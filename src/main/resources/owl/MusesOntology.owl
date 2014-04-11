@@ -1,0 +1,657 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY MusesOntology "http://www.musesproject.eu/ontologies/MusesOntology.owl#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.musesproject.eu/ontologies/MusesOntology.owl#"
+     xml:base="http://www.musesproject.eu/ontologies/MusesOntology.owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:MusesOntology="http://www.musesproject.eu/ontologies/MusesOntology.owl#"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.musesproject.eu/ontologies/MusesOntology.owl">
+        <rdfs:comment>Authors: Sergio Zamarripa, Carmen Calle</rdfs:comment>
+        <rdfs:comment>Please check D4.3 for description of concepts also</rdfs:comment>
+        <rdfs:comment>Muses Ontology
+This ontology captures important concepts related to software maintenance (cause-issue-symptom knowledge base, maintenance activities, ...)</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#ID -->
+
+    <rdfs:Datatype rdf:about="&xsd;ID"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#appliesChange -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;appliesChange">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment>Relationship denoting that FixAction FA applies change C</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#causedBy -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;causedBy">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:domain rdf:resource="&MusesOntology;Cause"/>
+        <owl:inverseOf rdf:resource="&MusesOntology;causes"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#causes -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;causes">
+        <rdfs:comment>Represents the relationship between a cause C and an issue I in which C causes I</rdfs:comment>
+        <rdfs:domain rdf:resource="&MusesOntology;Cause"/>
+        <rdfs:range rdf:resource="&MusesOntology;Issue"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#concernsApplication -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;concernsApplication"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#consisteOf -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;consisteOf">
+        <rdfs:comment>Relationship denoting that activity A is part of process P.</rdfs:comment>
+        <rdfs:range rdf:resource="&MusesOntology;MaintenanceActivity"/>
+        <rdfs:domain rdf:resource="&MusesOntology;MaintenanceProcess"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#hasFollowingActivity -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;hasFollowingActivity">
+        <rdfs:comment>Relationship denoting succeeding activity for an activity</rdfs:comment>
+        <rdfs:domain rdf:resource="&MusesOntology;MaintenanceActivity"/>
+        <rdfs:range rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#hasPreviousActivity -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;hasPreviousActivity">
+        <rdfs:comment>Relationship denoting succeeding activity for an activity</rdfs:comment>
+        <rdfs:range rdf:resource="&MusesOntology;MaintenanceActivity"/>
+        <rdfs:domain rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#isSymptomOf -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;isSymptomOf">
+        <owl:inverseOf rdf:resource="&MusesOntology;manifestsIn"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#manifestsIn -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;manifestsIn">
+        <rdfs:comment>Relationship between an issue I and a symptom S in which I manifests in S</rdfs:comment>
+        <rdfs:domain rdf:resource="&MusesOntology;Issue"/>
+        <rdfs:range rdf:resource="&MusesOntology;Symptom"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#mitigates -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;mitigates">
+        <rdfs:comment>Relationship denoting that Workaround W mitigates (i.e. removes or easens) Symptom S</rdfs:comment>
+        <rdfs:range rdf:resource="&MusesOntology;Symptom"/>
+        <rdfs:domain rdf:resource="&MusesOntology;Workaround"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#perceives -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;perceives">
+        <rdfs:comment>Relation denoting that user U perceives Symptom S</rdfs:comment>
+        <rdfs:range rdf:resource="&MusesOntology;Symptom"/>
+        <rdfs:domain rdf:resource="&MusesOntology;User"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#removes -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;removes">
+        <rdfs:comment>Relationship denoting that Solution S removes Cause C</rdfs:comment>
+        <rdfs:range rdf:resource="&MusesOntology;Cause"/>
+        <rdfs:domain rdf:resource="&MusesOntology;Solution"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#usesMethod -->
+
+    <owl:ObjectProperty rdf:about="&MusesOntology;usesMethod">
+        <rdfs:comment>Relationship denoting that FixAction FA uses FixMethod FM</rdfs:comment>
+        <rdfs:domain rdf:resource="&MusesOntology;FixAction"/>
+        <rdfs:range rdf:resource="&MusesOntology;FixMethod"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#hasEnd -->
+
+    <owl:DatatypeProperty rdf:about="&MusesOntology;hasEnd"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#hasStart -->
+
+    <owl:DatatypeProperty rdf:about="&MusesOntology;hasStart"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#hasText -->
+
+    <owl:DatatypeProperty rdf:about="&MusesOntology;hasText"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#idEntity -->
+
+    <owl:DatatypeProperty rdf:about="&MusesOntology;idEntity"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Acceptance -->
+
+    <owl:Class rdf:about="&MusesOntology;Acceptance">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Application -->
+
+    <owl:Class rdf:about="&MusesOntology;Application"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Bug -->
+
+    <owl:Class rdf:about="&MusesOntology;Bug">
+        <owl:equivalentClass rdf:resource="&MusesOntology;Defect"/>
+        <owl:equivalentClass rdf:resource="&MusesOntology;Fault"/>
+        <rdfs:subClassOf rdf:resource="&MusesOntology;ImplementationCause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Cause -->
+
+    <owl:Class rdf:about="&MusesOntology;Cause">
+        <rdfs:comment>Cause represents reasons for the appearance of certain Issues like Bugs or high CPU usage within the system. A specific Cause can give rise to several Issues and an Issue can have several causes.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Change -->
+
+    <owl:Class rdf:about="&MusesOntology;Change"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Closure -->
+
+    <owl:Class rdf:about="&MusesOntology;Closure">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#CodeChange -->
+
+    <owl:Class rdf:about="&MusesOntology;CodeChange">
+        <owl:equivalentClass rdf:resource="&MusesOntology;Patch"/>
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Change"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ConfigurationChange -->
+
+    <owl:Class rdf:about="&MusesOntology;ConfigurationChange">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Change"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#CorrectiveAction -->
+
+    <owl:Class rdf:about="&MusesOntology;CorrectiveAction">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;FixAction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Defect -->
+
+    <owl:Class rdf:about="&MusesOntology;Defect">
+        <owl:equivalentClass rdf:resource="&MusesOntology;Fault"/>
+        <rdfs:subClassOf rdf:resource="&MusesOntology;ImplementationCause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#EnvironmentCause -->
+
+    <owl:Class rdf:about="&MusesOntology;EnvironmentCause">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;ExternalCause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ErroneousState -->
+
+    <owl:Class rdf:about="&MusesOntology;ErroneousState">
+        <owl:equivalentClass rdf:resource="&MusesOntology;Error"/>
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Issue"/>
+        <rdfs:comment>Brügge: “a manifestation of a fault during the execution of the system. An eroneous state is cause by one or more faults and can lead to a failure”</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Error -->
+
+    <owl:Class rdf:about="&MusesOntology;Error">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Issue"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ExecutionEnvironmentCause -->
+
+    <owl:Class rdf:about="&MusesOntology;ExecutionEnvironmentCause">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;EnvironmentCause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ExternalCause -->
+
+    <owl:Class rdf:about="&MusesOntology;ExternalCause">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Cause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Failure -->
+
+    <owl:Class rdf:about="&MusesOntology;Failure">
+        <owl:equivalentClass rdf:resource="&MusesOntology;Symptom"/>
+        <rdfs:comment>Brügge: “a deviation between the specification and the actual behaviour”</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Fault -->
+
+    <owl:Class rdf:about="&MusesOntology;Fault">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;ImplementationCause"/>
+        <rdfs:comment>Brügge: “a design or coding mistake that may cause abnormal component behaviour”</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#FixAction -->
+
+    <owl:Class rdf:about="&MusesOntology;FixAction"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#FixMethod -->
+
+    <owl:Class rdf:about="&MusesOntology;FixMethod"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ImpactAnalysis -->
+
+    <owl:Class rdf:about="&MusesOntology;ImpactAnalysis">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Implementation -->
+
+    <owl:Class rdf:about="&MusesOntology;Implementation">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ImplementationCause -->
+
+    <owl:Class rdf:about="&MusesOntology;ImplementationCause">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Cause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ImplementationDecision -->
+
+    <owl:Class rdf:about="&MusesOntology;ImplementationDecision">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Issue -->
+
+    <owl:Class rdf:about="&MusesOntology;Issue">
+        <owl:equivalentClass rdf:resource="&MusesOntology;Problem"/>
+        <rdfs:comment>Issue represents a certain Problem that exists within the target application like PerformanceDegradation or ExceptionThrown. Issue and Problem are synonyms.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Localization -->
+
+    <owl:Class rdf:about="&MusesOntology;Localization">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#MaintenanceActivity -->
+
+    <owl:Class rdf:about="&MusesOntology;MaintenanceActivity"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#MaintenanceProcess -->
+
+    <owl:Class rdf:about="&MusesOntology;MaintenanceProcess"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#OSCause -->
+
+    <owl:Class rdf:about="&MusesOntology;OSCause">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;EnvironmentCause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Patch -->
+
+    <owl:Class rdf:about="&MusesOntology;Patch">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Change"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#PreventiveAction -->
+
+    <owl:Class rdf:about="&MusesOntology;PreventiveAction">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;FixAction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Problem -->
+
+    <owl:Class rdf:about="&MusesOntology;Problem"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#ProblemUnderstanding -->
+
+    <owl:Class rdf:about="&MusesOntology;ProblemUnderstanding">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#RegressionTesting -->
+
+    <owl:Class rdf:about="&MusesOntology;RegressionTesting">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Reinsertion -->
+
+    <owl:Class rdf:about="&MusesOntology;Reinsertion">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#SQLDropTable -->
+
+    <owl:Class rdf:about="&MusesOntology;SQLDropTable">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;SQLInjection"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#SQLInjection -->
+
+    <owl:Class rdf:about="&MusesOntology;SQLInjection">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Error"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Solution -->
+
+    <owl:Class rdf:about="&MusesOntology;Solution">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;FixMethod"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#SolutionAnalysis -->
+
+    <owl:Class rdf:about="&MusesOntology;SolutionAnalysis">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Symptom -->
+
+    <owl:Class rdf:about="&MusesOntology;Symptom">
+        <rdfs:comment>Symptoms are all forms in which an Issue manifests and and can be observed. An Issue can manifest in several Symptoms and a specific Symptom can potentially be the manifestation of several Issues.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#TextInput -->
+
+    <owl:Class rdf:about="&MusesOntology;TextInput">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;UserInput"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Trigger -->
+
+    <owl:Class rdf:about="&MusesOntology;Trigger">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;MaintenanceActivity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#User -->
+
+    <owl:Class rdf:about="&MusesOntology;User"/>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#UserInput -->
+
+    <owl:Class rdf:about="&MusesOntology;UserInput">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;User"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#UserInteractionCause -->
+
+    <owl:Class rdf:about="&MusesOntology;UserInteractionCause">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;ExternalCause"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#UserPerceivableSymptom -->
+
+    <owl:Class rdf:about="&MusesOntology;UserPerceivableSymptom">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;Symptom"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#Workaround -->
+
+    <owl:Class rdf:about="&MusesOntology;Workaround">
+        <rdfs:subClassOf rdf:resource="&MusesOntology;FixMethod"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#initialCauseOflowNumberFile -->
+
+    <owl:Thing rdf:about="&MusesOntology;initialCauseOflowNumberFile">
+        <rdf:type rdf:resource="&MusesOntology;Cause"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <idEntity rdf:datatype="&xsd;ID">2</idEntity>
+        <causedBy rdf:resource="&MusesOntology;lowNumberFileDescriptors"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#issue1 -->
+
+    <owl:Thing rdf:about="&MusesOntology;issue1">
+        <rdf:type rdf:resource="&MusesOntology;Issue"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <idEntity rdf:datatype="&xsd;ID">1</idEntity>
+        <causedBy rdf:resource="&MusesOntology;initialCauseOflowNumberFile"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#lowNumberFileDescriptors -->
+
+    <owl:Thing rdf:about="&MusesOntology;lowNumberFileDescriptors">
+        <rdf:type rdf:resource="&MusesOntology;OSCause"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <idEntity rdf:datatype="&xsd;ID">1</idEntity>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.musesproject.eu/ontologies/MusesOntology.owl#textInputEvent1 -->
+
+    <owl:Thing rdf:about="&MusesOntology;textInputEvent1">
+        <rdf:type rdf:resource="&MusesOntology;TextInput"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <idEntity>234</idEntity>
+        <hasText>drop table</hasText>
+        <concernsApplication rdf:resource="&MusesOntology;textInputEvent1"/>
+    </owl:Thing>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.2.2.1789) http://owlapi.sourceforge.net -->
+

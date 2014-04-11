@@ -1,0 +1,45 @@
+package MusesDrl
+
+
+global eu.musesproject.server.eventprocessor.correlator.global.StatusGlobal StatusGlobal
+global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2aeGlobal
+
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
+import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
+import eu.musesproject.server.eventprocessor.util.Constants
+import java.util.ArrayList
+import java.util.Date
+import java.util.StringTokenizer
+
+declare Event
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare AccessRequest
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare ConnectivityEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+
+	
+rule "Risk-mitigation-000001"
+	no-loop true
+	dialect "mvel"
+	when
+		original: ConnectivityEvent()
+		e: ConnectivityEvent(this after[0,24h] original)		
+	then		
+		StatusGlobal.log("Detection of connection properties changes");
+		//TODO: Detect what is the difference between connectivity properties and if it is an IMPROVEMENT				
+	end
