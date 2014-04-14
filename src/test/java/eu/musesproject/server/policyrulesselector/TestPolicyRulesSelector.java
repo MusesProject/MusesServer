@@ -34,6 +34,7 @@ import org.json.XML;
 import com.hp.hpl.jena.util.FileManager;
 
 import eu.musesproject.client.model.decisiontable.Action;
+import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.risktrust.CorporateUserAccessRequestDecision;
 import eu.musesproject.server.risktrust.Decision;
@@ -65,7 +66,7 @@ public class TestPolicyRulesSelector extends TestCase {
 		decisions[0] = decision;
 		
 		//First, we build the action associated to the decision to be taken
-		String action = Action.OPEN;
+		String action = ActionType.OPEN;
 		
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, action);
 		assertNotNull(policyDT);
