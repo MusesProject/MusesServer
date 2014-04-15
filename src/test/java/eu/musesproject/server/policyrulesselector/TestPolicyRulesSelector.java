@@ -61,8 +61,8 @@ public class TestPolicyRulesSelector extends TestCase {
 		RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
 		riskTreatments[0] = riskTreatment;
 		riskCommunication.setRiskTreatment(riskTreatments);
-		Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-		Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+		Decision decision = Decision.GRANTED_ACCESS;
+		Decision.GRANTED_ACCESS.setRiskCommunication(riskCommunication);
 		decisions[0] = decision;
 		
 		//First, we build the action associated to the decision to be taken

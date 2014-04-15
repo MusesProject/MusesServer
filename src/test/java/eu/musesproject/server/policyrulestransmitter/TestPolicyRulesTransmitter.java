@@ -52,7 +52,7 @@ public class TestPolicyRulesTransmitter extends TestCase {
 	  * @param device - Target device, identified by MUSES
 	  * 
 	  */
-	public final void testSendPolicyDT() {
+	public final void testSendPolicyDTV1() {
 		String dataToSend = null;
 		try {
 			InputStream in = FileManager.get().open("devpolicies/muses-device-policy-prototype.xml");
@@ -79,6 +79,31 @@ public class TestPolicyRulesTransmitter extends TestCase {
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		assertNotNull(transmitter.sendPolicyDT(policy, device));
 	}
+	
+	/**
+	  * testSendPolicyDT - JUnit test case whose aim is to test the communication method to send a set of policy decision entries to a concrete device
+	  *
+	  * @param policyDT - Set of policy decision entries
+	  * @param device - Target device, identified by MUSES
+	  * 
+	  */
+	public final void testSendPolicyDT() {
+		String dataToSend = null;
+		try {
+			String xmlPolicy = "{\"muses-device-policy\":{\"files\":{\"action\":{\"allow\":{\"id\":\"\"},\"type\":\"open\"}},\"revision\":1,\"schema-version\":1}}";
+           JSONObject xmlJSONObj = XML.toJSONObject(xmlPolicy);
+           dataToSend = xmlJSONObj.toString();
+       } catch (JSONException je) {
+           je.printStackTrace();
+       } 
+       PolicyDT policy = new PolicyDT();
+       policy.setRawPolicy(dataToSend);
+       Device device = new Device();
+       PolicyTransmitter transmitter = new PolicyTransmitter();
+       assertNotNull(transmitter.sendPolicyDT(policy, device));
+	}
+	
+	
 
 	
 

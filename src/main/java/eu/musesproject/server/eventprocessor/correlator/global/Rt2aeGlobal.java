@@ -26,6 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 
 import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
@@ -34,9 +37,11 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Threat;
 import eu.musesproject.server.policyrulesselector.PolicySelector;
+import eu.musesproject.server.policyrulestransmitter.PolicyTransmitter;
 import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
+import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
 
 public class Rt2aeGlobal {
@@ -82,6 +87,13 @@ public class Rt2aeGlobal {
 		logger.info(policyDT.getRawPolicy());
 		logger.info(decision.toString());
 		requests.add(composedRequest);
+		
+		//Send policy
+		
+		Device device = new Device();
+		PolicyTransmitter transmitter = new PolicyTransmitter();
+		transmitter.sendPolicyDT(policyDT, device);
+		
 		return composedRequest.getId();
 	}
 	
