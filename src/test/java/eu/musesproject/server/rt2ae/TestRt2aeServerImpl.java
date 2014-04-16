@@ -99,7 +99,7 @@ public class TestRt2aeServerImpl {
 		assertNotNull(decision);  
 		assertNotNull(decision1);
 		assertNotNull(decision2);
-
+  
 		
 		
 	}
