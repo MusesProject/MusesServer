@@ -21,12 +21,17 @@ package eu.musesproject.server.contextdatareceiver;
  * #L%
  */
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
+
 
 public class ConnectionCallbacksImpl implements IConnectionCallbacks, Runnable {
 	
@@ -77,7 +82,9 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks, Runnable {
 	public String receiveCb(String sessionId, String rData) {
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
 		ConnectionCallbacksImpl.receiveData = rData;
-		JSONManager.processJSONMessage(ConnectionCallbacksImpl.receiveData);
+		List<ContextEvent> list = JSONManager.processJSONMessage(ConnectionCallbacksImpl.receiveData);
+		UserContextEventDataReceiver.getInstance().processContextEventList(list);
+		
 		logger.info("*************Receive Callback called: "
 				+ ConnectionCallbacksImpl.receiveData + "from client ID " + sessionId);
 		if (isDataAvailable) {

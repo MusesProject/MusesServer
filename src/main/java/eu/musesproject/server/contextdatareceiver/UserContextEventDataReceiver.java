@@ -27,12 +27,19 @@ package eu.musesproject.server.contextdatareceiver;
  */
 
 
+import java.util.Iterator;
+import java.util.List;
+
 import eu.musesproject.client.model.contextmonitoring.Event;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.connectionmanager.IConnectionManager;
 import eu.musesproject.server.connectionmanager.StubConnectionManager;
 import eu.musesproject.server.contextdatareceiver.formatting.EventFormatter;
+import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.db.eventcorrelation.StubEventCorrelationData;
+import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
+import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
+import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
 
 
 /**
@@ -97,6 +104,23 @@ public class UserContextEventDataReceiver {
 		eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = null;		
 		formattedEvent = EventFormatter.formatContextEvent(contextEvent); 
 		return formattedEvent;
+	}
+	
+	public void processContextEventList(List<ContextEvent> list){
+		
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent event = (ContextEvent) iterator.next();
+			eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
+			EventProcessor processor = null;
+			MusesCorrelationEngineImpl engine = null;
+			DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+			if (des==null){
+				processor = new EventProcessorImpl();
+				engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+				des = EventProcessorImpl.getMusesEngineService();
+			}
+			des.insertFact(formattedEvent);
+		}
 	}
 
 }

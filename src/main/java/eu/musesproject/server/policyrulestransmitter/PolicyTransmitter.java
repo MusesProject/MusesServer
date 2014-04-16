@@ -29,8 +29,11 @@ package eu.musesproject.server.policyrulestransmitter;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -50,6 +53,8 @@ import eu.musesproject.server.risktrust.Device;
  */
 
 public class PolicyTransmitter {
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	private List<DataHandler> dataHandlerList	 = new CopyOnWriteArrayList<DataHandler>();
 	private ConnectionManager connManager;
@@ -77,8 +82,14 @@ public class PolicyTransmitter {
 	}
 	
 	private void sendData(String dataToSend){
-				
-		connManager.sendData("1", dataToSend);
+		
+		Set<String> sessionIds = connManager.getSessionIds();
+		for (Iterator iterator = sessionIds.iterator(); iterator.hasNext();) {
+			String sessionId = (String) iterator.next();
+			logger.info(connManager.getSessionDetails(sessionId).getId());//TODO Identify the concrete sessionId coming from the device
+			connManager.sendData(sessionId, dataToSend);
+		}
+		
 		
 	}
 
