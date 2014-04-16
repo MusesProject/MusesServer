@@ -77,7 +77,7 @@ public class TestRt2aeServerImpl {
 		AccessRequest accessRequest = new AccessRequest();
 		accessRequest.setId(1);
 		User user = new User();
-		UserTrustValue usertrustvalue = new UserTrustValue();
+		UserTrustValue usertrustvalue = new UserTrustValue();  
 		usertrustvalue.setValue(0);
 		user.setUsertrustvalue(usertrustvalue);
 		accessRequest.setUser(user);
