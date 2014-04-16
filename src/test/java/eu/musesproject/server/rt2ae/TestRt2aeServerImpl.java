@@ -86,8 +86,8 @@ public class TestRt2aeServerImpl {
 		devicetrustvalue.setValue(0);
 		device.setDevicetrustvalue(devicetrustvalue);    
 		accessRequest.setDevice(device);
-		  
-		Asset requestedCorporateAsset = new Asset();
+		    
+		Asset requestedCorporateAsset = new Asset();  
 		requestedCorporateAsset.setValue(1000000);
 		accessRequest.setRequestedCorporateAsset(requestedCorporateAsset);
 		
