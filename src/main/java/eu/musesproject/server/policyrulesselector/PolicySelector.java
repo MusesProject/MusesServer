@@ -163,8 +163,9 @@ public class PolicySelector {
             jsonDevicePolicy = xmlJSONObj.toString();
         } catch (JSONException je) {
             je.printStackTrace();
-        } finally{
-			jsonDevicePolicy = "<errorBuildingPolicy/>";
+        } catch (Exception e){
+        	jsonDevicePolicy = "<errorBuildingPolicy/>";
+        } finally{			
 			try {
 			    if (br != null) {
 			    	br.close();
