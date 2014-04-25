@@ -74,8 +74,13 @@ public class EventFormatter {
 	public static FileObserverEvent convertToFileObserverEvent(ContextEvent contextEvent){
 		FileObserverEvent cepFileEvent = new FileObserverEvent();
 		Map<String,String> properties = contextEvent.getProperties();
-		cepFileEvent.setEvent(properties.get("event"));
-		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		if (properties.get("event")!=null){//TODO Changes for System test
+			cepFileEvent.setEvent(properties.get("event"));
+		}		
+		cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
+		if (properties.get("id")!=null){//TODO Changes for System test
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		}		
 		cepFileEvent.setType(contextEvent.getType());
 		cepFileEvent.setPath(properties.get("path"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());

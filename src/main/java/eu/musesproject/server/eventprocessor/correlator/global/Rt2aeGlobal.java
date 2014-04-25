@@ -93,6 +93,7 @@ public class Rt2aeGlobal {
 		Device device = new Device();
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		transmitter.sendPolicyDT(policyDT, device);
+		logger.info("Device Policy is now sent:"+policyDT.getRawPolicy());
 		
 		return composedRequest.getId();
 	}

@@ -45,6 +45,37 @@ public class ContextEventFactory {
 			return fileEvent;
 	}
 	
+	public static ContextEvent createFileObserverContextEvent1(){//TODO Changes for System test
+		ContextEvent fileEvent = new ContextEvent();
+		fileEvent.setType("ACTION_REMOTE_FILE_ACCESS");
+		Map<String,String> properties = new HashMap<String, String>();
+		properties.put("protocol","https");
+		properties.put("url", "https://...");
+		fileEvent.setTimestamp(new Date().getTime());
+		properties.put("resourceId","file1.png");
+		properties.put("method","post");
+		fileEvent.setProperties(properties);
+		return fileEvent;
+}
+	public static ContextEvent createConnectivityContext1(){//TODO Changes for System test
+		ContextEvent connEvent = new ContextEvent();
+		connEvent.setType("CONTEXT_SENSOR_CONNECTIVITY");
+		Map<String,String> properties = new HashMap<String,String>();
+		properties.put("id", "1");
+		properties.put("airplaneMode", "false");
+		properties.put("bluetoothConnected", BluetoothState.FALSE.toString());
+		properties.put("BSSID", "01:23:45:67:89:AB");
+		properties.put("hiddenSSID","false");
+		properties.put("mobileConnected", "false");
+		properties.put("networkId", "1");
+		properties.put("wifiConnected", "true");
+		properties.put("wifiEnabled", "true");
+		properties.put("wifiNeighbors", "3");
+		connEvent.setTimestamp(new Date().getTime());
+		connEvent.setProperties(properties);
+		return connEvent;
+}
+	
 	public static ContextEvent createConnectivityContext(){
 		ContextEvent connEvent = new ContextEvent();
 		connEvent.setType(EventTypes.CONNECTIVITY);

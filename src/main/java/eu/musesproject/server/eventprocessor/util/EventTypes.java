@@ -22,7 +22,8 @@ package eu.musesproject.server.eventprocessor.util;
  */
 
 public class EventTypes {
-	public final static String FILEOBSERVER = "CONTEXT_SENSOR_FILEOBSERVER";
+	//public final static String FILEOBSERVER = "CONTEXT_SENSOR_FILEOBSERVER";
+	public final static String FILEOBSERVER = "ACTION_REMOTE_FILE_ACCESS";
 	public final static String CONNECTIVITY = "CONTEXT_SENSOR_APP";
 
 }

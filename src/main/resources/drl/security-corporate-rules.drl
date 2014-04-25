@@ -74,6 +74,25 @@ rule "AccessRequest Detection"
 
 	end
 	
+//TODO Changes for System test	
+rule "AccessRequest ClientServer Connectivity"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="post")
+	then
+		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e);
+		//GAP (we associate the access requests by id)
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end
+	
 
 	
 rule "Connectivity"

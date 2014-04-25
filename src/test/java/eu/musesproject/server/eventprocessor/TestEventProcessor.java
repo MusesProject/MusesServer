@@ -103,6 +103,24 @@ public class TestEventProcessor extends TestCase {
 	}
 	
 	/**
+	  * testAccessRequest - JUnit test case whose aim is to test the correct firing of the access request rule
+	  *
+	  * @param none 
+	  * 
+	  */
+	public final void testClientServerConnectivity() {
+		logger.info("Running testClientServerConnectivity");
+		ContextEvent fileEvent = ContextEventFactory.createFileObserverContextEvent1();
+		Event formattedfileEvent = UserContextEventDataReceiver.getInstance().formatEvent(fileEvent);
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		logger.info(des);
+		logger.info(formattedfileEvent);
+		des.insertFact(formattedfileEvent);
+		assertNotNull(des);
+	}
+	
+	
+	/**
 	  * testUserConnectingIntranet - JUnit test case whose aim is to test the detection of user connecting to the company intranet
 	  *
 	  * @param none 
