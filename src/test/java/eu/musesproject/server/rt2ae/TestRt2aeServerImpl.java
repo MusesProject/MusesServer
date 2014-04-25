@@ -77,26 +77,29 @@ public class TestRt2aeServerImpl {
 		AccessRequest accessRequest = new AccessRequest();
 		accessRequest.setId(1);
 		User user = new User();
-		UserTrustValue usertrustvalue = new UserTrustValue();
+		UserTrustValue usertrustvalue = new UserTrustValue();  
 		usertrustvalue.setValue(0);
 		user.setUsertrustvalue(usertrustvalue);
 		accessRequest.setUser(user);
 		Device device = new Device();
 		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
 		devicetrustvalue.setValue(0);
-		device.setDevicetrustvalue(devicetrustvalue);
+		device.setDevicetrustvalue(devicetrustvalue);    
 		accessRequest.setDevice(device);
-		
-		Asset requestedCorporateAsset = new Asset();
+		      
+		Asset requestedCorporateAsset = new Asset();  
 		requestedCorporateAsset.setValue(1000000);
 		accessRequest.setRequestedCorporateAsset(requestedCorporateAsset);
 		
 		Context context = new Context();
 		Decision decision = rt2ae.decideBasedOnRiskPolicy_version_2(accessRequest, context);
 		Decision decision1 = rt2ae.decideBasedOnRiskPolicy_version_3(accessRequest, context);
-		
-		assertNotNull(decision);
+		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_4(accessRequest, context);
+		   
+		assertNotNull(decision);  
 		assertNotNull(decision1);
+		assertNotNull(decision2);       
+  
 		
 		
 	}
