@@ -139,32 +139,6 @@ public class TestContextDataReceiver extends TestCase {
 	}
 	
 	/**
-	  * testProcessEvent - JUnit test case whose aim is to test the redirection of an incoming event to be processed by the CRTEP
-	  *
-	  * @param none 
-	  * 
-	  */
-	
-	public final void testProcessEvent1(){//TODO Changes for System test
-		ContextEvent event = ContextEventFactory.createConnectivityContext1();
-		Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
-		EventProcessor processor = null;
-		MusesCorrelationEngineImpl engine = null;
-		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
-		if (des==null){
-			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
-			assertNotNull(engine);
-			des = EventProcessorImpl.getMusesEngineService();
-		}
-		des.insertFact(formattedEvent);
-		
-		ContextEvent fileEvent = ContextEventFactory.createFileObserverContextEvent();
-		Event formattedfileEvent = UserContextEventDataReceiver.getInstance().formatEvent(fileEvent);
-		des.insertFact(formattedfileEvent);
-		assertNotNull(des);
-	}
-	/**
 	  * testJsonParse - JUnit test case whose aim is to test transformation of a JSON string received from the Connection Manager into the original Context Event
 	  *
 	  * @param none 
