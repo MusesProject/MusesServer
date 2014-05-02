@@ -57,15 +57,15 @@ public class UseCaseFactory {
 		connEvent.setType(EventTypes.CONNECTIVITY);
 		Map<String,String> properties = new HashMap<String,String>();
 		properties.put("id", "3");
-		properties.put("airplaneMode", "false");
-		properties.put("bluetoothConnected", BluetoothState.TRUE.toString());
-		properties.put("BSSID", "AcmeIntranet");
-		properties.put("hiddenSSID","true");
-		properties.put("mobileConnected", "true");
-		properties.put("networkId", "1");
-		properties.put("wifiConnected", "true");
-		properties.put("wifiEnabled", "true");
-		properties.put("wifiNeighbors", "0");
+		properties.put("airplanemode", "false");
+		properties.put("bluetoothconnected", BluetoothState.TRUE.toString());
+		properties.put("bssid", "AcmeIntranet");
+		properties.put("hiddenssid","true");
+		properties.put("mobileconnected", "true");
+		properties.put("networkid", "1");
+		properties.put("wificonnected", "true");
+		properties.put("wifienabled", "true");
+		properties.put("wifineighbors", "0");
 		connEvent.setTimestamp(new Date().getTime());
 		connEvent.setProperties(properties);
 		
@@ -79,21 +79,21 @@ public class UseCaseFactory {
 		connEvent1.setType(EventTypes.CONNECTIVITY);
 		Map<String,String> properties = new HashMap<String,String>();
 		properties.put("id", "4");
-		properties.put("airplaneMode", "false");
-		properties.put("bluetoothConnected", BluetoothState.TRUE.toString());
-		properties.put("BSSID", "Orange");
-		properties.put("hiddenSSID","true");
-		properties.put("mobileConnected", "true");
-		properties.put("networkId", "4");
-		properties.put("wifiConnected", "true");
-		properties.put("wifiEnabled", "true");
-		properties.put("wifiNeighbors", "0");
+		properties.put("airplanemode", "false");
+		properties.put("bluetoothconnected", BluetoothState.TRUE.toString());
+		properties.put("bssid", "Orange");
+		properties.put("hiddenssid","true");
+		properties.put("mobileconnected", "true");
+		properties.put("networkid", "4");
+		properties.put("wificonnected", "true");
+		properties.put("wifienabled", "true");
+		properties.put("wifineighbors", "0");
 		connEvent1.setTimestamp(new Date().getTime());
 		connEvent1.setProperties(properties);
 		
 		ContextEvent connEvent2 = new ContextEvent();
 		connEvent2.setType(EventTypes.CONNECTIVITY);
-		properties.put("bluetoothConnected", BluetoothState.FALSE.toString());
+		properties.put("bluetoothconnected", BluetoothState.FALSE.toString());
 		connEvent2.setTimestamp(new Date().getTime());
 		connEvent2.setProperties(properties);
 		
@@ -108,15 +108,15 @@ public class UseCaseFactory {
 		connEvent.setType(EventTypes.CONNECTIVITY);
 		Map<String,String> properties = new HashMap<String,String>();
 		properties.put("id", "5");
-		properties.put("airplaneMode", "false");
-		properties.put("bluetoothConnected", BluetoothState.TRUE.toString());
-		properties.put("BSSID", "Airport");
-		properties.put("hiddenSSID","false");
-		properties.put("mobileConnected", "true");
-		properties.put("networkId", "1");
-		properties.put("wifiConnected", "true");
-		properties.put("wifiEnabled", "true");
-		properties.put("wifiNeighbors", "200");
+		properties.put("airplanemode", "false");
+		properties.put("bluetoothconnected", BluetoothState.TRUE.toString());
+		properties.put("bssid", "Airport");
+		properties.put("hiddenssid","false");
+		properties.put("mobileconnected", "true");
+		properties.put("networkid", "1");
+		properties.put("wificonnected", "true");
+		properties.put("wifienabled", "true");
+		properties.put("wifineighbors", "200");
 		connEvent.setTimestamp(new Date().getTime());
 		connEvent.setProperties(properties);
 		
@@ -134,15 +134,15 @@ public class UseCaseFactory {
 		connEvent.setType(EventTypes.CONNECTIVITY);
 		Map<String,String> properties = new HashMap<String,String>();
 		properties.put("id", "6");
-		properties.put("airplaneMode", "false");
-		properties.put("bluetoothConnected", BluetoothState.TRUE.toString());
-		properties.put("BSSID", "Airport");
-		properties.put("hiddenSSID","false");
-		properties.put("mobileConnected", "true");
-		properties.put("networkId", "1");
-		properties.put("wifiConnected", "true");
-		properties.put("wifiEnabled", "true");
-		properties.put("wifiNeighbors", "200");
+		properties.put("airplanemode", "false");
+		properties.put("bluetoothconnected", BluetoothState.TRUE.toString());
+		properties.put("bssid", "Airport");
+		properties.put("hiddenssid","false");
+		properties.put("mobileconnected", "true");
+		properties.put("networkid", "1");
+		properties.put("wificonnected", "true");
+		properties.put("wifienabled", "true");
+		properties.put("wifineighbors", "200");
 		connEvent.setTimestamp(new Date().getTime());
 		connEvent.setProperties(properties);
 		
@@ -179,7 +179,7 @@ public class UseCaseFactory {
 		return result;
 	}
 	
-	
+
 	
 	
 
