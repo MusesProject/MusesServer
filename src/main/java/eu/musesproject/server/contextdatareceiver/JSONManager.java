@@ -33,9 +33,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 
 public class JSONManager {
@@ -56,6 +56,12 @@ public class JSONManager {
 			// Process the root JSON object
 			JSONObject root = new JSONObject(message);		
 			//TODO Get the action part
+			JSONObject actionJson = root.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
+			
+
+			contextEvent = extractContextEvent(actionJson);
+			resultList.add(contextEvent);
+
 			
 			// Get the List<ContextEvent> from each sensor			
 			JSONObject sensorJson = root.getJSONObject(JSONIdentifiers.SENSOR_IDENTIFIER);

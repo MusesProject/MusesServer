@@ -38,37 +38,37 @@ import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
 
 public class TestContextDataReceiver extends TestCase {
 	
-	private final String testJSONMessage = "{" +
-			"\""+JSONIdentifiers.ACTION_IDENTIFIER+"\" : "+
-   "{"+
-   "	\""+JSONIdentifiers.ACTION_TYPE+"\" : \"ACTION_REMOTE_FILE_ACCESS\","+
-   "	\""+JSONIdentifiers.ACTION_TIMESTAMP+"\" : \"1389885147\","+
-   "	\""+JSONIdentifiers.PROPERTIES_IDENTIFIER+"\": {"+
-   "		\"protocol\"   : \"https\","+
-   "		\"url\"        : \"https://...\","+
-   "		\"resourceId\" : \"file1.png\","+
-   "		\"method\"     : \"post\""+
-   "	}"+
-   "},"+
-   "\""+JSONIdentifiers.SENSOR_IDENTIFIER+"\" : {"+
-   "	\"connectivity\" : {"+
-   "		\""+ContextEvent.KEY_TYPE+"\" : \"CONTEXT_SENSOR_APP\","+
-   "		\"timestamp\" : \"1389885147\","+
-   "		\"mobileConnected\": \"false\","+
-   "		\"wifiEnabled\"    : \"true\","+
-   "		\"wifiConnected\"  : \"true\","+
-   "		\"wifiNeighbors\"  : \"3\","+
-   "		\"hiddenSSID\"     : \"false\","+
-   "		\"BSSID\"          : \"01:23:45:67:89:AB\","+
-   "		\"networkId\"      : \"1\","+
-   "		\"bluetoothConnected\": \"false\","+
-   "		\"airplaneMode\"   : \"false\""+
-   "	}" +
-   //","+
-   //"	\"another sensor\" : {"+
-   //"	},"+
-   "}"+
-   "}";
+	private final String testJSONMessage = ""	
++"	{ \"action\" : { \"properties\" : { \"method\" : \"post\","
++"        \"protocol\" : \"https\","
++"        \"resourceId\" : \"file1.png\","
++"        \"url\" : \"https://...\""
++"      },"
++"    \"timestamp\" : 1399037674634,"
++"    \"type\" : \"open\""
++"  },"
++"\"requesttype\" : \"local_decision\","
++"\"sensor\" : { \"CONTEXT_SENSOR_APP\" : { \"appname\" : \"Muses Aware App\","
++"        \"backgroundprocess\" : \"[com.android.phone, com.google.process.gapps, system, com.android.bluetooth, com.google.process.gapps, com.google.android.talk, com.android.bluetooth, com.android.systemui, com.google.android.music:main,             com.sec.android.app.gamehub, com.android.phone, com.tgrape.android.radar, com.google.process.location, com.android.systemui, com.sec.android.widgetapp.at.hero.accuweather, com.android.phone, com.sec.pcw, com.sec.esdk.elm, com.google.process.location, com.android.location.fused, com.sec.android.inputmethod, com.google.process.gapps, android.process.media, com.google.android.music:main, com.android.phone, com.sec.phone, com.google.process.location, com.sec.factory, com.google.process.location, com.google.android.gms, com.android.phone, com.wssyncmldm, com.google.android.music:main, org.simalliance.openmobileapi.service:remote, eu.musesproject.client, com.android.MtpApplication, com.google.process.location, com.google.android.music:main, com.google.android.music:main, eu.musesproject.client, com.sec.android.pagebuddynotisvc, com.android.phone, system, com.google.process.location, com.google.process.location, com.google.android.gms, com.google.android.music:main, com.google.process.gapps, com.google.android.music:main, com.android.bluetooth]\","
++"        \"id\" : \"2\","
++"        \"timestamp\" : 1399036877111,"
++"        \"type\" : \"CONTEXT_SENSOR_APP\""
++"      },"
++"    \"CONTEXT_SENSOR_CONNECTIVITY\" : { \"airplanemode\" : \"false\","
++"        \"bluetoothconnected\" : \"FALSE\","
++"        \"bssid\" : \"f8:1a:67:83:71:58\","
++"        \"hiddenssid\" : \"false\","
++"        \"id\" : \"3\","
++"        \"networkid\" : \"2\","
++"        \"timestamp\" : 1399036881208,"
++"        \"type\" : \"CONTEXT_SENSOR_CONNECTIVITY\","
++"        \"wificonnected\" : \"true\","
++"        \"wifienabled\" : \"true\","
++"        \"wifiencryption\" : \"unknown\","
++"        \"wifineighbors\" : \"6\""
++"      }"
++"  }"
++"}";
 
 	/**
 	  * testStoreEvent - JUnit test case whose aim is to test the storage of an incoming event from the Connection Manager
@@ -96,20 +96,6 @@ public class TestContextDataReceiver extends TestCase {
 	}
 	
 	
-	/**
-	  * testFormatEvent - JUnit test case whose aim is to test transformation of a context event to a Complex Event Processing fact,
-	  * which would be ready to be inserted into the MUSES Event Processor working memory
-	  *
-	  * @param none 
-	  * 
-	  */
-	
-	public final void testFormatEvent(){
-		//ContextEvent event = ContextEventFactory.createFileObserverContextEvent();//TODO Test File Observer when it implements Context Event
-		ContextEvent event = ContextEventFactory.createConnectivityContext();
-		Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
-		assertNotNull(formattedEvent);
-	}
 	
 	/**
 	  * testProcessEvent - JUnit test case whose aim is to test the redirection of an incoming event to be processed by the CRTEP
@@ -118,9 +104,8 @@ public class TestContextDataReceiver extends TestCase {
 	  * 
 	  */
 	
-	 public final void testProcessEvent(){
-		ContextEvent event = ContextEventFactory.createConnectivityContext();
-		Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
+	 public final void testStartProcessor(){
+
 		EventProcessor processor = null;
 		MusesCorrelationEngineImpl engine = null;
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
@@ -130,11 +115,6 @@ public class TestContextDataReceiver extends TestCase {
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		des.insertFact(formattedEvent);
-		
-		ContextEvent fileEvent = ContextEventFactory.createFileObserverContextEvent();
-		Event formattedfileEvent = UserContextEventDataReceiver.getInstance().formatEvent(fileEvent);
-		des.insertFact(formattedfileEvent);
 		assertNotNull(des);
 	}
 	
@@ -146,15 +126,25 @@ public class TestContextDataReceiver extends TestCase {
 	  */
 	
 	public final void testJsonParse(){
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
 		List<ContextEvent> list = JSONManager.processJSONMessage(testJSONMessage);
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			ContextEvent contextEvent = (ContextEvent) iterator.next();
 			assertNotNull(contextEvent);
 			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
 			des.insertFact(formattedEvent);
 		}
-	}	
+	}
+	
 	
 
 }

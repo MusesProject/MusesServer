@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import eu.musesproject.client.model.contextmonitoring.BluetoothState;
+import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
@@ -45,27 +46,32 @@ public class EventFormatter {
 			cepFileEvent = convertToFileObserverEvent(contextEvent);			
 		}else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)){
 			cepFileEvent = convertToConnectivityEvent(contextEvent);
-		}else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)){
-			cepFileEvent = convertToConnectivityEvent(contextEvent);
+		}else if (contextEvent.getType().equals(ActionTypes.OPEN)){
+			cepFileEvent = convertToFileObserverEvent(contextEvent, contextEvent.getType());
+
 		}
-		cepFileEvent.setType(contextEvent.getType());
+		
+		/*if (cepFileEvent!=null){
+			cepFileEvent.setType(contextEvent.getType());
+		}*/
+				
 		return (Event)cepFileEvent;
 		
 	}
 	public static ConnectivityEvent convertToConnectivityEvent(ContextEvent contextEvent){			
 			ConnectivityEvent cepFileEvent = new ConnectivityEvent();
 			Map<String,String> properties = contextEvent.getProperties();
-			cepFileEvent.setAirplaneMode(Boolean.valueOf(properties.get("airplaneMode")));
-			cepFileEvent.setBluetoothConnected(properties.get("bluetoothConnected"));
+			cepFileEvent.setAirplaneMode(Boolean.valueOf(properties.get("airplanemode")));
+			cepFileEvent.setBluetoothConnected(properties.get("bluetoothconnected"));
 			//cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 			cepFileEvent.setType(contextEvent.getType());
-			cepFileEvent.setBssid(properties.get("BSSID"));
-			cepFileEvent.setHiddenSSID(Boolean.valueOf(properties.get("hiddenSSID")));
+			cepFileEvent.setBssid(properties.get("bssid"));
+			cepFileEvent.setHiddenSSID(Boolean.valueOf(properties.get("hiddenssid")));
 			cepFileEvent.setMobileConnected(Boolean.valueOf(properties.get("mobileConnected")));
-			cepFileEvent.setWifiConnected(Boolean.valueOf(properties.get("wifiConnected")));
-			cepFileEvent.setWifiEnabled(Boolean.valueOf(properties.get("wifiEnabled")));
-			cepFileEvent.setNetworkId(Integer.valueOf(properties.get("networkId")));
-			cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifiNeighbors")));
+			cepFileEvent.setWifiConnected(Boolean.valueOf(properties.get("wificonnected")));
+			cepFileEvent.setWifiEnabled(Boolean.valueOf(properties.get("wifienabled")));
+			cepFileEvent.setNetworkId(Integer.valueOf(properties.get("networkid")));
+			cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifineighbors")));
 			cepFileEvent.setTimestamp(contextEvent.getTimestamp());		
 			//cepFileEvent.setUid(properties.get("id"));
 			return cepFileEvent;
@@ -87,5 +93,20 @@ public class EventFormatter {
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
 	}
+	public static FileObserverEvent convertToFileObserverEvent(ContextEvent contextEvent, String action){
+		FileObserverEvent cepFileEvent = new FileObserverEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		
+		cepFileEvent.setEvent(action.toString());
+		//cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
+		if (properties.get("id")!=null){//TODO Changes for System test
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		}		
+		cepFileEvent.setType(EventTypes.FILEOBSERVER);
+		cepFileEvent.setPath(properties.get("path"));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setUid(properties.get("id"));
+		return cepFileEvent;
+	}	
 
 }
