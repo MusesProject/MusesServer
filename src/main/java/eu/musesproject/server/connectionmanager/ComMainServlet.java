@@ -64,7 +64,7 @@ public class ComMainServlet extends HttpServlet {
 		sessionHandler = SessionHandler.getInstance(getServletContext());
 		logger = Logger.getRootLogger();
 		BasicConfigurator.configure();
-		logger.setLevel(Level.FATAL);
+		logger.setLevel(Level.INFO);
 		
 	}
 	

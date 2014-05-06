@@ -29,16 +29,16 @@ public class Helper {
 	private static final int COOKIE_MAX_AGE =  60*60*24;
 	Cookie retreivedCookie = null;
 
-	public Helper() {
-		logger = Logger.getRootLogger();
-		BasicConfigurator.configure();
-	}
 	/**
 	 * Set the cookie from the http request, if cookie is null then create the cookie from the session id
 	 * @param HttpServletRequest req
 	 * @return void
 	 */
 	public void setCookie(HttpServletRequest req) {
+		logger = Logger.getRootLogger();
+		BasicConfigurator.configure();
+		logger.setLevel(Level.INFO);
+		
 		Cookie [] cookies = req.getCookies();
 		if (cookies != null ){
 			for (Cookie ck : cookies){

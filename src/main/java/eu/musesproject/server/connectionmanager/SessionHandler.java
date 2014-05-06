@@ -44,10 +44,6 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	private Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
 	
-	public SessionHandler() {
-		logger = Logger.getRootLogger();
-		BasicConfigurator.configure();	
-	}
 	@Override
 	public void requestDestroyed(ServletRequestEvent sre) {
 		
@@ -62,6 +58,10 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	
 	@Override
 	public void requestInitialized(ServletRequestEvent sre) {
+		logger = Logger.getRootLogger();
+		BasicConfigurator.configure();
+		logger.setLevel(Level.INFO);
+		
 		int interval=0;
 		HttpServletRequest request = (HttpServletRequest) sre.getServletRequest();
 		if (request.getMethod().equalsIgnoreCase("POST")){

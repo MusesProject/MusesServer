@@ -60,6 +60,7 @@ public class ConnectionManager implements IConnectionManager{
 	private ConnectionManager() {
 		logger = Logger.getRootLogger();
 		BasicConfigurator.configure();
+		logger.setLevel(Level.INFO);
 		sessionCounter = new SessionHandler();
 	}
 	
