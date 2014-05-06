@@ -23,10 +23,12 @@ package eu.musesproject.server.connectionmanager;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Class Connection Manager
@@ -39,7 +41,7 @@ import javax.servlet.http.HttpSession;
 public class ConnectionManager implements IConnectionManager{
 
 	private static boolean D = true;
-	private final static Logger logger = Logger.getLogger(ConnectionManager.class.getName());
+	private static Logger logger = Logger.getLogger(ConnectionManager.class.getName());
 	public static IConnectionCallbacks callBacks;
 	private DataHandler dataHandler;
 	private SessionHandler sessionCounter;
@@ -56,6 +58,9 @@ public class ConnectionManager implements IConnectionManager{
 	}
 	
 	private ConnectionManager() {
+		logger = Logger.getRootLogger();
+		BasicConfigurator.configure();
+		logger.setLevel(Level.INFO);
 		sessionCounter = new SessionHandler();
 	}
 	
