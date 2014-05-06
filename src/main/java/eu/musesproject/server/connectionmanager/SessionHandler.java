@@ -41,7 +41,7 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	private Set<String> sessionIDs = new HashSet<String>();
 	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
 	private static final boolean D = true;
-	private final Logger logger = Logger.getLogger(SessionHandler.class.getName());
+	private Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
 	
 	public SessionHandler() {
