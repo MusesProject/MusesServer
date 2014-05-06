@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -35,7 +38,9 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	public Map<String,List<HttpSession>> eachClientSessions = new ConcurrentHashMap<String,List<HttpSession>>(); // TBD
 	private Set<String> sessionIDs = new HashSet<String>();
 	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
-	private static final boolean D = false;
+	private static final boolean D = true;
+	private final static Logger logger = Logger.getLogger(SessionHandler.class.getName());
+
 	
 	@Override
 	public void requestDestroyed(ServletRequestEvent sre) {
@@ -81,12 +86,12 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 			for (Map.Entry<String, HttpSession> entry : activeSessions.entrySet()) {
 				if (httpServletRequest.getSession() != entry.getValue()){
 					activeSessions.put(httpServletRequest.getSession().getId(), httpServletRequest.getSession());
-					if (D) System.out.println("Session added to the table: " + httpServletRequest.getSession().getId());
+					if (D) logger.log(Level.INFO,"Session added to the table: " + httpServletRequest.getSession().getId());
 				}
 			}
 		}else {
 			activeSessions.put(httpServletRequest.getSession().getId(), httpServletRequest.getSession());
-			if (D) System.out.println("Session added to the table: " + httpServletRequest.getSession().getId());
+			if (D) logger.log(Level.INFO, "Session added to the table: " + httpServletRequest.getSession().getId());
 		}
 	}
 	
@@ -101,7 +106,7 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 			for (Map.Entry<String, HttpSession> entry : activeSessions.entrySet()) {
 				if (httpSession == entry.getValue()){
 					activeSessions.remove(entry.getKey());
-					if (D) System.out.println("Session removed from the table: " + httpSession.getId());
+					if (D) logger.log(Level.INFO, "Session removed from the table: " + httpSession.getId());
 				}
 			}
 		}
@@ -137,7 +142,7 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	public void sessionDestroyed(HttpSessionEvent event) {
 		removeSessionFromTable(event.getSession());
 		if (sessionIDs.contains(event.getSession().getId())){
-			System.out.println("*** Session Destroyed *** " + event.getSession().getId()); // FIXME this id is wrong 
+			logger.log(Level.INFO, "*** Session Destroyed *** " + event.getSession().getId()); // FIXME this id is wrong 
 			removeSessionIdFromList(event.getSession().getId());
 			ConnectionManager.toSessionCb(event.getSession().getId(), Statuses.DISCONNECTED);
 		}
@@ -175,7 +180,7 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	 * @return void
 	 */
 	public void addSessionIdToList(String sessionId){
-		if (D) System.out.println("About to add : " + sessionId);
+		if (D) logger.log(Level.INFO,"About to add : " + sessionId);
 		sessionIDs.add(sessionId);
 	}
 	

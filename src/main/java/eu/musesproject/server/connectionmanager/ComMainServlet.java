@@ -59,7 +59,7 @@ public class ComMainServlet extends HttpServlet {
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
-		logger.setLevel(Level.OFF);
+		logger.setLevel(Level.ALL);
 		
 	}
 	

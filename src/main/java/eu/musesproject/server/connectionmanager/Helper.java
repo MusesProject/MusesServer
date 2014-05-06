@@ -14,13 +14,16 @@ package eu.musesproject.server.connectionmanager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 public class Helper {
-	private static boolean D = false;
+	private static boolean D = true;
+	private final static Logger logger = Logger.getLogger(Helper.class.getName());
 	private static final int COOKIE_MAX_AGE =  60*60*24;
 	Cookie retreivedCookie = null;
 
@@ -35,14 +38,14 @@ public class Helper {
 			for (Cookie ck : cookies){
 				if (ck.getName().equals("JSESSIONID")) {
 					retreivedCookie = ck;
-					if (D) System.out.println("Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
+					if (D) logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
 				}
 			}
 		} else {
 			retreivedCookie = new Cookie("JSESSIONID", req.getSession().getId());
 			retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
 			retreivedCookie.setPath(req.getContextPath());
-			if (D) System.out.println("Cookie created .. new request ..");	
+			if (D) logger.log(Level.INFO, "Cookie created .. new request ..");	
 		}
 		/**
 		 * 

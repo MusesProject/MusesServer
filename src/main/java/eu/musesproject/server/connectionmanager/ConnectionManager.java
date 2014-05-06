@@ -23,6 +23,8 @@ package eu.musesproject.server.connectionmanager;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -36,7 +38,8 @@ import javax.servlet.http.HttpSession;
 
 public class ConnectionManager implements IConnectionManager{
 
-	private static boolean D = false;
+	private static boolean D = true;
+	private final static Logger logger = Logger.getLogger(ConnectionManager.class.getName());
 	public static IConnectionCallbacks callBacks;
 	private DataHandler dataHandler;
 	private SessionHandler sessionCounter;
@@ -100,7 +103,7 @@ public class ConnectionManager implements IConnectionManager{
 		// FIXME how to handle the return status 
 		if (iCallBacks != null){
 			callBacks = iCallBacks;
-		} else if (D) System.out.println("Passed callback is null");		
+		} else if (D) logger.log(Level.INFO, "Passed callback is null");		
 	}
 	
 	/**
@@ -126,7 +129,7 @@ public class ConnectionManager implements IConnectionManager{
 	public static String toReceive(String sessionID, String dataAttachedInCurrentReuqest){
 		if (callBacks != null){
 			return callBacks.receiveCb(sessionID, dataAttachedInCurrentReuqest);
-		} else System.out.println("Callback object is null");
+		} else logger.log(Level.INFO, "Callback object is null");// logg
 		return null;
 	} 
 
@@ -185,7 +188,7 @@ public class ConnectionManager implements IConnectionManager{
 	public static void toSessionCb(String sessionId, int status){
 		if (callBacks!=null){
 			callBacks.sessionCb(sessionId, status);
-		} else System.out.println("Callback object is null");
+		} else logger.log(Level.INFO, "Callback object is null");
 	}
 
 	
