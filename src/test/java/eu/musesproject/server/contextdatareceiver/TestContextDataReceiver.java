@@ -66,10 +66,18 @@ public class TestContextDataReceiver extends TestCase {
 +"        \"wifienabled\" : \"true\","
 +"        \"wifiencryption\" : \"unknown\","
 +"        \"wifineighbors\" : \"6\""
++"      },"
++"    \"CONTEXT_SENSOR_DEVICE_PROTECTION\" : { \"passwordprotected\" : \"true\","
++"        \"patternprotected\" : \"true\","
++"        \"trustedavinstalled\" : \"true\","
++"        \"isrooted\" : \"false\","
++"        \"id\" : \"1\","
++"        \"timestamp\" : 1399036881212,"
++"        \"type\" : \"CONTEXT_SENSOR_DEVICE_PROTECTION\""
+
 +"      }"
 +"  }"
 +"}";
-
 	/**
 	  * testStoreEvent - JUnit test case whose aim is to test the storage of an incoming event from the Connection Manager
 	  *

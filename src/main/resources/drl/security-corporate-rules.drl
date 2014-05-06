@@ -44,6 +44,7 @@ declare ConnectivityEvent
 	@expires (1m)
 end
 
+
 rule "Rule firing"
 	no-loop true
 	dialect "mvel"
@@ -105,3 +106,4 @@ rule "Connectivity"
 		StatusGlobal.log("1.A new ConnectivityEvent has been detected");		
 
 	end
+	

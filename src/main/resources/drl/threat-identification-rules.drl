@@ -4,7 +4,9 @@ package MusesDrl
 global eu.musesproject.server.eventprocessor.correlator.global.StatusGlobal StatusGlobal
 global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2aeGlobal
 
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AdditionalProtection
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
+import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
@@ -39,6 +41,18 @@ declare FileObserverEvent
 end
 
 declare Threat
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare DeviceProtectionEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare AdditionalProtection
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -125,4 +139,16 @@ rule "Threat-identification-000006"
 	end
 	
 			
-	
+rule "Additional Protection Detection"
+	no-loop true
+	dialect "mvel"
+	when
+		request: AccessRequest()
+		e: DeviceProtectionEvent()
+	then
+		StatusGlobal.log("An additional protection event has been detected");
+		StatusGlobal.log("AccessRequest identifier:"+request.getId());
+		AdditionalProtection protection = Rt2aeGlobal.composeAdditionalProtection(request,e);
+		insert(protection);
+		StatusGlobal.log("Additional Protection inserted in the WM. AccessRequest identifier:"+request.getId());				
+	end	

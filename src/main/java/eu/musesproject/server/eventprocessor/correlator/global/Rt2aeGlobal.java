@@ -26,13 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
 
 import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
+import eu.musesproject.server.eventprocessor.composers.AdditionalProtectionComposer;
 import eu.musesproject.server.eventprocessor.composers.ThreatComposer;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AdditionalProtection;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Threat;
@@ -50,6 +49,7 @@ public class Rt2aeGlobal {
 	private Logger logger = Logger.getLogger(Rt2aeGlobal.class.getName());
 	private static List<Threat> threats = new ArrayList<Threat>();
 	private static List<AccessRequest> requests = new ArrayList<AccessRequest>();
+	private static List<AdditionalProtection> additionalProtections = new ArrayList<AdditionalProtection>();
 
 	public void setStatus(String st) {
 		status = st;
@@ -103,6 +103,13 @@ public class Rt2aeGlobal {
 		//TODO Complete the composition of threat attributes, based on the information of the event
 		threats.add(composedThreat);
 		return composedThreat;
+	}
+	
+	public AdditionalProtection composeAdditionalProtection(eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest request, Event event){
+		AdditionalProtection additionalProtection = AdditionalProtectionComposer.composeAdditionalProtection(request.getId(),event);		
+		additionalProtection.setRequestId(request.getId());		
+		additionalProtections.add(additionalProtection);
+		return additionalProtection;
 	}
 	
 	public static List<eu.musesproject.server.risktrust.Threat> getThreatsByRequestId(int requestId){
