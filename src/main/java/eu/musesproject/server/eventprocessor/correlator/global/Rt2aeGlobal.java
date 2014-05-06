@@ -124,6 +124,21 @@ public class Rt2aeGlobal {
 		}
 		return result;
 	}
+	
+	public static List<eu.musesproject.server.risktrust.AdditionalProtection> getProtectionsByRequestId(int requestId){
+		List<eu.musesproject.server.risktrust.AdditionalProtection> result = new ArrayList<eu.musesproject.server.risktrust.AdditionalProtection>();
+		eu.musesproject.server.risktrust.AdditionalProtection aux = null;
+		for (Iterator iterator = additionalProtections.iterator(); iterator.hasNext();) {
+			AdditionalProtection protection = (AdditionalProtection) iterator.next();
+			if (protection.getRequestId()==requestId){
+				aux = convertAdditionalProtection(protection);
+				result.add(aux);
+			}			
+		}
+		return result;
+	}
+	
+	
 
 	private static eu.musesproject.server.risktrust.Threat convertThreat(Threat threat) {
 		eu.musesproject.server.risktrust.Threat result = new eu.musesproject.server.risktrust.Threat();
@@ -132,6 +147,20 @@ public class Rt2aeGlobal {
 		result.setProbability(threat.getProbability());
 		result.setTimestamp(threat.getTimestamp());
 		result.setType(threat.getType());
+		return result;
+	}
+	
+	private static eu.musesproject.server.risktrust.AdditionalProtection convertAdditionalProtection(AdditionalProtection protection) {
+		eu.musesproject.server.risktrust.AdditionalProtection result = new eu.musesproject.server.risktrust.AdditionalProtection();
+		result.setAssetId(protection.getAssetId());
+		result.setId(protection.getId());
+		result.setProbability(protection.getProbability());
+		result.setTimestamp(protection.getTimestamp());
+		result.setType(protection.getType());
+		result.setPasswordProtected(protection.isPasswordProtected());
+		result.setPatternProtected(protection.isPatternProtected());
+		result.setRooted(protection.isRooted());
+		result.setTrustedAVInstalled(protection.isTrustedAVInstalled());
 		return result;
 	}
 	
