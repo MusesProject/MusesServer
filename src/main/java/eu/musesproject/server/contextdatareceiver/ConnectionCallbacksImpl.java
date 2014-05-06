@@ -33,11 +33,10 @@ import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
 
 
-public class ConnectionCallbacksImpl implements IConnectionCallbacks, Runnable {
+public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	
 	private Logger logger = Logger.getLogger(ConnectionCallbacksImpl.class.getName());
 	private ConnectionManager connManager;
-	private boolean isRunning = false;
 	boolean isDataAvailable = false;
 	public static volatile String lastSessionId = null;
 	private static volatile String data = "";
@@ -51,32 +50,9 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks, Runnable {
 	private void startConnection() {
 				
 		logger.info("Start Server Connection");
-		if (!isRunning){
-		   (new Thread(this)).start();
-		}   
+ 
 	}
 	
-	@Override
-	public void run() {
-		isRunning = true;
-		logger.info("Connection Callbacks Implementation running");
-			
-		isDataAvailable = true;
-		ConnectionCallbacksImpl.data = "Data available";
-		if (ConnectionCallbacksImpl.lastSessionId != null){
-			connManager.sendData(ConnectionCallbacksImpl.lastSessionId, ConnectionCallbacksImpl.data);
-		}	
-		logger.info("Data availability :" + isDataAvailable);
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException ex) {
-			logger.log(Level.FATAL, null, ex);
-		}
-		isRunning = false;
-		logger.info("Connection server stopped");
-			
-
-	}
 
 	@Override
 	public String receiveCb(String sessionId, String rData) {
