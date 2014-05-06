@@ -21,16 +21,11 @@ package eu.musesproject.server.contextdatareceiver.formatting;
  * #L%
  */
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-
-import eu.musesproject.client.model.contextmonitoring.BluetoothState;
-import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.util.ActionTypes;
@@ -48,15 +43,26 @@ public class EventFormatter {
 			cepFileEvent = convertToConnectivityEvent(contextEvent);
 		}else if (contextEvent.getType().equals(ActionTypes.OPEN)){
 			cepFileEvent = convertToFileObserverEvent(contextEvent, contextEvent.getType());
-
+		}else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)){
+			cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
 		}
 		
-		/*if (cepFileEvent!=null){
-			cepFileEvent.setType(contextEvent.getType());
-		}*/
 				
 		return (Event)cepFileEvent;
 		
+	}
+	private static DeviceProtectionEvent convertToDeviceProtectionEvent(
+			ContextEvent contextEvent) {
+		DeviceProtectionEvent cepFileEvent = new DeviceProtectionEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());	
+		cepFileEvent.setPasswordProtected(Boolean.valueOf(properties.get("passwordprotected")));
+		cepFileEvent.setPatternProtected(Boolean.valueOf(properties.get("patternprotected")));
+		cepFileEvent.setTrustedAVInstalled(Boolean.valueOf("trustedavinstalled"));
+		cepFileEvent.setRooted(Boolean.valueOf("isrooted"));
+		return cepFileEvent;
 	}
 	public static ConnectivityEvent convertToConnectivityEvent(ContextEvent contextEvent){			
 			ConnectivityEvent cepFileEvent = new ConnectivityEvent();
