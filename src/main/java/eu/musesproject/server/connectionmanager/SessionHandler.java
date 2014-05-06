@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -23,6 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This class handles all http session, called every time a 
@@ -39,9 +41,13 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	private Set<String> sessionIDs = new HashSet<String>();
 	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
 	private static final boolean D = true;
-	private final static Logger logger = Logger.getLogger(SessionHandler.class.getName());
+	private final Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
 	
+	public SessionHandler() {
+		logger = Logger.getRootLogger();
+		BasicConfigurator.configure();	
+	}
 	@Override
 	public void requestDestroyed(ServletRequestEvent sre) {
 		

@@ -6,14 +6,17 @@
 package eu.musesproject.server.connectionmanager;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 	
 	/**
 	 * Class ComMainServlet
@@ -25,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ComMainServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ComMainServlet.class.getName());
+	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());;
 	private Helper helper;
 	private SessionHandler sessionHandler;
 	private ConnectionManager connectionManager;
@@ -59,7 +62,9 @@ public class ComMainServlet extends HttpServlet {
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
-		logger.setLevel(Level.ALL);
+		logger = Logger.getRootLogger();
+		BasicConfigurator.configure();
+		logger.setLevel(Level.FATAL);
 		
 	}
 	

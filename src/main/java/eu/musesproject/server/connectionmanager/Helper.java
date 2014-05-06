@@ -14,19 +14,24 @@ package eu.musesproject.server.connectionmanager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 public class Helper {
 	private static boolean D = true;
-	private final static Logger logger = Logger.getLogger(Helper.class.getName());
+	private static Logger logger = Logger.getLogger(Helper.class.getName());
 	private static final int COOKIE_MAX_AGE =  60*60*24;
 	Cookie retreivedCookie = null;
 
+	public Helper() {
+		logger = Logger.getRootLogger();
+		BasicConfigurator.configure();
+	}
 	/**
 	 * Set the cookie from the http request, if cookie is null then create the cookie from the session id
 	 * @param HttpServletRequest req

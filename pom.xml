@@ -12,7 +12,7 @@
 	</properties>
 	<build>
 		<pluginManagement>
-			<plugins>				
+			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -33,39 +33,40 @@
 					<artifactId>properties-maven-plugin</artifactId>
 					<version>1.0-alpha-2</version>
 					<configuration>
-					<files>
-						<file>${basedir}/dev.properties</file>
-					</files>
+						<files>
+							<file>${basedir}/dev.properties</file>
+						</files>
 					</configuration>
 				</plugin>
-                <!-- Use this plugin when you need to apply MUSES license headers to java source files-->
-      			<plugin>
-        			<groupId>org.codehaus.mojo</groupId>
-        			<artifactId>license-maven-plugin</artifactId>
-        			<version>1.6</version>
-        			<configuration>
-        				<licenseName>${license.licenseName}</licenseName>
-        				<inceptionYear>2013</inceptionYear>
-        				<organizationName>${license.organizationName}</organizationName>
-         				<verbose>false</verbose>
-          				<addSvnKeyWords>false</addSvnKeyWords>
-          					<roots>
-                				<root>${license.root1}</root>
-                				<root>${license.root2}</root>
-              				</roots>
-        			</configuration>
-        			<executions>
-          				<execution>
-            				<id>first</id>
-            				<goals>
-              					<goal>update-file-header</goal>
-            				</goals>
-            				<phase>process-sources</phase>
-            				<configuration>             						
-            				</configuration>
-          				</execution>
-        			</executions>
-      			</plugin>
+				<!-- Use this plugin when you need to apply MUSES license headers to 
+					java source files -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>1.6</version>
+					<configuration>
+						<licenseName>${license.licenseName}</licenseName>
+						<inceptionYear>2013</inceptionYear>
+						<organizationName>${license.organizationName}</organizationName>
+						<verbose>false</verbose>
+						<addSvnKeyWords>false</addSvnKeyWords>
+						<roots>
+							<root>${license.root1}</root>
+							<root>${license.root2}</root>
+						</roots>
+					</configuration>
+					<executions>
+						<execution>
+							<id>first</id>
+							<goals>
+								<goal>update-file-header</goal>
+							</goals>
+							<phase>process-sources</phase>
+							<configuration>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -145,13 +146,13 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.8.4</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -196,47 +197,59 @@
 		<!-- Import the PicketLink API, we deploy this as library with the application, 
 			and can compile against it -->
 		<dependency>
-    		<groupId>org.picketlink</groupId>
-    		<artifactId>picketlink-idm-impl</artifactId>
-    		<version>3.0.0-2013Jan24</version> 
-    		<exclusions>
-    		 	<exclusion>
-    		 		 <groupId>commons-lang</groupId>
-    				<artifactId>commons-lang</artifactId>
-    		 	</exclusion>
-    		</exclusions>
-  		</dependency> 		
-  		<dependency>
-    		<groupId>org.picketlink</groupId>
-    		<artifactId>picketlink-idm-api</artifactId>
-    		 <version>3.0.0-2013Jan24</version>
-  		</dependency>
-  		<dependency>
-    		<groupId>org.picketbox</groupId>
-    		<artifactId>picketbox-quickstarts-common</artifactId>
-    		<version>5.0.0-2013Jan04</version>		
-  		</dependency>
-  		
-  		<dependency>
+			<groupId>org.picketlink</groupId>
+			<artifactId>picketlink-idm-impl</artifactId>
+			<version>3.0.0-2013Jan24</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.picketlink</groupId>
+			<artifactId>picketlink-idm-api</artifactId>
+			<version>3.0.0-2013Jan24</version>
+		</dependency>
+		<dependency>
+			<groupId>org.picketbox</groupId>
+			<artifactId>picketbox-quickstarts-common</artifactId>
+			<version>5.0.0-2013Jan04</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.picketbox</groupId>
 			<artifactId>picketbox-http</artifactId>
-			<version>5.0.0.Final</version>			
+			<version>5.0.0.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.picketbox</groupId>
 			<artifactId>picketbox-core</artifactId>
 			<version>5.0.0.Final</version>
 			<exclusions>
-    		 	<exclusion>
-    		 		 <groupId>commons-lang</groupId>
-    				<artifactId>commons-lang</artifactId>
-    		 	</exclusion>
-    		</exclusions>			
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.wso2.balana</groupId>
 			<artifactId>org.wso2.balana</artifactId>
-			<version>1.0.0-wso2v7</version>			
+			<version>1.0.0-wso2v7</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.0-rc1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.0-rc1</version>
+		</dependency>
+
 	</dependencies>
 </project>
