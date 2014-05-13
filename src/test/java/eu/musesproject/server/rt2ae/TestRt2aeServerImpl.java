@@ -89,16 +89,21 @@ public class TestRt2aeServerImpl {
 		      
 		Asset requestedCorporateAsset = new Asset();  
 		requestedCorporateAsset.setValue(1000000);
+		requestedCorporateAsset.setConfidential_level("confidential");
+
 		accessRequest.setRequestedCorporateAsset(requestedCorporateAsset);
 		
 		Context context = new Context();
 		Decision decision = rt2ae.decideBasedOnRiskPolicy_version_2(accessRequest, context);
 		Decision decision1 = rt2ae.decideBasedOnRiskPolicy_version_3(accessRequest, context);
 		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_4(accessRequest, context);
-		   
+		Decision decision3 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);
+
 		assertNotNull(decision);  
 		assertNotNull(decision1);
-		assertNotNull(decision2);       
+		assertNotNull(decision2); 
+		assertNotNull(decision3);       
+
   
 		
 		

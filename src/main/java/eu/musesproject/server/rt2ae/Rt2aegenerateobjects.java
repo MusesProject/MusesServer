@@ -3,7 +3,6 @@ package eu.musesproject.server.rt2ae;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.SecurityIncident;
 
