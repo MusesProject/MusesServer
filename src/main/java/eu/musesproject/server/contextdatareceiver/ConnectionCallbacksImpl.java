@@ -31,6 +31,7 @@ import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
+import eu.musesproject.server.contextdatareceiver.*;
 
 
 public class ConnectionCallbacksImpl implements IConnectionCallbacks {
