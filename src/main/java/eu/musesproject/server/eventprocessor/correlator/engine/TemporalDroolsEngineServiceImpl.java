@@ -50,7 +50,7 @@ public class TemporalDroolsEngineServiceImpl extends AbstractDroolsEngine {
 		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory
 				.newKnowledgeBuilder();
 
-		changesetPath = "src/main/resources/";
+		changesetPath = "./";
 
 		createChangeSetInfo(rulePackagePath, droolsEngineName, true);
 		engineResource = ResourceFactory.newFileResource(changesetPath

@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.drools.io.ResourceChangeScanner;
 import org.drools.io.ResourceChangeScannerConfiguration;
 import org.drools.io.ResourceFactory;
@@ -42,7 +43,6 @@ import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.eventprocessor.util.Constants;
 import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.AdditionalProtection;
-import eu.musesproject.server.risktrust.Asset;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.Probability;
@@ -52,6 +52,7 @@ import eu.musesproject.server.risktrust.UserTrustValue;
 public class EventProcessorImpl implements EventProcessor {
 	
 	private static volatile DroolsEngineService des = null;
+	private Logger logger = Logger.getLogger(EventProcessorImpl.class);
 	/**
 	 * @param args
 	 * @throws ClassNotFoundException
@@ -60,11 +61,20 @@ public class EventProcessorImpl implements EventProcessor {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
+	
+	/**
+	 * This method receives an Outcome, composed by a description of the cause or type of the threats (e.g. data leak), with a value representing the cost of the type of threats.
+	 * 
+	 * Based on that and the UserTrustValue and DeviceTrustValue and accessRequest, the method computes the probability that the Outcome might occur with the associated cost.
+	 * 
+	 * 
+	 * */
 
 	@Override
 	public Probability computeOutcomeProbability(
 			Outcome requestPotentialOutcome, AccessRequest accessRequest,
 			UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -148,6 +158,7 @@ public class EventProcessorImpl implements EventProcessor {
 	@Override
 	public IMusesCorrelationEngine startTemporalCorrelation(String relativeRulePath) {
 		
+		logger.info("Starting temporal correlation...");
 		MusesCorrelationEngineImpl engine = new MusesCorrelationEngineImpl();		
 		URL urlRulePath = getClass().getResource(relativeRulePath);
 		String drlRulePath = Constants.FILE_PROTOCOL + urlRulePath.getPath();
@@ -176,6 +187,7 @@ public class EventProcessorImpl implements EventProcessor {
 		if (error){
 			return null;
 		}
+		logger.info("Correlator started!");
 		return engine;
 	}
 		

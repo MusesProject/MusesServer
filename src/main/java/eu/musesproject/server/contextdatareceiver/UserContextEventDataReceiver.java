@@ -30,6 +30,8 @@ package eu.musesproject.server.contextdatareceiver;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import eu.musesproject.client.model.contextmonitoring.Event;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.connectionmanager.IConnectionManager;
@@ -53,6 +55,7 @@ public class UserContextEventDataReceiver {
 	
 	private static UserContextEventDataReceiver INSTANCE = new UserContextEventDataReceiver();
 	private StubEventCorrelationData data = null;
+	private Logger logger = Logger.getLogger(UserContextEventDataReceiver.class);
 	
 	private synchronized static void createInstance() {
         if (INSTANCE == null) { 
@@ -108,6 +111,7 @@ public class UserContextEventDataReceiver {
 	
 	public void processContextEventList(List<ContextEvent> list){
 		
+		logger.info("processContextEventList: Processing list of "+list.size()+" elements.");
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			ContextEvent event = (ContextEvent) iterator.next();
 			eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);

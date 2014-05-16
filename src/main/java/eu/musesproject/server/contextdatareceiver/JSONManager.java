@@ -52,6 +52,7 @@ public class JSONManager {
 		Map<String,String> properties = null;
 		ContextEvent contextEvent = null;
 		List<ContextEvent> resultList = new ArrayList<ContextEvent>();
+		Logger.getLogger(JSONManager.class).info("JSONMessage received: Processing message...");
 		try {
 			// Process the root JSON object
 			JSONObject root = new JSONObject(message);		
