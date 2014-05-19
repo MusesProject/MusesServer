@@ -34,10 +34,11 @@ import org.mockito.Mock;
 
 import com.hp.hpl.jena.util.FileManager;
 
+import eu.musesproject.client.model.JSONIdentifiers;
+import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.connectionmanager.IConnectionManager;
 import eu.musesproject.server.risktrust.Device;
-
 import junit.framework.TestCase;
 
 public class TestPolicyRulesTransmitter extends TestCase {
@@ -90,7 +91,7 @@ public class TestPolicyRulesTransmitter extends TestCase {
 	public final void testSendPolicyDT() {
 		String dataToSend = null;
 		try {
-			String xmlPolicy = "{\"muses-device-policy\":{\"files\":{\"action\":{\"allow\":{\"id\":\"\"},\"type\":\"open\"}},\"revision\":1,\"schema-version\":1}}";
+			String xmlPolicy = "{\"muses-device-policy\":{\"files\":{\"action\":{\"allow\":{\"id\":\"\"},\"type\":\"open\"}},\"revision\":1,\"schema-version\":1},\"requesttype\":\"update_policies\"}";
            JSONObject xmlJSONObj = XML.toJSONObject(xmlPolicy);
            dataToSend = xmlJSONObj.toString();
        } catch (JSONException je) {
@@ -103,6 +104,20 @@ public class TestPolicyRulesTransmitter extends TestCase {
        assertNotNull(transmitter.sendPolicyDT(policy, device));
 	}
 	
+	
+	public final void testCorrectnessPolicyDT() {
+		String requestType = null;
+		try {
+			String jsonPolicy = "{\"muses-device-policy\":{\"files\":{\"action\":{\"allow\":{\"id\":\"\"},\"type\":\"open\"}},\"revision\":1,\"schema-version\":1},\"requesttype\":\"update_policies\"}";
+			JSONObject requestJSON = new JSONObject(jsonPolicy);
+			requestType = requestJSON.getString(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER);
+			System.out.println("Request Type:"+requestType);
+
+       } catch (JSONException je) {
+           je.printStackTrace();
+       } 
+       assertEquals(RequestType.UPDATE_POLICIES, requestType);
+	}
 	
 
 	

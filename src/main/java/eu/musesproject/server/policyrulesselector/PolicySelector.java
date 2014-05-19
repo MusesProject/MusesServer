@@ -38,6 +38,7 @@ import org.json.XML;
 
 import com.hp.hpl.jena.util.FileManager;
 
+import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.Action;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.risktrust.Decision;
@@ -196,7 +197,7 @@ public class PolicySelector {
 	}
 	
 	private String getPolicyDTHeader(){
-		String header ="<muses-device-policy schema-version=\"1.0\">"+"<!--The device will update its policy if this number is greater than the stored one    -->"+"<revision>1.0</revision>";
+		String header ="<requesttype>"+RequestType.UPDATE_POLICIES+"</requesttype><muses-device-policy schema-version=\"1.0\">"+"<!--The device will update its policy if this number is greater than the stored one    -->"+"<revision>1.0</revision>";
 		return header;
 	}
 	
