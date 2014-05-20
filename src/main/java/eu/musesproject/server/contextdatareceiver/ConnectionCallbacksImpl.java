@@ -72,7 +72,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return ConnectionCallbacksImpl.receiveData;
+		return ConnectionCallbacksImpl.data;
 	}
 	@Override
 	public void sessionCb(String sessionId, int status) {

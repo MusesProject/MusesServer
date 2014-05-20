@@ -96,9 +96,7 @@ public class PolicyTransmitter {
 			logger.info(connManager.getSessionDetails(sessionId).getId());//TODO Identify the concrete sessionId coming from the device
 			connManager.sendData(sessionId, dataToSend);
 		}
-		
-		
-		
+
 	}
 
 }

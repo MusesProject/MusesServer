@@ -170,4 +170,19 @@ public class Rt2aeGlobal {
 				
 	}
 	
+	public int sendDefaultDevicePolicy(){
+
+		String defaultPolicy = "{\"muses-device-policy\":{\"files\":{\"resource\":{\"id\":\"12345\",\"description\":\"X-Project Brochure\",\"path\":\"/company-repo/commercial/brochures/xproject/brochure.pdf\",\"resourceType\":\"document\"},\"subject\":{\"id\":\"44444\",\"description\":\"user1\",\"role\":{\"id\":\"1\",\"description\":\"consultancy\"}},\"riskCommunication\":{\"id\":\"1\",\"communication_sequence\":\"1\",\"riskTreatment\":{\"id\":\"1\",\"textualdescription\":\"You are not allowed to open this file, due to your current connection properties, please connect through a secure Wifi to use this resource\"}},\"action\":{\"allow\":{\"id\":\"1234567\"},\"type\":\"open\"}},\"antivirus\":{\"allow\":{\"app\":[\"The UUID of the AV app\",\"The UUID of the AV app\",\"ALL\"]},\"updated\":true,\"deny\":{\"app\":[\"The UUID of the AV app\",\"The UUID of the AV app\",\"ALL\"]},\"check-interval\":\"day\",\"required\":true},\"revision\":1,\"physical\":{\"micro-allowed\":true,\"camera-allowed\":true},\"apps\":{\"installed\":{\"installed-blacklist\":{\"app\":[\"The UUID of the app\",\"The UUID of the app\",\"ALL\"]},\"must-be-updated\":true,\"check-interval\":\"day\",\"allow-install\":true,\"on-violation\":{\"notify-user\":{},\"notify-soc\":{}},\"installed-whitelist\":{\"app\":[\"The UUID of the app\",\"The UUID of the app\",\"ALL\"]}},\"permissions\":{\"allow\":{\"concurrent\":{\"perm\":[\"FOO\",\"BAR\"]},\"perm\":[\"NETWORK_ACCESS\",\"SMS_SEND\",\"ALL\"]},\"deny\":{\"concurrent\":{\"perm\":[\"DISK_ACCESS\",\"NETWORK_ACCESS\"]},\"perm\":[\"NETWORK_ACCESS\",\"SMS_SEND\",\"ALL\"]},\"on-violation\":{\"notify-user\":{},\"notify-soc\":{}}},\"running\":{\"allow\":{\"app\":[\"The UUID of the app\",\"The UUID of the app\",\"ALL\"],\"concurrent\":{\"app\":[\"The UUID of the app\",\"The UUID of the app\"]}},\"deny\":{\"app\":[\"The UUID of the app\",\"The UUID of the app\",\"ALL\"],\"concurrent\":{\"app\":[\"The UUID of the app\",\"The UUID of the app\"]}},\"on-violation\":{\"notify-user\":{},\"notify-soc\":{}}}},\"phoning\":\"\",\"web\":{\"allow-ftp\":false,\"allow-insecure\":true,\"plugins\":{\"allow\":{\"plugin\":[\"The ID of the plugin\",\"The ID of the plugin\",\"ALL\"]},\"deny\":{\"plugin\":[\"The ID of the plugin\",\"The ID of the plugin\",\"ALL\"]}},\"urls\":{\"allow\":{\"url\":[\"http://www.unige.ch\",\"http://www.s2grupo.es\",\"ALL\"]},\"deny\":{\"url\":[\"http://thepiratebay.sx\",\"http://mininova.org\",\"ALL\"]}},\"on-violation\":{\"notify-user\":{},\"notify-soc\":{}}},\"password\":{\"password-must-be-robust\":true,\"require\":{\"visual\":{},\"pin\":{},\"password\":{}}},\"network\":{\"connection-3g\":{\"allow-3g\":true,\"carriers\":{\"allow\":\"\",\"deny\":\"\"},\"allow-roaming\":true},\"wifi\":{\"allow-wifi\":true,\"allow\":{\"algo\":[\"WPA2 PSK\",\"WPA2 ENTERPRISE\",\"ALL\"]},\"deny\":{\"algo\":[\"NONE\",\"WEP\",\"ALL\"]}},\"require-vpn\":false},\"storage\":{\"data-classification\":{\"all-home-files-encrypted\":false,\"all-work-files-encrypted\":true,\"all-files-classified\":true},\"must-encrypt-primary-storage\":true,\"allow-extra-storage\":true,\"contacts-classification\":\"\",\"must-encrypt-extra-storage\":true},\"schema-version\":1},\"requesttype\":\"update_policies\"}";
+		
+		PolicyDT policyDT = new PolicyDT();
+		policyDT.setRawPolicy(defaultPolicy);
+		//Send policy		
+		Device device = new Device();
+		PolicyTransmitter transmitter = new PolicyTransmitter();
+		transmitter.sendPolicyDT(policyDT, device);
+		logger.info("Device Policy is now sent:"+policyDT.getRawPolicy());
+		
+		return 1;
+	}
+	
 }

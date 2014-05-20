@@ -54,6 +54,7 @@ rule "Rule firing"
 		StatusGlobal.log("-------------------------------------------------------------------------");
 		StatusGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("Rule firing correctly working!");
+		int id = Rt2aeGlobal.sendDefaultDevicePolicy();
 
 	end
 

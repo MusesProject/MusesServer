@@ -21,6 +21,7 @@ package eu.musesproject.server.eventprocessor.correlator.global;
  * #L%
  */
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class StatusGlobal {
@@ -39,8 +40,8 @@ public class StatusGlobal {
 		return status;
 	}
 	
-	public void log(String message){
-		logger.info(message);
+	public void log(String message){		
+		logger.log(Level.INFO, message);
 	}
 	
 	public void addFlag(String flag){
