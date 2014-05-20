@@ -57,13 +57,13 @@ rule "Rule firing"
 
 	end
 
-rule "AccessRequest Detection"
+rule "AccessRequest Detection open type"
 	no-loop true
 	dialect "mvel"
 	when
 		e: FileObserverEvent(event=="open")
 	then
-		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent");
+		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent. Type open");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e);
 		//GAP (we associate the access requests by id)
@@ -82,7 +82,7 @@ rule "AccessRequest ClientServer Connectivity"
 	when
 		e: FileObserverEvent(event=="post")
 	then
-		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent");
+		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent. Type post");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e);
 		//GAP (we associate the access requests by id)
@@ -93,6 +93,24 @@ rule "AccessRequest ClientServer Connectivity"
 		insert(request);
 
 	end
+	
+rule "AccessRequest Detection access type"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="access")
+	then
+		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent. Type access");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e);
+		//GAP (we associate the access requests by id)
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end	
 	
 
 	

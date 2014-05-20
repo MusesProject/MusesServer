@@ -41,8 +41,6 @@ public class EventFormatter {
 			cepFileEvent = convertToFileObserverEvent(contextEvent);			
 		}else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)){
 			cepFileEvent = convertToConnectivityEvent(contextEvent);
-		}else if (contextEvent.getType().equals(ActionTypes.OPEN)){
-			cepFileEvent = convertToFileObserverEvent(contextEvent, contextEvent.getType());
 		}else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)){
 			cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
 		}
@@ -89,7 +87,7 @@ public class EventFormatter {
 		if (properties.get("event")!=null){//TODO Changes for System test
 			cepFileEvent.setEvent(properties.get("event"));
 		}		
-		cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
+		//cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
 		if (properties.get("id")!=null){//TODO Changes for System test
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		}		
@@ -104,7 +102,6 @@ public class EventFormatter {
 		Map<String,String> properties = contextEvent.getProperties();
 		
 		cepFileEvent.setEvent(action.toString());
-		//cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
 		if (properties.get("id")!=null){//TODO Changes for System test
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		}		

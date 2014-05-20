@@ -23,6 +23,7 @@ package eu.musesproject.server.contextdatareceiver;
 
 
 
+import java.awt.Desktop.Action;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import eu.musesproject.client.model.JSONIdentifiers;
+import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 
@@ -60,7 +62,7 @@ public class JSONManager {
 			JSONObject actionJson = root.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
 			
 
-			contextEvent = extractContextEvent(actionJson);
+			contextEvent = extractActionContextEvent(actionJson);
 			resultList.add(contextEvent);
 
 			
@@ -115,6 +117,47 @@ public class JSONManager {
 					}
 				}
 				contextEvent.setProperties(properties);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return contextEvent;
+	}
+	
+	/**
+	 * conversion of JSONObject of each one of the context events in the list of each sensor
+	 * @param JSONObject 
+	 * @return ContextEvent 
+	 * @throws JSONException
+	 */
+	private static ContextEvent extractActionContextEvent(JSONObject contextEventJson) throws JSONException {
+	
+		ContextEvent contextEvent = null;
+		Map<String,String> properties = null;
+		String contextEventType = null;
+		String value = null;
+		
+		try{
+			contextEventType = contextEventJson.getString(ContextEvent.KEY_TYPE);
+		
+			if ((contextEventJson != null)&&(contextEventType != null)){
+				contextEvent = new ContextEvent();
+				contextEvent.setTimestamp(contextEventJson.getLong(ContextEvent.KEY_TIMESTAMP));
+				properties = new HashMap<String,String>();
+				for (Iterator iterator = contextEventJson.keys(); iterator.hasNext();) {
+					String key = (String) iterator.next();
+					if ((!key.equals(ContextEvent.KEY_TYPE))&&(!key.equals(ContextEvent.KEY_TIMESTAMP))){
+						value = contextEventJson.getString(key);
+						properties.put(key, value);
+					}
+				}
+				contextEvent.setProperties(properties);
+				if (contextEventType.equals(ActionType.OPEN)||contextEventType.equals(ActionType.ACCESS)){
+					contextEvent.setType(EventTypes.FILEOBSERVER);
+					properties.put("event", contextEventType);
+				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
