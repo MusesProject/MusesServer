@@ -48,6 +48,7 @@ public class TestEventProcessor extends TestCase {
 	private MusesCorrelationEngineImpl engine = null;
 	private EventProcessorImpl processor = null;
 	private Logger logger = Logger.getLogger(TestEventProcessor.class.getName());
+	private String defaultSessionId = "3SKLFNVNO230247";
 	
 	/**
 	  * testStartup - JUnit test case whose aim is to test the initialization and startup of the event correlation processor
@@ -81,6 +82,7 @@ public class TestEventProcessor extends TestCase {
 			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
 			des = EventProcessorImpl.getMusesEngineService();
 		}
+		event.setSessionId(defaultSessionId);
 		des.insertFact(event);
 		assertNotNull(des);
 	}
@@ -98,6 +100,7 @@ public class TestEventProcessor extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		logger.info(des);
 		logger.info(formattedfileEvent);
+		formattedfileEvent.setSessionId(defaultSessionId);
 		des.insertFact(formattedfileEvent);
 		assertNotNull(des);
 	}
@@ -115,6 +118,7 @@ public class TestEventProcessor extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		logger.info(des);
 		logger.info(formattedfileEvent);
+		formattedfileEvent.setSessionId(defaultSessionId);
 		des.insertFact(formattedfileEvent);
 		assertNotNull(des);
 	}
@@ -196,7 +200,8 @@ public class TestEventProcessor extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		for (Iterator iterator = sequence.iterator(); iterator.hasNext();) {
 			contextEvent = (ContextEvent) iterator.next();
-			formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);			
+			formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			formattedEvent.setSessionId(defaultSessionId);
 			des.insertFact(formattedEvent);			
 		}
 	}

@@ -30,6 +30,7 @@ import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineServi
 public class DroolsEngineResourceNotifier implements ResourceChangeListener {
 
 	private Logger log = Logger.getLogger(DroolsEngineResourceNotifier.class);
+	private final long timeout = 24*60*60*1000;
 
 	private DroolsEngineService droolsEngine;
 
@@ -39,7 +40,7 @@ public class DroolsEngineResourceNotifier implements ResourceChangeListener {
 
 	public void resourcesChanged(ChangeSet changeSet) {
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(timeout);
 			droolsEngine.updateKSession();
 		} catch (InterruptedException e) {
 			log.error(e);

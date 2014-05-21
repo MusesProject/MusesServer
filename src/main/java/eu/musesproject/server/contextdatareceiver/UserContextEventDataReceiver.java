@@ -109,12 +109,13 @@ public class UserContextEventDataReceiver {
 		return formattedEvent;
 	}
 	
-	public void processContextEventList(List<ContextEvent> list){
+	public void processContextEventList(List<ContextEvent> list, String currentSessionId){
 		
 		logger.info("processContextEventList: Processing list of "+list.size()+" elements.");
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			ContextEvent event = (ContextEvent) iterator.next();
 			eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
+			formattedEvent.setSessionId(currentSessionId);
 			EventProcessor processor = null;
 			MusesCorrelationEngineImpl engine = null;
 			DroolsEngineService des = EventProcessorImpl.getMusesEngineService();

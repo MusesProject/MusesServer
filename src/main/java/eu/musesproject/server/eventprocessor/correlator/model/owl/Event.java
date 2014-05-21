@@ -29,6 +29,7 @@ public class Event extends CepFact {
 
 	String type;
 	String uid;
+	String sessionId;
 
 	public Event() {
 		super();
@@ -60,6 +61,14 @@ public class Event extends CepFact {
 
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+	
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
 }

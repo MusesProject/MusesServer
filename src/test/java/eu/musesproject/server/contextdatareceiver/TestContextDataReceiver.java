@@ -26,10 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
-import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.StubConnectionManager;
-import eu.musesproject.server.contextdatareceiver.stub.ContextEventFactory;
 import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
@@ -38,6 +37,7 @@ import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
 
 public class TestContextDataReceiver extends TestCase {
 	
+	private final String defaultSessionId = "DFOOWE423423422H23H";
 	private final String testJSONMessage = ""	
 +"	{ \"action\" : { \"properties\" : { \"method\" : \"post\","
 +"        \"protocol\" : \"https\","
@@ -149,10 +149,27 @@ public class TestContextDataReceiver extends TestCase {
 			ContextEvent contextEvent = (ContextEvent) iterator.next();
 			assertNotNull(contextEvent);
 			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			formattedEvent.setSessionId(defaultSessionId);
 			des.insertFact(formattedEvent);
 		}
 	}
 	
-	
+	public final void testReceiveCb(){
+
+		String sessionId = "x";		
+		ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		cb.receiveCb(sessionId, testJSONMessage);
+		assertNotNull(cb.lastSessionId);
+		
+		for (int i = 0; i < 10; i++) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println();
+	}
 
 }

@@ -24,7 +24,7 @@ package eu.musesproject.server.eventprocessor.util;
 public class Constants {
 	public final static String FILE_PROTOCOL = "file://";
 	public final static String DROOLS_INTERVAL = "drools.resource.scanner.interval";
-	public final static String DROOLS_INTERVAL_VALUE = "10";
+	public final static String DROOLS_INTERVAL_VALUE = "86400";//24*60*60 One day
 	public final static String CORRELATOR_NAME = "MusesCorrelator";
 	public final static String STARTED = "Started";
 	public final static String ACCESS_REQUEST = "AccessRequest";

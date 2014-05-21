@@ -48,6 +48,19 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		connManager.registerReceiveCb(this);
 		startConnection();
 	}
+	
+	
+    private static class ProcessThread implements Runnable {
+    	List<ContextEvent> list = null;
+    	String sessionId = null;
+    	public ProcessThread(List<ContextEvent> contextList, String id){
+    		list = contextList;
+    		sessionId = id;
+    	}
+    public void run() {
+    	UserContextEventDataReceiver.getInstance().processContextEventList(list, sessionId);
+    }
+}
 	private void startConnection() {
 				
 		logger.info("Start Server Connection");
@@ -60,18 +73,18 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
 		ConnectionCallbacksImpl.receiveData = rData;
 		List<ContextEvent> list = JSONManager.processJSONMessage(ConnectionCallbacksImpl.receiveData);
-		UserContextEventDataReceiver.getInstance().processContextEventList(list);
+		logger.log(Level.INFO, "Starting ProcessThread...");
+		Thread t = new Thread(new ProcessThread(list, sessionId));
+        t.start();
+
+        logger.log(Level.INFO, "Resuming receiveCb after calling ProcessThread...");
 		
 		logger.info("*************Receive Callback called: "
 				+ ConnectionCallbacksImpl.receiveData + "from client ID " + sessionId);
 		if (isDataAvailable) {
 			connManager.sendData(sessionId, ConnectionCallbacksImpl.data);
 		}
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+
 		return ConnectionCallbacksImpl.data;
 	}
 	@Override

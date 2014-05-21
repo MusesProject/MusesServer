@@ -43,6 +43,8 @@ public class EventFormatter {
 			cepFileEvent = convertToConnectivityEvent(contextEvent);
 		}else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)){
 			cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
+		}else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")){
+			cepFileEvent = new Event();//TODO Manage CONTEXT_SENSOR_APP event information
 		}
 		
 				
