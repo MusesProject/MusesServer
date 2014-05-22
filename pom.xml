@@ -119,7 +119,7 @@
 			<groupId>eu.musesproject</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
