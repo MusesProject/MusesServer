@@ -92,6 +92,7 @@ public class EventProcessorImpl implements EventProcessor {
 			UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
 		
 		return Rt2aeGlobal.getProtectionsByRequestId(accessRequest.getId());
+	
 
 	}
 
