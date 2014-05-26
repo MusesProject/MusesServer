@@ -717,19 +717,30 @@ public class Rt2aeServerImpl implements Rt2ae {
 	@Override
 	public void warnUserSeemsInvolvedInSecurityIncident(User user,Probability probability, SecurityIncident securityIncident) {
 		// TODO Auto-generated method stub
-		if (probability.getValue()>0.5){
-			//recuperer l'asset
-			securityIncident.getAssetid();
-			securityIncident.getCostBenefit();
+			
+			Random r = new Random();
+			double assetvalue = 0 + r.nextInt(1000000);
 			/**
 			 * asset.getvalue():securityIncident.getCostBenefit()
 			 */			
-			double pourcentage = 0.5;
-			UserTrustValue u = new UserTrustValue();
-			u.setValue(user.getUsertrustvalue().getValue()*pourcentage);
-			user.setUsertrustvalue(u);
-			
-		}
+			if(securityIncident.getCostBenefit() == 0){
+				/**
+				 * the security incident has not cost
+				 */	
+				
+			}else {
+				/**
+				 * security incident has a cost
+				 */	
+				double pourcentage = securityIncident.getCostBenefit()/assetvalue;
+				UserTrustValue u = new UserTrustValue();
+				u.setValue(user.getUsertrustvalue().getValue()-user.getUsertrustvalue().getValue()*pourcentage);
+				user.setUsertrustvalue(u);
+	
+				
+			}
+						
+		
 
 	}
 	
