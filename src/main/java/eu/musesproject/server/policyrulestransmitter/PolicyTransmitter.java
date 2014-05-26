@@ -77,8 +77,13 @@ public class PolicyTransmitter {
 	 */
 
 	public Integer sendPolicyDT(PolicyDT policy, Device device, String sessionId) {
-		sendData(policy.getRawPolicy(), sessionId);
-		return 1;
+		if (sessionId != null){
+			sendData(policy.getRawPolicy(), sessionId);
+			return 1;
+		}else{
+			logger.info("SessionId is null");
+			return -1;
+		}
 	}
 	
 	private void sendData(String dataToSend, String sessionId){
