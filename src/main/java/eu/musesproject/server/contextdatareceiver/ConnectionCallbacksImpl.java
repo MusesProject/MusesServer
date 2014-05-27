@@ -50,17 +50,20 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	}
 	
 	
-    private static class ProcessThread implements Runnable {
-    	List<ContextEvent> list = null;
-    	String sessionId = null;
-    	public ProcessThread(List<ContextEvent> contextList, String id){
-    		list = contextList;
-    		sessionId = id;
-    	}
-    public void run() {
-    	UserContextEventDataReceiver.getInstance().processContextEventList(list, sessionId);
-    }
-}
+	private static class ProcessThread implements Runnable {
+		List<ContextEvent> list = null;
+		String sessionId = null;
+
+		public ProcessThread(List<ContextEvent> contextList, String id) {
+			list = contextList;
+			sessionId = id;
+		}
+
+		public void run() {
+			UserContextEventDataReceiver.getInstance().processContextEventList(
+					list, sessionId);
+		}
+	}
 	private void startConnection() {
 				
 		logger.info("Start Server Connection");

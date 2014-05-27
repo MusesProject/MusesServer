@@ -23,11 +23,14 @@ package eu.musesproject.server.contextdatareceiver.formatting;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
+import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.util.ActionTypes;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 
@@ -35,18 +38,23 @@ import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 public class EventFormatter {
 	
+	
+	
 	public static Event formatContextEvent(ContextEvent contextEvent){
 		Event cepFileEvent = null;
-		if (contextEvent.getType().equals(EventTypes.FILEOBSERVER)){
-			cepFileEvent = convertToFileObserverEvent(contextEvent);			
-		}else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)){
-			cepFileEvent = convertToConnectivityEvent(contextEvent);
-		}else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)){
-			cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
-		}else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")){
-			cepFileEvent = new Event();//TODO Manage CONTEXT_SENSOR_APP event information
+		if (contextEvent != null){
+			if (contextEvent.getType().equals(EventTypes.FILEOBSERVER)){
+				cepFileEvent = convertToFileObserverEvent(contextEvent);			
+			}else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)){
+				cepFileEvent = convertToConnectivityEvent(contextEvent);
+			}else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)){
+				cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
+			}else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")){
+				cepFileEvent = new Event();//TODO Manage CONTEXT_SENSOR_APP event information
+			}
+		}else{
+			Logger.getLogger(EventFormatter.class).error("ContextEvent is null in formatContextEvent");
 		}
-		
 				
 		return (Event)cepFileEvent;
 		
