@@ -40,6 +40,9 @@ import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
+import eu.musesproject.server.risktrust.Outcome;
+import eu.musesproject.server.risktrust.Probability;
+import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
 
@@ -119,6 +122,7 @@ public class TestRt2aeServerImpl {
 	@Test
 	public void testWarnDeviceSecurityStateChange() {
 		
+		
 		assertTrue(true);
 	}
 
@@ -131,10 +135,42 @@ public class TestRt2aeServerImpl {
 	*/
 	@Test
 	public void testWarnUserSeemsInvolvedInSecurityIncident() {
-		
-		assertTrue(true);
+		User user = new User();
+		UserTrustValue usertrustvalue = new UserTrustValue();
+		usertrustvalue.setValue(0);
+		user.setUsertrustvalue(usertrustvalue);
+		SecurityIncident securityincident = new SecurityIncident();
+		securityincident.setCostBenefit(100000);
+		rt2ae = new Rt2aeServerImpl();
+		Probability probability = new Probability();
+		rt2ae.warnUserSeemsInvolvedInSecurityIncident(user,probability ,securityincident);
+		assertNotNull(user.getUsertrustvalue());
 	}
 	
+	/**
+
+	* testComputeOutcomeProbability: JUnit Test case whose aim is to check that if the probability computed by the functionis not null.
+
+	* @param none
+
+	*/
+	@Test
+	public void testComputeOutcomeProbability() {
+		Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing",100000);
+		User user = new User();
+		UserTrustValue usertrustvalue = new UserTrustValue();
+		usertrustvalue.setValue(0);
+		user.setUsertrustvalue(usertrustvalue);
+		Device device = new Device();
+		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
+		devicetrustvalue.setValue(0);
+		device.setDevicetrustvalue(devicetrustvalue);    
+		rt2ae = new Rt2aeServerImpl();
+		Probability probability = new Probability();
+		AccessRequest accessRequest = new AccessRequest();
+		probability = rt2ae.computeOutcomeProbability(requestPotentialOutcome,accessRequest,usertrustvalue ,devicetrustvalue);
+		assertNotNull(probability);
+	}
 	
 
 }

@@ -1344,10 +1344,26 @@ public class Rt2aeServerImpl implements Rt2ae {
 		return decision;
 	}
 	
+	/**
+	 * First version of computeOutcomeProbability. This version just return a probability 
+	 * about the Outcome by setting a random value to the probability
+	 *  
+	 * 
+	 * */
+	public Probability computeOutcomeProbability(Outcome requestPotentialOutcome, AccessRequest accessRequest,UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
+		// TODO Auto-generated method stub
+		Probability probability = new Probability();
+		probability.setEventname(requestPotentialOutcome.getDescription());
+		
+		Random r = new Random();
+		double randomValue =  r.nextDouble();
+		probability.setValue(randomValue);
+		return probability;
+	}
 	
 	public static void main (String [] arg){
 		
-		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
+		/*Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
 
 		rt2ae = new Rt2aeServerImpl();
 		
@@ -1372,11 +1388,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		Context context = new Context();
 
 		
-		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);
+		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);*/
 
 		
-        //Insert Code Here
-        System.out.println("coucou");
    }
 	
 	
