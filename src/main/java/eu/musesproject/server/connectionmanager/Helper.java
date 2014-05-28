@@ -44,7 +44,7 @@ public class Helper {
 			for (Cookie ck : cookies){	
 				if (ck.getName().equals("JSESSIONID")) {
 					retreivedCookie = ck;
-					//retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
+					retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
 					if (D) logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
 				}
 			}

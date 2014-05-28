@@ -74,7 +74,7 @@ public class IConnectionCallbacksTest {
 				}
 			});
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
-			when(connectionManager.getDataHandlerList()).thenAnswer(new Answer<List<DataHandler>>() {
+			when(connectionManager.getDataHandlerQueue()).thenAnswer(new Answer<List<DataHandler>>() {
 				
 				@Override
 				public List<DataHandler> answer(InvocationOnMock invocation)

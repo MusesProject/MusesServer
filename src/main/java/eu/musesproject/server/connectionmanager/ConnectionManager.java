@@ -20,11 +20,9 @@ package eu.musesproject.server.connectionmanager;
  * #L%
  */
 
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -45,12 +43,10 @@ public class ConnectionManager implements IConnectionManager{
 	public static IConnectionCallbacks callBacks;
 	private DataHandler dataHandler;
 	private SessionHandler sessionCounter;
-	private List<DataHandler> dataHandlerList	 = new CopyOnWriteArrayList<DataHandler>();
 	private static ConnectionManager connectionManagerSingleton = null;
-	
-	
+	private Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
 	/**
-	 * Constructor initializes callbacks
+	 * Constructor initialises callback
 	 * @param calBacks
 	 */
 	public ConnectionManager(IConnectionCallbacks iCallbacks){ // FIXME this constrctor is used by Unit test only
@@ -134,7 +130,7 @@ public class ConnectionManager implements IConnectionManager{
 	 */
 	
 	private synchronized void addDataHandler(DataHandler dataHandler){
-		dataHandlerList.add(dataHandler);
+		dataHandlerQueue.add(dataHandler);
 	}
 	
 	/**
@@ -144,7 +140,7 @@ public class ConnectionManager implements IConnectionManager{
 	 */
 	
 	public synchronized void removeDataHandler(DataHandler dataHandler) {
-		dataHandlerList.remove(dataHandler);
+		dataHandlerQueue.remove(dataHandler);
 	}
 	
 	/**
@@ -154,8 +150,8 @@ public class ConnectionManager implements IConnectionManager{
 	 */
 	
 	public synchronized DataHandler getDataHandlerObject(String sessionId){
-		if (!dataHandlerList.isEmpty()) {
-			for (DataHandler d : dataHandlerList){
+		if (!dataHandlerQueue.isEmpty()) {
+			for (DataHandler d : dataHandlerQueue){
 				if(d.getSessionId().equalsIgnoreCase(sessionId)){
 					return d;
 				}
@@ -168,10 +164,10 @@ public class ConnectionManager implements IConnectionManager{
 	 * Get data handler objects list
 	 * @return
 	 */
-	public synchronized List<DataHandler> getDataHandlerList() {
-		return dataHandlerList;
+	public synchronized Queue<DataHandler> getDataHandlerQueue() {
+		return dataHandlerQueue;
 	}
-
+	
 	/**
 	 * This method is called to session status
 	 * @param sessionId

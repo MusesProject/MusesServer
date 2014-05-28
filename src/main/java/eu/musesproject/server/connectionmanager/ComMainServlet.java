@@ -108,9 +108,15 @@ public class ComMainServlet extends HttpServlet {
 		// if "poll" request
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
 			System.out.println("Poll request..");
-			for (DataHandler dataHandler : connectionManager.getDataHandlerList()){ // FIXME concurrent thread
+			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 					response.addHeader("data",dataHandler.getData());
+					connectionManager.removeDataHandler(dataHandler);
+					
+					if (connectionManager.getDataHandlerQueue().size()>1) {
+						response.addHeader("more-packets", "YES");
+					}else response.addHeader("more-packets", "NO");	
+
 					logger.log(Level.INFO, "Poll request data available.. attaching in response header..");
 					break; // FIXME temporary as multiple same session ids are in the list right now
 				}
@@ -187,7 +193,7 @@ public class ComMainServlet extends HttpServlet {
 		// if "poll" request
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
 			logger.log(Level.INFO, "Poll request ..");
-			for (DataHandler dataHandler : connectionManager.getDataHandlerList()){ // FIXME concurrent thread
+			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 					response.addHeader("data",dataHandler.getData());
 					logger.log(Level.INFO, "Poll request data available.. attaching in response header..");

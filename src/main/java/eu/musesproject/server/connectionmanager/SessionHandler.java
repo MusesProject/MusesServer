@@ -8,10 +8,10 @@ package eu.musesproject.server.connectionmanager;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -36,8 +37,6 @@ import org.apache.log4j.Logger;
 
 public class SessionHandler implements ServletContextListener , HttpSessionListener, ServletRequestListener{
 	
-	public Map<String,HttpSession> activeSessions = new ConcurrentHashMap<String,HttpSession>();
-	public Map<String,List<HttpSession>> eachClientSessions = new ConcurrentHashMap<String,List<HttpSession>>(); // TBD
 	private Set<String> sessionIDs = new HashSet<String>();
 	public Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
 	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
@@ -89,8 +88,6 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
-//		logger.log(Level.INFO, "*** Session Created *** " + event.getSession().getId()); // FIXME this id is wrong 
-//		sessionIDs.add(event.getSession().getId());
 		removeExpiredCookies();
 	}
 
@@ -104,11 +101,6 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
-//		if (sessionIDs.contains(event.getSession().getId())){
-//			logger.log(Level.INFO, "*** Session Destroyed *** " + event.getSession().getId()); // FIXME this id is wrong 
-//			sessionIDs.remove(event.getSession().getId());
-//			
-//		}
 		removeExpiredCookies();
 	}
 
