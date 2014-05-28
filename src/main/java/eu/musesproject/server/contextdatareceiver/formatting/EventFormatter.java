@@ -43,14 +43,20 @@ public class EventFormatter {
 	public static Event formatContextEvent(ContextEvent contextEvent){
 		Event cepFileEvent = null;
 		if (contextEvent != null){
-			if (contextEvent.getType().equals(EventTypes.FILEOBSERVER)){
-				cepFileEvent = convertToFileObserverEvent(contextEvent);			
-			}else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)){
-				cepFileEvent = convertToConnectivityEvent(contextEvent);
-			}else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)){
-				cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
-			}else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")){
-				cepFileEvent = new Event();//TODO Manage CONTEXT_SENSOR_APP event information
+			if (contextEvent.getType() != null) {
+				if (contextEvent.getType().equals(EventTypes.FILEOBSERVER)) {
+					cepFileEvent = convertToFileObserverEvent(contextEvent);
+				} else if (contextEvent.getType().equals(
+						EventTypes.CONNECTIVITY)) {
+					cepFileEvent = convertToConnectivityEvent(contextEvent);
+				} else if (contextEvent.getType().equals(
+						EventTypes.DEVICE_PROTECTION)) {
+					cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
+				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")) {
+					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
+				}
+			}else{
+				Logger.getLogger(EventFormatter.class).error("ContextEvent type is null");
 			}
 		}else{
 			Logger.getLogger(EventFormatter.class).error("ContextEvent is null in formatContextEvent");
