@@ -24,9 +24,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class Helper {
-	private static boolean D = true;
+	private static boolean D = false;
 	private static Logger logger = Logger.getLogger(Helper.class.getName());
-	private static final int COOKIE_MAX_AGE =  60*60*24;
+	private static final int COOKIE_MAX_AGE = 60*60*24;
 	Cookie retreivedCookie = null;
 
 	/**
@@ -41,9 +41,10 @@ public class Helper {
 		
 		Cookie [] cookies = req.getCookies();
 		if (cookies != null ){
-			for (Cookie ck : cookies){
+			for (Cookie ck : cookies){	
 				if (ck.getName().equals("JSESSIONID")) {
 					retreivedCookie = ck;
+					//retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
 					if (D) logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
 				}
 			}

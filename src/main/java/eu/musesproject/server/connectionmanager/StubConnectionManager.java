@@ -64,12 +64,6 @@ public class StubConnectionManager implements IConnectionManager, IConnectionCal
 		return null;
 	}
 
-	@Override
-	public HttpSession getSessionDetails(String sessionId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	/*
 	 * These methods are called from the connection manager, handle these call here 
 	 */

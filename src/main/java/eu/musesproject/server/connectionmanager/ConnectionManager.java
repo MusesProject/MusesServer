@@ -114,19 +114,6 @@ public class ConnectionManager implements IConnectionManager{
 	}
 	
 	/**
-	 * Retrieve session detail with session id
-	 * @param String sessionId
-	 * @return HttpSession
-	 */
-	
-	@Override
-	public HttpSession getSessionDetails(String sessionId) {
-		return sessionCounter.getSessionForId(sessionId);	
-		
-	}
-
-	
-	/**
 	 * Called by connection manager to send data received from the client
 	 * @param sessionID
 	 * @param dataAttachedInCurrentReuqest

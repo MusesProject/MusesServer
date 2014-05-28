@@ -6,14 +6,12 @@
 package eu.musesproject.server.connectionmanager;
 
 import java.io.IOException;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -109,7 +107,7 @@ public class ComMainServlet extends HttpServlet {
 				
 		// if "poll" request
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
-			logger.log(Level.INFO, "Poll request ..");
+			System.out.println("Poll request..");
 			for (DataHandler dataHandler : connectionManager.getDataHandlerList()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 					response.addHeader("data",dataHandler.getData());
@@ -131,24 +129,23 @@ public class ComMainServlet extends HttpServlet {
 		// invalidate session from Servlet
 		// remove it from the session id list
 		// Callback the Functional layer about the disconnect
-		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT) 
-					&& sessionHandler.getSessionForId(currentJSessionID) != null) {
+		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT)) {
 			logger.log(Level.INFO, "Connection disconnected with ID: " + currentJSessionID);
 			helper.disconnect(request);
-			sessionHandler.removeSessionFromTable(currentJSessionID);
-			sessionHandler.removeSessionIdFromList(currentJSessionID);
+			sessionHandler.removeCookieToList(cookie);
 			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
 		} 
 		
 		// Add session id to the List
-		if (currentJSessionID != null)
-			sessionHandler.addSessionIdToList(currentJSessionID);
+		if (currentJSessionID != null) {
+			sessionHandler.addCookieToList(cookie);
+		}
 
 		// Setup response to send back
 
 		response.setContentType("text/html");
 		response.addCookie(cookie);
-		
+	
 	}
 
 	/**
@@ -172,7 +169,7 @@ public class ComMainServlet extends HttpServlet {
 		
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
-			logger.log(Level.INFO, "Connect request .. Id: " + currentJSessionID );
+			logger.info("Connect request .. Id: " + currentJSessionID );
 		}
 		
 		//if "send-data" request
@@ -180,7 +177,7 @@ public class ComMainServlet extends HttpServlet {
 			// Callback the FL to receive data from the client and get the response data back into string
 			String dataToSendBackInResponse = null;
 			if (dataAttachedInCurrentReuqest != null){
-				dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
+				//dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
 			}
 			response.addHeader("data",dataToSendBackInResponse);
 			logger.log(Level.INFO, "Send data request .. Id: " + currentJSessionID );
@@ -211,20 +208,19 @@ public class ComMainServlet extends HttpServlet {
 		// invalidate session from Servlet
 		// remove it from the session id list
 		// Callback the Functional layer about the disconnect
-		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT) 
-				&& sessionHandler.getSessionForId(currentJSessionID) != null) {
+		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
 			helper.disconnect(request);
-			sessionHandler.removeSessionFromTable(currentJSessionID);
 			sessionHandler.removeSessionIdFromList(currentJSessionID);
+			sessionHandler.removeCookieToList(cookie);
 			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
 			logger.log(Level.INFO, "Connection disconnected with ID: " + currentJSessionID);
 		} 
 		
 		// Add session id to the List
 		sessionHandler.addSessionIdToList(currentJSessionID);
-		
+		sessionHandler.removeCookieToList(cookie);
 		// Setup response to send back
-		
+
 		response.setContentType("text/html");
 		response.addCookie(cookie);
 	}

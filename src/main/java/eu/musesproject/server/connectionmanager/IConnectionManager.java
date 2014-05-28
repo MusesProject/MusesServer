@@ -21,7 +21,6 @@ package eu.musesproject.server.connectionmanager;
  */
 
 import java.util.Set;
-import javax.servlet.http.HttpSession;
 
 /**
  * Interface 
@@ -34,6 +33,5 @@ public interface IConnectionManager {
 	void sendData (String sessionId, String data);
 	void registerReceiveCb (IConnectionCallbacks callBacks);
 	Set<String> getSessionIds();
-	HttpSession getSessionDetails (String sessionId);
 	
 }
