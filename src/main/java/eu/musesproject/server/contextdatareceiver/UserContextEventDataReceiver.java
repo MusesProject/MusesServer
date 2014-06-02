@@ -115,16 +115,21 @@ public class UserContextEventDataReceiver {
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			ContextEvent event = (ContextEvent) iterator.next();
 			eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
-			formattedEvent.setSessionId(currentSessionId);
 			EventProcessor processor = null;
 			MusesCorrelationEngineImpl engine = null;
 			DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		
 			if (des==null){
 				processor = new EventProcessorImpl();
 				engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
 				des = EventProcessorImpl.getMusesEngineService();
 			}
-			des.insertFact(formattedEvent);
+			if (formattedEvent != null){
+				formattedEvent.setSessionId(currentSessionId);
+				des.insertFact(formattedEvent);
+			}else{
+				logger.error("Formatted event is null.");
+			}
 		}
 	}
 
