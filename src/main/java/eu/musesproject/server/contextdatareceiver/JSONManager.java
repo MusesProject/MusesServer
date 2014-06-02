@@ -166,5 +166,22 @@ public class JSONManager {
 
 		return contextEvent;
 	}
+	
+	public static JSONObject createJSON(String requestType, String authResult, String authMessage) {
+		JSONObject root = new JSONObject();
+		try {
+
+            root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, requestType);
+            
+            root.put("auth-result", authResult);
+            
+            root.put("auth-message", authMessage);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return root;
+	}
 
 }

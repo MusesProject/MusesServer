@@ -26,8 +26,13 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import eu.musesproject.client.model.JSONIdentifiers;
+import eu.musesproject.client.model.RequestType;
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.authentication.AuthenticationManager;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
@@ -73,19 +78,54 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 
 	@Override
 	public String receiveCb(String sessionId, String rData) {
+		JSONObject root;
+		String requestType = null;
+
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
 		ConnectionCallbacksImpl.receiveData = rData;
-		List<ContextEvent> list = JSONManager.processJSONMessage(ConnectionCallbacksImpl.receiveData);
-		logger.log(Level.INFO, "Starting ProcessThread...");
-		Thread t = new Thread(new ProcessThread(list, sessionId));
-        t.start();
 
-        logger.log(Level.INFO, "Resuming receiveCb after calling ProcessThread...");
-		
-		logger.info("*************Receive Callback called: "
-				+ ConnectionCallbacksImpl.receiveData + "from client ID " + sessionId);
-		if (isDataAvailable) {
-			connManager.sendData(sessionId, ConnectionCallbacksImpl.data);
+		try {
+			// First, get the request type, in order to differentiate between login
+			// and data exchange
+			root = new JSONObject(ConnectionCallbacksImpl.receiveData);
+			requestType = root.getString(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER);
+
+			if (requestType.equals(RequestType.LOGIN)) {
+				logger.log(Level.INFO, "Login request");
+				// Delegate authentication to AuthenticationManager
+				JSONObject authResponse = AuthenticationManager.getInstance().authenticate(root, sessionId);
+				if (authResponse != null) {
+					connManager.sendData(sessionId, authResponse.toString());
+				}
+			} else {
+				//Data exchange: We should check if sessionId is correctly authenticated
+				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
+
+					List<ContextEvent> list = JSONManager
+							.processJSONMessage(ConnectionCallbacksImpl.receiveData);
+					logger.log(Level.INFO, "Starting ProcessThread...");
+					Thread t = new Thread(new ProcessThread(list, sessionId));
+					t.start();
+
+					logger.log(Level.INFO,
+							"Resuming receiveCb after calling ProcessThread...");
+
+					logger.info("*************Receive Callback called: "
+							+ ConnectionCallbacksImpl.receiveData
+							+ "from client ID " + sessionId);
+					if (data != null) {
+						connManager.sendData(sessionId,
+								ConnectionCallbacksImpl.data);
+					}
+
+				} else {//Current sessionId has not been authenticated
+					JSONObject response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, "FAIL", "Data cannot be processed: Failed authentication");
+					logger.log(Level.INFO, response.toString());
+					connManager.sendData(sessionId, response.toString());
+				}
+			}
+		} catch (JSONException je) {
+			je.printStackTrace();
 		}
 
 		return ConnectionCallbacksImpl.data;
