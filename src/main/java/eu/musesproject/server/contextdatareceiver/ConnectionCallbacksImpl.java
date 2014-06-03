@@ -95,7 +95,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				// Delegate authentication to AuthenticationManager
 				JSONObject authResponse = AuthenticationManager.getInstance().authenticate(root, sessionId);
 				if (authResponse != null) {
-					connManager.sendData(sessionId, authResponse.toString());
+					return authResponse.toString();
 				}
 			} else {
 				//Data exchange: We should check if sessionId is correctly authenticated
