@@ -49,7 +49,7 @@ public class ConnectionManager implements IConnectionManager{
 	 * Constructor initialises callback
 	 * @param calBacks
 	 */
-	public ConnectionManager(IConnectionCallbacks iCallbacks){ // FIXME this constrctor is used by Unit test only
+	public ConnectionManager(IConnectionCallbacks iCallbacks){ // FIXME this constructor is used by Unit test only
 		callBacks = iCallbacks;
 	}
 	

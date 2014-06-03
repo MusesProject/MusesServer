@@ -113,7 +113,7 @@ public class ComMainServlet extends HttpServlet {
 					response.addHeader("data",dataHandler.getData());
 					connectionManager.removeDataHandler(dataHandler);
 					
-					if (connectionManager.getDataHandlerQueue().size()>1) {
+					if (connectionManager.getDataHandlerQueue().size()>=1) {
 						response.addHeader("more-packets", "YES");
 					}else response.addHeader("more-packets", "NO");	
 
