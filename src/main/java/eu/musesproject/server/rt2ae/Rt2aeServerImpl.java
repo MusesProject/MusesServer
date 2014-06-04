@@ -27,6 +27,7 @@ import java.util.Random;
 
 import eu.musesproject.client.model.actuators.RiskCommunication;
 import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.Asset;
@@ -582,7 +583,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 									Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 									decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								
-								
+									//decision.getRiskCommunication().getRiskTreatment()[1].getTextualDescription();
 								}else{
 									Decision decision = Decision.STRONG_DENY_ACCESS;
 									return decision;
@@ -623,6 +624,43 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 
 	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * This function is the version of the decideBasedOnRiskPolicy for the demo Demo_Hambourg. 
+	 * 
+	 * @param accessRequest
+	 * @param context
+	 * @return
+	 */
+	
+	public Decision decideBasedOnRiskPolicy_version_Demo_Hambourg(AccessRequest accessRequest, ConnectivityEvent connEvent) {
+		// TODO Auto-generated method stub
+		if (!connEvent.getWifiEncryption().equals("WPA2")){
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[1];
+			RiskTreatment riskTreatment = new RiskTreatment("Action not allowed. Please, change WIFI encryption to WPA2");
+			
+			riskTreatments[0] = riskTreatment;	
+			riskCommunication.setRiskTreatment(riskTreatments);
+			Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+			logger.info("Decision: MAYBE_ACCESS");
+			logger.info("RiskTreatment: Action not allowed. Please, change WIFI encryption to WPA2");
+			return decision;
+		}else{
+	
+			Decision decision = Decision.GRANTED_ACCESS;
+			logger.info("Decision: GRANTED_ACCESS");
+			return decision;
+		}
+		
+	}
 	
 	/**
 	 * This function is the version 5 of the decideBasedOnRiskPolicy. This version computes the Decision based on the value of the Asset,the Context and the list of Threats and the Outcome and the trust value
@@ -1459,6 +1497,32 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
    }
 	
+	
+	private Decision decideBasedOnRiskPolicy3(AccessRequest composedRequest, ConnectivityEvent connEvent) {//TODO Demo purposes: RT2AE by-pass
+		Decision decision = null;
+		
+		if (!connEvent.getWifiEncryption().equals("WPA2")){
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[1];
+			RiskTreatment riskTreatment = new RiskTreatment("Action not allowed. Please, change WIFI encryption to WPA2");
+			
+			riskTreatments[0] = riskTreatment;	
+			riskCommunication.setRiskTreatment(riskTreatments);
+			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
+		}else{
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[1];
+			RiskTreatment riskTreatment = new RiskTreatment("Action allowed.");
+			
+			riskTreatments[0] = riskTreatment;	
+			riskCommunication.setRiskTreatment(riskTreatments);
+			decision = Decision.GRANTED_ACCESS;
+			decision.GRANTED_ACCESS.setRiskCommunication(riskCommunication); 
+		}
+		
+		return decision;
+	}
 	
 
 }
