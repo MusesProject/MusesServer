@@ -36,6 +36,7 @@ public class ConnectivityEvent extends Event {
 	private String bssid;
 	private int networkId;
 	private String bluetoothConnected;
+	private String wifiEncryption;
 	private boolean airplaneMode;
 	
 	public int getId() {
@@ -109,6 +110,12 @@ public class ConnectivityEvent extends Event {
 	}
 	public void setAirplaneMode(boolean airplaneMode) {
 		this.airplaneMode = airplaneMode;
+	}
+	public String getWifiEncryption() {
+		return wifiEncryption;
+	}
+	public void setWifiEncryption(String wifiEncryption) {
+		this.wifiEncryption = wifiEncryption;
 	}
 	
 
