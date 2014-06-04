@@ -1498,31 +1498,7 @@ public class Rt2aeServerImpl implements Rt2ae {
    }
 	
 	
-	private Decision decideBasedOnRiskPolicy3(AccessRequest composedRequest, ConnectivityEvent connEvent) {//TODO Demo purposes: RT2AE by-pass
-		Decision decision = null;
-		
-		if (!connEvent.getWifiEncryption().equals("WPA2")){
-			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
-			RiskTreatment [] riskTreatments = new RiskTreatment[1];
-			RiskTreatment riskTreatment = new RiskTreatment("Action not allowed. Please, change WIFI encryption to WPA2");
-			
-			riskTreatments[0] = riskTreatment;	
-			riskCommunication.setRiskTreatment(riskTreatments);
-			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
-		}else{
-			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
-			RiskTreatment [] riskTreatments = new RiskTreatment[1];
-			RiskTreatment riskTreatment = new RiskTreatment("Action allowed.");
-			
-			riskTreatments[0] = riskTreatment;	
-			riskCommunication.setRiskTreatment(riskTreatments);
-			decision = Decision.GRANTED_ACCESS;
-			decision.GRANTED_ACCESS.setRiskCommunication(riskCommunication); 
-		}
-		
-		return decision;
-	}
+	
 	
 
 }
