@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mockito.Mock;
@@ -88,8 +89,8 @@ public class PolicyTransmitter {
 	
 	private void sendData(String dataToSend, String sessionId){
 		
-		logger.info("Retrieving session Ids...");
-		logger.info("PolicyTransmitter sendData. Data to be sent:"+dataToSend);
+		logger.log(Level.INFO, "Retrieving session Ids...");
+		logger.log(Level.INFO, "PolicyTransmitter sendData. Data to be sent:"+dataToSend);
 		//Set<String> sessionIds = connManager.getSessionIds();
 		//logger.info("Number of ids:"+sessionIds.size());
 		//if (sessionIds.size()==0){
@@ -97,7 +98,7 @@ public class PolicyTransmitter {
 		//}
 		//for (Iterator iterator = sessionIds.iterator(); iterator.hasNext();) {
 			//String sessionId = (String) iterator.next();
-		logger.info("Sending data with sessionId:"+sessionId);
+		logger.log(Level.INFO, "Sending data with sessionId:"+sessionId);
 		//logger.info(connManager.getSessionDetails(sessionId).getId());//TODO Identify the concrete sessionId coming from the device
 		connManager.sendData(sessionId, dataToSend);
 		//}

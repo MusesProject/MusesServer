@@ -32,6 +32,7 @@ import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
 import eu.musesproject.server.eventprocessor.composers.AdditionalProtectionComposer;
 import eu.musesproject.server.eventprocessor.composers.ThreatComposer;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AdditionalProtection;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Threat;
@@ -41,6 +42,7 @@ import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
+import eu.musesproject.server.risktrust.RiskTreatment;
 import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
 
 public class Rt2aeGlobal {
@@ -185,6 +187,63 @@ public class Rt2aeGlobal {
 		logger.info("Device Policy is now sent:"+policyDT.getRawPolicy());
 		
 		return 1;
+	}
+	
+	public int decide(FileObserverEvent event, ConnectivityEvent connEvent){//Simulate response from RT2AE, for demo purposes
+		Decision[] decisions = new Decision[1];
+		
+		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
+		composedRequest.setId(requests.size()+1);
+		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+		Context context = new Context();//TODO This context should be extracted from the event
+		//Simulate response from RT2AE, for demo purposes
+		Decision decision = decideBasedOnRiskPolicy(composedRequest, connEvent);
+		decisions[0] = decision;
+		
+		//Select the most appropriate policy according to the decision and the action of the request		
+		logger.info("Session id:"+event.getSessionId());
+		PolicySelector policySelector = new PolicySelector();
+		logger.info("Rt2aeGlobal request action:"+composedRequest.getAction());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.info(policyDT.getRawPolicy());
+		logger.info(decision.toString());
+		requests.add(composedRequest);
+		
+		//Send policy
+		
+		Device device = new Device();
+		PolicyTransmitter transmitter = new PolicyTransmitter();
+		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		logger.info("Device Policy is now sent:"+policyDT.getRawPolicy());
+		
+		return composedRequest.getId();
+	}
+
+	private Decision decideBasedOnRiskPolicy(AccessRequest composedRequest,	ConnectivityEvent connEvent) {//TODO Demo purposes: RT2AE by-pass
+		Decision decision = null;
+		
+		if (!connEvent.getWifiEncryption().equals("WPA2")){
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[1];
+			RiskTreatment riskTreatment = new RiskTreatment("Action not allowed. Please, change WIFI encryption to WPA2");
+			
+			riskTreatments[0] = riskTreatment;	
+			riskCommunication.setRiskTreatment(riskTreatments);
+			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
+			decision.setCondition("wifiencryption!=WPA2");
+		}else{
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[1];
+			RiskTreatment riskTreatment = new RiskTreatment("Action allowed.");
+			
+			riskTreatments[0] = riskTreatment;	
+			riskCommunication.setRiskTreatment(riskTreatments);
+			decision = Decision.GRANTED_ACCESS;
+			decision.GRANTED_ACCESS.setRiskCommunication(riskCommunication); 
+		}
+		
+		return decision;
 	}
 	
 }

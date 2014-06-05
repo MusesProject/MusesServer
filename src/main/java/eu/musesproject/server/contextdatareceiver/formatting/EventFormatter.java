@@ -24,6 +24,8 @@ package eu.musesproject.server.contextdatareceiver.formatting;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
@@ -46,12 +48,10 @@ public class EventFormatter {
 			if (contextEvent.getType() != null) {
 				if (contextEvent.getType().equals(EventTypes.FILEOBSERVER)) {
 					cepFileEvent = convertToFileObserverEvent(contextEvent);
-				} else if (contextEvent.getType().equals(
-						EventTypes.CONNECTIVITY)) {
+				} else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)) {
 					cepFileEvent = convertToConnectivityEvent(contextEvent);
 				} else if (contextEvent.getType().equals(
-						EventTypes.DEVICE_PROTECTION)) {
-					cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
+						EventTypes.DEVICE_PROTECTION)) {cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
 				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")) {
 					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
 				}
@@ -61,7 +61,8 @@ public class EventFormatter {
 		}else{
 			Logger.getLogger(EventFormatter.class).error("ContextEvent is null in formatContextEvent");
 		}
-				
+		
+		Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
 		return (Event)cepFileEvent;
 		
 	}
@@ -92,6 +93,7 @@ public class EventFormatter {
 			cepFileEvent.setWifiEnabled(Boolean.valueOf(properties.get("wifienabled")));
 			cepFileEvent.setNetworkId(Integer.valueOf(properties.get("networkid")));
 			cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifineighbors")));
+			cepFileEvent.setWifiEncryption(properties.get("wifiencryption"));
 			cepFileEvent.setTimestamp(contextEvent.getTimestamp());		
 			//cepFileEvent.setUid(properties.get("id"));
 			return cepFileEvent;
@@ -108,10 +110,22 @@ public class EventFormatter {
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		}		
 		cepFileEvent.setType(contextEvent.getType());
-		cepFileEvent.setPath(properties.get("path"));
+		
+		cepFileEvent.setPath(getElement(properties.get("properties"), "resourcePath"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
+	}
+	private static String getElement(String properties, String element) {
+		String result = null;
+		try {
+			JSONObject root = new JSONObject(properties);
+			result = root.getString(element);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return result;
+		
 	}
 	public static FileObserverEvent convertToFileObserverEvent(ContextEvent contextEvent, String action){
 		FileObserverEvent cepFileEvent = new FileObserverEvent();

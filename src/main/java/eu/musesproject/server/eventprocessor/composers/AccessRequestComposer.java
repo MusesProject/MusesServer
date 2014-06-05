@@ -42,7 +42,8 @@ public class AccessRequestComposer {
 		
 		if (event.getType().equals(EventTypes.FILEOBSERVER)){			
 			FileObserverEvent fileEvent = (FileObserverEvent) event;
-			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier			
+			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
+			requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
 			composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
 		}
 		

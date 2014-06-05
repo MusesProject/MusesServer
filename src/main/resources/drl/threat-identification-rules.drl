@@ -139,6 +139,19 @@ rule "Threat-identification-000006"
 	end
 	
 			
+
+rule "Threat-identification-000007"
+	no-loop true
+	dialect "mvel"
+	when
+		request: AccessRequest()
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true,wifiEncryption=="WPA2")
+	then		
+		StatusGlobal.log("Unsecure wifi settings:"+conn.getId());
+		StatusGlobal.addFlag("DEMO STEP3");	
+		StatusGlobal.log("AccessRequest identifier:"+request.getId());
+	end	
+			
 rule "Additional Protection Detection"
 	no-loop true
 	dialect "mvel"

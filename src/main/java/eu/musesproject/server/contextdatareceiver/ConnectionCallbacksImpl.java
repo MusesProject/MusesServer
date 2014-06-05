@@ -49,6 +49,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	public static volatile String receiveData;
 
 	public ConnectionCallbacksImpl(){
+		logger.log(Level.INFO, "ConnectionCallbacksImpl constructor");//Demo debug
 		connManager = ConnectionManager.getInstance();
 		connManager.registerReceiveCb(this);
 		startConnection();
@@ -65,8 +66,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		}
 
 		public void run() {
-			UserContextEventDataReceiver.getInstance().processContextEventList(
-					list, sessionId);
+			UserContextEventDataReceiver.getInstance().processContextEventList(list, sessionId);
 		}
 	}
 	private void startConnection() {
@@ -102,7 +102,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
 
 					List<ContextEvent> list = JSONManager
-							.processJSONMessage(ConnectionCallbacksImpl.receiveData);
+							.processJSONMessage(ConnectionCallbacksImpl.receiveData, requestType);
 					logger.log(Level.INFO, "Starting ProcessThread...");
 					Thread t = new Thread(new ProcessThread(list, sessionId));
 					t.start();
@@ -113,9 +113,8 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					logger.info("*************Receive Callback called: "
 							+ ConnectionCallbacksImpl.receiveData
 							+ "from client ID " + sessionId);
-					if (data != null) {
-						connManager.sendData(sessionId,
-								ConnectionCallbacksImpl.data);
+					if ((data != null)||(!data.equals(""))) {
+						connManager.sendData(sessionId,	ConnectionCallbacksImpl.data);
 					}
 
 				} else {//Current sessionId has not been authenticated

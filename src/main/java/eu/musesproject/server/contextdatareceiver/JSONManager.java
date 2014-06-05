@@ -30,11 +30,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import eu.musesproject.client.model.JSONIdentifiers;
+import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
@@ -48,7 +50,56 @@ public class JSONManager {
 	 * @param String root of the JSON message
 	 * @return void
 	 * @throws JSONException
+	 * 
 	 */
+	
+	public static List<ContextEvent> processJSONMessage(String message,	String requestType) {
+		// Action action = null;
+		Map<String, String> properties = null;
+		ContextEvent contextEvent = null;
+		List<ContextEvent> resultList = new ArrayList<ContextEvent>();
+		if (requestType.equals(RequestType.UPDATE_CONTEXT_EVENTS)) {
+			Logger.getLogger(JSONManager.class)
+					.log(Level.INFO,
+							"Update context events JSONMessage received: Processing message...");
+		} else if ((requestType.equals(RequestType.ONLINE_DECISION)||(requestType.equals(RequestType.LOCAL_DECISION)))) {// TODO Remove LOCAL_DECISION when sensors are updated conveniently
+			Logger.getLogger(JSONManager.class)
+					.log(Level.INFO,
+							"Online decision JSONMessage received: Processing message...");
+
+			try {
+				// Process the root JSON object
+				JSONObject root = new JSONObject(message);
+				// TODO Get the action part
+				JSONObject actionJson = root
+						.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
+
+				contextEvent = extractActionContextEvent(actionJson);
+				resultList.add(contextEvent);
+
+				// Get the List<ContextEvent> from each sensor
+				JSONObject sensorJson = root
+						.getJSONObject(JSONIdentifiers.SENSOR_IDENTIFIER);
+
+				for (Iterator iterator = sensorJson.keys(); iterator.hasNext();) {
+					String contextEventType = (String) iterator.next();
+					JSONObject contextEventJson = sensorJson
+							.getJSONObject(contextEventType);
+					contextEvent = extractContextEvent(contextEventJson);
+					Logger.getLogger(JSONManager.class.getName()).log(
+							Level.INFO, "A new event has been received.");
+					printContextEventInfo(contextEvent);
+					resultList.add(contextEvent);
+				}
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return resultList;
+
+	}
+	
 	public static List<ContextEvent> processJSONMessage(String message){
 		//Action action = null;
 		Map<String,String> properties = null;
@@ -73,6 +124,8 @@ public class JSONManager {
 				String contextEventType = (String) iterator.next();
 				JSONObject contextEventJson = sensorJson.getJSONObject(contextEventType);
 				contextEvent = extractContextEvent(contextEventJson);
+				Logger.getLogger(JSONManager.class.getName()).log(Level.INFO, "A new event has been received.");
+				printContextEventInfo(contextEvent);
 				resultList.add(contextEvent);
 			}
 
@@ -84,7 +137,19 @@ public class JSONManager {
 		
 	}
 	
-	
+	public static void printContextEventInfo(ContextEvent contextEvent){
+		Map<String, String> properties = null;
+		if ((contextEvent!=null)&&(contextEvent.getType()!=null)){
+			Logger.getLogger(JSONManager.class.getName()).log(Level.INFO, "		Event type:" + contextEvent.getType());
+		}
+		properties = contextEvent.getProperties();
+		if (properties != null){
+			for (Map.Entry<String, String> entry : properties.entrySet())
+			{
+				Logger.getLogger(JSONManager.class.getName()).log(Level.INFO, "		" + entry.getKey() + "/" + entry.getValue());
+			}
+		}
+	}
 
 	
 	/**
@@ -154,7 +219,7 @@ public class JSONManager {
 					}
 				}
 				contextEvent.setProperties(properties);
-				if (contextEventType.equals(ActionType.OPEN)||contextEventType.equals(ActionType.ACCESS)){
+				if (contextEventType.equals(ActionType.OPEN_ASSET)||contextEventType.equals(ActionType.ACCESS)||contextEventType.equals(ActionType.OPEN)){
 					contextEvent.setType(EventTypes.FILEOBSERVER);
 					properties.put("event", contextEventType);
 				}
