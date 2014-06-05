@@ -215,13 +215,25 @@ public class JSONManager {
 					String key = (String) iterator.next();
 					if ((!key.equals(ContextEvent.KEY_TYPE))&&(!key.equals(ContextEvent.KEY_TIMESTAMP))){
 						value = contextEventJson.getString(key);
-						properties.put(key, value);
+						if (key.equals("properties")){//TODO Issue with inner properties
+							System.out.println(value);
+							JSONObject valueJSON = new JSONObject(value);
+							for (Iterator iteratorProp = valueJSON.keys(); iteratorProp.hasNext();) {
+								String keyProp = (String) iteratorProp.next();
+								String valueProp = valueJSON.getString(keyProp);
+								properties.put(keyProp, valueProp);
+							}
+						}else{
+							properties.put(key, value);
+						}	
 					}
 				}
 				contextEvent.setProperties(properties);
 				if (contextEventType.equals(ActionType.OPEN_ASSET)||contextEventType.equals(ActionType.ACCESS)||contextEventType.equals(ActionType.OPEN)){
 					contextEvent.setType(EventTypes.FILEOBSERVER);
 					properties.put("event", contextEventType);
+				}else if (contextEventType.equals(ActionType.OPEN_APPLICATION)){
+					contextEvent.setType(EventTypes.APPOBSERVER);
 				}
 			}
 		} catch (JSONException e) {

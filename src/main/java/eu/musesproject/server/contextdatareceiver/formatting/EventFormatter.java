@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
@@ -54,6 +55,8 @@ public class EventFormatter {
 						EventTypes.DEVICE_PROTECTION)) {cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
 				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")) {
 					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
+				} else if (contextEvent.getType().equals(EventTypes.APPOBSERVER)){
+					cepFileEvent = convertToAppObserverEvent(contextEvent);
 				}
 			}else{
 				Logger.getLogger(EventFormatter.class).error("ContextEvent type is null");
@@ -104,7 +107,7 @@ public class EventFormatter {
 		Map<String,String> properties = contextEvent.getProperties();
 		if (properties.get("event")!=null){//TODO Changes for System test
 			cepFileEvent.setEvent(properties.get("event"));
-		}		
+		}
 		//cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
 		if (properties.get("id")!=null){//TODO Changes for System test
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
@@ -112,6 +115,7 @@ public class EventFormatter {
 		cepFileEvent.setType(contextEvent.getType());
 		
 		cepFileEvent.setPath(getElement(properties.get("properties"), "resourcePath"));
+		cepFileEvent.setResourceType(getElement(properties.get("properties"), "resourceType"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
@@ -141,5 +145,18 @@ public class EventFormatter {
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
 	}	
+	
+	public static AppObserverEvent convertToAppObserverEvent(ContextEvent contextEvent){
+		AppObserverEvent cepFileEvent = new AppObserverEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		
+		cepFileEvent.setType(EventTypes.APPOBSERVER);
+		cepFileEvent.setAppPackage(properties.get("package"));
+		cepFileEvent.setName(properties.get("name"));
+		cepFileEvent.setVersion(properties.get("version"));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setUid(properties.get("id"));
+		return cepFileEvent;
+	}
 
 }
