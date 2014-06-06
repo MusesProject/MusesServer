@@ -151,9 +151,9 @@ public class EventFormatter {
 		Map<String,String> properties = contextEvent.getProperties();
 		
 		cepFileEvent.setType(EventTypes.APPOBSERVER);
-		cepFileEvent.setAppPackage(properties.get("package"));
-		cepFileEvent.setName(properties.get("name"));
-		cepFileEvent.setVersion(properties.get("version"));
+		cepFileEvent.setAppPackage(getElement(properties.get("properties"), "package"));
+		cepFileEvent.setName(getElement(properties.get("properties"), "name"));
+		cepFileEvent.setVersion(getElement(properties.get("properties"), "version"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;

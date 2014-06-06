@@ -304,7 +304,7 @@ public class PolicySelector {
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
 				result += "<condition>any</condition>";
-				result += "<risktreatment>Allowed</risktreatment>";
+				result += "<riskTreatment>Allowed</riskTreatment>";
 			}			
 			result += "</allow>";
 		}else if (decision.equals(Decision.STRONG_DENY_ACCESS)){
@@ -313,7 +313,7 @@ public class PolicySelector {
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
 				result += "<condition>any</condition>";
-				result += "<risktreatment>Denied</risktreatment>";
+				result += "<riskTreatment>Denied</riskTreatment>";
 			}	
 			result += "</deny>";
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
@@ -328,7 +328,7 @@ public class PolicySelector {
 					if (rt!=null){
 						if (rt.length>0){
 							if (rt[0].getTextualDescription()!=null){
-								result += "<risktreatment>"+rt[0].getTextualDescription()+"</risktreatment>";
+								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
 							}
 						}
 					}

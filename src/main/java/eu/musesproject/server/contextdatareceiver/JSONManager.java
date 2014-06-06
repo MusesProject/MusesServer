@@ -206,7 +206,13 @@ public class JSONManager {
 		
 		try{
 			contextEventType = contextEventJson.getString(ContextEvent.KEY_TYPE);
-		
+		} catch (JSONException e) {
+			e.printStackTrace();
+			//TODO Tweaked for the case where type of the action is not completed, remove this when it is fixed
+			contextEventType = "open_asset";
+			
+		}
+		try{
 			if ((contextEventJson != null)&&(contextEventType != null)){
 				contextEvent = new ContextEvent();
 				contextEvent.setTimestamp(contextEventJson.getLong(ContextEvent.KEY_TIMESTAMP));
@@ -215,17 +221,7 @@ public class JSONManager {
 					String key = (String) iterator.next();
 					if ((!key.equals(ContextEvent.KEY_TYPE))&&(!key.equals(ContextEvent.KEY_TIMESTAMP))){
 						value = contextEventJson.getString(key);
-						if (key.equals("properties")){//TODO Issue with inner properties
-							System.out.println(value);
-							JSONObject valueJSON = new JSONObject(value);
-							for (Iterator iteratorProp = valueJSON.keys(); iteratorProp.hasNext();) {
-								String keyProp = (String) iteratorProp.next();
-								String valueProp = valueJSON.getString(keyProp);
-								properties.put(keyProp, valueProp);
-							}
-						}else{
-							properties.put(key, value);
-						}	
+						properties.put(key, value);
 					}
 				}
 				contextEvent.setProperties(properties);
@@ -238,6 +234,8 @@ public class JSONManager {
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
+			//TODO Tweaked for the case where type of the action is not completed
+			
 			return null;
 		}
 
