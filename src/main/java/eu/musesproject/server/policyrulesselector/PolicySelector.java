@@ -317,7 +317,7 @@ public class PolicySelector {
 			}	
 			result += "</deny>";
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
-			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
+			result += "<maybe><!-- Allow these URLs (could be regular expressions) -->";
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
@@ -334,7 +334,7 @@ public class PolicySelector {
 					}
 				}
 			}	
-			result += "</deny>";
+			result += "</maybe>";
 		}
 		result += "</action>";
 		result += "</files>";		
