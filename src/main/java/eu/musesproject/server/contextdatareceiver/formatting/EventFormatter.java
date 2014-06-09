@@ -150,6 +150,10 @@ public class EventFormatter {
 		AppObserverEvent cepFileEvent = new AppObserverEvent();
 		Map<String,String> properties = contextEvent.getProperties();
 		
+		if (properties.get("event")!=null){//TODO Changes for System test
+			cepFileEvent.setEvent(properties.get("event"));
+		}
+		
 		cepFileEvent.setType(EventTypes.APPOBSERVER);
 		cepFileEvent.setAppPackage(getElement(properties.get("properties"), "package"));
 		cepFileEvent.setName(getElement(properties.get("properties"), "appname"));

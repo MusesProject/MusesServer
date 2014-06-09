@@ -28,6 +28,7 @@ public class AppObserverEvent extends Event {
 	private long timestamp;
 	private String name;
 	private String version;
+	private String event;
 	
 	public int getId() {
 		return id;
@@ -58,6 +59,12 @@ public class AppObserverEvent extends Event {
 	}
 	public void setAppPackage(String appPackage) {
 		this.appPackage = appPackage;
+	}
+	public String getEvent() {
+		return event;
+	}
+	public void setEvent(String event) {
+		this.event = event;
 	}
 
 	

@@ -230,6 +230,7 @@ public class JSONManager {
 					properties.put("event", contextEventType);
 				}else if (contextEventType.equals(ActionType.OPEN_APPLICATION)){
 					contextEvent.setType(EventTypes.APPOBSERVER);
+					properties.put("event", contextEventType);
 				}
 			}
 		} catch (JSONException e) {

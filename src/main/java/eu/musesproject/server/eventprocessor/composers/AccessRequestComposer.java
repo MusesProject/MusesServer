@@ -50,7 +50,7 @@ public class AccessRequestComposer {
 			AppObserverEvent appEvent = (AppObserverEvent) event;
 			requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
 			requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
-			//composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+			composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
 		}
 		
 		requestedCorporateAsset.setValue(0);
