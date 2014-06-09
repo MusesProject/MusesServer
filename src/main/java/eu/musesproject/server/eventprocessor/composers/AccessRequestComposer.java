@@ -21,6 +21,7 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent;
@@ -45,6 +46,11 @@ public class AccessRequestComposer {
 			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
 			requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
 			composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+		}else if (event.getType().equals(EventTypes.APPOBSERVER)){
+			AppObserverEvent appEvent = (AppObserverEvent) event;
+			requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
+			requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
+			//composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
 		}
 		
 		requestedCorporateAsset.setValue(0);
