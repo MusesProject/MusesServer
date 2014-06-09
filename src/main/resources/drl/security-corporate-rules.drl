@@ -82,7 +82,8 @@ rule "AccessRequest Detection open asset type sensitive"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-
+		retract(e);
+		retract(conn);
 	end
 	
 	rule "AccessRequest Detection open asset type insensitive"
@@ -102,7 +103,8 @@ rule "AccessRequest Detection open asset type sensitive"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-
+		retract(e);
+		retract(conn);
 	end
 	
 	rule "AccessRequest Detection open type"
@@ -122,7 +124,7 @@ rule "AccessRequest Detection open asset type sensitive"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-
+		retract(e);
 	end
 	
 //TODO Changes for System test	
@@ -191,6 +193,6 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-
+		retract(e);
 	end
 	
