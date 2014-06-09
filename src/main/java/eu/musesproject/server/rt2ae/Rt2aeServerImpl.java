@@ -1465,7 +1465,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		return probability;
 	}
 	
-	public static void main (String [] arg){
+	/*public static void main (String [] arg){
 		
 		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
 
@@ -1495,7 +1495,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);
 
 		
-   }
+   }*/
 	
 	
 	
