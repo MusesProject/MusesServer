@@ -6,12 +6,14 @@
 package eu.musesproject.server.connectionmanager;
 
 import java.io.IOException;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -100,6 +102,8 @@ public class ComMainServlet extends HttpServlet {
 			if (dataAttachedInCurrentReuqest != null){
 				dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
 			}
+			if (dataToSendBackInResponse ==null || dataToSendBackInResponse == "")
+				dataToSendBackInResponse = waitForDataIfAvailable(5, currentJSessionID);
 			response.addHeader("data",dataToSendBackInResponse);
 			logger.log(Level.INFO, "Send data request .. Id: " + currentJSessionID );
 			logger.log(Level.INFO, "Data avaialble for the request .. attaching in response header.. data: " + dataToSendBackInResponse);
@@ -152,6 +156,32 @@ public class ComMainServlet extends HttpServlet {
 		response.setContentType("text/html");
 		response.addCookie(cookie);
 	
+	}
+	
+	private String waitForDataIfAvailable(int timeout, String currentJSessionID){
+		int i=1;
+		while(i<=timeout){
+			if (connectionManager.getDataHandlerQueue().size()>=1) {
+				for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
+					if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
+						connectionManager.removeDataHandler(dataHandler);
+						return dataHandler.getData();
+					}
+				}
+			}
+			sleep(1000);
+			i++;
+		}
+		return "";
+	}
+	
+	private void sleep(long millis){
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
