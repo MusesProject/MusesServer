@@ -313,7 +313,16 @@ public class PolicySelector {
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
 				result += "<condition>any</condition>";
-				result += "<riskTreatment>Denied</riskTreatment>";
+				if (decision.getRiskCommunication()!=null){
+					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
+					if (rt!=null){
+						if (rt.length>0){
+							if (rt[0].getTextualDescription()!=null){
+								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
+							}
+						}
+					}
+				}
 			}	
 			result += "</deny>";
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){

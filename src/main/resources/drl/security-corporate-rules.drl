@@ -186,7 +186,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		//int id = Rt2aeGlobal.composeAccessRequest(e);
-		int id = Rt2aeGlobal.deny(e);
+		int id = Rt2aeGlobal.deny(e,"Action denied: This is a blacklisted application");
 		//GAP (we associate the access requests by id)
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);

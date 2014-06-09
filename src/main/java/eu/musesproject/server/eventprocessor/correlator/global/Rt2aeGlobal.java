@@ -220,7 +220,7 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 	
-	public int deny(AppObserverEvent event){//Simulate response from RT2AE, for demo purposes
+	public int deny(AppObserverEvent event, String message){//Simulate response from RT2AE, for demo purposes
 		Decision[] decisions = new Decision[1];
 		
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
@@ -229,7 +229,7 @@ public class Rt2aeGlobal {
 		
 		eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 		RiskTreatment [] riskTreatments = new RiskTreatment[1];
-		RiskTreatment riskTreatment = new RiskTreatment("Action allowed.");
+		RiskTreatment riskTreatment = new RiskTreatment(message);
 		
 		riskTreatments[0] = riskTreatment;	
 		riskCommunication.setRiskTreatment(riskTreatments);
