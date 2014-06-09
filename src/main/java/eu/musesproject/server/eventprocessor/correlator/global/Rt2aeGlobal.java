@@ -255,6 +255,42 @@ public class Rt2aeGlobal {
 		
 		return composedRequest.getId();
 	}
+	
+	public int allow(AppObserverEvent event){//Simulate response from RT2AE, for demo purposes
+		Decision[] decisions = new Decision[1];
+		
+		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
+		composedRequest.setId(requests.size()+1);
+		Decision decision = null;
+		
+		eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+		RiskTreatment [] riskTreatments = new RiskTreatment[1];
+		RiskTreatment riskTreatment = new RiskTreatment("Allow");
+		
+		riskTreatments[0] = riskTreatment;	
+		riskCommunication.setRiskTreatment(riskTreatments);
+		decision = Decision.GRANTED_ACCESS;
+		decision.GRANTED_ACCESS.setRiskCommunication(riskCommunication); 
+		decisions[0] = decision;
+		
+		//Select the most appropriate policy according to the decision and the action of the request		
+		logger.info("Session id:"+event.getSessionId());
+		PolicySelector policySelector = new PolicySelector();
+		logger.info("Rt2aeGlobal request action:"+composedRequest.getAction());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.info(policyDT.getRawPolicy());
+		logger.info(decision.toString());
+		requests.add(composedRequest);
+		
+		//Send policy
+		
+		Device device = new Device();
+		PolicyTransmitter transmitter = new PolicyTransmitter();
+		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		logger.info("Device Policy is now sent:"+policyDT.getRawPolicy());
+		
+		return composedRequest.getId();
+	}
 
 	private Decision decideBasedOnRiskPolicy(AccessRequest composedRequest,	ConnectivityEvent connEvent) {//TODO Demo purposes: RT2AE by-pass
 		Decision decision = null;
