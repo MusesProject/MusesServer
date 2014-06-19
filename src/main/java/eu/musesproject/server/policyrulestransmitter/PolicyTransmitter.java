@@ -91,6 +91,7 @@ public class PolicyTransmitter {
 		
 		logger.log(Level.INFO, "Retrieving session Ids...");
 		logger.log(Level.INFO, "PolicyTransmitter sendData. Data to be sent:"+dataToSend);
+		logger.info("PolicyTransmitter sendData. Data to be sent:"+dataToSend);
 		//Set<String> sessionIds = connManager.getSessionIds();
 		//logger.info("Number of ids:"+sessionIds.size());
 		//if (sessionIds.size()==0){
@@ -99,6 +100,7 @@ public class PolicyTransmitter {
 		//for (Iterator iterator = sessionIds.iterator(); iterator.hasNext();) {
 			//String sessionId = (String) iterator.next();
 		logger.log(Level.INFO, "Sending data with sessionId:"+sessionId);
+		logger.info("Sending data with sessionId:"+sessionId);
 		//logger.info(connManager.getSessionDetails(sessionId).getId());//TODO Identify the concrete sessionId coming from the device
 		connManager.sendData(sessionId, dataToSend);
 		//}
