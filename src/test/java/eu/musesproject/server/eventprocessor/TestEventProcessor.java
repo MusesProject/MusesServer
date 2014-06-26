@@ -116,18 +116,6 @@ public class TestEventProcessor extends TestCase {
 		assertTrue(StatusGlobal.containsFlag("F"));
 	}
 	
-	/**
-	  * testUnsecureWifi - JUnit test case whose aim is to test the detection of unsecure Wifi
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testUnsecureWifi() {
-			
-		List<ContextEvent> sequence = UseCaseFactory.sequenceUnsecureWifi();
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F1:8"));
-	}	
 	
 
 	
