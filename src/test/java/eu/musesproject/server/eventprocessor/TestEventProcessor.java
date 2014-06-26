@@ -90,19 +90,6 @@ public class TestEventProcessor extends TestCase {
 	
 
 	
-	/**
-	  * testConnectionChanges - JUnit test case whose aim is to test the detection of connection changes in a concrete device
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testConnectionChanges() {
-		logger.info("Running testConnectionChanges");
-		List<ContextEvent> sequence = UseCaseFactory.sequenceConnectionChanges();	
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F"));
-	}
-	
 	
 
 	
