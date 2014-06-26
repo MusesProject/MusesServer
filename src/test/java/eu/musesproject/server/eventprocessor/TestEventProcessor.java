@@ -88,20 +88,7 @@ public class TestEventProcessor extends TestCase {
 	}
 	
 	
-	
-	
-	/**
-	  * testUserConnectingIntranet - JUnit test case whose aim is to test the detection of user connecting to the company intranet
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testUserConnectingIntranet() {
-		logger.info("Running testUserConnectingIntranet");
-		List<ContextEvent> sequence = UseCaseFactory.sequenceUserConnectingIntranet();		
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F1:7"));
-	}
+
 	
 	/**
 	  * testConnectionChanges - JUnit test case whose aim is to test the detection of connection changes in a concrete device
