@@ -55,8 +55,12 @@ public class EventFormatter {
 						EventTypes.DEVICE_PROTECTION)) {cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
 				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")) {
 					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
+				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_PACKAGE")) {
+					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_PACKAGE event information
 				} else if (contextEvent.getType().equals(EventTypes.APPOBSERVER)){
 					cepFileEvent = convertToAppObserverEvent(contextEvent);
+				} else {
+					cepFileEvent = new Event();// Any other unsupported sensor
 				}
 			}else{
 				Logger.getLogger(EventFormatter.class).error("ContextEvent type is null");
