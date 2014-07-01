@@ -21,12 +21,10 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
-import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
-import eu.musesproject.server.eventprocessor.correlator.model.owl.Threat;
-import eu.musesproject.server.risktrust.AccessRequest;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.risktrust.Clue;
 
 
@@ -59,6 +57,9 @@ public static Clue composeClue(Event event, String name, String type){
 			composedClue.setId((int)fileEvent.getTimestamp());
 		}else if (event instanceof AppObserverEvent){
 			AppObserverEvent appEvent = (AppObserverEvent)event;
+			composedClue.setId((int)appEvent.getTimestamp());
+		}else if (event instanceof PackageObserverEvent){
+			PackageObserverEvent appEvent = (PackageObserverEvent)event;
 			composedClue.setId((int)appEvent.getTimestamp());
 		}
 		composedClue.setName(name);

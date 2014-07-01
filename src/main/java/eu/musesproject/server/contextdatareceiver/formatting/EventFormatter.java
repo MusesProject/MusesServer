@@ -33,6 +33,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEv
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.util.ActionTypes;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
@@ -51,12 +52,12 @@ public class EventFormatter {
 					cepFileEvent = convertToFileObserverEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)) {
 					cepFileEvent = convertToConnectivityEvent(contextEvent);
-				} else if (contextEvent.getType().equals(
-						EventTypes.DEVICE_PROTECTION)) {cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
+				} else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)) {
+					cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
 				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")) {
 					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
 				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_PACKAGE")) {
-					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_PACKAGE event information
+					cepFileEvent = convertToPackageObserverEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.APPOBSERVER)){
 					cepFileEvent = convertToAppObserverEvent(contextEvent);
 				} else {
@@ -72,6 +73,15 @@ public class EventFormatter {
 		Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
 		return (Event)cepFileEvent;
 		
+	}
+	private static PackageObserverEvent convertToPackageObserverEvent(ContextEvent contextEvent) {
+		PackageObserverEvent cepFileEvent = new PackageObserverEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setInstalledApps(properties.get("installedapps"));
+		return cepFileEvent;
 	}
 	private static DeviceProtectionEvent convertToDeviceProtectionEvent(
 			ContextEvent contextEvent) {

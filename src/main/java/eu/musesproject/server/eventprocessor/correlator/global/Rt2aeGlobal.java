@@ -44,6 +44,7 @@ import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
+import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.risktrust.RiskTreatment;
 import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
@@ -53,8 +54,11 @@ public class Rt2aeGlobal {
 	private String status = null;
 	private Logger logger = Logger.getLogger(Rt2aeGlobal.class.getName());
 	private static List<Clue> clues = new ArrayList<Clue>();
+	private static List<Clue> deviceSecurityClues = new ArrayList<Clue>();
 	private static List<AccessRequest> requests = new ArrayList<AccessRequest>();
 	private static List<AdditionalProtection> additionalProtections = new ArrayList<AdditionalProtection>();
+	
+	Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 
 	public void setStatus(String st) {
 		status = st;
@@ -67,7 +71,7 @@ public class Rt2aeGlobal {
 	public AccessRequest composeAccessRequest(Event event){
 		logger.info("[composeAccessRequest] Event");
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
-		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
 		PolicyCompliance policyCompliance = new PolicyCompliance();
 		
@@ -76,48 +80,18 @@ public class Rt2aeGlobal {
 		logger.info("		" + "Session id:"+event.getSessionId());
 		return composedRequest;
 	}
+
 	
-	/*public int composeAccessRequest(FileObserverEvent event){
-		
-		logger.info("[composeAccessRequest] FileObserverEvent");
-		Decision[] decisions = new Decision[1];		
-		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
-		composedRequest.setId(requests.size()+1);
-		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
-		Context context = new Context();//TODO This context should be extracted from the event
-		//Retrieve the decision associated to current composedRequest
-		
-		PolicyCompliance policyCompliance = new PolicyCompliance();
-		
-		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
-		decisions[0] = decision;
-		
-		//Select the most appropriate policy according to the decision and the action of the request		
-		logger.info("		Session id:"+event.getSessionId());
-		PolicySelector policySelector = new PolicySelector();
-		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction());
-		logger.info("		" + policyDT.getRawPolicy());
-		logger.info("		" + decision.toString());
-		requests.add(composedRequest);
-		
-		//Send policy
-		
-		Device device = new Device();
-		PolicyTransmitter transmitter = new PolicyTransmitter();
-		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
-		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
-		
-		return composedRequest.getId();
-	}*/
-	
-	/*public Clue composeClue(eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest request, Event event){
-		logger.info("[composeClue]");
-		Clue composedClue = ClueComposer.composeClue(request.getId(),event);
-		//TODO Complete the composition of threat attributes, based on the information of the event
-		clues.add(composedClue);
+	public Clue deviceSecurityStateChange(Event event, String name, String type){
+		logger.info("[deviceSecurityStateChange]");
+		Clue composedClue = ClueComposer.composeClue(event, name, type);
+		deviceSecurityClues.add(composedClue);
+		DeviceSecurityState deviceSecurityState = new DeviceSecurityState();
+		deviceSecurityState.setDevice_id(0);//TODO Set device id and manage a different object to manage clues for each device
+		deviceSecurityState.setClues(deviceSecurityClues);
+		rt2aeServer.warnDeviceSecurityStateChange(deviceSecurityState);
 		return composedClue;
-	}*/
+	}
 	
 	public Clue composeClue(Event event, String name, String type){
 		logger.info("[composeClue]");
@@ -232,7 +206,7 @@ public class Rt2aeGlobal {
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
 		composedRequest.setId(requests.size()+1);
 		requests.add(composedRequest);
-		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
 		//Simulate response from RT2AE, for demo purposes
 		Decision decision = decideBasedOnRisk(composedRequest, connEvent);
@@ -257,45 +231,6 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 	
-	/*public int composeAccessRequest(FileObserverEvent event){
-		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
-		composedRequest.setId(requests.size()+1);
-		
-		return composedRequest.getId();
-	}
-
-	public int compliance(int accessRequestId, FileObserverEvent event, ConnectivityEvent connEvent, String mode){//Simulate response from RT2AE, for demo purposes
-		logger.info("[composeAccessRequest] event,conn");
-		Decision[] decisions = new Decision[1];
-		
-		AccessRequest composedRequest = requests.get(accessRequestId);
-		
-		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
-		Context context = new Context();//TODO This context should be extracted from the event
-		//Simulate response from RT2AE, for demo purposes
-		PolicyCompliance policyCompliance = policyCompliance(composedRequest, connEvent, mode);
-		
-		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
-		decisions[0] = decision;
-		
-		//Select the most appropriate policy according to the decision and the action of the request		
-		logger.info("		Session id:"+event.getSessionId());
-		PolicySelector policySelector = new PolicySelector();
-		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction());
-		logger.info("		" + policyDT.getRawPolicy());
-		logger.info("		" + decision.toString());
-		requests.add(composedRequest);
-		
-		//Send policy
-		
-		Device device = new Device();
-		PolicyTransmitter transmitter = new PolicyTransmitter();
-		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
-		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
-		
-		return composedRequest.getId();
-	}*/
 
 	public int composeAccessRequest(FileObserverEvent event, ConnectivityEvent connEvent, String mode){//Simulate response from RT2AE, for demo purposes
 		logger.info("[composeAccessRequest] event,conn");
@@ -303,7 +238,7 @@ public class Rt2aeGlobal {
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
 		composedRequest.setId(requests.size()+1);
 		requests.add(composedRequest);
-		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
 		//Simulate response from RT2AE, for demo purposes
 		PolicyCompliance policyCompliance = policyCompliance(composedRequest, connEvent, mode);
@@ -375,7 +310,7 @@ public class Rt2aeGlobal {
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
 		composedRequest.setId(requests.size()+1);
 		requests.add(composedRequest);
-		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Decision decision = null;
 		Context context = new Context();
 		
