@@ -41,7 +41,7 @@ public class StatusGlobal {
 	}
 	
 	public void log(String message){		
-		//logger.log(Level.INFO, message);
+		logger.log(Level.INFO, message);
 	}
 	
 	public void addFlag(String flag){

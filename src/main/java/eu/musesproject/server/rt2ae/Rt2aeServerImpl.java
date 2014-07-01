@@ -22,25 +22,24 @@ package eu.musesproject.server.rt2ae;
  */
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import eu.musesproject.client.model.actuators.RiskCommunication;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.risktrust.AccessRequest;
-import eu.musesproject.server.risktrust.Asset;
+import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
-import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
+import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.RiskTreatment;
 import eu.musesproject.server.risktrust.Rt2ae;
 import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.risktrust.Threat;
-import eu.musesproject.server.risktrust.TrustValue;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
 
@@ -59,10 +58,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 	*/  
 	@SuppressWarnings({ "null", "static-access" })
 	@Override
-	public Decision decideBasedOnRiskPolicy(AccessRequest accessRequest,Context context) {
+	public Decision decideBasedOnRiskPolicy(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub  
 		
-		return decideBasedOnRiskPolicy_version_4(accessRequest, context);
+		return decideBasedOnRiskPolicy_version_4(accessRequest, policyCompliance, context);
 	}  
       
 	/**  
@@ -85,7 +84,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 			accessRequest.getUser().getUsertrustvalue().setValue(valeur);
 			accessRequest.getDevice().getDevicetrustvalue().setValue(valeur);
 			
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
 			if (threats.isEmpty()){			
 				
@@ -130,7 +131,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 				
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clue  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+	
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
@@ -257,7 +261,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 				
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
@@ -413,7 +420,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	 * @return
 	 */
 	@SuppressWarnings({ "unused", "static-access" })
-	public Decision decideBasedOnRiskPolicy_version_4(AccessRequest accessRequest,Context context) {
+	public Decision decideBasedOnRiskPolicy_version_4(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub
 		
 			Random r = new Random();
@@ -424,7 +431,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 				
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
@@ -632,7 +642,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 			//public,internal,confidentiality,strictlyconfidential
 			
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="public"){
 				Decision decision = Decision.GRANTED_ACCESS;; 
@@ -751,7 +764,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		
+		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+		
 		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
@@ -952,7 +968,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		
+		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+		
 		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		Outcome requestPotentialOutcomes = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 		Probability probabilitys = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcomes, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1152,7 +1171,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		
+		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+		
 		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {

@@ -46,11 +46,13 @@ public class AccessRequestComposer {
 			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
 			requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
 			composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+			composedRequest.setEventId(fileEvent.getTimestamp());
 		}else if (event.getType().equals(EventTypes.APPOBSERVER)){
 			AppObserverEvent appEvent = (AppObserverEvent) event;
 			requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
 			requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
 			composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+			composedRequest.setEventId(appEvent.getTimestamp());
 		}
 		
 		requestedCorporateAsset.setValue(0);
@@ -67,6 +69,8 @@ public class AccessRequestComposer {
 		composedRequest.setUser(user);
 		composedRequest.setDevice(device);
 		composedRequest.setRequestedCorporateAsset(requestedCorporateAsset);
+		
+		
 		
 		return composedRequest;
 	}

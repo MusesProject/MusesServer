@@ -21,8 +21,6 @@ package eu.musesproject.server.eventprocessor.impl;
  * #L%
  */
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
@@ -43,10 +41,10 @@ import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.eventprocessor.util.Constants;
 import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.AdditionalProtection;
+import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.Probability;
-import eu.musesproject.server.risktrust.Threat;
 import eu.musesproject.server.risktrust.UserTrustValue;
 
 public class EventProcessorImpl implements EventProcessor {
@@ -80,10 +78,12 @@ public class EventProcessorImpl implements EventProcessor {
 	}
 
 	@Override
-	public List<Threat> getCurrentThreats(AccessRequest accessRequest,
+	public List<Clue> getCurrentClues(AccessRequest accessRequest,
 			UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
 		
-		return Rt2aeGlobal.getThreatsByRequestId(accessRequest.getId());
+		List<eu.musesproject.server.risktrust.Clue> clues = Rt2aeGlobal.getCluesByRequestId(accessRequest.getId());
+		logger.info("Number of clues:"+clues.size());
+		return clues;
 
 	}
 	
