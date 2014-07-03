@@ -22,38 +22,30 @@ package eu.musesproject.server.rt2ae;
  */
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import eu.musesproject.client.model.actuators.RiskCommunication;
-import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
-import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.risktrust.AccessRequest;
-import eu.musesproject.server.risktrust.Asset;
+import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
-import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
+import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.RiskTreatment;
 import eu.musesproject.server.risktrust.Rt2ae;
 import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.risktrust.Threat;
-import eu.musesproject.server.risktrust.TrustValue;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
-
-import org.apache.log4j.Logger;
-
 
 public class Rt2aeServerImpl implements Rt2ae {
 
 	private final int RISK_TREATMENT_SIZE = 20;
-	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
-
 	
 	/**
 
@@ -66,10 +58,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 	*/  
 	@SuppressWarnings({ "null", "static-access" })
 	@Override
-	public Decision decideBasedOnRiskPolicy(AccessRequest accessRequest,Context context) {
+	public Decision decideBasedOnRiskPolicy(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub  
 		
-		return decideBasedOnRiskPolicy_version_5(accessRequest, context);
+		return decideBasedOnRiskPolicy_version_4(accessRequest, policyCompliance, context);
 	}  
       
 	/**  
@@ -92,7 +84,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 			accessRequest.getUser().getUsertrustvalue().setValue(valeur);
 			accessRequest.getDevice().getDevicetrustvalue().setValue(valeur);
 			
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
 			if (threats.isEmpty()){			
 				
@@ -137,7 +131,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 				
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clue  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+	
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
@@ -264,7 +261,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 				
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
@@ -420,7 +420,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	 * @return
 	 */
 	@SuppressWarnings({ "unused", "static-access" })
-	public Decision decideBasedOnRiskPolicy_version_4(AccessRequest accessRequest,Context context) {
+	public Decision decideBasedOnRiskPolicy_version_4(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub
 		
 			Random r = new Random();
@@ -431,7 +431,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 				
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
@@ -583,7 +586,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 									Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 									decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								
-									//decision.getRiskCommunication().getRiskTreatment()[1].getTextualDescription();
+								
 								}else{
 									Decision decision = Decision.STRONG_DENY_ACCESS;
 									return decision;
@@ -625,43 +628,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 	
 	
-	
-	
-	
-	
-	
-	
-	/**
-	 * This function is the version of the decideBasedOnRiskPolicy for the demo Demo_Hambourg. 
-	 * 
-	 * @param accessRequest
-	 * @param context
-	 * @return  
-	 */
-	
-	public Decision decideBasedOnRiskPolicy_version_Demo_Hambourg(AccessRequest accessRequest, ConnectivityEvent connEvent) {
-		// TODO Auto-generated method stub
-		if (!connEvent.getWifiEncryption().equals("WPA2")){
-			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
-			RiskTreatment [] riskTreatments = new RiskTreatment[1];
-			RiskTreatment riskTreatment = new RiskTreatment("Action not allowed. Please, change WIFI encryption to WPA2");
-			
-			riskTreatments[0] = riskTreatment;	
-			riskCommunication.setRiskTreatment(riskTreatments);
-			Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-			logger.info("Decision: MAYBE_ACCESS");
-			logger.info("RiskTreatment: Action not allowed. Please, change WIFI encryption to WPA2");
-			return decision;
-		}else{
-	
-			Decision decision = Decision.GRANTED_ACCESS;
-			logger.info("Decision: GRANTED_ACCESS");
-			return decision;
-		}
-		
-	}
-	
 	/**
 	 * This function is the version 5 of the decideBasedOnRiskPolicy. This version computes the Decision based on the value of the Asset,the Context and the list of Threats and the Outcome and the trust value
 	 * 
@@ -676,18 +642,19 @@ public class Rt2aeServerImpl implements Rt2ae {
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 			//public,internal,confidentiality,strictlyconfidential
 			
-			List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+			
+			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+			
 			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="public"){
-				Decision decision = Decision.GRANTED_ACCESS;
-				logger.info("Decision: GRANTED_ACCESS");
+				Decision decision = Decision.GRANTED_ACCESS;; 
 				return decision;	
 			}
 			
 			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="internal"){
 				if (threats.isEmpty()){			
-					Decision decision = Decision.GRANTED_ACCESS;
-					logger.info("Decision: GRANTED_ACCESS");
+					Decision decision = Decision.GRANTED_ACCESS;; 
 					return decision;
 				}else{
 					return computeDecisionInternalAsset( accessRequest, context);
@@ -698,8 +665,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="confidential"){
 				if (!threats.isEmpty()){			
-					Decision decision = Decision.GRANTED_ACCESS;
-					logger.info("Decision: GRANTED_ACCESS");
+					Decision decision = Decision.GRANTED_ACCESS;; 
 					return decision;
 				}else{
 					return computeDecisionConfidentialAsset(accessRequest, context);
@@ -710,16 +676,14 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="strictlyconfidential"){
 				if (threats.isEmpty()){			
-					Decision decision = Decision.GRANTED_ACCESS;
-					logger.info("Decision: GRANTED_ACCESS");
+					Decision decision = Decision.GRANTED_ACCESS;; 
 					return decision;
 				}else{
 				return computeDecisionStrictlyConfidentialAsset( accessRequest, context);
 				}
 			}
 			
-			Decision decision = Decision.GRANTED_ACCESS;
-			logger.info("Decision: GRANTED_ACCESS");
+			Decision decision = Decision.GRANTED_ACCESS;; 
 			return decision;
 			
 			
@@ -800,7 +764,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		
+		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+		
 		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
@@ -814,7 +781,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.5){	
@@ -832,7 +798,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: MAYBE_ACCESS");
 							return decision;
 						}else{
 							if(accessRequest.getUser().getUsertrustvalue().getValue() >0.5 && accessRequest.getDevice().getDevicetrustvalue().getValue()>0.5){
@@ -851,12 +816,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-								logger.info("Decision: UPTOYOU_ACCESS");
 								return decision;
 								
 							}else{
 								Decision decision = Decision.STRONG_DENY_ACCESS;
-								logger.info("Decision: STRONG_DENY_ACCESS");
 								return decision;
 							}
 							
@@ -869,7 +832,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.5){
@@ -888,11 +850,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 						//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 						Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 						decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-						logger.info("Decision: UPTOYOU_ACCESS");
 						return decision;
 						}else{
 							Decision decision = Decision.STRONG_DENY_ACCESS;
-							logger.info("Decision: STRONG_DENY_ACCESS");
 							return decision;
 						}
 					}
@@ -903,7 +863,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.5){
@@ -921,11 +880,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: UPTOYOU_ACCESS");
 							return decision;
 						}else{
 							Decision decision = Decision.STRONG_DENY_ACCESS;
-							logger.info("Decision: STRONG_DENY_ACCESS");
 							return decision;
 						}
 					}
@@ -937,7 +894,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.5){
@@ -955,7 +911,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: MAYBE_ACCESS");
 							return decision;
 						}else{
 							
@@ -975,12 +930,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-								logger.info("Decision: UPTOYOU_ACCESS");
-								return decision;
+							
 							
 							}else{
 								Decision decision = Decision.STRONG_DENY_ACCESS;
-								logger.info("Decision: STRONG_DENY_ACCESS");
 								return decision;
 							}
 						}
@@ -990,26 +943,22 @@ public class Rt2aeServerImpl implements Rt2ae {
 				if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()>0){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
-					logger.info("Decision: STRONG_DENY_ACCESS");
 					return decision;
 					
 				}
 				if(threats.get(i).getType()=="Device under attack" && threats.get(i).getProbability()>0){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
-					logger.info("Decision: STRONG_DENY_ACCESS");
 					return decision;
 					
 				}
 				
 				Decision decision = Decision.STRONG_DENY_ACCESS;
-				logger.info("Decision: STRONG_DENY_ACCESS");
 				return decision;
 					
 			}
 		}
 		Decision decision = Decision.GRANTED_ACCESS;
-		logger.info("Decision: GRANTED_ACCESS");
 		return decision;
 	}
 	
@@ -1019,7 +968,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		
+		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+		
 		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		Outcome requestPotentialOutcomes = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 		Probability probabilitys = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcomes, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1034,7 +986,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.3){	
@@ -1052,7 +1003,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: MAYBE_ACCESS");
 							return decision;
 						}else{
 							if(accessRequest.getUser().getUsertrustvalue().getValue() >0.7 && accessRequest.getDevice().getDevicetrustvalue().getValue()>0.7){
@@ -1071,12 +1021,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-								logger.info("Decision: UPTOYOU_ACCESS");
-								return decision;
+								
 								
 							}else{
 								Decision decision = Decision.STRONG_DENY_ACCESS;
-								logger.info("Decision: STRONG_DENY_ACCESS");
 								return decision;
 							}
 							
@@ -1089,7 +1037,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.3){
@@ -1108,11 +1055,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 						//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 						Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 						decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-						logger.info("Decision: UPTOYOU_ACCESS");
 						return decision;
 						}else{
 							Decision decision = Decision.STRONG_DENY_ACCESS;
-							logger.info("Decision: STRONG_DENY_ACCESS");
 							return decision;
 						}
 					}
@@ -1123,7 +1068,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: UPTOYOU_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.3){
@@ -1141,11 +1085,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: UPTOYOU_ACCESS");
 							return decision;
 						}else{
 							Decision decision = Decision.STRONG_DENY_ACCESS;
-							logger.info("Decision: STRONG_DENY_ACCESS");
 							return decision;
 						}
 					}
@@ -1156,7 +1098,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.3){
@@ -1174,7 +1115,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: MAYBE_ACCESS");
 							return decision;
 						}else{
 							
@@ -1194,12 +1134,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-								logger.info("Decision: UPTOYOU_ACCESS");
-								return decision;
+							
 							
 							}else{
 								Decision decision = Decision.STRONG_DENY_ACCESS;
-								logger.info("Decision: STRONG_DENY_ACCESS");
 								return decision;
 							}
 						}
@@ -1209,27 +1147,22 @@ public class Rt2aeServerImpl implements Rt2ae {
 				if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()<0.3){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
-					logger.info("Decision: STRONG_DENY_ACCESS");
 					return decision;
 					
 				}
 				if(threats.get(i).getType()=="Device under attack" && threats.get(i).getProbability()<0.3){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
-					logger.info("Decision: STRONG_DENY_ACCESS");
 					return decision;
 					
 				}
 				
 				Decision decision = Decision.STRONG_DENY_ACCESS;
-				logger.info("Decision: STRONG_DENY_ACCESS");
-
 				return decision;
 					
 			}
 		}
 		Decision decision = Decision.GRANTED_ACCESS;
-		logger.info("Decision: GRANTED_ACCESS");
 		return decision;
 	}
 	
@@ -1238,7 +1171,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Threat> threats  = eventprocessorimpl.getCurrentThreats(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		
+		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
+		
 		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
@@ -1251,7 +1187,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.1){	
@@ -1269,7 +1204,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: MAYBE_ACCESS");
 							return decision;
 						}else{
 							if(accessRequest.getUser().getUsertrustvalue().getValue() >0.5 && accessRequest.getDevice().getDevicetrustvalue().getValue()>0.5){
@@ -1288,12 +1222,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-								logger.info("Decision: UPTOYOU_ACCESS");
-								return decision;
+								
 								
 							}else{
 								Decision decision = Decision.STRONG_DENY_ACCESS;
-								logger.info("Decision: STRONG_DENY_ACCESS");
 								return decision;
 							}
 							
@@ -1306,7 +1238,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.1){
@@ -1325,11 +1256,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 						//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 						Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 						decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-						logger.info("Decision: UPTOYOU_ACCESS");
 						return decision;
 						}else{
 							Decision decision = Decision.STRONG_DENY_ACCESS;
-							logger.info("Decision: STRONG_DENY_ACCESS");
 							return decision;
 						}
 					}
@@ -1340,7 +1269,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.1){
@@ -1358,11 +1286,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: UPTOYOU_ACCESS");
 							return decision;
 						}else{
 							Decision decision = Decision.STRONG_DENY_ACCESS;
-							logger.info("Decision: STRONG_DENY_ACCESS");
 							return decision;
 						}
 					}
@@ -1373,7 +1299,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						Decision decision = Decision.STRONG_DENY_ACCESS;
-						logger.info("Decision: STRONG_DENY_ACCESS");
 						return decision;
 					}else{
 						if(probability.getValue()<=0.1){
@@ -1391,7 +1316,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
-							logger.info("Decision: MAYBE_ACCESS");
 							return decision;
 						}else{
 							
@@ -1411,12 +1335,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
-								logger.info("Decision: UPTOYOU_ACCESS");
-								return decision;
+							
 							
 							}else{
 								Decision decision = Decision.STRONG_DENY_ACCESS;
-								logger.info("Decision: STRONG_DENY_ACCESS");
 								return decision;
 							}
 						}
@@ -1425,26 +1347,22 @@ public class Rt2aeServerImpl implements Rt2ae {
 				if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()<0.1){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
-					logger.info("Decision: STRONG_DENY_ACCESS");
 					return decision;
 					
 				}
 				if(threats.get(i).getType()=="Device under attack" && threats.get(i).getProbability()<0.1){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
-					logger.info("Decision: STRONG_DENY_ACCESS");
 					return decision;
 					
 				}
 				
 				Decision decision = Decision.STRONG_DENY_ACCESS;
-				logger.info("Decision: STRONG_DENY_ACCESS");
 				return decision;
 					
 			}
 		}
 		Decision decision = Decision.GRANTED_ACCESS;
-		logger.info("Decision: GRANTED_ACCESS");
 		return decision;
 	}
 	
@@ -1465,9 +1383,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		return probability;
 	}
 	
-	/*public static void main (String [] arg){
+	public static void main (String [] arg){
 		
-		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
+		/*Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
 
 		rt2ae = new Rt2aeServerImpl();
 		
@@ -1492,12 +1410,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		Context context = new Context();
 
 		
-		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);
+		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);*/
 
 		
-   }*/
-	
-	
+   }
 	
 	
 
