@@ -41,6 +41,7 @@ import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
+import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
 
 public class Rt2aeGlobal {
@@ -64,7 +65,8 @@ public class Rt2aeGlobal {
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
 		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
-		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, context);
+		PolicyCompliance policyCompliance = null;
+		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest,policyCompliance, context);
 		logger.info(decision.toString());
 		logger.info("Session id:"+event.getSessionId());
 		return composedRequest;
@@ -77,8 +79,9 @@ public class Rt2aeGlobal {
 		composedRequest.setId(requests.size()+1);
 		Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
+		PolicyCompliance policyCompliance = null;
 		//Retrieve the decision associated to current composedRequest
-		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, context);
+		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		decisions[0] = decision;
 		
 		//Select the most appropriate policy according to the decision and the action of the request		

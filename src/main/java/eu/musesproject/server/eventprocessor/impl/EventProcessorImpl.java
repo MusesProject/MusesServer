@@ -43,6 +43,7 @@ import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.eventprocessor.util.Constants;
 import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.AdditionalProtection;
+import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.Probability;
@@ -79,13 +80,6 @@ public class EventProcessorImpl implements EventProcessor {
 		return null;
 	}
 
-	@Override
-	public List<Threat> getCurrentThreats(AccessRequest accessRequest,
-			UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
-		
-		return Rt2aeGlobal.getThreatsByRequestId(accessRequest.getId());
-
-	}
 	
 	@Override
 	public List<AdditionalProtection> getCurrentAdditionalProtections(AccessRequest accessRequest,
@@ -194,6 +188,14 @@ public class EventProcessorImpl implements EventProcessor {
 		
 	public static DroolsEngineService getMusesEngineService(){
 		return des;
+	}
+
+
+	@Override
+	public List<Clue> getCurrentClues(AccessRequest accessRequest,
+			UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

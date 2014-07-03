@@ -99,12 +99,12 @@ public class TestRt2aeServerImpl {
 		Context context = new Context();
 		Decision decision = rt2ae.decideBasedOnRiskPolicy_version_2(accessRequest, context);
 		Decision decision1 = rt2ae.decideBasedOnRiskPolicy_version_3(accessRequest, context);
-		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_4(accessRequest, context);
+		//Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_4(accessRequest, context);
 		Decision decision3 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);
 
 		assertNotNull(decision);  
 		assertNotNull(decision1);
-		assertNotNull(decision2); 
+		//assertNotNull(decision2); 
 		assertNotNull(decision3);       
 
   
