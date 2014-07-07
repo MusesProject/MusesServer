@@ -24,12 +24,16 @@ package eu.musesproject.server.contextdatareceiver.formatting;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.util.ActionTypes;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
@@ -46,14 +50,18 @@ public class EventFormatter {
 			if (contextEvent.getType() != null) {
 				if (contextEvent.getType().equals(EventTypes.FILEOBSERVER)) {
 					cepFileEvent = convertToFileObserverEvent(contextEvent);
-				} else if (contextEvent.getType().equals(
-						EventTypes.CONNECTIVITY)) {
+				} else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)) {
 					cepFileEvent = convertToConnectivityEvent(contextEvent);
-				} else if (contextEvent.getType().equals(
-						EventTypes.DEVICE_PROTECTION)) {
+				} else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)) {
 					cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
 				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")) {
 					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
+				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_PACKAGE")) {
+					cepFileEvent = convertToPackageObserverEvent(contextEvent);
+				} else if (contextEvent.getType().equals(EventTypes.APPOBSERVER)){
+					cepFileEvent = convertToAppObserverEvent(contextEvent);
+				} else {
+					cepFileEvent = new Event();// Any other unsupported sensor
 				}
 			}else{
 				Logger.getLogger(EventFormatter.class).error("ContextEvent type is null");
@@ -61,9 +69,19 @@ public class EventFormatter {
 		}else{
 			Logger.getLogger(EventFormatter.class).error("ContextEvent is null in formatContextEvent");
 		}
-				
+		
+		Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
 		return (Event)cepFileEvent;
 		
+	}
+	private static PackageObserverEvent convertToPackageObserverEvent(ContextEvent contextEvent) {
+		PackageObserverEvent cepFileEvent = new PackageObserverEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setInstalledApps(properties.get("installedapps"));
+		return cepFileEvent;
 	}
 	private static DeviceProtectionEvent convertToDeviceProtectionEvent(
 			ContextEvent contextEvent) {
@@ -92,6 +110,7 @@ public class EventFormatter {
 			cepFileEvent.setWifiEnabled(Boolean.valueOf(properties.get("wifienabled")));
 			cepFileEvent.setNetworkId(Integer.valueOf(properties.get("networkid")));
 			cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifineighbors")));
+			cepFileEvent.setWifiEncryption(properties.get("wifiencryption"));
 			cepFileEvent.setTimestamp(contextEvent.getTimestamp());		
 			//cepFileEvent.setUid(properties.get("id"));
 			return cepFileEvent;
@@ -102,16 +121,29 @@ public class EventFormatter {
 		Map<String,String> properties = contextEvent.getProperties();
 		if (properties.get("event")!=null){//TODO Changes for System test
 			cepFileEvent.setEvent(properties.get("event"));
-		}		
+		}
 		//cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
 		if (properties.get("id")!=null){//TODO Changes for System test
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		}		
 		cepFileEvent.setType(contextEvent.getType());
-		cepFileEvent.setPath(properties.get("path"));
+		
+		cepFileEvent.setPath(getElement(properties.get("properties"), "resourcePath"));
+		cepFileEvent.setResourceType(getElement(properties.get("properties"), "resourceType"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
+	}
+	private static String getElement(String properties, String element) {
+		String result = null;
+		try {
+			JSONObject root = new JSONObject(properties);
+			result = root.getString(element);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return result;
+		
 	}
 	public static FileObserverEvent convertToFileObserverEvent(ContextEvent contextEvent, String action){
 		FileObserverEvent cepFileEvent = new FileObserverEvent();
@@ -127,5 +159,22 @@ public class EventFormatter {
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
 	}	
+	
+	public static AppObserverEvent convertToAppObserverEvent(ContextEvent contextEvent){
+		AppObserverEvent cepFileEvent = new AppObserverEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		
+		if (properties.get("event")!=null){//TODO Changes for System test
+			cepFileEvent.setEvent(properties.get("event"));
+		}
+		
+		cepFileEvent.setType(EventTypes.APPOBSERVER);
+		cepFileEvent.setAppPackage(getElement(properties.get("properties"), "package"));
+		cepFileEvent.setName(getElement(properties.get("properties"), "appname"));
+		cepFileEvent.setVersion(getElement(properties.get("properties"), "version"));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setUid(properties.get("id"));
+		return cepFileEvent;
+	}
 
 }

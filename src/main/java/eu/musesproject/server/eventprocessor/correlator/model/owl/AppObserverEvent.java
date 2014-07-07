@@ -21,14 +21,14 @@ package eu.musesproject.server.eventprocessor.correlator.model.owl;
  * #L%
  */
 
-public class FileObserverEvent extends Event {
+public class AppObserverEvent extends Event {
 	
 	private int id;
-	private String type;
+	private String appPackage;
 	private long timestamp;
+	private String name;
+	private String version;
 	private String event;
-	private String path;
-	private String resourceType;
 	
 	public int getId() {
 		return id;
@@ -36,17 +36,29 @@ public class FileObserverEvent extends Event {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
 	public long getTimestamp() {
 		return timestamp;
 	}
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	public String getAppPackage() {
+		return appPackage;
+	}
+	public void setAppPackage(String appPackage) {
+		this.appPackage = appPackage;
 	}
 	public String getEvent() {
 		return event;
@@ -54,18 +66,9 @@ public class FileObserverEvent extends Event {
 	public void setEvent(String event) {
 		this.event = event;
 	}
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	public String getResourceType() {
-		return resourceType;
-	}
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
-	}
+
+	
+
 	
 
 	

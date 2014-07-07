@@ -21,19 +21,15 @@ package eu.musesproject.server.rt2ae;
  * #L%
  */
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.apache.log4j.Logger;
 
-import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.TestEventProcessor;
-import eu.musesproject.server.eventprocessor.correlator.global.StatusGlobal;
-import eu.musesproject.server.eventprocessor.simulation.UseCaseFactory;
 import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.Asset;
 import eu.musesproject.server.risktrust.Context;
@@ -41,6 +37,7 @@ import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
+import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.risktrust.User;
@@ -97,14 +94,15 @@ public class TestRt2aeServerImpl {
 		accessRequest.setRequestedCorporateAsset(requestedCorporateAsset);
 		
 		Context context = new Context();
+		PolicyCompliance policyCompliance = new PolicyCompliance();
 		Decision decision = rt2ae.decideBasedOnRiskPolicy_version_2(accessRequest, context);
 		Decision decision1 = rt2ae.decideBasedOnRiskPolicy_version_3(accessRequest, context);
-		//Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_4(accessRequest, context);
+		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_4(accessRequest, policyCompliance, context);
 		Decision decision3 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);
 
 		assertNotNull(decision);  
 		assertNotNull(decision1);
-		//assertNotNull(decision2); 
+		assertNotNull(decision2); 
 		assertNotNull(decision3);       
 
   

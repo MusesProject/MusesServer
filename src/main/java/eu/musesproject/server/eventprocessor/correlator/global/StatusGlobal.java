@@ -46,9 +46,9 @@ public class StatusGlobal {
 	
 	public void addFlag(String flag){
 		
-		logger.info("Adding flag:" + flag);
+		//logger.log(Level.INFO, "Adding flag:" + flag);
 		StatusGlobal.flags += flag + SEPARATOR;
-		logger.info("Current flags:" + StatusGlobal.flags);
+		//logger.log(Level.INFO, "Current flags:" + StatusGlobal.flags);
 	}
 	
 	public static boolean containsFlag(String flag){

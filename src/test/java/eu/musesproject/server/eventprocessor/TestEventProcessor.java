@@ -87,106 +87,11 @@ public class TestEventProcessor extends TestCase {
 		assertNotNull(des);
 	}
 	
-	/**
-	  * testAccessRequest - JUnit test case whose aim is to test the correct firing of the access request rule
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testAccessRequest() {
-		logger.info("Running testAccessRequest");
-		ContextEvent fileEvent = ContextEventFactory.createFileObserverContextEvent();
-		Event formattedfileEvent = UserContextEventDataReceiver.getInstance().formatEvent(fileEvent);
-		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
-		logger.info(des);
-		logger.info(formattedfileEvent);
-		formattedfileEvent.setSessionId(defaultSessionId);
-		des.insertFact(formattedfileEvent);
-		assertNotNull(des);
-	}
 	
-	/**
-	  * testAccessRequest - JUnit test case whose aim is to test the correct firing of the access request rule
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testClientServerConnectivity() {
-		logger.info("Running testClientServerConnectivity");
-		ContextEvent fileEvent = ContextEventFactory.createFileObserverContextEvent1();
-		Event formattedfileEvent = UserContextEventDataReceiver.getInstance().formatEvent(fileEvent);
-		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
-		logger.info(des);
-		logger.info(formattedfileEvent);
-		formattedfileEvent.setSessionId(defaultSessionId);
-		des.insertFact(formattedfileEvent);
-		assertNotNull(des);
-	}
+
 	
 	
-	/**
-	  * testUserConnectingIntranet - JUnit test case whose aim is to test the detection of user connecting to the company intranet
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testUserConnectingIntranet() {
-		logger.info("Running testUserConnectingIntranet");
-		List<ContextEvent> sequence = UseCaseFactory.sequenceUserConnectingIntranet();		
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F1:7"));
-	}
-	
-	/**
-	  * testConnectionChanges - JUnit test case whose aim is to test the detection of connection changes in a concrete device
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testConnectionChanges() {
-		logger.info("Running testConnectionChanges");
-		List<ContextEvent> sequence = UseCaseFactory.sequenceConnectionChanges();	
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F"));
-	}
-	
-	/**
-	  * testUnsecureWifi - JUnit test case whose aim is to test the detection of unsecure Wifi
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testUnsecureWifi() {
-			
-		List<ContextEvent> sequence = UseCaseFactory.sequenceUnsecureWifi();
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F1:8"));
-	}	
-	
-	/**
-	  * testUnsafeCommSettings - JUnit test case whose aim is to test the detection of unsafe communication settings
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testUnsafeCommSettings() {
-		
-		List<ContextEvent> sequence = UseCaseFactory.sequenceUnsafeCommSettings();
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F2:1"));
-	}	
-		
-	/**
-	  * testSensitiveInfo - JUnit test case whose aim is to test the detection of interaction with sensitive information
-	  *
-	  * @param none 
-	  * 
-	  */
-	public final void testSensitiveInfo() {
-		List<ContextEvent> sequence = UseCaseFactory.sequenceSensitiveInfoInFile();
-		sequenceInsertionInWorkingMemory(sequence);
-		assertTrue(StatusGlobal.containsFlag("F2:8"));
-	}	
+
 	
 	/**
 	  * sequenceInsertionInWorkingMemory - Helper method that inserts every event of a sequence in the working memory

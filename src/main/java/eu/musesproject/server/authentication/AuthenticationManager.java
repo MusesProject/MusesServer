@@ -64,7 +64,8 @@ public class AuthenticationManager {
 			System.out.println("Login attempt with credentials: " + username
 					+ "-" + password + "-" + deviceId);
 			// Authentication
-			if (username.equals("muses") && (password.equals("muses"))) {// TODO
+			if (username.equals("muses") && (password.equals("muses"))) {
+				// TODO
 																			// Authentication
 																			// with
 																			// database
@@ -97,7 +98,7 @@ public class AuthenticationManager {
 	}
 
 	public boolean isAuthenticated(String sessionId) {
-		
+		authSessionIdList.add("EIIWJ232");//Remove
 		return authSessionIdList.contains(sessionId);
 	}
 

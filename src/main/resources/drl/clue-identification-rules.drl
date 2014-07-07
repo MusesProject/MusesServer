@@ -10,8 +10,10 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtecti
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
-import eu.musesproject.server.eventprocessor.correlator.model.owl.Threat;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Clue;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
 import eu.musesproject.server.eventprocessor.util.Constants
+import eu.musesproject.server.risktrust.ThreatOntology
 import java.util.ArrayList
 import java.util.Date
 import java.util.StringTokenizer
@@ -40,7 +42,13 @@ declare FileObserverEvent
 	@expires (1m)
 end
 
-declare Threat
+declare PackageObserverEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare Clue
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -58,24 +66,56 @@ declare AdditionalProtection
 	@expires (1m)
 end
 
-
-	
-/*rule "Threat-identification-000001"
+rule "Clue-identification-00000"
 	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
+		conn: ConnectivityEvent(bluetoothConnected=="TRUE")
+	then
+		
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());
+		StatusGlobal.log(conn.getBluetoothConnected());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Bluetooth enabled might turn into data leakage problems",ThreatOntology.DATA_LEAKAGE);
+		insert(clue);
+	end
+	
+	rule "Clue-identification-00001"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
+		conn: ConnectivityEvent(wifiEncryption!="WPA2")
+	then
+		
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());
+		StatusGlobal.log(conn.getBluetoothConnected());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Encryption without WPA2 protocol might be unsecure", ThreatOntology.DATA_LEAKAGE);
+		insert(clue);
+	end
+	
+/*rule "Clue-identification-000001"
+	no-loop true
+	salience 50000
 	dialect "mvel"
 	when
 		request: AccessRequest()
-		e: ConnectivityEvent(this before[0,5s] request,bluetoothConnected=="TRUE")		
+		e: ConnectivityEvent(bluetoothConnected=="TRUE")
+		//e: ConnectivityEvent(this before[0,5s] request,bluetoothConnected=="TRUE")		
 	then
 		
-		StatusGlobal.log("3.A new threat has been identified, associated to request:"+request.getId());
+		StatusGlobal.log("3.A new clue has been identified, associated to request:"+request.getId());
 		StatusGlobal.log(e.getBluetoothConnected());		
 		StatusGlobal.log("AccessRequest identifier:"+request.getId());
-		Threat threat = Rt2aeGlobal.composeClue(request,e);
-		insert(threat);
-	end
+		Clue clue = Rt2aeGlobal.composeClue(request,e);
+		insert(clue);
+	end*/
 	
-rule "Threat-identification-000002"
+rule "Clue-identification-000002"
 	no-loop true
 	dialect "mvel"
 	when
@@ -89,7 +129,7 @@ rule "Threat-identification-000002"
 		//TODO: Detect what is the difference between connectivity properties and if it is a DETERIORATION	
 	end
 	
-rule "Threat-identification-000003"
+rule "Clue-identification-000003"
 	no-loop true
 	dialect "mvel"
 	when
@@ -102,7 +142,7 @@ rule "Threat-identification-000003"
 		retract(conn);	
 	end	
 
-rule "Threat-identification-000004"
+rule "Clue-identification-000004"
 	no-loop true
 	dialect "mvel"
 	when
@@ -114,7 +154,7 @@ rule "Threat-identification-000004"
 		retract(fileEvent);	
 	end		
 
-rule "Threat-identification-000005"
+rule "Clue-identification-000005"
 	no-loop true
 	dialect "mvel"
 	when
@@ -126,7 +166,7 @@ rule "Threat-identification-000005"
 		StatusGlobal.log("AccessRequest identifier:"+request.getId());	
 	end		
 
-rule "Threat-identification-000006"
+rule "Clue-identification-000006"
 	no-loop true
 	dialect "mvel"
 	when
@@ -140,7 +180,7 @@ rule "Threat-identification-000006"
 	
 			
 
-rule "Threat-identification-000007"
+rule "Clue-identification-000007"
 	no-loop true
 	dialect "mvel"
 	when
@@ -164,4 +204,37 @@ rule "Additional Protection Detection"
 		AdditionalProtection protection = Rt2aeGlobal.composeAdditionalProtection(request,e);
 		insert(protection);
 		StatusGlobal.log("Additional Protection inserted in the WM. AccessRequest identifier:"+request.getId());				
-	end	*/
+	end	
+	
+	/*rule "Device-security-state-00000"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: PackageObserverEvent(installedApps matches ".*Kaspersky.*")
+
+	then
+		
+		StatusGlobal.log("4.A new device security state has been identified: ANTIVIRUS RUNNING, associated to event:"+e.getTimestamp());
+		StatusGlobal.log(e.getInstalledApps());		
+		//StatusGlobal.log("Identifier:"+e.getTimestamp());
+		//Clue clue = Rt2aeGlobal.composeClue(e,"Bluetooth enabled might turn into data leakage problems",ThreatOntology.DATA_LEAKAGE);
+		//insert(clue);
+		retract(e);
+	end*/
+	
+	rule "Device-security-state-00001"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: PackageObserverEvent(installedApps not matches ".*Kaspersky.*")
+
+	then
+		
+		StatusGlobal.log("4.A new device security state has been identified: ANTIVIRUS NOT RUNNING, associated to event:"+e.getTimestamp());
+		StatusGlobal.log(e.getInstalledApps());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Rt2aeGlobal.deviceSecurityStateChange(e,"Antivirus is not running", ThreatOntology.MALICIOUS_MISUSE);
+		retract(e);
+	end

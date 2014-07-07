@@ -21,14 +21,16 @@ package eu.musesproject.server.eventprocessor.correlator.model.owl;
  * #L%
  */
 
-public class FileObserverEvent extends Event {
+import java.util.HashMap;
+
+public class Clue extends Event {
 	
 	private int id;
 	private String type;
+	private String name;
 	private long timestamp;
-	private String event;
-	private String path;
-	private String resourceType;
+	private int requestId;
+    private int assetId;
 	
 	public int getId() {
 		return id;
@@ -48,27 +50,23 @@ public class FileObserverEvent extends Event {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	public String getEvent() {
-		return event;
+	public int getAssetId() {
+		return assetId;
 	}
-	public void setEvent(String event) {
-		this.event = event;
+	public void setAssetId(int assetId) {
+		this.assetId = assetId;
 	}
-	public String getPath() {
-		return path;
+	public int getRequestId() {
+		return requestId;
 	}
-	public void setPath(String path) {
-		this.path = path;
+	public void setRequestId(int requestId) {
+		this.requestId = requestId;
 	}
-	public String getResourceType() {
-		return resourceType;
+	public String getName() {
+		return name;
 	}
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
+	public void setName(String name) {
+		this.name = name;
 	}
-	
-
-	
-	
 
 }

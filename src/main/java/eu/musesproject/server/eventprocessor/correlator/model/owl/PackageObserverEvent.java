@@ -1,4 +1,4 @@
-package eu.musesproject.server.eventprocessor.composers;
+package eu.musesproject.server.eventprocessor.correlator.model.owl;
 
 /*
  * #%L
@@ -21,24 +21,34 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
-import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
-import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
-import eu.musesproject.server.eventprocessor.correlator.model.owl.Threat;
-import eu.musesproject.server.risktrust.AccessRequest;
-
-
-public class ThreatComposer {
+public class PackageObserverEvent extends Event {
 	
+	private int id;
+	private String installedApps;
+	private long timestamp;
 	
-	public static Threat composeThreat(int requestId, Event event){
-		
-		Threat composedThreat = new Threat();
-		composedThreat.setRequestId(requestId);
-		
-		AccessRequest accessRequest = Rt2aeGlobal.getRequestById(requestId);
-		composedThreat.setAssetId(accessRequest.getRequestedCorporateAsset().getId());
-		//composedThreat.setProbability(probability);
-		return composedThreat;
+	public int getId() {
+		return id;
 	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public long getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+	public String getInstalledApps() {
+		return installedApps;
+	}
+	public void setInstalledApps(String installedApps) {
+		this.installedApps = installedApps;
+	}
+
+	
+
+	
+	
 
 }

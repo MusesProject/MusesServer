@@ -41,8 +41,10 @@ import com.hp.hpl.jena.util.FileManager;
 import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.Action;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
+import eu.musesproject.server.risktrust.Asset;
 import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
+import eu.musesproject.server.risktrust.RiskTreatment;
 
 /**
  * Class PolicySelector
@@ -78,6 +80,20 @@ public class PolicySelector {
 		resultPolicyDT.setRawPolicy(jsonDevicePolicy);
 		return resultPolicyDT;
 	}	
+	
+	public PolicyDT computePolicyBasedOnDecisions( Decision[] decisions, String action, Asset asset){ //Create device policy based on decision
+		
+		PolicyDT resultPolicyDT = new PolicyDT();
+		String jsonDevicePolicy = null;
+		if (decisions.length > 0){//TODO This is a sample policy selection, hence the selection of concrete policies based on decisions is yet to be done
+			Decision decision = decisions[0];
+			jsonDevicePolicy = getJSONDevicePolicy(decision, action, asset);
+		}else{
+			jsonDevicePolicy = "<empty/>";
+		}
+		resultPolicyDT.setRawPolicy(jsonDevicePolicy);
+		return resultPolicyDT;
+	}
 	
 	/**
 	 * Info RT
@@ -196,6 +212,52 @@ public class PolicySelector {
         return jsonDevicePolicy;
 	}
 	
+	private String getJSONDevicePolicy(Decision decision, String action, Asset asset){
+		String jsonDevicePolicy = null;
+		BufferedReader br = null;
+		InputStream in = null;
+		InputStreamReader is = null;
+		String policyContent = null;
+		try {
+			policyContent = getPolicyDTHeader();
+			policyContent += getActionSection(decision, action, asset);
+			policyContent += getPolicyDTBottom();
+            JSONObject xmlJSONObj = XML.toJSONObject(policyContent);
+            jsonDevicePolicy = xmlJSONObj.toString();
+        } catch (JSONException je) {
+            je.printStackTrace();
+        } catch (Exception e){
+        	jsonDevicePolicy = "<errorBuildingPolicy/>";
+        } finally{			
+			try {
+			    if (br != null) {
+			    	br.close();
+			    }
+			  }catch (IOException e) {
+			    e.printStackTrace();
+			  
+			  }
+			try {
+				if (in != null) {
+				   	in.close();
+				}
+			}catch (IOException e) {
+			    e.printStackTrace();
+			  
+			}
+			try {
+				if (is != null) {
+				   	is.close();
+				}
+			}catch (IOException e) {
+			    e.printStackTrace();
+			  
+			}  			
+		}
+        
+        return jsonDevicePolicy;
+	}
+	
 	private String getPolicyDTHeader(){
 		String header ="<requesttype>"+RequestType.UPDATE_POLICIES+"</requesttype><muses-device-policy schema-version=\"1.0\">"+"<!--The device will update its policy if this number is greater than the stored one    -->"+"<revision>1.0</revision>";
 		return header;
@@ -219,6 +281,69 @@ public class PolicySelector {
 			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
 			result += "<id></id>"; //TODO Add resource identification
 			result += "</deny>";
+		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
+			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
+			result += "<id></id>"; //TODO Add resource identification
+			result += "</deny>";
+		}
+		result += "</action>";
+		result += "</files>";		
+		
+		return result;
+	}
+	
+	private String getActionSection(Decision decision, String action, Asset asset){
+		String result = null;
+		
+		result = "<files>";
+		result += "<action>";
+		result += "<type>"+action+"</type>";
+		if (decision.equals(Decision.GRANTED_ACCESS)){
+			result += "<allow><!-- Allow these URLs (could be regular expressions) -->";
+			if ((asset != null)){
+				result += "<id>"+asset.getId()+"</id>";
+				result += "<path>"+asset.getLocation()+"</path>";
+				result += "<condition>any</condition>";
+				result += "<riskTreatment>Allowed</riskTreatment>";
+			}			
+			result += "</allow>";
+		}else if (decision.equals(Decision.STRONG_DENY_ACCESS)){
+			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
+			if ((asset != null)){
+				result += "<id>"+asset.getId()+"</id>";
+				result += "<path>"+asset.getLocation()+"</path>";
+				result += "<condition>any</condition>";
+				if (decision.getRiskCommunication()!=null){
+					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
+					if (rt!=null){
+						if (rt.length>0){
+							if (rt[0].getTextualDescription()!=null){
+								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
+							}
+						}
+					}
+				}
+			}	
+			result += "</deny>";
+		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
+			result += "<maybe><!-- Allow these URLs (could be regular expressions) -->";
+			if ((asset != null)){
+				result += "<id>"+asset.getId()+"</id>";
+				result += "<path>"+asset.getLocation()+"</path>";
+				if (decision.getCondition()!=null){
+					result += "<condition>"+decision.getCondition()+"</condition>";
+				}if (decision.getRiskCommunication()!=null){
+					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
+					if (rt!=null){
+						if (rt.length>0){
+							if (rt[0].getTextualDescription()!=null){
+								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
+							}
+						}
+					}
+				}
+			}	
+			result += "</maybe>";
 		}
 		result += "</action>";
 		result += "</files>";		

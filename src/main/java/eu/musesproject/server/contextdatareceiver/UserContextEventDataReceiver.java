@@ -126,6 +126,7 @@ public class UserContextEventDataReceiver {
 			}
 			if (formattedEvent != null){
 				formattedEvent.setSessionId(currentSessionId);
+				logger.info("Inserting event into the WM:"+formattedEvent);
 				des.insertFact(formattedEvent);
 			}else{
 				logger.error("Formatted event is null.");

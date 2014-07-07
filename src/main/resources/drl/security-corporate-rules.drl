@@ -5,6 +5,7 @@ global eu.musesproject.server.eventprocessor.correlator.global.StatusGlobal Stat
 global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2aeGlobal
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
@@ -15,6 +16,12 @@ import java.util.Date
 import java.util.StringTokenizer
 
 declare Event
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare AppObserverEvent
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -54,26 +61,70 @@ rule "Rule firing"
 		StatusGlobal.log("-------------------------------------------------------------------------");
 		StatusGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("Rule firing correctly working!");
-		int id = Rt2aeGlobal.sendDefaultDevicePolicy(e);
+		//int id = Rt2aeGlobal.sendDefaultDevicePolicy(e);
 
 	end
 
-rule "AccessRequest Detection open type"
+rule "AccessRequest Detection open asset type sensitive"
 	no-loop true
 	dialect "mvel"
 	when
-		e: FileObserverEvent(event=="open")
+		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
 	then
-		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
-		int id = Rt2aeGlobal.composeAccessRequest(e);
+		int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE");
+		//int id = Rt2aeGlobal.decide(e,conn);
 		//GAP (we associate the access requests by id)
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-
+		//retract(e);
+		//retract(conn);
+	end
+	
+	rule "AccessRequest Detection open asset type insensitive"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="open_asset", resourceType=="insensitive")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+	then
+		StatusGlobal.log("1.2.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,conn,"ALLOW");
+		//int id = Rt2aeGlobal.allow(e,conn);
+		//GAP (we associate the access requests by id)
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
+		//retract(conn);
+	end
+	
+	rule "AccessRequest Detection open type"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="open")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+	then
+		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE");
+		//int id = Rt2aeGlobal.decide(e,conn);
+		//GAP (we associate the access requests by id)
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
 	end
 	
 //TODO Changes for System test	
@@ -83,7 +134,7 @@ rule "AccessRequest ClientServer Connectivity"
 	when
 		e: FileObserverEvent(event=="post")
 	then
-		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent. Type post");
+		StatusGlobal.log("1.4.A new AccessRequest has been detected: FileObserverEvent. Type post");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e);
 		//GAP (we associate the access requests by id)
@@ -101,7 +152,7 @@ rule "AccessRequest Detection access type"
 	when
 		e: FileObserverEvent(event=="access")
 	then
-		StatusGlobal.log("2.A new AccessRequest has been detected: FileObserverEvent. Type access");
+		StatusGlobal.log("1.5.A new AccessRequest has been detected: FileObserverEvent. Type access");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e);
 		//GAP (we associate the access requests by id)
@@ -124,5 +175,43 @@ rule "Connectivity"
 		
 		StatusGlobal.log("1.A new ConnectivityEvent has been detected");		
 
+	end
+	
+rule "Blacklist app 00001"
+	no-loop true
+	dialect "mvel"
+	when
+		e: AppObserverEvent(name=="Gmail")
+	then
+		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a blacklisted application","DENY");
+		//int id = Rt2aeGlobal.deny(e,"Action denied: This is a blacklisted application");
+		//GAP (we associate the access requests by id)
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
+	end
+	
+	rule "Not Blacklist app 00001"
+	no-loop true
+	dialect "mvel"
+	when
+		e: AppObserverEvent(name!="Gmail")
+	then
+		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"","ALLOW");
+		//int id = Rt2aeGlobal.allow(e);
+		//GAP (we associate the access requests by id)
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
 	end
 	
