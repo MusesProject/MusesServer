@@ -114,8 +114,9 @@ public class JSONManager {
 			
 
 			contextEvent = extractActionContextEvent(actionJson);
-			resultList.add(contextEvent);
-
+			if (contextEvent!=null){
+				resultList.add(contextEvent);
+			}	
 			
 			// Get the List<ContextEvent> from each sensor			
 			JSONObject sensorJson = root.getJSONObject(JSONIdentifiers.SENSOR_IDENTIFIER);
@@ -126,7 +127,11 @@ public class JSONManager {
 				contextEvent = extractContextEvent(contextEventJson);
 				Logger.getLogger(JSONManager.class.getName()).log(Level.INFO, "A new event has been received.");
 				printContextEventInfo(contextEvent);
-				resultList.add(contextEvent);
+				if (contextEvent == null){
+					Logger.getLogger(JSONManager.class).log(Level.INFO, "Extracted event as null! Original message:"+contextEventJson);
+				}else{
+					resultList.add(contextEvent);
+				}
 			}
 
 		} catch (JSONException e) {
@@ -231,6 +236,9 @@ public class JSONManager {
 				}else if (contextEventType.equals(ActionType.OPEN_APPLICATION)){
 					contextEvent.setType(EventTypes.APPOBSERVER);
 					properties.put("event", contextEventType);
+				}else if (contextEventType.equals(ActionType.UPDATE)){
+					Logger.getLogger(JSONManager.class).log(Level.INFO, "Action type for update of events");
+					return null; //This is not a concrete type of action, it just reflects that the list of events is an update_events request type
 				}
 			}
 		} catch (JSONException e) {
