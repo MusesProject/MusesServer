@@ -21,8 +21,6 @@ package eu.musesproject.server.eventprocessor.impl;
  * #L%
  */
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
@@ -47,7 +45,6 @@ import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.Probability;
-import eu.musesproject.server.risktrust.Threat;
 import eu.musesproject.server.risktrust.UserTrustValue;
 
 public class EventProcessorImpl implements EventProcessor {
@@ -80,6 +77,15 @@ public class EventProcessorImpl implements EventProcessor {
 		return null;
 	}
 
+	@Override
+	public List<Clue> getCurrentClues(AccessRequest accessRequest,
+			UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
+		
+		List<eu.musesproject.server.risktrust.Clue> clues = Rt2aeGlobal.getCluesByRequestId(accessRequest.getId());
+		logger.info("Number of clues:"+clues.size());
+		return clues;
+
+	}
 	
 	@Override
 	public List<AdditionalProtection> getCurrentAdditionalProtections(AccessRequest accessRequest,
@@ -188,14 +194,6 @@ public class EventProcessorImpl implements EventProcessor {
 		
 	public static DroolsEngineService getMusesEngineService(){
 		return des;
-	}
-
-
-	@Override
-	public List<Clue> getCurrentClues(AccessRequest accessRequest,
-			UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
