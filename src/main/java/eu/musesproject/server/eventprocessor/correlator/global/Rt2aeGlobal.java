@@ -22,6 +22,7 @@ package eu.musesproject.server.eventprocessor.correlator.global;
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -93,12 +94,17 @@ public class Rt2aeGlobal {
 		return composedClue;
 	}
 	
-	public Clue composeClue(Event event, String name, String type){
+	//public Clue composeClue(Event event, String name, String type){
+	public eu.musesproject.server.eventprocessor.correlator.model.owl.Clue composeClue(Event event, String name, String type){ 
 		logger.info("[composeClue]");
+		eu.musesproject.server.eventprocessor.correlator.model.owl.Clue factClue = new eu.musesproject.server.eventprocessor.correlator.model.owl.Clue();
 		Clue composedClue = ClueComposer.composeClue(event, name, type);
 		//TODO Complete the composition of threat attributes, based on the information of the event
 		clues.add(composedClue);
-		return composedClue;
+		factClue.setName(composedClue.getName());
+		factClue.setTimestamp(composedClue.getTimestamp());
+		factClue.setEvent_date(new Date(System.currentTimeMillis()));
+		return factClue;
 	}
 	
 	public AdditionalProtection composeAdditionalProtection(eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest request, Event event){

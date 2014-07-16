@@ -79,10 +79,11 @@ rule "AccessRequest Detection open asset type sensitive"
 		//GAP (we associate the access requests by id)
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		//retract(e);
+		retract(e);
 		//retract(conn);
 	end
 	
@@ -100,6 +101,7 @@ rule "AccessRequest Detection open asset type sensitive"
 		//GAP (we associate the access requests by id)
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open asset type insensitive:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
@@ -121,6 +123,7 @@ rule "AccessRequest Detection open asset type sensitive"
 		//GAP (we associate the access requests by id)
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open type:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
@@ -209,6 +212,7 @@ rule "Blacklist app 00001"
 		//GAP (we associate the access requests by id)
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("Not Blacklist app:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);

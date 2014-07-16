@@ -10,15 +10,20 @@
 		
 		<!-- Adds Support for basic authentication -->
 	<!--<http-basic/>
-	</http>-->
+	</http>
 	
 	<http auto-config="true" use-expressions="true">
 		<intercept-url pattern="/commain" access="permitAll" />
 		<intercept-url pattern="/secured/*" access="ROLE_USER" />
 		
-		<!-- Adds Support for basic authentication -->
+		
 		<http-basic/>
+	</http>-->
+	
+	<http>
+    	<x509 subject-principal-regex="CN=(.*?)," user-service-ref="userService"/>
 	</http>
+	
 
 	<!-- <authentication-manager>
 		<authentication-provider>

@@ -55,12 +55,15 @@ public static Clue composeClue(Event event, String name, String type){
 		if (event instanceof FileObserverEvent){
 			FileObserverEvent fileEvent = (FileObserverEvent)event;
 			composedClue.setId((int)fileEvent.getTimestamp());
+			composedClue.setTimestamp(fileEvent.getTimestamp());
 		}else if (event instanceof AppObserverEvent){
 			AppObserverEvent appEvent = (AppObserverEvent)event;
 			composedClue.setId((int)appEvent.getTimestamp());
+			composedClue.setTimestamp(appEvent.getTimestamp());
 		}else if (event instanceof PackageObserverEvent){
-			PackageObserverEvent appEvent = (PackageObserverEvent)event;
-			composedClue.setId((int)appEvent.getTimestamp());
+			PackageObserverEvent pkgEvent = (PackageObserverEvent)event;
+			composedClue.setId((int)pkgEvent.getTimestamp());
+			composedClue.setTimestamp(pkgEvent.getTimestamp());
 		}
 		composedClue.setName(name);
 		composedClue.setType(type);
