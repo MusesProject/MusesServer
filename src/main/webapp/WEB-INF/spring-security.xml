@@ -20,6 +20,35 @@
 		<http-basic/>
 	</http>-->
 	
+	<!-- There is no security requirement to access the html resources like css, js etc and maybe loggedout.jsp page -->
+	<http pattern="/commain/**" security="none"/>
+	<http pattern="/pages/public.jsp" security="none"/>
+
+ 
+	<http use-expressions="true">
+		<!-- Only supervisor can access secure1 webresources and all the resources under it and this resource can be accessed only if the request is https-->
+		<!-- <intercept-url pattern="/pages/secured/**" access="hasRole('supervisor')" requires-channel="https"/> -->
+		<!-- You have to be logged in to access secure folder and all resources under it -->
+		<intercept-url pattern="/pages/secured/**" access="isAuthenticated()" requires-channel="https"/>
+		<!-- <intercept-url pattern="/commain/**" access="isAuthenticated()" requires-channel="https"/> -->
+		<!-- You have to be logged in to access secure folder and all resources under it -->
+		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" requires-channel="https"/>
+ 
+		<!-- Here is where you provide a regular expression to extract user identity from the certificate and pass it to a authentication provider, in this example,
+		there is a dummy authentication provider as below, in real example, the auth provider is something like LDAP -->
+		<x509 subject-principal-regex="CN=(.*?)," user-service-ref="accountService" />
+	</http>
+ 
+	<authentication-manager>
+		<authentication-provider>
+			<!-- Anthentication provider -->
+			<user-service id="accountService">
+				<user name="muses" password="muses" authorities="supervisor" />
+				<!-- <user name="client2" password="" authorities="user" /> -->
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
+	
 	<http>
     	<x509 subject-principal-regex="CN=(.*?)," user-service-ref="userService"/>
 	</http>
@@ -31,12 +60,12 @@
 				<user name="muses" password="muses" authorities="ROLE_USER" />
 			</user-service>
 		</authentication-provider>
-	</authentication-manager> -->
+	</authentication-manager> 
 	
 	
 	<authentication-manager>
         <authentication-provider ref="customAuthenticationProvider" />
-    </authentication-manager>
+    </authentication-manager>-->
 	
 
 </beans:beans>
