@@ -65,8 +65,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 	@Override
 	public Decision decideBasedOnRiskPolicy(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub  
-		
-		return decideBasedOnRiskPolicy_version_4(accessRequest, policyCompliance, context);
+
+		return decideBasedOnRiskPolicy_testing_version(accessRequest,policyCompliance, context);
+		//return decideBasedOnRiskPolicy_version_4(accessRequest, policyCompliance, context);
 	}  
       
 	/**  
@@ -704,69 +705,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	}
 	
 	
-	/**
-
-	* WarnDeviceSecurityStateChange is a function whose aim is to check that if the DeviceSecurityState has changed.
-
-	* @param deviceSecurityState the device security state
-
-	*/
-	@Override
-	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
-		// TODO Auto-generated method stub
-
-		if( deviceSecurityState == null)
-		{
-			
-			System.out.println(" The deviceSecurityState object is null");
-		}
-		else{
-			
-			System.out.println(" The deviceSecurityState object is not null");
-		}
-		
-	}
-
-	/**
-
-	* WarnUserSeemsInvolvedInSecurityIncident is a function whose aim is to check that if the user seems involved in security incident.
-
-	* @param user the user
-
-	* @param probability the probability
-
-	* @param securityIncident the security incident
-
-	*/
-	@Override
-	public void warnUserSeemsInvolvedInSecurityIncident(User user,Probability probability, SecurityIncident securityIncident) {
-		// TODO Auto-generated method stub
-			
-			Random r = new Random();
-			double assetvalue = 0 + r.nextInt(1000000);
-			/**
-			 * asset.getvalue():securityIncident.getCostBenefit()
-			 */			
-			if(securityIncident.getCostBenefit() == 0){
-				/**
-				 * the security incident has not cost
-				 */	
-				
-			}else {
-				/**
-				 * security incident has a cost
-				 */	
-				double pourcentage = securityIncident.getCostBenefit()/assetvalue;
-				UserTrustValue u = new UserTrustValue();
-				u.setValue(user.getUsertrustvalue().getValue()-user.getUsertrustvalue().getValue()*pourcentage);
-				user.setUsertrustvalue(u);
 	
-				
-			}
-						
-		
-
-	}
 	
 	
 	
@@ -1462,22 +1401,107 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 	}
 	
+	
 	/**
-	 * First version of computeOutcomeProbability. This version just return a probability 
-	 * about the Outcome by setting a random value to the probability
-	 *  
+	 * This function is the version of the decideBasedOnRiskPolicy for the demo Demo_Hambourg. 
 	 * 
-	 * */
-	public Probability computeOutcomeProbability(Outcome requestPotentialOutcome, AccessRequest accessRequest,UserTrustValue userTrustValue, DeviceTrustValue deviceTrustValue) {
+	 * @param accessRequest
+	 * @param context
+	 * @return  
+	 */
+	
+	public Decision decideBasedOnRiskPolicy_testing_version(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub
-		Probability probability = new Probability();
-		probability.setEventname(requestPotentialOutcome.getDescription());
 		
-		Random r = new Random();
-		double randomValue =  r.nextDouble();
-		probability.setValue(randomValue);
-		return probability;
+		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
+		
+		List<Clue> listclues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
+		if (accessRequest.getRequestedCorporateAsset().getConfidential_level()=="PUBLIC"){
+			Decision decision = Decision.GRANTED_ACCESS;
+			return decision;
+		}
+		for (int i = 0; i < listclues.size(); i++) {
+			if (listclues.get(i).getName().equalsIgnoreCase("Virus")){
+				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+				RiskTreatment [] riskTreatments = new RiskTreatment[1];
+				RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+				riskTreatments[0] = riskTreatment;	
+				riskCommunication.setRiskTreatment(riskTreatments);
+				Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+				logger.info("Decision: MAYBE_ACCESS");
+				logger.info("Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+				return decision;
+			}
+		}
+		Decision decision = Decision.GRANTED_ACCESS;
+		return decision;
+		
+		
 	}
+	
+	/**
+
+	* WarnDeviceSecurityStateChange is a function whose aim is to check that if the DeviceSecurityState has changed.
+
+	* @param deviceSecurityState the device security state
+
+	*/
+	@Override
+	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
+		// TODO Auto-generated method stub
+
+		if( deviceSecurityState == null)
+		{
+			
+			System.out.println(" The deviceSecurityState object is null");
+		}
+		else{
+			
+			System.out.println(" The deviceSecurityState object is not null");
+		}
+		
+	}
+
+	/**
+
+	* WarnUserSeemsInvolvedInSecurityIncident is a function whose aim is to check that if the user seems involved in security incident.
+
+	* @param user the user
+
+	* @param probability the probability
+
+	* @param securityIncident the security incident
+
+	*/
+	@Override
+	public void warnUserSeemsInvolvedInSecurityIncident(User user,Probability probability, SecurityIncident securityIncident) {
+		// TODO Auto-generated method stub
+			
+			Random r = new Random();
+			double assetvalue = 0 + r.nextInt(1000000);
+			/**
+			 * asset.getvalue():securityIncident.getCostBenefit()
+			 */			
+			if(securityIncident.getCostBenefit() == 0){
+				/**
+				 * the security incident has not cost
+				 */	
+				
+			}else {
+				/**
+				 * security incident has a cost
+				 */	
+				double pourcentage = securityIncident.getCostBenefit()/assetvalue;
+				UserTrustValue u = new UserTrustValue();
+				u.setValue(user.getUsertrustvalue().getValue()-user.getUsertrustvalue().getValue()*pourcentage);
+				user.setUsertrustvalue(u);
+	
+				
+			}
+		
+	}
+	
 	
 	public static void main (String [] arg){
 		
