@@ -37,7 +37,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEve
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
-import eu.musesproject.server.eventprocessor.correlator.model.owl.Threat;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
 import eu.musesproject.server.policyrulesselector.PolicySelector;
 import eu.musesproject.server.policyrulestransmitter.PolicyTransmitter;
 import eu.musesproject.server.risktrust.AccessRequest;
@@ -48,6 +48,8 @@ import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.risktrust.RiskTreatment;
+import eu.musesproject.server.risktrust.SecurityIncident;
+import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
 
 public class Rt2aeGlobal {
@@ -59,7 +61,7 @@ public class Rt2aeGlobal {
 	private static List<AccessRequest> requests = new ArrayList<AccessRequest>();
 	private static List<AdditionalProtection> additionalProtections = new ArrayList<AdditionalProtection>();
 	
-	Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+	private static Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 
 	public void setStatus(String st) {
 		status = st;
@@ -488,5 +490,23 @@ public class Rt2aeGlobal {
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
 		
 		return composedRequest.getId();
+	}
+	
+	public static void notifySecurityIncident(SecurityIncident securityIncident){
+		//Pre-requisites: MUSES UI reports a security incident associated to a concrete user
+		
+		//First, look for previous decisions that might be related the the current security incident
+		rt2aeServer.warnUserSeemsInvolvedInSecurityIncident(securityIncident.getUser(), null, securityIncident);
+	}
+	
+	public void notifyUserBehavior(Event event){
+		logger.info("[notifyUserBehavior] Event");
+		UserBehaviorEvent userEvent = (UserBehaviorEvent)event;
+		//rt2aeServer.warn		
+		logger.info("		" + "UserBehavior sent to RT2AE:"+userEvent.getAction());
+	}
+	
+	public static Rt2aeServerImpl getRt2aeServer(){
+		return rt2aeServer;
 	}
 }

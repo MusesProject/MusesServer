@@ -1,20 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<!-- 
+   - MUSES Server
+   -
+	 -->
+	 
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"	>
+    
   <display-name>server</display-name>
+  
+      <!--
+      - Location of the XML file that defines the root application context
+      - Applied by ContextLoaderListener.
+      -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/spring-security.xml
+        </param-value>
+    </context-param>
+
+
   <session-config>
        <session-timeout>
            30
        </session-timeout>
   </session-config>
-  <welcome-file-list>
-      <welcome-file>index.jsp</welcome-file>
-  </welcome-file-list>
   
+  <filter>
+	<filter-name>springSecurityFilterChain</filter-name>
+	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+ 
+  <filter-mapping>
+	<filter-name>springSecurityFilterChain</filter-name>
+	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+ 
+  
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+      <!--
+      - Publishes events for session creation and destruction through the application
+      - context. Optional unless concurrent session control is being used.
+      -->
+    <listener>
+      <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+
    <!--  Defining the servlets -->     
   
   
-   <servlet>
+  <servlet>
     <description></description>
     <servlet-name>ComMainServlet</servlet-name>
     <servlet-class>eu.musesproject.server.connectionmanager.ComMainServlet</servlet-class>
@@ -27,17 +67,9 @@
 		<listener-class>eu.musesproject.server.connectionmanager.SessionHandler</listener-class>
   </listener>
   
-  <filter>
-	<filter-name>springSecurityFilterChain</filter-name>
-	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-  </filter>
- 
-  <filter-mapping>
-	<filter-name>springSecurityFilterChain</filter-name>
-	<url-pattern>/*</url-pattern>
-  </filter-mapping>
- 
-  <listener>
-	<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
-  </listener>
+  <welcome-file-list>
+      <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  
+  
 </web-app>

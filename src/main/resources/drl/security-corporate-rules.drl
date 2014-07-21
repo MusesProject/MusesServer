@@ -10,6 +10,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -51,6 +52,11 @@ declare ConnectivityEvent
 	@expires (1m)
 end
 
+declare UserBehaviorEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
 
 rule "Rule firing"
 	no-loop true
@@ -219,3 +225,12 @@ rule "Blacklist app 00001"
 		retract(e);
 	end
 	
+	rule "User Behavior"
+	no-loop true
+	dialect "mvel"
+	when
+		u:UserBehaviorEvent()
+	then
+		StatusGlobal.log("USER BEHAVIOR DETECTED:"+u.getAction());
+		Rt2aeGlobal.notifyUserBehavior(u);
+	end	

@@ -34,8 +34,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtecti
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
-import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
-import eu.musesproject.server.eventprocessor.util.ActionTypes;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 
@@ -60,6 +59,8 @@ public class EventFormatter {
 					cepFileEvent = convertToPackageObserverEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.APPOBSERVER)){
 					cepFileEvent = convertToAppObserverEvent(contextEvent);
+				} else if (contextEvent.getType().equals(EventTypes.USERBEHAVIOR)){
+					cepFileEvent = convertToUserBehaviorEvent(contextEvent);
 				} else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 				}
@@ -73,6 +74,14 @@ public class EventFormatter {
 		Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
 		return (Event)cepFileEvent;
 		
+	}
+	private static Event convertToUserBehaviorEvent(ContextEvent contextEvent) {
+		UserBehaviorEvent cepFileEvent = new UserBehaviorEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setAction(properties.get("action"));
+		cepFileEvent.setType(EventTypes.USERBEHAVIOR);
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		return cepFileEvent;
 	}
 	private static PackageObserverEvent convertToPackageObserverEvent(ContextEvent contextEvent) {
 		PackageObserverEvent cepFileEvent = new PackageObserverEvent();

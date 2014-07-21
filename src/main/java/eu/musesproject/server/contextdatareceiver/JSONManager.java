@@ -95,6 +95,36 @@ public class JSONManager {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+		} else if (requestType.equals(RequestType.USER_ACTION)) {
+			
+			// Process the root JSON object
+			JSONObject root;
+			try {
+				root = new JSONObject(message);
+				// TODO Get the behavior part
+				JSONObject behaviorJson = root
+						.getJSONObject(JSONIdentifiers.USER_BEHAVIOR);
+				contextEvent = new ContextEvent();
+				contextEvent.setType(EventTypes.USERBEHAVIOR);
+				properties = new HashMap<String,String>();
+				for (Iterator iterator = behaviorJson.keys(); iterator.hasNext();) {
+					String key = (String) iterator.next();
+					if ((!key.equals(ContextEvent.KEY_TYPE))&&(!key.equals(ContextEvent.KEY_TIMESTAMP))){
+						String value = behaviorJson.getString(key);
+						properties.put(key, value);
+					}
+				}
+				contextEvent.setProperties(properties);
+				Logger.getLogger(JSONManager.class.getName()).log(
+						Level.INFO, "A new event has been received.");
+				printContextEventInfo(contextEvent);
+				resultList.add(contextEvent);
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		return resultList;
 

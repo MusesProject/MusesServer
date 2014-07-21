@@ -1,4 +1,4 @@
-package eu.musesproject.server.eventprocessor.util;
+package eu.musesproject.server.eventprocessor.correlator.model.owl;
 
 /*
  * #%L
@@ -21,11 +21,29 @@ package eu.musesproject.server.eventprocessor.util;
  * #L%
  */
 
-public class EventTypes {
-	//public final static String FILEOBSERVER = "CONTEXT_SENSOR_FILEOBSERVER";
-	public final static String FILEOBSERVER = "ACTION_REMOTE_FILE_ACCESS";
-	public final static String CONNECTIVITY = "CONTEXT_SENSOR_CONNECTIVITY";
-	public final static String DEVICE_PROTECTION = "CONTEXT_SENSOR_DEVICE_PROTECTION";
-	public final static String APPOBSERVER = "ACTION_APP_OPEN";
-	public final static String USERBEHAVIOR = "USER_BEHAVIOR";
+public class UserBehaviorEvent extends Event {
+	
+	private int id;
+	private long timestamp;
+	private String action;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public long getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+	public String getAction() {
+		return action;
+	}
+	public void setAction(String action) {
+		this.action = action;
+	}
+
 }
