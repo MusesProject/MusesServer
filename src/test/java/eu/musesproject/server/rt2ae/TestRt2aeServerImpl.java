@@ -145,30 +145,5 @@ public class TestRt2aeServerImpl {
 		assertNotNull(user.getUsertrustvalue());
 	}
 	
-	/**
-
-	* testComputeOutcomeProbability: JUnit Test case whose aim is to check that if the probability computed by the functionis not null.
-
-	* @param none
-
-	*/
-	@Test
-	public void testComputeOutcomeProbability() {
-		Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing",100000);
-		User user = new User();
-		UserTrustValue usertrustvalue = new UserTrustValue();
-		usertrustvalue.setValue(0);
-		user.setUsertrustvalue(usertrustvalue);
-		Device device = new Device();
-		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
-		devicetrustvalue.setValue(0);
-		device.setDevicetrustvalue(devicetrustvalue);    
-		rt2ae = new Rt2aeServerImpl();
-		Probability probability = new Probability();
-		AccessRequest accessRequest = new AccessRequest();
-		probability = rt2ae.computeOutcomeProbability(requestPotentialOutcome,accessRequest,usertrustvalue ,devicetrustvalue);
-		assertNotNull(probability);
-	}
-	
 
 }
