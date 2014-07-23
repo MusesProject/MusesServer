@@ -240,6 +240,9 @@ public class PolicyEnforcementPoint {
     }
     
     public static Balana getBalana(){
+    	if (balana==null){
+    		initBalana();
+    	}
     	return balana;
     }
 
