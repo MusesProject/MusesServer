@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
@@ -41,6 +42,7 @@ import com.hp.hpl.jena.util.FileManager;
 import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.Action;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
+import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.risktrust.Asset;
 import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
@@ -53,6 +55,8 @@ import eu.musesproject.server.risktrust.RiskTreatment;
  * @version Oct 7, 2013
  */
 public class PolicySelector {
+	
+	private Logger logger = Logger.getLogger(PolicySelector.class.getName());
 	
 	
 	/**
@@ -73,7 +77,12 @@ public class PolicySelector {
 		String jsonDevicePolicy = null;
 		if (decisions.length > 0){//TODO This is a sample policy selection, hence the selection of concrete policies based on decisions is yet to be done
 			Decision decision = decisions[0];
-			jsonDevicePolicy = getJSONDevicePolicy(decision, action);
+			if (decision!=null){
+				jsonDevicePolicy = getJSONDevicePolicy(decision, action);
+			}else{
+				logger.info("		DECISION returned by RT2AE IS NULL");
+				jsonDevicePolicy = "<empty/>";
+			}			
 		}else{
 			jsonDevicePolicy = "<empty/>";
 		}
@@ -87,7 +96,13 @@ public class PolicySelector {
 		String jsonDevicePolicy = null;
 		if (decisions.length > 0){//TODO This is a sample policy selection, hence the selection of concrete policies based on decisions is yet to be done
 			Decision decision = decisions[0];
-			jsonDevicePolicy = getJSONDevicePolicy(decision, action, asset);
+			if (decision!=null){
+				jsonDevicePolicy = getJSONDevicePolicy(decision, action, asset);
+			}else{
+				logger.info("		DECISION returned by RT2AE IS NULL");
+				jsonDevicePolicy = "<empty/>";
+			}
+			
 		}else{
 			jsonDevicePolicy = "<empty/>";
 		}

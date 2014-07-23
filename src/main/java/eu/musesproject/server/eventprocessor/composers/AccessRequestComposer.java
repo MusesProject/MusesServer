@@ -22,6 +22,7 @@ package eu.musesproject.server.eventprocessor.composers;
  */
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent;
@@ -53,6 +54,12 @@ public class AccessRequestComposer {
 			requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
 			composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
 			composedRequest.setEventId(appEvent.getTimestamp());
+		}else if (event.getType().equals(EventTypes.SEND_MAIL)){
+			EmailEvent emailEvent = (EmailEvent) event;
+			requestedCorporateAsset.setId(emailEvent.getId());//Get the asset identifier		
+			requestedCorporateAsset.setLocation(emailEvent.getAttachmentName());//Get the asset identifier
+			composedRequest.setAction(emailEvent.getType());//Get the action over the asset
+			composedRequest.setEventId(emailEvent.getTimestamp());
 		}
 		
 		requestedCorporateAsset.setValue(0);

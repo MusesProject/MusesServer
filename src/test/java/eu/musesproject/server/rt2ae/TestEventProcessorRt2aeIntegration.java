@@ -1,5 +1,7 @@
 package eu.musesproject.server.rt2ae;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
+import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
@@ -133,10 +136,14 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 		securityIncident.setDescription("");
 		securityIncident.setProbability(0.5);
 		securityIncident.setUser(user);
+		Probability probability = new Probability();
+		probability.setValue(0.5);
 		
-		Rt2aeGlobal.notifySecurityIncident(securityIncident);
+		Rt2aeGlobal.notifySecurityIncident(probability, securityIncident);
+		assertNotNull(user.getUsertrustvalue());
 		
 	}
+	
 	
 	public final void testUserAction(){
 		

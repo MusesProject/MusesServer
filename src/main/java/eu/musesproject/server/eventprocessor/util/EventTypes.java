@@ -28,4 +28,5 @@ public class EventTypes {
 	public final static String DEVICE_PROTECTION = "CONTEXT_SENSOR_DEVICE_PROTECTION";
 	public final static String APPOBSERVER = "ACTION_APP_OPEN";
 	public final static String USERBEHAVIOR = "USER_BEHAVIOR";
+	public final static String SEND_MAIL = "ACTION_SEND_MAIL";
 }

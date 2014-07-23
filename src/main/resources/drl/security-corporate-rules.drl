@@ -6,6 +6,7 @@ global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2ae
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
@@ -41,6 +42,12 @@ declare FileObserverEvent
 end
 
 declare OpenFileEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare EmailEvent
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -233,4 +240,14 @@ rule "Blacklist app 00001"
 	then
 		StatusGlobal.log("USER BEHAVIOR DETECTED:"+u.getAction());
 		Rt2aeGlobal.notifyUserBehavior(u);
+	end	
+	
+	rule "AccessRequest Email"
+	no-loop true
+	dialect "mvel"
+	when
+		e:EmailEvent()
+	then
+		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
+		int id = Rt2aeGlobal.composeAccessRequest(e,"","ALLOW");
 	end	

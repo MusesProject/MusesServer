@@ -35,6 +35,7 @@ import eu.musesproject.server.eventprocessor.composers.ClueComposer;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AdditionalProtection;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
@@ -47,9 +48,9 @@ import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.PolicyCompliance;
+import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.RiskTreatment;
 import eu.musesproject.server.risktrust.SecurityIncident;
-import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
 
 public class Rt2aeGlobal {
@@ -311,7 +312,7 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 	
-	public int composeAccessRequest(AppObserverEvent event, String message, String mode){//Simulate response from RT2AE, for demo purposes
+	public int composeAccessRequest(Event event, String message, String mode){//Simulate response from RT2AE, for demo purposes
 		logger.info("[composedAccessRequest]");
 		Decision[] decisions = new Decision[1];
 		
@@ -492,11 +493,12 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 	
-	public static void notifySecurityIncident(SecurityIncident securityIncident){
+	public static void notifySecurityIncident(Probability probability, SecurityIncident securityIncident){
 		//Pre-requisites: MUSES UI reports a security incident associated to a concrete user
 		
 		//First, look for previous decisions that might be related the the current security incident
-		rt2aeServer.warnUserSeemsInvolvedInSecurityIncident(securityIncident.getUser(), null, securityIncident);
+		//Second, get the information about the associated user (userTrustValue)
+		rt2aeServer.warnUserSeemsInvolvedInSecurityIncident(securityIncident.getUser(), probability, securityIncident);
 	}
 	
 	public void notifyUserBehavior(Event event){

@@ -21,16 +21,21 @@ package eu.musesproject.server.contextdatareceiver.formatting;
  * #L%
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ibm.icu.util.StringTokenizer;
+
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
@@ -61,6 +66,8 @@ public class EventFormatter {
 					cepFileEvent = convertToAppObserverEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.USERBEHAVIOR)){
 					cepFileEvent = convertToUserBehaviorEvent(contextEvent);
+				} else if (contextEvent.getType().equals(EventTypes.SEND_MAIL)){
+					cepFileEvent = convertToEmailEvent(contextEvent);
 				} else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 				}
@@ -74,6 +81,45 @@ public class EventFormatter {
 		Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
 		return (Event)cepFileEvent;
 		
+	}
+	private static Event convertToEmailEvent(ContextEvent contextEvent) {
+		EmailEvent cepFileEvent = new EmailEvent();
+		Map<String,String> prop = contextEvent.getProperties();
+		Map<String,String> properties = null;
+		JSONObject propJSON;
+		try {
+			propJSON = new JSONObject(prop.get("properties"));
+		
+			properties = new HashMap<String,String>();
+			for (Iterator iterator = propJSON.keys(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String value = propJSON.getString(key);
+				properties.put(key, value);
+			}
+		
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		cepFileEvent.setType(EventTypes.SEND_MAIL);
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setFrom(properties.get("from"));
+		cepFileEvent.setTo(properties.get("to"));
+		cepFileEvent.setCc(properties.get("cc"));
+		cepFileEvent.setBcc(properties.get("bcc"));
+		cepFileEvent.setSubject(properties.get("subject"));
+		cepFileEvent.setNumberAttachments(Integer.valueOf(properties.get("noAttachments")));
+		String attachmentInfo = properties.get("attachmentInfo");
+		StringTokenizer tokenizer = new StringTokenizer(attachmentInfo, ";");
+		while (tokenizer.hasMoreTokens()){
+			String attachment = tokenizer.nextToken();
+			StringTokenizer tokenAttach = new StringTokenizer(attachment,",");
+			cepFileEvent.setAttachmentName(tokenAttach.nextToken()); //FIXME We have to provide a mechanism to store info associated to more than one attachment
+			cepFileEvent.setAttachmentType(tokenAttach.nextToken());
+			cepFileEvent.setAttachmentSize(tokenAttach.nextToken());
+		}		
+		return cepFileEvent;
 	}
 	private static Event convertToUserBehaviorEvent(ContextEvent contextEvent) {
 		UserBehaviorEvent cepFileEvent = new UserBehaviorEvent();
