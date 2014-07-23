@@ -119,20 +119,20 @@ public class Rt2aeGlobal {
 	}
 	
 	public static List<eu.musesproject.server.risktrust.Clue> getCluesByRequestId(int requestId){
-		Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]");
+		Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:"+requestId);
 		List<eu.musesproject.server.risktrust.Clue> result = new ArrayList<eu.musesproject.server.risktrust.Clue>();
 		eu.musesproject.server.risktrust.Clue aux = null;
 		
 		long eventId = 0;
 		
-		for (Iterator iterator = requests.iterator(); iterator.hasNext();) {
+		for (Iterator<AccessRequest> iterator = requests.iterator(); iterator.hasNext();) {
 			AccessRequest accessRequest = (AccessRequest) iterator.next();
 			if (accessRequest.getId()==requestId){
 				eventId = accessRequest.getEventId();
 			}
 		}
 		
-		for (Iterator iterator = clues.iterator(); iterator.hasNext();) {
+		for (Iterator<Clue> iterator = clues.iterator(); iterator.hasNext();) {
 			Clue clue = (Clue) iterator.next();
 			if (clue.getId()==(int)eventId){
 				clue.setRequestId(requestId);
@@ -327,7 +327,7 @@ public class Rt2aeGlobal {
 		
 		PolicyCompliance policyCompliance = policyCompliance(composedRequest, event, mode);
 		decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
-		
+		decisions[0] = decision;
 		
 		//Select the most appropriate policy according to the decision and the action of the request		
 		logger.info("		Session id:"+event.getSessionId());
@@ -420,6 +420,7 @@ public class Rt2aeGlobal {
 		}else if (mode.equals("ALLOW")){
 			compliance.setResult(PolicyCompliance.ALLOW);
 			compliance.setCompliance(true);
+			compliance.setReason("Action allowed because it is compliant with policies. To be confirmed by RT2AE");
 		}
 		
 		logger.info("		Compliance for access request "+compliance.getRequestId()+" :"+compliance.getResult()+" "+compliance.getReason());

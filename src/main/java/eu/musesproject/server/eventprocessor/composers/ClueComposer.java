@@ -22,6 +22,7 @@ package eu.musesproject.server.eventprocessor.composers;
  */
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
@@ -64,6 +65,10 @@ public static Clue composeClue(Event event, String name, String type){
 			PackageObserverEvent pkgEvent = (PackageObserverEvent)event;
 			composedClue.setId((int)pkgEvent.getTimestamp());
 			composedClue.setTimestamp(pkgEvent.getTimestamp());
+		}else if (event instanceof EmailEvent){
+			EmailEvent emailEvent = (EmailEvent)event;
+			composedClue.setId((int)emailEvent.getTimestamp());
+			composedClue.setTimestamp(emailEvent.getTimestamp());
 		}
 		composedClue.setName(name);
 		composedClue.setType(type);

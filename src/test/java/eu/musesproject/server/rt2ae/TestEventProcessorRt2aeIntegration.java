@@ -30,6 +30,10 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 	
 	private final String testUserAction = "{\"behavior\":{\"action\":\"cancel\"},\"requesttype\":\"user_behavior\"}";
 	
+	private final String testEmailWithoutAttachments = "{\"sensor\":{},\"action\":{\"type\":\"ACTION_SEND_MAIL\",\"timestamp\" : \"1389885147\",\"properties\": {\"from\":\"max.mustermann@generic.com\",\"to\":\"the.reiceiver@generic.com, another.direct.receiver@generic.com\",\"cc\":\"other.listener@generic.com, 2other.listener@generic.com\",\"bcc\":\"hidden.reiceiver@generic.com\",\"subject\":\"MUSES sensor status subject\",\"noAttachments\" : 0,\"attachmentInfo\": \"\"}},\"requesttype\":\"online_decision\"}";
+	private final String testEmailWithAttachments = "{\"sensor\":{},\"action\":{\"type\":\"ACTION_SEND_MAIL\",\"timestamp\" : \"1389885147\",\"properties\": {\"from\":\"max.mustermann@generic.com\",\"to\":\"the.reiceiver@generic.com, another.direct.receiver@generic.com\",\"cc\":\"other.listener@generic.com, 2other.listener@generic.com\",\"bcc\":\"hidden.reiceiver@generic.com\",\"subject\":\"MUSES sensor status subject\",\"noAttachments\" : 2,\"attachmentInfo\": \"name,type,size;name2,type2,size2\"}},\"requesttype\":\"online_decision\"}";
+	private final String testVirusFound = "{\"sensor\":{},\"action\":{\"type\":\"virus_found\",\"timestamp\" : \"1389885147\",\"properties\": {\"path\":\"/sdcard/Swe/virus.txt\",\"name\":\"seriour_virus\",\"severity\":\"high\"}},\"requesttype\":\"online_decision\"}";
+	
 	public final void testFullCycleWithClues(){
 		
 		EventProcessor processor = null;
@@ -144,6 +148,10 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 		
 	}
 	
+	public final void testVirusFoundAsSecurityDeviceStateChange(){
+		
+	}
+	
 	
 	public final void testUserAction(){
 		
@@ -168,5 +176,65 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 			des.insertFact(formattedEvent);
 		}
 		
+	}
+
+	public final void testEmailWithoutAttachments(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		List<ContextEvent> list = JSONManager.processJSONMessage(testEmailWithoutAttachments, "online_decision");		
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+	}
+	
+	public final void testEmailWithAttachmentsVirusFound(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		List<ContextEvent> list = JSONManager.processJSONMessage(testEmailWithAttachments, "online_decision");
+		List<ContextEvent> list1 = JSONManager.processJSONMessage(testVirusFound, "online_decision");
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
+		for (Iterator<ContextEvent> iterator = list1.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+		
+		//DeviceSecurityState changes due to virus found in the same device
+		//testSecurityDeviceStateChange();
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+		
+		/*
+		testSecurityIncident();// TODO Associate with the same user and previous decision
+		
+		testUserAction(); //TODO Associate with the same user*/
 	}
 }

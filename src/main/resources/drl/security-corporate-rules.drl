@@ -12,6 +12,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEv
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -48,6 +49,12 @@ declare OpenFileEvent
 end
 
 declare EmailEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare VirusFoundEvent
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -241,13 +248,24 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("USER BEHAVIOR DETECTED:"+u.getAction());
 		Rt2aeGlobal.notifyUserBehavior(u);
 	end	
-	
-	rule "AccessRequest Email"
+
+
+	rule "AccessRequest Email without Attachments"
 	no-loop true
 	dialect "mvel"
 	when
-		e:EmailEvent()
+		e:EmailEvent(numberAttachments==0)
 	then
 		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
 		int id = Rt2aeGlobal.composeAccessRequest(e,"","ALLOW");
+	end	
+	
+	rule "AccessRequest Email with Attachments"
+	no-loop true
+	dialect "mvel"
+	when
+		e:EmailEvent(numberAttachments>0)
+	then
+		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
+		int id = Rt2aeGlobal.composeAccessRequest(e,"","DECIDE");
 	end	

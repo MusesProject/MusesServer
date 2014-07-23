@@ -7,11 +7,13 @@ global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2ae
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AdditionalProtection
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Clue;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import eu.musesproject.server.risktrust.ThreatOntology
 import java.util.ArrayList
@@ -61,6 +63,18 @@ declare DeviceProtectionEvent
 end
 
 declare AdditionalProtection
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare EmailEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare VirusFoundEvent
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -195,6 +209,8 @@ rule "Clue-identification-000007"
 		StatusGlobal.addFlag("DEMO STEP3");	
 		StatusGlobal.log("AccessRequest identifier:"+request.getId());
 	end	
+	
+
 			
 rule "Additional Protection Detection"
 	no-loop true
@@ -242,3 +258,34 @@ rule "Additional Protection Detection"
 		Rt2aeGlobal.deviceSecurityStateChange(e,"Antivirus is not running", ThreatOntology.MALICIOUS_MISUSE);
 		retract(e);
 	end
+	
+	
+	rule "Device-security-state-00002"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		v: VirusFoundEvent()
+	then
+		
+		StatusGlobal.log("5.A new device security state has been identified: VIRUS FOUND, associated to event:"+v.getTimestamp());
+		//Rt2aeGlobal.deviceSecurityStateChange(e,"Virus", ThreatOntology.DATA_DESTRUCTION);
+		//retract(v);
+	end
+	
+	rule "Clue-identification-000008"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: EmailEvent()
+		v: VirusFoundEvent()		
+		not Clue(name=="Virus")
+	then
+		
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Virus", ThreatOntology.DATA_DESTRUCTION);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		insert(clue);
+	end	

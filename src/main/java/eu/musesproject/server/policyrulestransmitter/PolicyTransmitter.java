@@ -88,23 +88,10 @@ public class PolicyTransmitter {
 	}
 	
 	private void sendData(String dataToSend, String sessionId){
-		logger.log(Level.INFO, "[PolicyTransmitter.sendData]");
-		logger.log(Level.INFO, "		Retrieving session Ids...");
-		logger.log(Level.INFO, "		PolicyTransmitter sendData. Data to be sent:"+dataToSend);
-		logger.info("		PolicyTransmitter sendData. Data to be sent:"+dataToSend);
-		//Set<String> sessionIds = connManager.getSessionIds();
-		//logger.info("Number of ids:"+sessionIds.size());
-		//if (sessionIds.size()==0){
-		//	logger.info("No sessions available in the connection manager");
-		//}
-		//for (Iterator iterator = sessionIds.iterator(); iterator.hasNext();) {
-			//String sessionId = (String) iterator.next();
+		//logger.log(Level.INFO, "[PolicyTransmitter.sendData]");
+		//logger.log(Level.INFO, "		PolicyTransmitter sendData. Data to be sent:"+dataToSend);
 		logger.log(Level.INFO, "		Sending data with sessionId:"+sessionId);
-		logger.info("		Sending data with sessionId:"+sessionId);
-		//logger.info(connManager.getSessionDetails(sessionId).getId());//TODO Identify the concrete sessionId coming from the device
 		connManager.sendData(sessionId, dataToSend);
-		//}
-
 	}
 
 }

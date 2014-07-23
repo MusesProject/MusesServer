@@ -40,6 +40,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 
@@ -68,6 +69,8 @@ public class EventFormatter {
 					cepFileEvent = convertToUserBehaviorEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.SEND_MAIL)){
 					cepFileEvent = convertToEmailEvent(contextEvent);
+				} else if (contextEvent.getType().equals(EventTypes.VIRUS_FOUND)){
+					cepFileEvent = convertToVirusFoundEvent(contextEvent);
 				} else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 				}
@@ -82,6 +85,36 @@ public class EventFormatter {
 		return (Event)cepFileEvent;
 		
 	}
+	
+	private static Event convertToVirusFoundEvent(ContextEvent contextEvent) {
+		VirusFoundEvent cepFileEvent = new VirusFoundEvent();
+		Map<String,String> prop = contextEvent.getProperties();
+		Map<String,String> properties = null;
+		JSONObject propJSON;
+		try {
+			propJSON = new JSONObject(prop.get("properties"));
+		
+			properties = new HashMap<String,String>();
+			for (Iterator iterator = propJSON.keys(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String value = propJSON.getString(key);
+				properties.put(key, value);
+			}
+		
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		cepFileEvent.setType(EventTypes.VIRUS_FOUND);
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setPath(properties.get("path"));
+		cepFileEvent.setName(properties.get("name"));
+		cepFileEvent.setSeverity(properties.get("severity"));
+				
+		return cepFileEvent;
+	}
+	
 	private static Event convertToEmailEvent(ContextEvent contextEvent) {
 		EmailEvent cepFileEvent = new EmailEvent();
 		Map<String,String> prop = contextEvent.getProperties();

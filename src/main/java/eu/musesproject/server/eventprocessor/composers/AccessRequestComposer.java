@@ -57,7 +57,9 @@ public class AccessRequestComposer {
 		}else if (event.getType().equals(EventTypes.SEND_MAIL)){
 			EmailEvent emailEvent = (EmailEvent) event;
 			requestedCorporateAsset.setId(emailEvent.getId());//Get the asset identifier		
-			requestedCorporateAsset.setLocation(emailEvent.getAttachmentName());//Get the asset identifier
+			requestedCorporateAsset.setLocation(emailEvent.getAttachmentName());//Get the asset identifier //FIXME This should be a location, hence we should look into the database for the location in the repository
+			requestedCorporateAsset.setValue(15000);//FIXME Set value from the assets' database
+			requestedCorporateAsset.setConfidential_level("STRICTLY_CONFIDENTIAL"); //FIXME Set confidential level by means of the domains' database
 			composedRequest.setAction(emailEvent.getType());//Get the action over the asset
 			composedRequest.setEventId(emailEvent.getTimestamp());
 		}
