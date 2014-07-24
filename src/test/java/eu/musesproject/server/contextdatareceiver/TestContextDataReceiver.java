@@ -295,7 +295,7 @@ public class TestContextDataReceiver extends TestCase {
 	}
 	
 	
-public final void testEmailWithAttachments(){
+	public final void testEmailWithAttachments(){
 		
 		EventProcessor processor = null;
 		MusesCorrelationEngineImpl engine = null;

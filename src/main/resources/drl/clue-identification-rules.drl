@@ -95,6 +95,8 @@ rule "Clue-identification-00000"
 		StatusGlobal.log("Identifier:"+e.getTimestamp());
 		Clue clue = Rt2aeGlobal.composeClue(e,"Bluetooth enabled might turn into data leakage problems",ThreatOntology.DATA_LEAKAGE);
 		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
 		insert(clue);
 	end
 	
@@ -113,6 +115,8 @@ rule "Clue-identification-00000"
 		StatusGlobal.log("Identifier:"+e.getTimestamp());
 		Clue clue = Rt2aeGlobal.composeClue(e,"Encryption without WPA2 protocol might be unsecure", ThreatOntology.DATA_LEAKAGE);
 		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
 		insert(clue);
 	end
 	
@@ -287,5 +291,7 @@ rule "Additional Protection Detection"
 		StatusGlobal.log("Identifier:"+e.getTimestamp());
 		Clue clue = Rt2aeGlobal.composeClue(e,"Virus", ThreatOntology.DATA_DESTRUCTION);
 		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
 		insert(clue);
 	end	

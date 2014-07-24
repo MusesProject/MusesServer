@@ -57,6 +57,8 @@ public class JSONManager {
 		// Action action = null;
 		Map<String, String> properties = null;
 		ContextEvent contextEvent = null;
+		String username = null;
+		String deviceId = null;
 		List<ContextEvent> resultList = new ArrayList<ContextEvent>();
 		if (requestType.equals(RequestType.UPDATE_CONTEXT_EVENTS)) {
 			Logger.getLogger(JSONManager.class)
@@ -70,7 +72,8 @@ public class JSONManager {
 			try {
 				// Process the root JSON object
 				JSONObject root = new JSONObject(message);
-				// TODO Get the action part
+				
+				// Get the action part
 				JSONObject actionJson = root
 						.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
 

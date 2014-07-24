@@ -56,10 +56,7 @@ public class AccessRequestComposer {
 			composedRequest.setEventId(appEvent.getTimestamp());
 		}else if (event.getType().equals(EventTypes.SEND_MAIL)){
 			EmailEvent emailEvent = (EmailEvent) event;
-			requestedCorporateAsset.setId(emailEvent.getId());//Get the asset identifier		
-			requestedCorporateAsset.setLocation(emailEvent.getAttachmentName());//Get the asset identifier //FIXME This should be a location, hence we should look into the database for the location in the repository
-			requestedCorporateAsset.setValue(15000);//FIXME Set value from the assets' database
-			requestedCorporateAsset.setConfidential_level("STRICTLY_CONFIDENTIAL"); //FIXME Set confidential level by means of the domains' database
+			requestedCorporateAsset = testGetRequestedAsset(emailEvent.getAttachmentName());
 			composedRequest.setAction(emailEvent.getType());//Get the action over the asset
 			composedRequest.setEventId(emailEvent.getTimestamp());
 		}
@@ -69,12 +66,11 @@ public class AccessRequestComposer {
 			OpenFileEvent fileEvent = (OpenFileEvent)event;
 			requestedCorporateAsset.setTitle(fileEvent.getAssetTypeId());//TODO Asset information should be completed
 		}
-		User user = new User();//TODO User information should be retrieved
-		Device device = new Device();//TODO Device information should be retrieved
-		UserTrustValue userTrustValue = new UserTrustValue();
-		user.setUsertrustvalue(userTrustValue);
-		DeviceTrustValue deviceTrustValue = new DeviceTrustValue();
-		device.setDevicetrustvalue(deviceTrustValue);
+		
+		User user = testGetUserFromDatabase(event.getUsername());//TODO User information should be retrieved from the database
+
+		Device device = testGetDeviceFromDatabase(event.getDeviceId());//TODO Device information should be retrieved
+
 		composedRequest.setUser(user);
 		composedRequest.setDevice(device);
 		composedRequest.setRequestedCorporateAsset(requestedCorporateAsset);
@@ -83,5 +79,32 @@ public class AccessRequestComposer {
 		
 		return composedRequest;
 	}
+
+	private static Asset testGetRequestedAsset(String attachmentName) {//TODO This method will be replaced by the info in the database
+		Asset asset = new Asset();
+		asset.setId(1);//Get the asset identifier		
+		asset.setLocation("//repository/projects/sandproject/offer/"+attachmentName);//Get the asset identifier //FIXME This should be a location, hence we should look into the database for the location in the repository
+		asset.setValue(15000);//FIXME Set value from the assets' database
+		asset.setConfidential_level("STRICTLY_CONFIDENTIAL"); //FIXME Set confidential level by means of the domains' database		
+		return asset;
+	}
+
+	private static Device testGetDeviceFromDatabase(String deviceId) {//TODO This method will be replaced by the info in the database
+		Device device = new Device();
+		DeviceTrustValue deviceTrustValue = new DeviceTrustValue();
+		deviceTrustValue.setValue(500);
+		device.setDevicetrustvalue(deviceTrustValue);
+		return device;
+	}
+
+	private static User testGetUserFromDatabase(String username) {//TODO This method will be replaced by the info in the database
+		User user = new User();
+		UserTrustValue userTrustValue = new UserTrustValue();
+		userTrustValue.setValue(2000);
+		user.setUsertrustvalue(userTrustValue);
+		return user;
+	}
+	
+	
 
 }

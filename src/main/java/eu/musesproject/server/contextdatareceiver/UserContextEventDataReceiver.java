@@ -109,7 +109,7 @@ public class UserContextEventDataReceiver {
 		return formattedEvent;
 	}
 	
-	public void processContextEventList(List<ContextEvent> list, String currentSessionId){
+	public void processContextEventList(List<ContextEvent> list, String currentSessionId, String username, String deviceId){
 		
 		logger.info("processContextEventList: Processing list of "+list.size()+" elements.");
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -126,6 +126,8 @@ public class UserContextEventDataReceiver {
 			}
 			if (formattedEvent != null){
 				formattedEvent.setSessionId(currentSessionId);
+				formattedEvent.setUsername(username);
+				formattedEvent.setDeviceId(deviceId);
 				logger.info("Inserting event into the WM:"+formattedEvent);
 				des.insertFact(formattedEvent);
 			}else{

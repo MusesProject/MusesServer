@@ -58,15 +58,19 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	private static class ProcessThread implements Runnable {
 		List<ContextEvent> list = null;
 		String sessionId = null;
+		String username = null;
+		String deviceId = null;
 
-		public ProcessThread(List<ContextEvent> contextList, String id) {
+		public ProcessThread(List<ContextEvent> contextList, String id, String user, String device) {
 			list = contextList;
 			sessionId = id;
+			username = user;
+			deviceId = device;
 		}
 
 		public void run() {
 			UserContextEventDataReceiver.getInstance().processContextEventList(
-					list, sessionId);
+					list, sessionId, username, deviceId);
 		}
 	}
 	private void startConnection() {
@@ -80,6 +84,8 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	public String receiveCb(String sessionId, String rData) {
 		JSONObject root;
 		String requestType = null;
+		String username = null;
+		String deviceId = null;
 
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
 		ConnectionCallbacksImpl.receiveData = rData;
@@ -104,7 +110,19 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					List<ContextEvent> list = JSONManager
 							.processJSONMessage(ConnectionCallbacksImpl.receiveData);
 					logger.log(Level.INFO, "Starting ProcessThread...");
-					Thread t = new Thread(new ProcessThread(list, sessionId));
+					
+					
+					try {
+						username = root
+								.getString(JSONIdentifiers.AUTH_USERNAME);
+						deviceId = root
+								.getString(JSONIdentifiers.AUTH_DEVICE_ID);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId));
 					t.start();
 
 					logger.log(Level.INFO,
