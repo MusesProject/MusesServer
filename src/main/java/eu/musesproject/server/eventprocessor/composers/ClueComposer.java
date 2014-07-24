@@ -26,6 +26,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent;
 import eu.musesproject.server.risktrust.Clue;
 
 
@@ -69,6 +70,10 @@ public static Clue composeClue(Event event, String name, String type){
 			EmailEvent emailEvent = (EmailEvent)event;
 			composedClue.setId((int)emailEvent.getTimestamp());
 			composedClue.setTimestamp(emailEvent.getTimestamp());
+		}else if (event instanceof VirusFoundEvent){
+			VirusFoundEvent virusFoundEvent = (VirusFoundEvent)event;
+			composedClue.setId((int)virusFoundEvent.getTimestamp());
+			composedClue.setTimestamp(virusFoundEvent.getTimestamp());
 		}
 		composedClue.setName(name);
 		composedClue.setType(type);
