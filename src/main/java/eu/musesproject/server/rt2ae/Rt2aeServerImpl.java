@@ -1418,6 +1418,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 		List<Clue> listclues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		if (accessRequest.getRequestedCorporateAsset().getConfidential_level()=="PUBLIC"){
 			Decision decision = Decision.GRANTED_ACCESS;
+			logger.info("Decision: GRANTED_ACCESS");
+			logger.info("The confidential level of the asset is PUBLIC");
 			return decision;
 		}
 		for (int i = 0; i < listclues.size(); i++) {
@@ -1430,11 +1432,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 				Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 				logger.info("Decision: MAYBE_ACCESS");
-				logger.info("Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+				logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
 				return decision;
 			}
 		}
 		Decision decision = Decision.GRANTED_ACCESS;
+		logger.info("Decision: GRANTED_ACCESS");
 		return decision;
 		
 		
