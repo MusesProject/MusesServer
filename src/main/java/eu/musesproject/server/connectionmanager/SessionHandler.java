@@ -37,12 +37,16 @@ import org.apache.log4j.Logger;
 
 public class SessionHandler implements ServletContextListener , HttpSessionListener, ServletRequestListener{
 	
-	private Set<String> sessionIDs = new HashSet<String>();
-	public Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
+	public static Set<String> sessionIDs = new HashSet<String>();
+	public static Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
 	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
 	private static final boolean D = true;
 	private Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
+	
+	public SessionHandler() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	@Override
 	public void requestDestroyed(ServletRequestEvent sre) {
@@ -125,7 +129,7 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, cookie.getMaxAge());
 		Date d = calendar.getTime();
-		boolean found = true;
+		boolean found = false;
 		if(cookieSet.isEmpty()) 
 			found=false; 
 		for (Map.Entry<Date, Cookie> entry : cookieSet.entrySet()) {
@@ -140,7 +144,7 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	}
 		
 	public void removeCookieToList(Cookie cookie){
-		if (cookieSet.isEmpty()){
+		if (!cookieSet.isEmpty()){
 			cookieSet.remove(cookie);
 			removeSessionIdFromList(cookie.getValue());
 		} 

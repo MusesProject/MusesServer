@@ -38,15 +38,19 @@ public class ComMainServletTest {
 	private ConnectionManager connectionManager;
 	
 	private SessionHandler sessionHandler;
-	private Cookie cookie1,cookie2;
+	private Cookie cookie1,cookie2, cookie3;
 	private ComMainServlet comMainServlet;
 
 	@Before
 	public void setup() {
 		cookie1 = new Cookie("JSESSIONID", "00000000000001");
-		cookie1.setMaxAge(60*60*24);
+		cookie1.setMaxAge(1);
 		cookie2 = new Cookie("JSESSIONID", "00000000000002");
-		cookie2.setMaxAge(60*60*24);
+		cookie2.setMaxAge(1);
+		
+		cookie3 = new Cookie("JSESSIONID", "00000000000003");
+		cookie3.setMaxAge(1);
+
 		sessionHandler =new SessionHandler();
 		comMainServlet = new ComMainServlet(sessionHandler, helper, connectionManager);
 	}
@@ -111,13 +115,13 @@ public class ComMainServletTest {
 			
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
 			for (String id: sessionHandler.getSessionIds()){
-				if (id.equalsIgnoreCase(cookie1.getValue())) assertTrue(true);  // Cookie in the list
-				else assertTrue(false);
+				if (id.equalsIgnoreCase(cookie1.getValue())) assertTrue(true); break;  // Cookie in the list
 			}
 			// No need to test it was sent to functional layer
 			
 			// assert that the data is available in the queue and attach
-			assertEquals("{\"auth-message\":\"Successfully authenticated\",\"auth-result\":\"SUCCESS\",\"requesttype\":\"auth-response\"}", comMainServlet.getResponseData()); 
+			//assertEquals("{\"auth-message\":\"Successfully authenticated\",\"auth-result\":\"SUCCESS\",\"requesttype\":\"auth-response\"}", comMainServlet.getResponseData());
+			assertEquals("Some JSON for Client ...", comMainServlet.getResponseData());
 		} catch (ServletException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -126,6 +130,33 @@ public class ComMainServletTest {
 
 	}
 	
+	@Test
+	public void testdoPostDisconnect() throws Exception {
+		when(httpServletRequest.getHeader("connection-type")).thenReturn(
+				"disconnect");
+		when(helper.getRequestData(httpServletRequest)).thenReturn("");
+		when(helper.setCookie(httpServletRequest)).thenReturn(0);
+		when(helper.getCookie()).thenReturn(cookie1);
+		comMainServlet.doPost(httpServletRequest, httpServletResponse);
+		for (String id: sessionHandler.getSessionIds()){
+			if (id.equalsIgnoreCase(cookie1.getValue())) assertTrue(false); // Cookie in the list
+			else continue;
+		}
+		assertEquals(1,new SessionHandler().getSessionIds().size());
+		
+		when(httpServletRequest.getHeader("connection-type")).thenReturn(
+				"disconnect");
+		when(helper.getRequestData(httpServletRequest)).thenReturn("");
+		when(helper.setCookie(httpServletRequest)).thenReturn(0);
+		when(helper.getCookie()).thenReturn(cookie2);
+		comMainServlet.doPost(httpServletRequest, httpServletResponse);
+		for (String id: sessionHandler.getSessionIds()){
+			if (id.equalsIgnoreCase(cookie2.getValue())) assertTrue(false); // Cookie in the list
+			else continue;
+		}
+		assertEquals(0,new SessionHandler().getSessionIds().size());
+		
+	}
 	
 	private Queue<DataHandler> getFakeQueueDataRequest(){
 		Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();

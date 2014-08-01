@@ -6,7 +6,11 @@
 package eu.musesproject.server.connectionmanager;
 
 import java.io.IOException;
+import java.util.Queue;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -17,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import eu.musesproject.server.entity.AppType;
 	
 	/**
 	 * Class ComMainServlet
@@ -31,7 +37,11 @@ public class ComMainServlet extends HttpServlet {
 	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());;
 	private Helper helper;
 	private SessionHandler sessionHandler;
+	private EntityManagerFactory emf;
+	private EntityManager em;
 	private ConnectionManager connectionManager;
+	private String dataAttachedInCurrentReuqest;
+	private String dataToSendBackInResponse;
 
 	/**
 	 * 
@@ -88,7 +98,7 @@ public class ComMainServlet extends HttpServlet {
 		String currentJSessionID = cookie.getValue();
 		
 		// Retrieve data in the request
-		String dataAttachedInCurrentReuqest = helper.getRequestData(request);
+		dataAttachedInCurrentReuqest = helper.getRequestData(request);
 		
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
@@ -98,7 +108,7 @@ public class ComMainServlet extends HttpServlet {
 		// if "send-data" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
 			// Callback the FL to receive data from the client and get the response data back into string
-			String dataToSendBackInResponse = null;
+			dataToSendBackInResponse = null;
 			if (dataAttachedInCurrentReuqest != null){
 				dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
 			}
@@ -116,8 +126,8 @@ public class ComMainServlet extends HttpServlet {
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 					response.addHeader("data",dataHandler.getData());
 					connectionManager.removeDataHandler(dataHandler);
-					
-					if (connectionManager.getDataHandlerQueue().size()>1) {
+					Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
+					if (dQueue.size() > 1) {
 						response.addHeader("more-packets", "YES");
 					}else response.addHeader("more-packets", "NO");	
 
@@ -157,14 +167,20 @@ public class ComMainServlet extends HttpServlet {
 		response.addCookie(cookie);
 	
 	}
+	public String getResponseData(){
+		return dataToSendBackInResponse;
+	}
 	
-	private String waitForDataIfAvailable(int timeout, String currentJSessionID){
+	
+	public String waitForDataIfAvailable(int timeout, String currentJSessionID){
 		int i=1;
 		while(i<=timeout){
-			if (connectionManager.getDataHandlerQueue().size()>=1) {
+			Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
+			if (dQueue.size()>=1) {
 				for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 					if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 						connectionManager.removeDataHandler(dataHandler);
+						dataToSendBackInResponse = dataHandler.getData();
 						return dataHandler.getData();
 					}
 				}
@@ -190,10 +206,18 @@ public class ComMainServlet extends HttpServlet {
 	 * @param HttpServletResponse response
 	 * @throws ServletException, IOException
 	 */
-	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+	    emf = Persistence.createEntityManagerFactory("server");
+	    em = emf.createEntityManager();
+	    AppType appType = new AppType();
+	    appType.setDescription("test");
+	    appType.setType("test");
+		em.getTransaction().begin();
+		em.persist(appType);
+		em.getTransaction().commit();
 		
 		String connectionType = request.getParameter("connection-type");
 		String dataAttachedInCurrentReuqest = request.getParameter("data");
@@ -254,7 +278,6 @@ public class ComMainServlet extends HttpServlet {
 		
 		// Add session id to the List
 		sessionHandler.addSessionIdToList(currentJSessionID);
-		sessionHandler.removeCookieToList(cookie);
 		// Setup response to send back
 
 		response.setContentType("text/html");

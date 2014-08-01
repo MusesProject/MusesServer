@@ -44,7 +44,7 @@ public class ConnectionManager implements IConnectionManager{
 	private DataHandler dataHandler;
 	private SessionHandler sessionCounter;
 	private static ConnectionManager connectionManagerSingleton = null;
-	private Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
+	private static Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
 	/**
 	 * Constructor initialises callback
 	 * @param calBacks
@@ -129,7 +129,7 @@ public class ConnectionManager implements IConnectionManager{
 	 * @return void
 	 */
 	
-	private synchronized void addDataHandler(DataHandler dataHandler){
+	public static  synchronized void addDataHandler(DataHandler dataHandler){
 		dataHandlerQueue.add(dataHandler);
 	}
 	

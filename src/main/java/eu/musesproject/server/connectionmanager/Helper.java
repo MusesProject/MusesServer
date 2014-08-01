@@ -34,7 +34,7 @@ public class Helper {
 	 * @param HttpServletRequest req
 	 * @return void
 	 */
-	public void setCookie(HttpServletRequest req) {
+	public int setCookie(HttpServletRequest req) {
 		logger = Logger.getRootLogger();
 		BasicConfigurator.configure();
 		logger.setLevel(Level.INFO);
@@ -59,6 +59,7 @@ public class Helper {
 		 * @author yasir
 		 * @version 2.1
 		 */
+		return 0;
 	}
 	/**
 	 * Retrieves current cookie
