@@ -68,7 +68,7 @@ public class ComMainServletTest {
 				if (id.equalsIgnoreCase(cookie1.getValue())) assertTrue(true); // Cookie in the list
 				else assertTrue(false);
 			}
-			assertEquals(1,new SessionHandler().getSessionIds().size());
+			assertEquals(null,comMainServlet.getResponseData());
 	
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
@@ -79,7 +79,7 @@ public class ComMainServletTest {
 			for (String id: sessionHandler.getSessionIds()){
 				if (id.equalsIgnoreCase(cookie1.getValue()) || id.equalsIgnoreCase(cookie2.getValue())) assertTrue(true); // Cookie in the list
 			}
-			assertEquals(2,new SessionHandler().getSessionIds().size());
+			assertEquals(null,comMainServlet.getResponseData());
 			
 		} catch (ServletException e) {
 			e.printStackTrace();
@@ -94,34 +94,40 @@ public class ComMainServletTest {
 	@Test
 	public void testdoPostData() {
 		try {
+			
+			when(httpServletRequest.getHeader("connection-type")).thenReturn(
+					"connect");
+			when(helper.getRequestData(httpServletRequest)).thenReturn("");
+			when(helper.setCookie(httpServletRequest)).thenReturn(0);
+			when(helper.getCookie()).thenReturn(cookie1);
+			comMainServlet.doPost(httpServletRequest, httpServletResponse);
+			
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"data");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("{\"password\":\"muses\",\"device_id\":\"a67f130d348d0126\",\"username\":\"muses\",\"requesttype\":\"login\"}");
 			when(helper.setCookie(httpServletRequest)).thenReturn(0);
 			when(helper.getCookie()).thenReturn(cookie1);
-			when(connectionManager.getDataHandlerQueue()).thenReturn(getFakeQueueDataRequest());
-
-//			doAnswer(new Answer<Void>() {
-//				
-//				@Override
-//				public Void answer(InvocationOnMock invocation) throws Throwable {
-//					Object[] arguments = invocation.getArguments();
-//					String sessionId = (String) arguments[0];
-//					String data = (String) arguments[1];
-//					ConnectionManager.addDataHandler(new DataHandler(sessionId, data));
-//					return null;
-//				}
-//			}).when(httpServletResponse).addHeader("data", "Some data for client");
-			
+			when(connectionManager.getDataHandlerQueue()).thenReturn(getFakeQueueDataRequest(1));
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
 			for (String id: sessionHandler.getSessionIds()){
 				if (id.equalsIgnoreCase(cookie1.getValue())) assertTrue(true); break;  // Cookie in the list
 			}
-			// No need to test it was sent to functional layer
+			// No need to test that it was sent to functional layer
 			
 			// assert that the data is available in the queue and attach
 			assertEquals("{\"auth-message\":\"Successfully authenticated\",\"auth-result\":\"SUCCESS\",\"requesttype\":\"auth-response\"}", comMainServlet.getResponseData());
-//			assertEquals("Some JSON for Client ...", comMainServlet.getResponseData());
+			
+			when(httpServletRequest.getHeader("connection-type")).thenReturn(
+					"data");
+			when(helper.getRequestData(httpServletRequest)).thenReturn("Some event from client");
+			when(helper.setCookie(httpServletRequest)).thenReturn(0);
+			when(helper.getCookie()).thenReturn(cookie1);
+			when(connectionManager.getDataHandlerQueue()).thenReturn(getFakeQueueDataRequest(2));
+			comMainServlet.doPost(httpServletRequest, httpServletResponse);
+			
+			assertNotSame("{\"auth-message\":\"Successfully authenticated\",\"auth-result\":\"SUCCESS\",\"requesttype\":\"auth-response\"}", comMainServlet.getResponseData());
+
+			
 		} catch (ServletException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -129,10 +135,96 @@ public class ComMainServletTest {
 		}
 
 	}
+
+	
+	private Queue<DataHandler> getFakeQueueDataRequest(int i){
+		Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
+		switch(i){
+		case 1:
+			dataHandlerQueue.add(new DataHandler("00000000000001", "{\"auth-message\":\"Successfully authenticated\",\"auth-result\":\"SUCCESS\",\"requesttype\":\"auth-response\"}"));
+			break;
+		case 2:
+			dataHandlerQueue.add(new DataHandler("00000000000001", "Some policy for client from server"));
+			break;
+		}
+		return dataHandlerQueue;
+	}
+	
+	
+	@Test
+	public void doPostPoll() {
+		try {
+			
+			// Client 1 connect
+			when(httpServletRequest.getHeader("connection-type")).thenReturn(
+					"connect");
+			when(helper.getRequestData(httpServletRequest)).thenReturn("");
+			when(helper.setCookie(httpServletRequest)).thenReturn(0);
+			when(helper.getCookie()).thenReturn(cookie1);
+			comMainServlet.doPost(httpServletRequest, httpServletResponse);
+
+			// Client 2 connect
+			when(httpServletRequest.getHeader("connection-type")).thenReturn(
+					"connect");
+			when(helper.getRequestData(httpServletRequest)).thenReturn("");
+			when(helper.setCookie(httpServletRequest)).thenReturn(0);
+			when(helper.getCookie()).thenReturn(cookie2);
+			comMainServlet.doPost(httpServletRequest, httpServletResponse);
+			
+			
+			when(httpServletRequest.getHeader("connection-type")).thenReturn(
+					"poll");	
+			when(helper.getRequestData(httpServletRequest)).thenReturn("");
+			when(helper.setCookie(httpServletRequest)).thenReturn(0);
+			when(helper.getCookie()).thenReturn(cookie1);
+			when(connectionManager.getDataHandlerQueue()).thenReturn(getFakeQueuePollRequest());
+			comMainServlet.doPost(httpServletRequest, httpServletResponse);
+			assertEquals("Some JSON for Client 1 ...", comMainServlet.getResponseData());
+//			assertEquals(2,new SessionHandler().getSessionIds().size());
+			
+			when(httpServletRequest.getHeader("connection-type")).thenReturn(
+					"poll");	
+			when(helper.getRequestData(httpServletRequest)).thenReturn("");
+			when(helper.setCookie(httpServletRequest)).thenReturn(0);
+			when(helper.getCookie()).thenReturn(cookie2);
+			when(connectionManager.getDataHandlerQueue()).thenReturn(getFakeQueuePollRequest());
+			comMainServlet.doPost(httpServletRequest, httpServletResponse);
+			assertEquals("Some JSON for Client 2 ...", comMainServlet.getResponseData());
+//			assertEquals(2,new SessionHandler().getSessionIds().size());
+			
+		} catch (ServletException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private Queue<DataHandler> getFakeQueuePollRequest(){
+		Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
+		dataHandlerQueue.add(new DataHandler("00000000000001", "Some JSON for Client 1 ..."));
+		dataHandlerQueue.add(new DataHandler("00000000000002", "Some JSON for Client 2 ..."));
+		return dataHandlerQueue;
+	}
 	
 	@Test
 	public void testdoPostDisconnect() throws Exception {
+		// Client 1 connect
+		when(httpServletRequest.getHeader("connection-type")).thenReturn(
+				"connect");
+		when(helper.getRequestData(httpServletRequest)).thenReturn("");
+		when(helper.setCookie(httpServletRequest)).thenReturn(0);
+		when(helper.getCookie()).thenReturn(cookie1);
+		comMainServlet.doPost(httpServletRequest, httpServletResponse);
+
+		// Client 2 connect
+		when(httpServletRequest.getHeader("connection-type")).thenReturn(
+				"connect");
+		when(helper.getRequestData(httpServletRequest)).thenReturn("");
+		when(helper.setCookie(httpServletRequest)).thenReturn(0);
+		when(helper.getCookie()).thenReturn(cookie2);
+		comMainServlet.doPost(httpServletRequest, httpServletResponse);
 		
+		// Disconnect should remove cookies from the list
 		when(httpServletRequest.getHeader("connection-type")).thenReturn(
 				"disconnect");
 		when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -162,11 +254,6 @@ public class ComMainServletTest {
 		assertEquals(0,new SessionHandler().getSessionIds().size());
 	}
 	
-	private Queue<DataHandler> getFakeQueueDataRequest(){
-		Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
-		dataHandlerQueue.add(new DataHandler("00000000000001", "{\"auth-message\":\"Successfully authenticated\",\"auth-result\":\"SUCCESS\",\"requesttype\":\"auth-response\"}"));
-		return dataHandlerQueue;
-	}
 
 	
 //	@Test
@@ -175,33 +262,5 @@ public class ComMainServletTest {
 //		comMainServlet.waitForDataIfAvailable(5, "00000000000001");
 //		assertEquals("Some JSON for Client ...", comMainServlet.getResponseData());
 //	}
-	
-	
-//	@Test
-//	public void doPostPoll() {
-//		try {
-//			when(httpServletRequest.getHeader("connection-type")).thenReturn(
-//					"poll");	
-//			when(helper.getRequestData(httpServletRequest)).thenReturn("Some JSON for server ...");
-//			when(helper.setCookie(httpServletRequest)).thenReturn(0);
-//			when(helper.getCookie()).thenReturn(cookie1);
-//			when(connectionManager.getDataHandlerQueue()).thenReturn(getFakeQueuePollRequest());
-//			comMainServlet.doPost(httpServletRequest, httpServletResponse);
-//			assertEquals(1,new SessionHandler().getSessionIds().size());
-//		} catch (ServletException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
-	private Queue<DataHandler> getFakeQueuePollRequest(){
-		Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
-		dataHandlerQueue.add(new DataHandler("00000000000001", "Some JSON for Client ..."));
-		return dataHandlerQueue;
-	}
-	
-	
-	
 	
 }

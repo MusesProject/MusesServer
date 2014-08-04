@@ -124,7 +124,8 @@ public class ComMainServlet extends HttpServlet {
 			System.out.println("Poll request..");
 			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
-					response.addHeader("data",dataHandler.getData());
+					dataToSendBackInResponse = dataHandler.getData();
+					response.addHeader("data",dataToSendBackInResponse);
 					connectionManager.removeDataHandler(dataHandler);
 					Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
 					if (dQueue.size() > 1) {
@@ -157,7 +158,7 @@ public class ComMainServlet extends HttpServlet {
 		} 
 		
 		// Add session id to the List
-		if (currentJSessionID != null) {
+		if (currentJSessionID != null && !connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
 			sessionHandler.addCookieToList(cookie);
 		}
 
