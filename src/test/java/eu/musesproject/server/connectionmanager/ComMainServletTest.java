@@ -130,21 +130,37 @@ public class ComMainServletTest {
 
 	}
 	
-//	@Test
-//	public void testdoPostDisconnect() throws Exception {
-//		
-//		when(httpServletRequest.getHeader("connection-type")).thenReturn(
-//				"disconnect");
-//		when(helper.getRequestData(httpServletRequest)).thenReturn("");
-//		when(helper.setCookie(httpServletRequest)).thenReturn(0);
-//		when(helper.getCookie()).thenReturn(cookie1);
-//		comMainServlet.doPost(httpServletRequest, httpServletResponse);
-//		for (String id: sessionHandler.getSessionIds()){
-//			if (id.equalsIgnoreCase(cookie1.getValue())) assertTrue(true); // Cookie in the list
-//			else assertTrue(false);
-//		}
-//		assertEquals(1,new SessionHandler().getSessionIds().size());
-//	}
+	@Test
+	public void testdoPostDisconnect() throws Exception {
+		
+		when(httpServletRequest.getHeader("connection-type")).thenReturn(
+				"disconnect");
+		when(helper.getRequestData(httpServletRequest)).thenReturn("");
+		when(helper.setCookie(httpServletRequest)).thenReturn(0);
+		when(helper.getCookie()).thenReturn(cookie1);
+		comMainServlet.doPost(httpServletRequest, httpServletResponse);
+		boolean found=false;
+		for (String id: sessionHandler.getSessionIds()){
+			if (id.equalsIgnoreCase(cookie1.getValue())) found=true; // Cookie in the list
+			else found=false;
+		}
+		assertEquals(false, found);
+		assertEquals(1,new SessionHandler().getSessionIds().size());
+		
+		when(httpServletRequest.getHeader("connection-type")).thenReturn(
+				"disconnect");
+		when(helper.getRequestData(httpServletRequest)).thenReturn("");
+		when(helper.setCookie(httpServletRequest)).thenReturn(0);
+		when(helper.getCookie()).thenReturn(cookie2);
+		comMainServlet.doPost(httpServletRequest, httpServletResponse);
+		found=false;
+		for (String id: sessionHandler.getSessionIds()){
+			if (id.equalsIgnoreCase(cookie2.getValue())) found=true; // Cookie in the list
+			else found=false;
+		}
+		assertEquals(false, found);
+		assertEquals(0,new SessionHandler().getSessionIds().size());
+	}
 	
 	private Queue<DataHandler> getFakeQueueDataRequest(){
 		Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
