@@ -37,10 +37,9 @@ import org.apache.log4j.Logger;
 
 public class SessionHandler implements ServletContextListener , HttpSessionListener, ServletRequestListener{
 	
-	public static Set<String> sessionIDs = new HashSet<String>();
-	public static Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
+	private static Set<String> sessionIDs = new HashSet<String>();
+	private static Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
 	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
-	private static final boolean D = true;
 	private Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
 	
@@ -130,8 +129,9 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 		calendar.add(Calendar.SECOND, cookie.getMaxAge());
 		Date d = calendar.getTime();
 		boolean found = false;
-		if(cookieSet.isEmpty()) 
+		if(cookieSet.isEmpty()){
 			found=false; 
+		} 
 		for (Map.Entry<Date, Cookie> entry : cookieSet.entrySet()) {
 			if (cookie.getValue().equalsIgnoreCase(entry.getValue().getValue())) {
 				found = true;
@@ -162,7 +162,9 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	}
 	
     private boolean isExpired(Date cookieExpires) {
-		if (cookieExpires == null) return true;
+		if (cookieExpires == null) {
+				return true;
+		}
 		Date now = new Date();
 		if (now.compareTo(cookieExpires) <= 0){
 			return false;
@@ -189,8 +191,9 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	
 	public void printCurrentList(){
 		logger.log(Level.INFO, "Active session:");
-		for (String id : sessionIDs)
+		for (String id : sessionIDs){
 			logger.log(Level.INFO,id);
+		}
 	}
 	
 

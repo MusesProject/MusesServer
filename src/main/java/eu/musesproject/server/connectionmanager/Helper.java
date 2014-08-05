@@ -24,10 +24,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class Helper {
-	private static boolean D = false;
 	private static Logger logger = Logger.getLogger(Helper.class.getName());
 	private static final int COOKIE_MAX_AGE = 60*60*24;
-	Cookie retreivedCookie = null;
+	private Cookie retreivedCookie = null;
 
 	/**
 	 * Set the cookie from the http request, if cookie is null then create the cookie from the session id
@@ -45,14 +44,14 @@ public class Helper {
 				if (ck.getName().equals("JSESSIONID")) {
 					retreivedCookie = ck;
 					retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
-					if (D) logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
+					logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
 				}
 			}
 		} else {
 			retreivedCookie = new Cookie("JSESSIONID", req.getSession().getId());
 			retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
 			retreivedCookie.setPath(req.getContextPath());
-			if (D) logger.log(Level.INFO, "Cookie created .. new request ..");	
+			logger.log(Level.INFO, "Cookie created .. new request ..");	
 		}
 		/**
 		 * 
@@ -81,13 +80,13 @@ public class Helper {
 	    String body = null;
 	    StringBuilder stringBuilder = new StringBuilder();
 	    BufferedReader bufferedReader = null;
-
+	    int bufferSize = 128;
 	    try {
 	        ServletInputStream inputStream = request.getInputStream();
 	        if (inputStream != null) {
 	        	InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 	            bufferedReader = new BufferedReader(inputStreamReader);
-	            char[] charBuffer = new char[128];
+	            char[] charBuffer = new char[bufferSize];
 	            int bytesRead = -1;
 	            while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
 	                stringBuilder.append(charBuffer, 0, bytesRead);
@@ -96,13 +95,13 @@ public class Helper {
 	            stringBuilder.append("");
 	        }
 	    } catch (IOException ex) {
-	        throw ex;
+	        logger.log(Level.INFO, ex);
 	    } finally {
 	        if (bufferedReader != null) {
 	            try {
 	                bufferedReader.close();
 	            } catch (IOException ex) {
-	            	throw ex;
+	    	        logger.log(Level.INFO, ex);
 	            }
 	        }
 	    }
