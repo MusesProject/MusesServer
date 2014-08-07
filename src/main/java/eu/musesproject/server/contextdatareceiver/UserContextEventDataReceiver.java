@@ -30,6 +30,7 @@ package eu.musesproject.server.contextdatareceiver;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.client.model.contextmonitoring.Event;
@@ -53,6 +54,7 @@ import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
 
 public class UserContextEventDataReceiver {
 	
+	private static final String MUSES_TAG = "MUSES_TAG";
 	private static UserContextEventDataReceiver INSTANCE = new UserContextEventDataReceiver();
 	private StubEventCorrelationData data = null;
 	private Logger logger = Logger.getLogger(UserContextEventDataReceiver.class);
@@ -112,6 +114,7 @@ public class UserContextEventDataReceiver {
 	public void processContextEventList(List<ContextEvent> list, String currentSessionId, String username, String deviceId){
 		
 		logger.info("processContextEventList: Processing list of "+list.size()+" elements.");
+		logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> processing events:"+list.size());		
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			ContextEvent event = (ContextEvent) iterator.next();
 			eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
@@ -128,6 +131,7 @@ public class UserContextEventDataReceiver {
 				formattedEvent.setSessionId(currentSessionId);
 				formattedEvent.setUsername(username);
 				formattedEvent.setDeviceId(deviceId);
+				logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> Inserting events into WM:"+formattedEvent);
 				logger.info("Inserting event into the WM:"+formattedEvent);
 				des.insertFact(formattedEvent);
 			}else{

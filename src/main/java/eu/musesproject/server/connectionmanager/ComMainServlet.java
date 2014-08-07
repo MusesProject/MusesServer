@@ -38,7 +38,7 @@ public class ComMainServlet extends HttpServlet {
 	private static final String DATA = "data";
 	private static final int INTERVAL_TO_WAIT = 5;
 	private static final long SLEEP_INTERVAL = 1000;
-
+	private static final String MUSES_TAG = "MUSES_TAG";
 	/**
 	 * 
 	 * @param sessionHandler
@@ -95,7 +95,8 @@ public class ComMainServlet extends HttpServlet {
 		
 		// Retrieve data in the request
 		dataAttachedInCurrentReuqest = helper.getRequestData(request);
-		
+		logger.log(Level.INFO, MUSES_TAG + "Info SS*, Request type:"+connectionType+" with data:"+dataAttachedInCurrentReuqest);
+
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
 			logger.log(Level.INFO, "Connect request .. Id: " + currentJSessionID );

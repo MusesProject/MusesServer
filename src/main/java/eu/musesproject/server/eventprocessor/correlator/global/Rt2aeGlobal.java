@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.client.model.decisiontable.PolicyDT;
@@ -55,6 +56,7 @@ import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
 
 public class Rt2aeGlobal {
 	
+	private static final String MUSES_TAG = "MUSES_TAG";
 	private String status = null;
 	private Logger logger = Logger.getLogger(Rt2aeGlobal.class.getName());
 	private static List<Clue> clues = new ArrayList<Clue>();
@@ -224,8 +226,10 @@ public class Rt2aeGlobal {
 		//Select the most appropriate policy according to the decision and the action of the request		
 		logger.info("		Session id:"+event.getSessionId());
 		PolicySelector policySelector = new PolicySelector();
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 		logger.info(policyDT.getRawPolicy());
 		logger.info(decision.toString());
 		//requests.add(composedRequest);
@@ -235,6 +239,7 @@ public class Rt2aeGlobal {
 		Device device = new Device();
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Now sending policy:"+policyDT.getRawPolicy());
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
 		
 		return composedRequest.getId();
@@ -258,8 +263,10 @@ public class Rt2aeGlobal {
 		//Select the most appropriate policy according to the decision and the action of the request		
 		logger.info("		Session id:"+event.getSessionId());
 		PolicySelector policySelector = new PolicySelector();
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
 		//requests.add(composedRequest);
@@ -269,6 +276,7 @@ public class Rt2aeGlobal {
 		Device device = new Device();
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Now sending policy:"+policyDT.getRawPolicy());
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
 		
 		return composedRequest.getId();
@@ -296,8 +304,10 @@ public class Rt2aeGlobal {
 		//Select the most appropriate policy according to the decision and the action of the request		
 		logger.info("		Session id:"+event.getSessionId());
 		PolicySelector policySelector = new PolicySelector();
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
 		//requests.add(composedRequest);
@@ -308,7 +318,8 @@ public class Rt2aeGlobal {
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
-		
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Now sending policy:"+policyDT.getRawPolicy());
+
 		return composedRequest.getId();
 	}
 	
@@ -333,7 +344,10 @@ public class Rt2aeGlobal {
 		logger.info("		Session id:"+event.getSessionId());
 		PolicySelector policySelector = new PolicySelector();
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
+
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
 		//requests.add(composedRequest);
@@ -344,7 +358,8 @@ public class Rt2aeGlobal {
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
-		
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Now sending policy:"+policyDT.getRawPolicy());
+
 		return composedRequest.getId();
 	}
 	
@@ -372,7 +387,10 @@ public class Rt2aeGlobal {
 		logger.info("		Session id:"+event.getSessionId());
 		PolicySelector policySelector = new PolicySelector();
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
+
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
 		//requests.add(composedRequest);
@@ -383,7 +401,8 @@ public class Rt2aeGlobal {
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
-		
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Now sending policy:"+policyDT.getRawPolicy());
+
 		return composedRequest.getId();
 	}
 
@@ -479,7 +498,10 @@ public class Rt2aeGlobal {
 		logger.info("		Session id:"+event.getSessionId());
 		PolicySelector policySelector = new PolicySelector();
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
+
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
 		//requests.add(composedRequest);
@@ -490,7 +512,8 @@ public class Rt2aeGlobal {
 		PolicyTransmitter transmitter = new PolicyTransmitter();
 		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
-		
+		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Now sending policy:"+policyDT.getRawPolicy());
+
 		return composedRequest.getId();
 	}
 	
