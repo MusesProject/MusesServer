@@ -18,7 +18,7 @@ public class Asset implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="asset_id")
-	private String assetId;
+	private int assetId;
 
 	@Column(name="confidential_level")
 	private String confidentialLevel;
@@ -50,11 +50,11 @@ public class Asset implements Serializable {
 	public Asset() {
 	}
 
-	public String getAssetId() {
+	public int getAssetId() {
 		return this.assetId;
 	}
 
-	public void setAssetId(String assetId) {
+	public void setAssetId(int assetId) {
 		this.assetId = assetId;
 	}
 

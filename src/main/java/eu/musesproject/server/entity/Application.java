@@ -19,7 +19,7 @@ public class Application implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="app_id")
-	private String appId;
+	private int appId;
 
 	private String description;
 
@@ -47,11 +47,11 @@ public class Application implements Serializable {
 	public Application() {
 	}
 
-	public String getAppId() {
+	public int getAppId() {
 		return this.appId;
 	}
 
-	public void setAppId(String appId) {
+	public void setAppId(int appId) {
 		this.appId = appId;
 	}
 

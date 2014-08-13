@@ -18,7 +18,7 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="user_id")
-	private String userId;
+	private int userId;
 
 	private String email;
 
@@ -69,11 +69,11 @@ public class User implements Serializable {
 	public User() {
 	}
 
-	public String getUserId() {
+	public int getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 

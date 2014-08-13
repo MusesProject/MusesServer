@@ -18,7 +18,7 @@ public class Device implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="device_id")
-	private String deviceId;
+	private int deviceId;
 
 	@Lob
 	private byte[] certificate;
@@ -73,11 +73,11 @@ public class Device implements Serializable {
 	public Device() {
 	}
 
-	public String getDeviceId() {
+	public int getDeviceId() {
 		return this.deviceId;
 	}
 
-	public void setDeviceId(String deviceId) {
+	public void setDeviceId(int deviceId) {
 		this.deviceId = deviceId;
 	}
 

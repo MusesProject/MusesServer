@@ -20,7 +20,7 @@ public class SimpleEvent implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="event_id")
-	private String eventId;
+	private int eventId;
 
 	private String data;
 
@@ -90,11 +90,11 @@ public class SimpleEvent implements Serializable {
 	public SimpleEvent() {
 	}
 
-	public String getEventId() {
+	public int getEventId() {
 		return this.eventId;
 	}
 
-	public void setEventId(String eventId) {
+	public void setEventId(int eventId) {
 		this.eventId = eventId;
 	}
 
