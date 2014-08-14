@@ -46,10 +46,6 @@ public class User implements Serializable {
 	@OneToMany(mappedBy="user")
 	private List<AdditionalProtection> additionalProtections;
 
-	//bi-directional many-to-one association to Device
-	@OneToMany(mappedBy="user")
-	private List<Device> devices;
-
 	//bi-directional many-to-one association to SecurityIncident
 	@OneToMany(mappedBy="user")
 	private List<SecurityIncident> securityIncidents;
@@ -183,28 +179,6 @@ public class User implements Serializable {
 		additionalProtection.setUser(null);
 
 		return additionalProtection;
-	}
-
-	public List<Device> getDevices() {
-		return this.devices;
-	}
-
-	public void setDevices(List<Device> devices) {
-		this.devices = devices;
-	}
-
-	public Device addDevice(Device device) {
-		getDevices().add(device);
-		device.setUser(this);
-
-		return device;
-	}
-
-	public Device removeDevice(Device device) {
-		getDevices().remove(device);
-		device.setUser(null);
-
-		return device;
 	}
 
 	public List<SecurityIncident> getSecurityIncidents() {

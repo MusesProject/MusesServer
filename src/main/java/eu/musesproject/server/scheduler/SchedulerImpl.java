@@ -40,11 +40,11 @@ public class SchedulerImpl implements Scheduler {
 			boolean isKRSAllowed = results[0];
 			boolean isEPAllowed = results[1];
 			boolean isRT2AEAllowed = results[2];
+			EntityTransaction entityTransaction = em.getTransaction();
+			entityTransaction.begin();
 			if (!isKRSAllowed && !isEPAllowed && !isRT2AEAllowed)  {
 				try {
 					logger.log(Level.INFO, MUSES_TAG + " Hard limit expired for all allowed components, cleaning up the event:" + event.getEventId());
-					EntityTransaction entityTransaction = em.getTransaction();
-					entityTransaction.begin();
 					em.remove(event);
 					entityTransaction.commit();
 				} catch (Exception e) {
@@ -55,8 +55,15 @@ public class SchedulerImpl implements Scheduler {
 			} else {
 				logger.log(Level.INFO, MUSES_TAG + " Update component mask for event:" + event.getEventId());
 				event.setKRS_can_access(isKRSAllowed?new byte[]{1}:new byte[]{0});
-				event.setEP_can_access(isKRSAllowed?new byte[]{1}:new byte[]{0});
-				event.setRT2AE_can_access(isKRSAllowed?new byte[]{1}:new byte[]{0});
+				event.setEP_can_access(isEPAllowed?new byte[]{1}:new byte[]{0});
+				event.setRT2AE_can_access(isRT2AEAllowed?new byte[]{1}:new byte[]{0});
+				try {
+					entityTransaction.commit();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					em.close();
+				}
 			}
 
 		}

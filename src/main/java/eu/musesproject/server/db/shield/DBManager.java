@@ -22,8 +22,26 @@ public class DBManager {
 	    em = emf.createEntityManager();	
 	}
 	
-	public void inform(String module) {
-		
+	public void inform(SimpleEvent event) {
+		try {
+			EntityTransaction entityTransaction = em.getTransaction();
+			entityTransaction.begin();
+			if (module.equals(Module.KRS)){
+				event.setKRS_can_access(new byte[]{0});
+			}
+			if (module.equals(Module.EP)){
+				event.setKRS_can_access(new byte[]{0});
+			}
+
+			if (module.equals(Module.RT2AE)){
+				event.setKRS_can_access(new byte[]{0});
+			}
+			entityTransaction.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}
 	}
 	
 	// Normal DB access methods

@@ -53,11 +53,6 @@ public class Device implements Serializable {
 	@JoinColumn(name="type")
 	private DeviceType deviceType;
 
-	//bi-directional many-to-one association to User
-	@ManyToOne
-	@JoinColumn(name="owner_id")
-	private User user;
-
 	//bi-directional many-to-one association to SecurityIncident
 	@OneToMany(mappedBy="device")
 	private List<SecurityIncident> securityIncidents;
@@ -189,14 +184,6 @@ public class Device implements Serializable {
 
 	public void setDeviceType(DeviceType deviceType) {
 		this.deviceType = deviceType;
-	}
-
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	public List<SecurityIncident> getSecurityIncidents() {
