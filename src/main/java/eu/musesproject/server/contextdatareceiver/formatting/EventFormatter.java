@@ -148,9 +148,14 @@ public class EventFormatter {
 		while (tokenizer.hasMoreTokens()){
 			String attachment = tokenizer.nextToken();
 			StringTokenizer tokenAttach = new StringTokenizer(attachment,",");
-			cepFileEvent.setAttachmentName(tokenAttach.nextToken()); //FIXME We have to provide a mechanism to store info associated to more than one attachment
-			cepFileEvent.setAttachmentType(tokenAttach.nextToken());
-			cepFileEvent.setAttachmentSize(tokenAttach.nextToken());
+			String firstToken = tokenAttach.nextToken();
+			if (tokenAttach.hasMoreTokens()){
+				cepFileEvent.setAttachmentName(firstToken); //FIXME We have to provide a mechanism to store info associated to more than one attachment
+				cepFileEvent.setAttachmentType(tokenAttach.nextToken());
+				cepFileEvent.setAttachmentSize(tokenAttach.nextToken());
+			}else{
+				cepFileEvent.setAttachmentType(firstToken);
+			}
 		}		
 		return cepFileEvent;
 	}
