@@ -1,8 +1,15 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.math.BigInteger;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 
 /**
@@ -11,7 +18,12 @@ import java.math.BigInteger;
  */
 @Entity
 @Table(name="user_authorization")
-@NamedQuery(name="UserAuthorization.findAll", query="SELECT u FROM UserAuthorization u")
+@NamedQueries({
+	@NamedQuery(name="UserAuthorization.findAll", 
+				query="SELECT u FROM UserAuthorization u"),
+	@NamedQuery(name="UserAuthorization.findByUserID", 
+				query="SELECT u FROM UserAuthorization u where u.userId = :userId")	
+})
 public class UserAuthorization implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -24,7 +36,7 @@ public class UserAuthorization implements Serializable {
 	private int roleId;
 
 	@Column(name="user_id")
-	private BigInteger userId;
+	private int userId;
 
 	public UserAuthorization() {
 	}
@@ -45,11 +57,11 @@ public class UserAuthorization implements Serializable {
 		this.roleId = roleId;
 	}
 
-	public BigInteger getUserId() {
+	public int getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(BigInteger userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 

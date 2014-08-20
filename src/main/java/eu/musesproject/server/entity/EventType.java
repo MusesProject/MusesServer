@@ -11,7 +11,12 @@ import java.util.List;
  */
 @Entity
 @Table(name="event_type")
-@NamedQuery(name="EventType.findAll", query="SELECT e FROM EventType e")
+@NamedQueries({
+	@NamedQuery(name="EventType.findAll", 
+				query="SELECT e FROM EventType e"),
+	@NamedQuery(name="EventType.findByKey", 
+				query="SELECT e FROM EventType e where e.eventTypeKey = :eventTypeKey")
+})
 public class EventType implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -10,7 +10,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="domains")
-@NamedQuery(name="Domain.findAll", query="SELECT d FROM Domain d")
+@NamedQueries({
+	@NamedQuery(name="Domain.findAll", 
+				query="SELECT d FROM Domain d"),
+	@NamedQuery(name="Domain.findByName", 
+				query="SELECT d FROM Domain d where d.name = :name")
+})
 public class Domain implements Serializable {
 	private static final long serialVersionUID = 1L;
 

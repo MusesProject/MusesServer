@@ -11,7 +11,12 @@ import java.util.List;
  */
 @Entity
 @Table(name="devices")
-@NamedQuery(name="Device.findAll", query="SELECT d FROM Device d")
+@NamedQueries({
+	@NamedQuery(name="Device.findAll", 
+				query="SELECT d FROM Device d"),
+	@NamedQuery(name="Device.findByIMEI", 
+				query="SELECT d FROM Device d where d.imei = :imei")
+})
 public class Device implements Serializable {
 	private static final long serialVersionUID = 1L;
 
