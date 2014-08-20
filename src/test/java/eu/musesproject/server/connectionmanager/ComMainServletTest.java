@@ -64,11 +64,7 @@ public class ComMainServletTest {
 			when(helper.setCookie(httpServletRequest)).thenReturn(0);
 			when(helper.getCookie()).thenReturn(cookie1);
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
-//			for (String id: sessionHandler.getSessionIds()){
-//				if (id.equalsIgnoreCase(cookie1.getValue())) assertTrue(true); // Cookie in the list
-//				else assertTrue(false);
-//			}
-			assertEquals(null,comMainServlet.getResponseData());
+			assertEquals("",comMainServlet.getResponseData());
 	
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
@@ -76,10 +72,7 @@ public class ComMainServletTest {
 			when(helper.setCookie(httpServletRequest)).thenReturn(0);
 			when(helper.getCookie()).thenReturn(cookie2);
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
-//			for (String id: sessionHandler.getSessionIds()){
-//				if (id.equalsIgnoreCase(cookie1.getValue()) || id.equalsIgnoreCase(cookie2.getValue())) assertTrue(true); // Cookie in the list
-//			}
-			assertEquals(null,comMainServlet.getResponseData());
+			assertEquals("",comMainServlet.getResponseData());
 			
 		} catch (ServletException e) {
 			e.printStackTrace();
@@ -94,7 +87,7 @@ public class ComMainServletTest {
 	@Test
 	public void testdoPostData() {
 		try {
-			
+			// Connect request before testing data
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -104,7 +97,7 @@ public class ComMainServletTest {
 			
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"data");
-			when(helper.getRequestData(httpServletRequest)).thenReturn("{\"password\":\"muses\",\"device_id\":\"a67f130d348d0126\",\"username\":\"muses\",\"requesttype\":\"login\"}");
+			when(helper.getRequestData(httpServletRequest)).thenReturn("{\"test\":\"test\"}");
 			when(helper.setCookie(httpServletRequest)).thenReturn(0);
 			when(helper.getCookie()).thenReturn(cookie1);
 			when(connectionManager.getDataHandlerQueue()).thenReturn(getFakeQueueDataRequest(1));
