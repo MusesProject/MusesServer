@@ -89,6 +89,12 @@ public class DBManager {
 	
 	// Complex DB method provided by Partners
 	
+	/**
+	 * Get user by username
+	 * @param username
+	 * @return User
+	 */
+	
 	public User getUserByUsername(String username) {
 		List<User> userList = em.createNamedQuery("User.findByUsername",User.class)
 				.setParameter("username", username)
@@ -101,6 +107,11 @@ public class DBManager {
 		}
 		return null;
 	}
+	
+	/**
+	 * Saves the user object in DB
+	 * @param user
+	 */
 	
 	public void saveUser(User user) {
 		try {
@@ -115,6 +126,12 @@ public class DBManager {
 		}
 	}
 	
+	/**
+	 * Get device object by IMEI number
+	 * @param imei
+	 * @return Device
+	 */
+	
 	public Device getDeviceByIMEI(String imei){
 		List<Device> deviceList = em.createNamedQuery("Device.findByIMEI",Device.class)
 				.setParameter("imei", imei)
@@ -127,6 +144,11 @@ public class DBManager {
 		}
 		return null;
 	}
+	
+	/**
+	 * Save device object in DB
+	 * @param device
+	 */
 	
 	public void saveDevice(Device device) {
 		try {
@@ -141,6 +163,12 @@ public class DBManager {
 		}
 	}
 	
+	/**
+	 * Get role object by name
+	 * @param name
+	 * @return Role
+	 */
+	
 	public Role getRoleByName(String name){
 		List<Role> roleList = em.createNamedQuery("Role.findByName",Role.class)
 				.setParameter("name", name)
@@ -153,6 +181,12 @@ public class DBManager {
 		}
 		return null;
 	}
+	
+	/**
+	 * Get domain object by name 
+	 * @param name
+	 * @return Domain
+	 */
 	
 	public Domain getDomainByName(String name){
 		List<Domain> domainList = em.createNamedQuery("Domain.findByName",Domain.class)
@@ -167,6 +201,12 @@ public class DBManager {
 		return null;
 	}
 	
+	/**
+	 * Get asset object by location
+	 * @param location
+	 * @return Asset
+	 */
+	
 	public Asset getAssetByLocation(String location) {
 		List<Asset> assetList = em.createNamedQuery("Asset.findByLocation",Asset.class)
 				.setParameter("location", location)
@@ -179,6 +219,12 @@ public class DBManager {
 		}
 		return null;
 	}
+	
+	/**
+	 * Get UserAuthorization object by userId of User object
+	 * @param userId
+	 * @return UserAuthorization
+	 */
 	
 	public UserAuthorization getUserAuthByUserId(int userId) {
 		List<UserAuthorization> userAuthorizationsList = em.createNamedQuery("UserAuthorization.findByUserID",UserAuthorization.class)
@@ -193,6 +239,10 @@ public class DBManager {
 		return null;
 	}
 	
+	/**
+	 * Saves event object in the DB 
+	 * @param event
+	 */
 	
 	public void saveSimpleEvent(SimpleEvent event){
 		try {
@@ -208,6 +258,11 @@ public class DBManager {
 
 	}
 	
+	/**
+	 * Save AccessRequest object in the DB 
+	 * @param request
+	 */
+	
 	public void saveAccessRequest(AccessRequest request){
 		try {
 			EntityTransaction entityTransaction = em.getTransaction();
@@ -222,6 +277,10 @@ public class DBManager {
 
 	}
 	
+	/**
+	 * Saves ThreatClue in the DB
+	 * @param clue
+	 */
 	
     public void saveThreatClue(ThreatClue clue){
 		try {
@@ -237,6 +296,11 @@ public class DBManager {
 
     } 
     
+    /**
+     * Saves ThreatClue in the DB 
+     * @param addProtection
+     */
+    
     public void saveAdditionalProtection(AdditionalProtection addProtection){
 		try {
 			EntityTransaction entityTransaction = em.getTransaction();
@@ -250,6 +314,11 @@ public class DBManager {
 		}
 
     }
+    
+    /**
+     * Save SecurityIncident in the DB 
+     * @param secIncident
+     */
     
     public void saveSecurityIncident(SecurityIncident secIncident){
 		try {
@@ -265,6 +334,11 @@ public class DBManager {
 
     }
     
+    /**
+     * Save EventType in the DB
+     * @param type
+     */
+    
     public void saveEventType(EventType type) {
 		try {
 			EntityTransaction entityTransaction = em.getTransaction();
@@ -279,6 +353,12 @@ public class DBManager {
 
     }
     
+    /**
+     * Get EventType object by key 
+     * @param key
+     * @return EventType
+     */
+    
     public List<EventType> getEventTypeByKey(String key) {
 		List<EventType> eventTypeList = em.createNamedQuery("EventType.findByKey",EventType.class)
 				.setParameter("eventTypeKey", key)
@@ -287,6 +367,10 @@ public class DBManager {
 		return eventTypeList;
     }
     
+    /**
+     * Save SecurityRule object in DB
+     * @param rule
+     */
     
     public void saveSecurityRule(SecurityRule rule) {
 		try {
@@ -301,19 +385,37 @@ public class DBManager {
 		}
     }
     
+    /**
+     * Get SecurityRules list by status 
+     * @param status
+     * @return List<SecurityRule>
+     */
+    
     public List<SecurityRule> getSecurityRulesByStatus(String status) {
     	List<SecurityRule> securityRuleList = em.createNamedQuery("SecurityRule.findByStatus",SecurityRule.class)
 				.setParameter("status", status)
 				.getResultList();
 		return securityRuleList;
     }
-    
+
+    /**
+     * Get Decision by access request Id of AccessRequest object  
+     * @param accessRequestId
+     * @return List<Decision>
+     */
+
     public List<Decision> getDecisionByAccessRequestId(int accessRequestId) {
     	AccessRequest accessRequest = em.createNamedQuery("AccessRequest.findById",AccessRequest.class)
     			.setParameter("accessRequestId", accessRequestId)
     			.getSingleResult();
     	return accessRequest.getDecisions();
     }
+    
+    /**
+     * Get RefinedSecurityRule list by status
+     * @param status
+     * @return List<RefinedSecurityRule>
+     */
     
     public List<RefinedSecurityRule> getRefinedSecurityRulesByStatus(String status) {
     	List<RefinedSecurityRule> refinedSecurityRuleList = em.createNamedQuery("RefinedSecurityRule.findByStatus",RefinedSecurityRule.class)
@@ -332,4 +434,6 @@ public class DBManager {
 //    	
 //    }
 	
+    
+    
 }
