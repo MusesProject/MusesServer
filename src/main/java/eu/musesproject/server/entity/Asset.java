@@ -11,7 +11,12 @@ import java.util.List;
  */
 @Entity
 @Table(name="assets")
-@NamedQuery(name="Asset.findAll", query="SELECT a FROM Asset a")
+@NamedQueries({
+	@NamedQuery(name="Asset.findAll", 
+			    query="SELECT a FROM Asset a"),
+	@NamedQuery(name="Asset.findByLocation", 
+	 			query="SELECT a FROM Asset a where a.location = :location")
+})
 public class Asset implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -61,9 +60,6 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	
 	@Override
 	public void requestInitialized(ServletRequestEvent sre) {
-		logger = Logger.getRootLogger();
-		BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
 		
 		int interval=0;
 		HttpServletRequest request = (HttpServletRequest) sre.getServletRequest();

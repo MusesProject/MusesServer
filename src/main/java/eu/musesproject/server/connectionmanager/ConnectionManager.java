@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -53,9 +52,6 @@ public class ConnectionManager implements IConnectionManager{
 	}
 	
 	private ConnectionManager() {
-		logger = Logger.getRootLogger();
-		BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
 		sessionCounter = new SessionHandler();
 	}
 	
@@ -105,6 +101,7 @@ public class ConnectionManager implements IConnectionManager{
 		// FIXME how to handle the return status 
 		if (iCallBacks != null){
 			callBacks = iCallBacks;
+			logger.log(Level.INFO, "callback registered");
 		} else {
 			logger.log(Level.INFO, "Passed callback is null");		
 		}

@@ -15,9 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import eu.musesproject.server.contextdatareceiver.ConnectionCallbacksImpl;
 	
 	/**
 	 * Class ComMainServlet
@@ -34,7 +35,7 @@ public class ComMainServlet extends HttpServlet {
 	private SessionHandler sessionHandler;
 	private ConnectionManager connectionManager;
 	private String dataAttachedInCurrentReuqest;
-	private String dataToSendBackInResponse;
+	private String dataToSendBackInResponse="";
 	private static final String DATA = "data";
 	private static final int INTERVAL_TO_WAIT = 5;
 	private static final long SLEEP_INTERVAL = 1000;
@@ -68,10 +69,7 @@ public class ComMainServlet extends HttpServlet {
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
-		logger = Logger.getRootLogger();
-		BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
-		
+		ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
 	}
 	
 	/**
@@ -105,11 +103,14 @@ public class ComMainServlet extends HttpServlet {
 		// if "send-data" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
 			// Callback the FL to receive data from the client and get the response data back into string
-			dataToSendBackInResponse = null;
+			dataToSendBackInResponse="";
 			if (dataAttachedInCurrentReuqest != null){
 				dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
+				if (dataToSendBackInResponse == null) {
+					dataToSendBackInResponse = "";
+				}
 			}
-			if (dataToSendBackInResponse.equals(null) || dataToSendBackInResponse.equals("")) {
+			if (dataToSendBackInResponse.equals("")) {
 				dataToSendBackInResponse = waitForDataIfAvailable(INTERVAL_TO_WAIT, currentJSessionID);
 			}
 			response.addHeader(DATA,dataToSendBackInResponse);

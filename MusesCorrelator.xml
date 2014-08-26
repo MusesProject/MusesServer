@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?><change-set xmlns="http://drools.org/drools-5.0/change-set"><add><resource type="DRL" source="file:///C:/Users/szamarripa/gitMUSESPrototype1/MusesServer/target/classes/drl"/></add></change-set>
+=======
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><change-set xmlns="http://drools.org/drools-5.0/change-set"><add><resource source="file:///C:/Users/yasir/Documents/GitHub/MusesServer/target/classes/drl" type="DRL"/></add></change-set>
+>>>>>>> 219dafb9a22e085d19f535e58a0f28dd3503f473

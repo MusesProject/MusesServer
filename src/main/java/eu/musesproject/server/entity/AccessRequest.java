@@ -12,14 +12,19 @@ import java.util.List;
  */
 @Entity
 @Table(name="access_request")
-@NamedQuery(name="AccessRequest.findAll", query="SELECT a FROM AccessRequest a")
+@NamedQueries ({
+	@NamedQuery(name="AccessRequest.findAll", 
+				query="SELECT a FROM AccessRequest a"),
+	@NamedQuery(name="AccessRequest.findById", 
+				query="SELECT a FROM AccessRequest a where a.accessRequestId = :accessRequestId")
+})
 public class AccessRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="access_request_id")
-	private String accessRequestId;
+	private int accessRequestId;
 
 	private String action;
 
@@ -61,11 +66,11 @@ public class AccessRequest implements Serializable {
 	public AccessRequest() {
 	}
 
-	public String getAccessRequestId() {
+	public int getAccessRequestId() {
 		return this.accessRequestId;
 	}
 
-	public void setAccessRequestId(String accessRequestId) {
+	public void setAccessRequestId(int accessRequestId) {
 		this.accessRequestId = accessRequestId;
 	}
 

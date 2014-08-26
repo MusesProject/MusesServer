@@ -19,7 +19,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -34,13 +33,11 @@ public class Helper {
 	 * @return void
 	 */
 	public int setCookie(HttpServletRequest req) {
-		logger = Logger.getRootLogger();
-		BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
 		
 		Cookie [] cookies = req.getCookies();
+		logger.log(Level.INFO, "Number of cookies" + req.getCookies().length);
 		if (cookies != null ){
-			for (Cookie ck : cookies){	
+			for (Cookie ck : cookies){
 				if (ck.getName().equals("JSESSIONID")) {
 					retreivedCookie = ck;
 					retreivedCookie.setMaxAge(COOKIE_MAX_AGE);

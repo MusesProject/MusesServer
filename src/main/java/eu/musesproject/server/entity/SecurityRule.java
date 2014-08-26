@@ -12,7 +12,12 @@ import java.util.List;
  */
 @Entity
 @Table(name="security_rules")
-@NamedQuery(name="SecurityRule.findAll", query="SELECT s FROM SecurityRule s")
+@NamedQueries ({
+	@NamedQuery(name="SecurityRule.findAll", 
+				query="SELECT s FROM SecurityRule s"),
+	@NamedQuery(name="SecurityRule.findByStatus", 
+				query="SELECT s FROM SecurityRule s where s.status = :status")
+})
 public class SecurityRule implements Serializable {
 	private static final long serialVersionUID = 1L;
 

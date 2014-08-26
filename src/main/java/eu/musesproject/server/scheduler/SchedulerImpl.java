@@ -9,7 +9,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -25,9 +24,6 @@ public class SchedulerImpl implements Scheduler {
 	private static final String MUSES_TAG = "MUSES_TAG";
 	
 	public SchedulerImpl() {
-		logger = Logger.getRootLogger();
-		BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
 	    emf = Persistence.createEntityManagerFactory("server"); // FIXME change to muses
 	    em = emf.createEntityManager();		
 	}

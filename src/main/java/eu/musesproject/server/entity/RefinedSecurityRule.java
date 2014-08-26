@@ -11,14 +11,19 @@ import java.util.Date;
  */
 @Entity
 @Table(name="refined_security_rules")
-@NamedQuery(name="RefinedSecurityRule.findAll", query="SELECT r FROM RefinedSecurityRule r")
+@NamedQueries ({
+	@NamedQuery(name="RefinedSecurityRule.findAll", 
+				query="SELECT r FROM RefinedSecurityRule r"),
+	@NamedQuery(name="RefinedSecurityRule.findByStatus", 
+				query="SELECT r FROM RefinedSecurityRule r where r.status = :status")
+})
 public class RefinedSecurityRule implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="refined_security_rules_id")
-	private String refinedSecurityRulesId;
+	private int refinedSecurityRulesId;
 
 	@Lob
 	private byte[] file;
@@ -38,11 +43,11 @@ public class RefinedSecurityRule implements Serializable {
 	public RefinedSecurityRule() {
 	}
 
-	public String getRefinedSecurityRulesId() {
+	public int getRefinedSecurityRulesId() {
 		return this.refinedSecurityRulesId;
 	}
 
-	public void setRefinedSecurityRulesId(String refinedSecurityRulesId) {
+	public void setRefinedSecurityRulesId(int refinedSecurityRulesId) {
 		this.refinedSecurityRulesId = refinedSecurityRulesId;
 	}
 
