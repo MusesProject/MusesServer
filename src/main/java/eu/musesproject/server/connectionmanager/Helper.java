@@ -19,43 +19,46 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class Helper {
+	private static boolean D = false;
 	private static Logger logger = Logger.getLogger(Helper.class.getName());
 	private static final int COOKIE_MAX_AGE = 60*60*24;
-	private Cookie retreivedCookie = null;
+	Cookie retreivedCookie = null;
 
 	/**
 	 * Set the cookie from the http request, if cookie is null then create the cookie from the session id
 	 * @param HttpServletRequest req
 	 * @return void
 	 */
-	public int setCookie(HttpServletRequest req) {
+	public void setCookie(HttpServletRequest req) {
+		logger = Logger.getRootLogger();
+		//BasicConfigurator.configure();
+		logger.setLevel(Level.INFO);
 		
 		Cookie [] cookies = req.getCookies();
-		logger.log(Level.INFO, "Number of cookies" + req.getCookies().length);
 		if (cookies != null ){
-			for (Cookie ck : cookies){
+			for (Cookie ck : cookies){	
 				if (ck.getName().equals("JSESSIONID")) {
 					retreivedCookie = ck;
 					retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
-					logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
+					if (D) logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
 				}
 			}
 		} else {
 			retreivedCookie = new Cookie("JSESSIONID", req.getSession().getId());
 			retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
 			retreivedCookie.setPath(req.getContextPath());
-			logger.log(Level.INFO, "Cookie created .. new request ..");	
+			if (D) logger.log(Level.INFO, "Cookie created .. new request ..");	
 		}
 		/**
 		 * 
 		 * @author yasir
 		 * @version 2.1
 		 */
-		return 0;
 	}
 	/**
 	 * Retrieves current cookie
@@ -77,13 +80,13 @@ public class Helper {
 	    String body = null;
 	    StringBuilder stringBuilder = new StringBuilder();
 	    BufferedReader bufferedReader = null;
-	    int bufferSize = 128;
+
 	    try {
 	        ServletInputStream inputStream = request.getInputStream();
 	        if (inputStream != null) {
 	        	InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 	            bufferedReader = new BufferedReader(inputStreamReader);
-	            char[] charBuffer = new char[bufferSize];
+	            char[] charBuffer = new char[128];
 	            int bytesRead = -1;
 	            while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
 	                stringBuilder.append(charBuffer, 0, bytesRead);
@@ -92,13 +95,13 @@ public class Helper {
 	            stringBuilder.append("");
 	        }
 	    } catch (IOException ex) {
-	        logger.log(Level.INFO, ex);
+	        throw ex;
 	    } finally {
 	        if (bufferedReader != null) {
 	            try {
 	                bufferedReader.close();
 	            } catch (IOException ex) {
-	    	        logger.log(Level.INFO, ex);
+	            	throw ex;
 	            }
 	        }
 	    }

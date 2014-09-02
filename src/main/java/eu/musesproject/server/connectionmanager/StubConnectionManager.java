@@ -23,6 +23,8 @@ package eu.musesproject.server.connectionmanager;
 
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import eu.musesproject.client.model.contextmonitoring.Event;
 import eu.musesproject.server.contextdatareceiver.UserContextEventDataReceiver;
 

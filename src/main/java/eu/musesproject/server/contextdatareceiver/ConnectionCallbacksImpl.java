@@ -21,11 +21,14 @@ package eu.musesproject.server.contextdatareceiver;
  * #L%
  */
 
+import java.util.Iterator;
 import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.client.model.RequestType;
 import eu.musesproject.contextmodel.ContextEvent;
@@ -33,11 +36,11 @@ import eu.musesproject.server.authentication.AuthenticationManager;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
+import eu.musesproject.server.contextdatareceiver.*;
 
 
 public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	
-	private static final String MUSES_TAG = "MUSES_TAG";
 	private Logger logger = Logger.getLogger(ConnectionCallbacksImpl.class.getName());
 	private ConnectionManager connManager;
 	boolean isDataAvailable = false;
@@ -86,9 +89,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
 		ConnectionCallbacksImpl.receiveData = rData;
-		
-		logger.log(Level.INFO, MUSES_TAG + "Info SS, received callback from CM with data:"+rData);
-		
+
 		try {
 			// First, get the request type, in order to differentiate between login
 			// and data exchange
@@ -99,7 +100,6 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				logger.log(Level.INFO, "Login request");
 				// Delegate authentication to AuthenticationManager
 				JSONObject authResponse = AuthenticationManager.getInstance().authenticate(root, sessionId);
-				logger.log(Level.INFO, MUSES_TAG + "Info SS, Login request=>authenticating ..... authentication response is:"+authResponse.toString()	);
 				if (authResponse != null) {
 					return authResponse.toString();
 				}

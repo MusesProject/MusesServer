@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -37,12 +38,13 @@ import org.apache.log4j.Logger;
 
 public class ConnectionManager implements IConnectionManager{
 
+	private static boolean D = true;
 	private static Logger logger = Logger.getLogger(ConnectionManager.class.getName());
-	private static IConnectionCallbacks callBacks;
+	public static IConnectionCallbacks callBacks;
 	private DataHandler dataHandler;
 	private SessionHandler sessionCounter;
 	private static ConnectionManager connectionManagerSingleton = null;
-	private static Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
+	private Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
 	/**
 	 * Constructor initialises callback
 	 * @param calBacks
@@ -52,6 +54,9 @@ public class ConnectionManager implements IConnectionManager{
 	}
 	
 	private ConnectionManager() {
+		logger = Logger.getRootLogger();
+		BasicConfigurator.configure();
+		logger.setLevel(Level.INFO);
 		sessionCounter = new SessionHandler();
 	}
 	
@@ -75,7 +80,7 @@ public class ConnectionManager implements IConnectionManager{
 	
 	@Override
 	public void sendData(String sessionId, String dta) { // FIXME if several packets are sent with same session ID there is no way to find out which one was sent
-		if (!sessionId.equals(null) && !dta.equals(null) && !dta.equals("")) {
+		if (sessionId != null && dta != null && dta!="") {
 			dataHandler = new DataHandler(sessionId, dta);	
 			addDataHandler(dataHandler);
 		}
@@ -101,10 +106,7 @@ public class ConnectionManager implements IConnectionManager{
 		// FIXME how to handle the return status 
 		if (iCallBacks != null){
 			callBacks = iCallBacks;
-			logger.log(Level.INFO, "callback registered");
-		} else {
-			logger.log(Level.INFO, "Passed callback is null");		
-		}
+		} else if (D) logger.log(Level.INFO, "Passed callback is null");		
 	}
 	
 	/**
@@ -117,9 +119,7 @@ public class ConnectionManager implements IConnectionManager{
 	public static String toReceive(String sessionID, String dataAttachedInCurrentReuqest){
 		if (callBacks != null){
 			return callBacks.receiveCb(sessionID, dataAttachedInCurrentReuqest);
-		} else {
-			logger.log(Level.INFO, "Callback object is null");// logg
-		}
+		} else logger.log(Level.INFO, "Callback object is null");// logg
 		return null;
 	} 
 
@@ -129,7 +129,7 @@ public class ConnectionManager implements IConnectionManager{
 	 * @return void
 	 */
 	
-	public static  synchronized void addDataHandler(DataHandler dataHandler){
+	private synchronized void addDataHandler(DataHandler dataHandler){
 		dataHandlerQueue.add(dataHandler);
 	}
 	
@@ -178,9 +178,7 @@ public class ConnectionManager implements IConnectionManager{
 	public static void toSessionCb(String sessionId, int status){
 		if (callBacks!=null){
 			callBacks.sessionCb(sessionId, status);
-		} else {
-			logger.log(Level.INFO, "Callback object is null");
-		}
+		} else logger.log(Level.INFO, "Callback object is null");
 	}
 
 	

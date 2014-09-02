@@ -6,7 +6,6 @@
 package eu.musesproject.server.connectionmanager;
 
 import java.io.IOException;
-import java.util.Queue;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -34,12 +34,7 @@ public class ComMainServlet extends HttpServlet {
 	private Helper helper;
 	private SessionHandler sessionHandler;
 	private ConnectionManager connectionManager;
-	private String dataAttachedInCurrentReuqest;
-	private String dataToSendBackInResponse="";
-	private static final String DATA = "data";
-	private static final int INTERVAL_TO_WAIT = 5;
-	private static final long SLEEP_INTERVAL = 1000;
-	private static final String MUSES_TAG = "MUSES_TAG";
+
 	/**
 	 * 
 	 * @param sessionHandler
@@ -69,7 +64,12 @@ public class ComMainServlet extends HttpServlet {
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
+		logger = Logger.getRootLogger();
+		//BasicConfigurator.configure();
+		logger.setLevel(Level.INFO);
 		ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+
+		
 	}
 	
 	/**
@@ -92,9 +92,8 @@ public class ComMainServlet extends HttpServlet {
 		String currentJSessionID = cookie.getValue();
 		
 		// Retrieve data in the request
-		dataAttachedInCurrentReuqest = helper.getRequestData(request);
-		logger.log(Level.INFO, MUSES_TAG + "Info SS*, Request type:"+connectionType+" with data:"+dataAttachedInCurrentReuqest);
-
+		String dataAttachedInCurrentReuqest = helper.getRequestData(request);
+		
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
 			logger.log(Level.INFO, "Connect request .. Id: " + currentJSessionID );
@@ -103,17 +102,13 @@ public class ComMainServlet extends HttpServlet {
 		// if "send-data" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
 			// Callback the FL to receive data from the client and get the response data back into string
-			dataToSendBackInResponse="";
+			String dataToSendBackInResponse = null;
 			if (dataAttachedInCurrentReuqest != null){
 				dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
-				if (dataToSendBackInResponse == null) {
-					dataToSendBackInResponse = "";
-				}
 			}
-			if (dataToSendBackInResponse.equals("")) {
-				dataToSendBackInResponse = waitForDataIfAvailable(INTERVAL_TO_WAIT, currentJSessionID);
-			}
-			response.addHeader(DATA,dataToSendBackInResponse);
+			if (dataToSendBackInResponse ==null || dataToSendBackInResponse == "")
+				dataToSendBackInResponse = waitForDataIfAvailable(5, currentJSessionID);
+			response.addHeader("data",dataToSendBackInResponse);
 			logger.log(Level.INFO, "Send data request .. Id: " + currentJSessionID );
 			logger.log(Level.INFO, "Data avaialble for the request .. attaching in response header.. data: " + dataToSendBackInResponse);
 		}
@@ -123,15 +118,12 @@ public class ComMainServlet extends HttpServlet {
 			System.out.println("Poll request..");
 			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
-					dataToSendBackInResponse = dataHandler.getData();
-					response.addHeader(DATA,dataToSendBackInResponse);
+					response.addHeader("data",dataHandler.getData());
 					connectionManager.removeDataHandler(dataHandler);
-					Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
-					if (dQueue.size() > 1) {
+					
+					if (connectionManager.getDataHandlerQueue().size()>1) {
 						response.addHeader("more-packets", "YES");
-					}else {
-						response.addHeader("more-packets", "NO");	
-					}
+					}else response.addHeader("more-packets", "NO");	
 
 					logger.log(Level.INFO, "Poll request data available.. attaching in response header..");
 					break; // FIXME temporary as multiple same session ids are in the list right now
@@ -159,7 +151,7 @@ public class ComMainServlet extends HttpServlet {
 		} 
 		
 		// Add session id to the List
-		if (currentJSessionID != null && !connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
+		if (currentJSessionID != null) {
 			sessionHandler.addCookieToList(cookie);
 		}
 
@@ -169,25 +161,19 @@ public class ComMainServlet extends HttpServlet {
 		response.addCookie(cookie);
 	
 	}
-	public String getResponseData(){
-		return dataToSendBackInResponse;
-	}
 	
-	
-	public String waitForDataIfAvailable(int timeout, String currentJSessionID){
+	private String waitForDataIfAvailable(int timeout, String currentJSessionID){
 		int i=1;
 		while(i<=timeout){
-			Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
-			if (dQueue.size()>=1) {
+			if (connectionManager.getDataHandlerQueue().size()>=1) {
 				for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 					if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 						connectionManager.removeDataHandler(dataHandler);
-						dataToSendBackInResponse = dataHandler.getData();
 						return dataHandler.getData();
 					}
 				}
 			}
-			sleep(SLEEP_INTERVAL);
+			sleep(1000);
 			i++;
 		}
 		return "";
@@ -197,7 +183,8 @@ public class ComMainServlet extends HttpServlet {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			logger.log(Level.INFO, e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -207,72 +194,75 @@ public class ComMainServlet extends HttpServlet {
 	 * @param HttpServletResponse response
 	 * @throws ServletException, IOException
 	 */
+	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		String connectionType = request.getParameter("connection-type");
-//		String dataAttachedInCurrentReuqest = request.getParameter(DATA);
-//		
-//		// create cookie if not in the request
-//		helper.setCookie(request);
-//		Cookie cookie = helper.getCookie();
-//		String currentJSessionID = cookie.getValue();
-//		
-//		// if "connect" request
-//		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
-//			logger.info("Connect request .. Id: " + currentJSessionID );
-//		}
-//		
-//		//if "send-data" request
-//		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
-//			// Callback the FL to receive data from the client and get the response data back into string
-//			String dataToSendBackInResponse = null;
-//			if (dataAttachedInCurrentReuqest != null){
-//				//dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
-//			}
-//			response.addHeader(DATA,dataToSendBackInResponse);
-//			logger.log(Level.INFO, "Send data request .. Id: " + currentJSessionID );
-//			logger.log(Level.INFO, "Data avaialble for the request .. attaching in response header.. data: " + dataToSendBackInResponse);
-//		}
-//		
-//		// if "poll" request
-//		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
-//			logger.log(Level.INFO, "Poll request ..");
-//			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
-//				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
-//					response.addHeader(DATA,dataHandler.getData());
-//					logger.log(Level.INFO, "Poll request data available.. attaching in response header..");
-//					break; // FIXME temporary as multiple same session ids are in the list right now
-//				}
-//			}
-//		}
-//		
-//		// if "ack" request
-//		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.ACK)) {
-//			// Clean up the data handler object from the list 
-//			connectionManager.removeDataHandler(connectionManager.getDataHandlerObject(currentJSessionID));
-//			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DATA_SENT_SUCCESFULLY);
-//			logger.log(Level.INFO, "Ack request ..");
-//		}
-//		
-//		// if disconnect request 
-//		// invalidate session from Servlet
-//		// remove it from the session id list
-//		// Callback the Functional layer about the disconnect
-//		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
-//			helper.disconnect(request);
-//			sessionHandler.removeSessionIdFromList(currentJSessionID);
-//			sessionHandler.removeCookieToList(cookie);
-//			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
-//			logger.log(Level.INFO, "Connection disconnected with ID: " + currentJSessionID);
-//		} 
-//		
-//		// Add session id to the List
-//		sessionHandler.addSessionIdToList(currentJSessionID);
-//		// Setup response to send back
-//
-//		response.setContentType("text/html");
-//		response.addCookie(cookie);
+		
+		String connectionType = request.getParameter("connection-type");
+		String dataAttachedInCurrentReuqest = request.getParameter("data");
+		
+		// create cookie if not in the request
+		helper.setCookie(request);
+		Cookie cookie = helper.getCookie();
+		String currentJSessionID = cookie.getValue();
+		
+		// if "connect" request
+		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
+			logger.info("Connect request .. Id: " + currentJSessionID );
+		}
+		
+		//if "send-data" request
+		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
+			// Callback the FL to receive data from the client and get the response data back into string
+			String dataToSendBackInResponse = null;
+			if (dataAttachedInCurrentReuqest != null){
+				//dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
+			}
+			response.addHeader("data",dataToSendBackInResponse);
+			logger.log(Level.INFO, "Send data request .. Id: " + currentJSessionID );
+			logger.log(Level.INFO, "Data avaialble for the request .. attaching in response header.. data: " + dataToSendBackInResponse);
+		}
+		
+		// if "poll" request
+		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
+			logger.log(Level.INFO, "Poll request ..");
+			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
+				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
+					response.addHeader("data",dataHandler.getData());
+					logger.log(Level.INFO, "Poll request data available.. attaching in response header..");
+					break; // FIXME temporary as multiple same session ids are in the list right now
+				}
+			}
+		}
+		
+		// if "ack" request
+		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.ACK)) {
+			// Clean up the data handler object from the list 
+			connectionManager.removeDataHandler(connectionManager.getDataHandlerObject(currentJSessionID));
+			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DATA_SENT_SUCCESFULLY);
+			logger.log(Level.INFO, "Ack request ..");
+		}
+		
+		// if disconnect request 
+		// invalidate session from Servlet
+		// remove it from the session id list
+		// Callback the Functional layer about the disconnect
+		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
+			helper.disconnect(request);
+			sessionHandler.removeSessionIdFromList(currentJSessionID);
+			sessionHandler.removeCookieToList(cookie);
+			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
+			logger.log(Level.INFO, "Connection disconnected with ID: " + currentJSessionID);
+		} 
+		
+		// Add session id to the List
+		sessionHandler.addSessionIdToList(currentJSessionID);
+		sessionHandler.removeCookieToList(cookie);
+		// Setup response to send back
+
+		response.setContentType("text/html");
+		response.addCookie(cookie);
 	}
 
 }
