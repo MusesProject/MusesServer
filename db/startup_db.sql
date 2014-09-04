@@ -151,11 +151,11 @@ DROP TABLE IF EXISTS `assets`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `assets` (
   `asset_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(30) NOT NULL,
+  `title` varchar(50) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
   `value` double NOT NULL COMMENT 'represents the real value of the asset',
   `confidential_level` enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLYCONFIDENTIAL') NOT NULL,
-  `location` varchar(100) NOT NULL COMMENT 'Location of the asset in the hard drive',
+  `location` varchar(300) NOT NULL COMMENT 'Location of the asset in the hard drive',
   PRIMARY KEY (`asset_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1539 DEFAULT CHARSET=utf8 COMMENT='This one will store all Assets data. All fields are defined in the table.';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -166,7 +166,7 @@ CREATE TABLE `assets` (
 
 LOCK TABLES `assets` WRITE;
 /*!40000 ALTER TABLE `assets` DISABLE KEYS */;
-INSERT INTO `assets` VALUES (1,'MusesBeerCompetition.txt','Beer Competition',1000,'INTERNAL','Sweden'),(1515,'ttle','desc',1,'PUBLIC','sweden'),(1516,'title','desc',1,'PUBLIC','sweden'),(1520,'title','desc',200000,'PUBLIC','Sweden'),(1521,'title','desc',200000,'PUBLIC','Sweden'),(1522,'title','desc',200000,'PUBLIC','Sweden'),(1523,'title','desc',200000,'PUBLIC','Sweden'),(1524,'title','desc',200000,'PUBLIC','Sweden'),(1525,'title','desc',200000,'PUBLIC','Sweden'),(1526,'title','desc',200000,'PUBLIC','Sweden'),(1527,'title','desc',200000,'PUBLIC','Sweden'),(1528,'title','desc',200000,'PUBLIC','Sweden'),(1529,'title','desc',200000,'PUBLIC','Sweden'),(1530,'title','desc',200000,'PUBLIC','Sweden'),(1531,'title','desc',200000,'PUBLIC','Sweden'),(1532,'title','desc',200000,'PUBLIC','Sweden'),(1533,'title','desc',200000,'PUBLIC','Sweden'),(1534,'title','desc',200000,'PUBLIC','Sweden'),(1535,'title','desc',200000,'PUBLIC','Sweden'),(1536,'title','desc',200000,'PUBLIC','Sweden'),(1537,'title','desc',200000,'PUBLIC','Sweden'),(1538,'title','desc',200000,'PUBLIC','Sweden');
+INSERT INTO `assets` VALUES (1514,'MusesBeerCompetition.txt','Beer Competition',1000,'PUBLIC','/sdcard/Swe/MusesBeerCompetition.txt'),(1515,'MUSES_internal_asset.txt','desc',10000,'INTERNAL','/sdcard/Swe/MUSES_internal_asset.txt'),(1516,'MUSES_partner_grades.txt','desc',100000,'CONFIDENTIAL','/sdcard/Swe/MUSES_partner_grades.txt'),(1520,'MUSES_strictly_confidential.txt','desc',200000,'STRICTLYCONFIDENTIAL','/sdacrd/Swe/MUSES_strictly_confidential.txt'),(1521,'emas_ticket_101','file server not working',5000,'INTERNAL','emas://swe_ticket/emas_ticket_101'),(1522,'emas_ticket_102','web server not working',50000,'CONFIDENTIAL','emas://swe_ticket/emas_ticket_102'),(1523,'emas_ticket_103','VPN server not working',100000,'STRICTLYCONFIDENTIAL','emas://swe_ticket/emas_ticket_103');
 /*!40000 ALTER TABLE `assets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -990,4 +990,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-08-28 18:00:02
+-- Dump completed on 2014-09-01 13:05:16

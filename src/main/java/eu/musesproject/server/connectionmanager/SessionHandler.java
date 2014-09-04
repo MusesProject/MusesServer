@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -37,12 +36,15 @@ import org.apache.log4j.Logger;
 
 public class SessionHandler implements ServletContextListener , HttpSessionListener, ServletRequestListener{
 	
-	private Set<String> sessionIDs = new HashSet<String>();
-	public Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
+	private static Set<String> sessionIDs = new HashSet<String>();
+	private static Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
 	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
-	private static final boolean D = true;
 	private Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
+	
+	public SessionHandler() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	@Override
 	public void requestDestroyed(ServletRequestEvent sre) {
@@ -58,9 +60,6 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	
 	@Override
 	public void requestInitialized(ServletRequestEvent sre) {
-		logger = Logger.getRootLogger();
-		//BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
 		
 		int interval=0;
 		HttpServletRequest request = (HttpServletRequest) sre.getServletRequest();
@@ -125,9 +124,10 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, cookie.getMaxAge());
 		Date d = calendar.getTime();
-		boolean found = true;
-		if(cookieSet.isEmpty()) 
+		boolean found = false;
+		if(cookieSet.isEmpty()){
 			found=false; 
+		} 
 		for (Map.Entry<Date, Cookie> entry : cookieSet.entrySet()) {
 			if (cookie.getValue().equalsIgnoreCase(entry.getValue().getValue())) {
 				found = true;
@@ -140,7 +140,7 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	}
 		
 	public void removeCookieToList(Cookie cookie){
-		if (cookieSet.isEmpty()){
+		if (!cookieSet.isEmpty()){
 			cookieSet.remove(cookie);
 			removeSessionIdFromList(cookie.getValue());
 		} 
@@ -158,7 +158,9 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	}
 	
     private boolean isExpired(Date cookieExpires) {
-		if (cookieExpires == null) return true;
+		if (cookieExpires == null) {
+				return true;
+		}
 		Date now = new Date();
 		if (now.compareTo(cookieExpires) <= 0){
 			return false;
@@ -185,8 +187,9 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	
 	public void printCurrentList(){
 		logger.log(Level.INFO, "Active session:");
-		for (String id : sessionIDs)
+		for (String id : sessionIDs){
 			logger.log(Level.INFO,id);
+		}
 	}
 	
 

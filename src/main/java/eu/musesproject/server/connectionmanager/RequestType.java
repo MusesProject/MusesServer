@@ -12,7 +12,8 @@ package eu.musesproject.server.connectionmanager;
  * @version Jan 27, 2014
  */
 
-public class RequestType {
+public final class RequestType {
+	private RequestType(){};
 	public static final String CONNECT = "connect";
 	public static final String DATA = "data";
 	public static final String POLL = "poll";
