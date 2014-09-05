@@ -1,6 +1,7 @@
 package eu.musesproject.server.db.handler;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,15 +12,19 @@ import javax.persistence.Persistence;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.AdditionalProtection;
 import eu.musesproject.server.entity.Asset;
+import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.Device;
 import eu.musesproject.server.entity.Domain;
 import eu.musesproject.server.entity.EventType;
+import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RefinedSecurityRule;
+import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.Role;
 import eu.musesproject.server.entity.SecurityIncident;
 import eu.musesproject.server.entity.SecurityRule;
 import eu.musesproject.server.entity.SimpleEvent;
+import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.ThreatClue;
 import eu.musesproject.server.entity.User;
 import eu.musesproject.server.entity.UserAuthorization;
@@ -36,6 +41,8 @@ public class DBManager {
 	    emf = Persistence.createEntityManagerFactory("server"); // FIXME change to muses
 	    em = emf.createEntityManager();	
 	}
+	
+	
 	
 	public void inform(SimpleEvent event) {
 		try {
@@ -430,10 +437,259 @@ public class DBManager {
 		return foundList;
     }
     
-//    public List<BlackList> getFullBlacklist() {  // FIXME no black list table
-//    	
-//    }
+//  public List<BlackList> getFullBlacklist() {  // FIXME no black list table
+//	
+//}
+
+    			
+    	/**----------------------------------------------------------------**/
+    
+    					/*** START RT2AE DB METHODS***/
+    
+     /**----------------------------------------------------------------**/
+   
+    
+    
+    /**
+     * Get Users list 
+     * @return List<User>
+     */
+	public List<User> getUsers() {
+		List<User> users = em.createNamedQuery("User.findAll",User.class).getResultList();
+		return users;
+	}
+    
 	
+	/**
+     * Save User list in the DB 
+     * @param User
+     */
+	public void setUsers(List<User> users) {
+		Iterator<User> i = users.iterator();
+		while(i.hasNext()){
+			User user = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(user);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+
+	}
+	
+	 /**
+     * Get Asset list
+     * @return List<Asset>
+     */
+    public List<Asset> getAssets() {
+		List<Asset> assets = em.createNamedQuery("Asset.findAll",Asset.class).getResultList();
+		return assets;		
+	}
     
-    
+    /**
+     * Get Asset list by title
+     * @param title
+     * @return List<Asset>
+     */
+    public List<Asset> findAssetByTitle(String title) {
+		List<Asset> assets = em.createNamedQuery("Asset.findByTitle",Asset.class).getResultList();
+		return assets;		
+	}
+      
+    /**
+     * Save Asset list in the DB 
+     * @param Asset
+     */
+	public void setAssets(List<Asset> assets) {
+		Iterator<Asset> i = assets.iterator();
+		while(i.hasNext()){
+			Asset asset = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(asset);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+	}
+	
+	
+	/*public List<ThreatClue> getClues() {
+			List<ThreatClue> clues = em.createNamedQuery("ThreatClue.findAll",ThreatClue.class).getResultList();
+			return clues;		
+		}
+	
+	
+	public void setThreatClues(List<ThreatClue> clues) {
+		Iterator<ThreatClue> i = clues.iterator();
+		while(i.hasNext()){
+			ThreatClue clue = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(clue);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+	}*/
+	
+	 /**
+     * Get Clue list
+     * @return List<Clue>
+     */
+	public List<Clue> getClues() {
+		List<Clue> clues = em.createNamedQuery("Clue.findAll",Clue.class).getResultList();
+		return clues;		
+	}
+
+
+	/**
+     * Save Clue list in the DB 
+     * @param Clue
+     */
+	public void setClues(List<Clue> clues) {
+		Iterator<Clue> i = clues.iterator();
+		while(i.hasNext()){
+			Clue clue = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(clue);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+	}
+	
+	/**
+     * Get Threat list
+     * @return List<Threat>
+     */
+	public List<Threat> getThreats() {
+		
+		List<Threat> threats = em.createNamedQuery("Threat.findAll",Threat.class).getResultList();
+		
+		return threats;		
+	}
+	
+	 /**
+     * Get Threat list by description
+     * @param description
+     * @return List<Threat>
+     */
+	public List<Threat> findThreatbydescription(String description) {
+		
+		List<Threat> threat = em.createNamedQuery("Threat.findThreatbyDescription",Threat.class)
+				.setParameter("description", description)
+				.getResultList();
+				
+		return threat;		
+	}
+	
+	/**
+     * Save Threat list in the DB 
+     * @param Threat
+     */
+	public void setThreats(List<Threat> threats) {
+		
+		Iterator<Threat> i = threats.iterator();
+		while(i.hasNext()){
+			Threat threat = i.next();
+		
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(threat);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+			
+			Iterator<Outcome> o = threat.getOutcomes().iterator();
+			while(o.hasNext()){
+				Outcome outcome = o.next();
+
+				try {
+					EntityTransaction entityTransaction = em.getTransaction();
+					entityTransaction.begin();
+					List<Threat> t = this.findThreatbydescription(threat.getDescription());
+					outcome.setThreat(t.get(0));
+					em.persist(outcome);
+					entityTransaction.commit();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					em.close();
+				}
+				
+			}
+		}
+	}
+	
+	/**
+     * Get RiskPolicy list
+     * @return List<RiskPolicy>
+     */
+	public List<RiskPolicy> getRiskPolicies() {
+		List<RiskPolicy> riskpolicy = em.createNamedQuery("RiskPolicy.findAll",RiskPolicy.class).getResultList();
+		return riskpolicy;				
+	}
+
+
+	/**
+     * Save RiskPolicy list in the DB 
+     * @param riskPolicies
+     */
+	public void setRiskPolicies(List<RiskPolicy> riskPolicies) {
+		Iterator<RiskPolicy> i = riskPolicies.iterator();
+		while(i.hasNext()){
+			RiskPolicy riskpolicy = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(riskpolicy);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+	}
+	
+	/**
+     * Get AccessRequest list
+     * @return List<AccessRequest>
+     */
+	public List<AccessRequest> getAccessRequests() {
+		List<AccessRequest> accesrequests = em.createNamedQuery("AccessRequest.findAll",AccessRequest.class).getResultList();
+		
+		return accesrequests;
+	}
+	
+					/**----------------------------------------------------------------**/
+				    
+									/*** END RT2AE DB METHODS***/
+				
+				/**----------------------------------------------------------------**/
+
+
 }

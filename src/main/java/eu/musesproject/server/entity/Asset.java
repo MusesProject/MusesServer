@@ -15,7 +15,9 @@ import java.util.List;
 	@NamedQuery(name="Asset.findAll", 
 			    query="SELECT a FROM Asset a"),
 	@NamedQuery(name="Asset.findByLocation", 
-	 			query="SELECT a FROM Asset a where a.location = :location")
+	 			query="SELECT a FROM Asset a where a.location = :location"),
+	@NamedQuery(name="Asset.findByTitle", 
+		query="SELECT a FROM Asset a where a.title = :title")
 })
 public class Asset implements Serializable {
 	private static final long serialVersionUID = 1L;

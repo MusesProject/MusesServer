@@ -66,7 +66,11 @@
   <listener>
 		<listener-class>eu.musesproject.server.connectionmanager.SessionHandler</listener-class>
   </listener>
-  
+  <!-- 
+  <listener>
+		<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+  </listener>
+   -->
   <welcome-file-list>
       <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
