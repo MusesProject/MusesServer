@@ -1,6 +1,7 @@
 package eu.musesproject.server.db.handler;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -430,10 +431,99 @@ public class DBManager {
 		return foundList;
     }
     
-//    public List<BlackList> getFullBlacklist() {  // FIXME no black list table
-//    	
-//    }
+//  public List<BlackList> getFullBlacklist() {  // FIXME no black list table
+//	
+//}
+
+    			
+    	/**----------------------------------------------------------------**/
+    
+    					/*** START RT2AE DB METHODS***/
+    
+     /**----------------------------------------------------------------**/
+    
+	public List<User> getUsers() {
+		List<User> users = em.createNamedQuery("User.findAll",User.class).getResultList();
+		return users;
+	}
+    
 	
+	public void setUsers(List<User> users) {
+		Iterator<User> i = users.iterator();
+		while(i.hasNext()){
+			User user = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(user);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+
+	}
+	
+    public List<Asset> getAssets() {
+		List<Asset> assets = em.createNamedQuery("Asset.findAll",Asset.class).getResultList();
+		return assets;		
+	}
+      
     
-    
+	public void setAssets(List<Asset> assets) {
+		Iterator<Asset> i = assets.iterator();
+		while(i.hasNext()){
+			Asset asset = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(asset);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+	}
+	
+	
+	public List<ThreatClue> getClues() {
+			List<ThreatClue> clues = em.createNamedQuery("ThreatClue.findAll",ThreatClue.class).getResultList();
+			return clues;		
+		}
+	
+	
+	public void setThreatClues(List<ThreatClue> clues) {
+		Iterator<ThreatClue> i = clues.iterator();
+		while(i.hasNext()){
+			ThreatClue clue = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(clue);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				em.close();
+			}
+		}
+	}
+	
+	public List<AccessRequest> getAccessRequests() {
+		List<AccessRequest> accesrequests = em.createNamedQuery("AccessRequest.findAll",AccessRequest.class).getResultList();
+		
+		return accesrequests;
+	}
+	
+					/**----------------------------------------------------------------**/
+				    
+									/*** END RT2AE DB METHODS***/
+				
+				/**----------------------------------------------------------------**/
+
+
 }
