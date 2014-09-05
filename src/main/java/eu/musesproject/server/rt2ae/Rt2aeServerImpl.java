@@ -1431,6 +1431,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				riskCommunication.setRiskTreatment(riskTreatments);
 				Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+				decision.setCondition("<noAttachments>1</noAttachments>");//TODO Manage this programmatically
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
 				return decision;
