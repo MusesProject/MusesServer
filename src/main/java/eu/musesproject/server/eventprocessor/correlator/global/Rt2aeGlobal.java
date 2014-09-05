@@ -220,7 +220,7 @@ public class Rt2aeGlobal {
 		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
 		//Simulate response from RT2AE, for demo purposes
-		Decision decision = decideBasedOnRisk(composedRequest, connEvent);
+		Decision decision = testDecideBasedOnRisk(composedRequest, connEvent);
 		decisions[0] = decision;
 		
 		//Select the most appropriate policy according to the decision and the action of the request		
@@ -265,7 +265,7 @@ public class Rt2aeGlobal {
 		PolicySelector policySelector = new PolicySelector();
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
@@ -447,10 +447,11 @@ public class Rt2aeGlobal {
 		return compliance;
 	}
 	
-	private Decision decideBasedOnRisk(AccessRequest composedRequest,	ConnectivityEvent connEvent) {//TODO Demo purposes: RT2AE by-pass
+	private Decision testDecideBasedOnRisk(AccessRequest composedRequest,	ConnectivityEvent connEvent) {//TODO Demo purposes: RT2AE by-pass
 		logger.info("[policyCompliance]");
 		Decision decision = null;
 		
+		logger.info(connEvent.getWifiEncryption());
 		if (!connEvent.getWifiEncryption().equals("WPA2")){
 			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 			RiskTreatment [] riskTreatments = new RiskTreatment[1];
@@ -535,4 +536,7 @@ public class Rt2aeGlobal {
 	public static Rt2aeServerImpl getRt2aeServer(){
 		return rt2aeServer;
 	}
+	
+	
+	
 }
