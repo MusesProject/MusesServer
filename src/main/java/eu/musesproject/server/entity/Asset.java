@@ -16,7 +16,7 @@ import java.util.List;
 			    query="SELECT a FROM Asset a"),
 	@NamedQuery(name="Asset.findByLocation", 
 	 			query="SELECT a FROM Asset a where a.location = :location"),
-	@NamedQuery(name="Asset.findBytitle", 
+	@NamedQuery(name="Asset.findByTitle", 
 		query="SELECT a FROM Asset a where a.title = :title")
 })
 public class Asset implements Serializable {
