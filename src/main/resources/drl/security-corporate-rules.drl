@@ -103,7 +103,7 @@ rule "AccessRequest Detection open asset type sensitive"
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
-		//retract(conn);
+		
 	end
 	
 	rule "AccessRequest Detection open asset type insensitive"
@@ -209,6 +209,7 @@ rule "Blacklist app 00001"
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
+		
 	end
 	
 	rule "Not Blacklist app 00001"
