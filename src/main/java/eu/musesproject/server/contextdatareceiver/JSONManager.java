@@ -169,6 +169,8 @@ public class JSONManager {
 
 		} catch (JSONException e) {
 			e.printStackTrace();
+			Logger.getLogger(JSONManager.class).info("Exception with JSON message:"+message);
+			Logger.getLogger(JSONManager.class).info("*******");
 		}
 		
 		return resultList;
