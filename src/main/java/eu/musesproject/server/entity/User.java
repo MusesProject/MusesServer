@@ -27,7 +27,7 @@ public class User implements Serializable {
 
 	private String email;
 
-	private byte[] enabled;
+	private int enabled;
 
 	private String name;
 
@@ -86,11 +86,11 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public byte[] getEnabled() {
+	public int getEnabled() {
 		return this.enabled;
 	}
 
-	public void setEnabled(byte[] enabled) {
+	public void setEnabled(int enabled) {
 		this.enabled = enabled;
 	}
 

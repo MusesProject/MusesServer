@@ -1415,6 +1415,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
+		if(!policyCompliance.equals(policyCompliance.DENY)){
+		
 		List<Clue> listclues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		if (accessRequest.getRequestedCorporateAsset().getConfidential_level()=="PUBLIC"){
 			Decision decision = Decision.GRANTED_ACCESS;
@@ -1440,6 +1442,14 @@ public class Rt2aeServerImpl implements Rt2ae {
 		logger.info("Decision: GRANTED_ACCESS");
 		return decision;
 		
+		}else{
+			
+			Decision decision = Decision.STRONG_DENY_ACCESS;
+			logger.info("Decision: STRONG_DENY_ACCESS");
+			return decision;
+			
+			
+		}
 		
 	}
 	

@@ -11,13 +11,17 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="clue")
-@NamedQuery(name="Clue.findAll", query="SELECT c FROM Clue c")
+@NamedQueries({
+@NamedQuery(name="Clue.findAll", query="SELECT c FROM Clue c"),
+@NamedQuery(name="Clue.findByValue", 
+query="SELECT c FROM Clue c where c.value = :value")
+})
 public class Clue implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name="clue_id")
-	private String clueId;
+	private int clueId;
 
 	@Lob
 	private String value;
@@ -25,11 +29,11 @@ public class Clue implements Serializable {
 	public Clue() {
 	}
 
-	public String getClueId() {
+	public int getClueId() {
 		return this.clueId;
 	}
 
-	public void setClueId(String clueId) {
+	public void setClueId(int clueId) {
 		this.clueId = clueId;
 	}
 
