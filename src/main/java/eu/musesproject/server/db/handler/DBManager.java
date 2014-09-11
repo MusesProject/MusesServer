@@ -40,6 +40,8 @@ public class DBManager {
 		this.module = module;
 	    emf = Persistence.createEntityManagerFactory("server"); // FIXME change to muses
 	    em = emf.createEntityManager();	
+		
+	    
 	}
 	
 	
@@ -454,11 +456,22 @@ public class DBManager {
      * Get Users list 
      * @return List<User>
      */
-	public List<User> getUsers() {
+	public List<User> getUsers() {	
 		List<User> users = em.createNamedQuery("User.findAll",User.class).getResultList();
 		return users;
 	}
     
+	/**
+     * Find User list by username 
+     * @param username
+     */
+	public List<User> findUserByUsername(String username) {
+		List<User> users = em.createNamedQuery("User.findByUsername",User.class)
+				.setParameter("username", username)
+				.getResultList();
+	
+		return users;
+	}
 	
 	/**
      * Save User list in the DB 
@@ -471,12 +484,13 @@ public class DBManager {
 			try {
 				EntityTransaction entityTransaction = em.getTransaction();
 				entityTransaction.begin();
+				System.out.println("ok");
 				em.persist(user);
 				entityTransaction.commit();
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				em.close();
+				//em.close();
 			}
 		}
 
@@ -487,7 +501,11 @@ public class DBManager {
      * @return List<Asset>
      */
     public List<Asset> getAssets() {
+    	
+    	
 		List<Asset> assets = em.createNamedQuery("Asset.findAll",Asset.class).getResultList();
+		
+
 		return assets;		
 	}
     
@@ -497,7 +515,11 @@ public class DBManager {
      * @return List<Asset>
      */
     public List<Asset> findAssetByTitle(String title) {
-		List<Asset> assets = em.createNamedQuery("Asset.findByTitle",Asset.class).getResultList();
+    
+		List<Asset> assets = em.createNamedQuery("Asset.findByTitle",Asset.class)
+							.setParameter("title", title)
+							.getResultList();
+
 		return assets;		
 	}
       
@@ -517,7 +539,7 @@ public class DBManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				em.close();
+				//em.close();
 			}
 		}
 	}
@@ -551,10 +573,26 @@ public class DBManager {
      * @return List<Clue>
      */
 	public List<Clue> getClues() {
+			
 		List<Clue> clues = em.createNamedQuery("Clue.findAll",Clue.class).getResultList();
+		
 		return clues;		
 	}
 
+	
+	/**
+     * Get Clue list by value
+     * @param value
+     * @return List<Clue>
+     */
+    public List<Clue> findClueByValue(String value) {
+    	
+		List<Clue> clues = em.createNamedQuery("Clue.findByValue",Clue.class)
+							.setParameter("value", value)
+							.getResultList();
+
+		return clues;		
+	}
 
 	/**
      * Save Clue list in the DB 
@@ -572,7 +610,7 @@ public class DBManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				em.close();
+				//em.close();
 			}
 		}
 	}
@@ -583,6 +621,8 @@ public class DBManager {
      */
 	public List<Threat> getThreats() {
 		
+
+				
 		List<Threat> threats = em.createNamedQuery("Threat.findAll",Threat.class).getResultList();
 		
 		return threats;		
@@ -594,11 +634,10 @@ public class DBManager {
      * @return List<Threat>
      */
 	public List<Threat> findThreatbydescription(String description) {
-		
+				
 		List<Threat> threat = em.createNamedQuery("Threat.findThreatbyDescription",Threat.class)
 				.setParameter("description", description)
 				.getResultList();
-				
 		return threat;		
 	}
 	
@@ -649,7 +688,9 @@ public class DBManager {
      * @return List<RiskPolicy>
      */
 	public List<RiskPolicy> getRiskPolicies() {
+			
 		List<RiskPolicy> riskpolicy = em.createNamedQuery("RiskPolicy.findAll",RiskPolicy.class).getResultList();
+
 		return riskpolicy;				
 	}
 
@@ -670,7 +711,7 @@ public class DBManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				em.close();
+				//em.close();
 			}
 		}
 	}
@@ -680,8 +721,10 @@ public class DBManager {
      * @return List<AccessRequest>
      */
 	public List<AccessRequest> getAccessRequests() {
-		List<AccessRequest> accesrequests = em.createNamedQuery("AccessRequest.findAll",AccessRequest.class).getResultList();
 		
+			
+		List<AccessRequest> accesrequests = em.createNamedQuery("AccessRequest.findAll",AccessRequest.class).getResultList();
+
 		return accesrequests;
 	}
 	

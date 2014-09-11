@@ -38,7 +38,7 @@
 		<class>eu.musesproject.server.entity.UserBehaviour</class>
 		<class>eu.musesproject.server.entity.User</class>
 		<properties>
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/muses" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://192.168.44.101:3306/muses" />
 			<property name="javax.persistence.jdbc.user" value="muses" />
 			<property name="javax.persistence.jdbc.password" value="muses11" />
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
