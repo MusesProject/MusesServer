@@ -27,10 +27,15 @@ public class DeviceProtectionEvent extends Event {
 	private int id;
 	private String type;
 	private long timestamp;
-	private boolean passwordProtected;
-	private boolean patternProtected;
-	private boolean trustedAVInstalled;
+	private boolean isPasswordProtected;
+	private boolean isPatternProtected;
+	private boolean isTrustedAntivirusInstalled;
 	private boolean isRooted;
+	private boolean isRootPermissionGiven;
+	private int screenTimeoutInSeconds;
+	private boolean musesDatabaseExists;
+	private String ipaddress;
+	
 
 	
 	public int getId() {
@@ -51,29 +56,54 @@ public class DeviceProtectionEvent extends Event {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	public boolean isPasswordProtected() {
-		return passwordProtected;
-	}
-	public void setPasswordProtected(boolean passwordProtected) {
-		this.passwordProtected = passwordProtected;
-	}
-	public boolean isPatternProtected() {
-		return patternProtected;
-	}
-	public void setPatternProtected(boolean patternProtected) {
-		this.patternProtected = patternProtected;
-	}
-	public boolean isTrustedAVInstalled() {
-		return trustedAVInstalled;
-	}
-	public void setTrustedAVInstalled(boolean trustedAVInstalled) {
-		this.trustedAVInstalled = trustedAVInstalled;
-	}
+
 	public boolean isRooted() {
 		return isRooted;
 	}
 	public void setRooted(boolean isRooted) {
 		this.isRooted = isRooted;
+	}
+	public boolean getIsPasswordProtected() {
+		return isPasswordProtected;
+	}
+	public void setIsPasswordProtected(boolean isPasswordProtected) {
+		this.isPasswordProtected = isPasswordProtected;
+	}
+	public boolean isPatternProtected() {
+		return isPatternProtected;
+	}
+	public void setPatternProtected(boolean isPatternProtected) {
+		this.isPatternProtected = isPatternProtected;
+	}
+	public boolean isTrustedAntivirusInstalled() {
+		return isTrustedAntivirusInstalled;
+	}
+	public void setTrustedAntivirusInstalled(boolean isTrustedAntivirusInstalled) {
+		this.isTrustedAntivirusInstalled = isTrustedAntivirusInstalled;
+	}
+	public boolean isRootPermissionGiven() {
+		return isRootPermissionGiven;
+	}
+	public void setRootPermissionGiven(boolean isRootPermissionGiven) {
+		this.isRootPermissionGiven = isRootPermissionGiven;
+	}
+	public int getScreenTimeoutInSeconds() {
+		return screenTimeoutInSeconds;
+	}
+	public void setScreenTimeoutInSeconds(int screenTimeoutInSeconds) {
+		this.screenTimeoutInSeconds = screenTimeoutInSeconds;
+	}
+	public boolean isMusesDatabaseExists() {
+		return musesDatabaseExists;
+	}
+	public void setMusesDatabaseExists(boolean musesDatabaseExists) {
+		this.musesDatabaseExists = musesDatabaseExists;
+	}
+	public String getIpaddress() {
+		return ipaddress;
+	}
+	public void setIpaddress(String ipaddress) {
+		this.ipaddress = ipaddress;
 	}
 
 

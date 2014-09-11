@@ -14,6 +14,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEv
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Clue;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import eu.musesproject.server.risktrust.ThreatOntology
 import java.util.ArrayList
@@ -75,6 +76,12 @@ declare EmailEvent
 end
 
 declare VirusFoundEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare ChangeSecurityPropertyEvent
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -149,6 +156,33 @@ rule "Clue-identification-00000"
 		StatusGlobal.log("5.A new device security state has been identified: VIRUS FOUND, associated to event:"+v.getTimestamp());
 		Rt2aeGlobal.deviceSecurityStateChange(v,"Virus", ThreatOntology.DATA_DESTRUCTION);
 		//retract(v);
+	end
+	
+	
+	rule "Device-security-state-00003"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		d: DeviceProtectionEvent(isPasswordProtected==false)
+	then
+		
+		StatusGlobal.log("5.A new device security state has been identified: SCREEN LOCK DISABLED, associated to event:"+d.getTimestamp());
+		Rt2aeGlobal.deviceSecurityStateChange(d,"Screen Lock Disabled", ThreatOntology.PHYSICAL_ACCESS);
+
+	end
+	
+		rule "Device-security-state-00004"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		d: DeviceProtectionEvent(screenTimeoutInSeconds<60)
+	then
+		
+		StatusGlobal.log("5.A new device security state has been identified: SCREEN TIMEOUT IS NOT ACCEPTABLE, associated to event:"+d.getTimestamp());
+		Rt2aeGlobal.deviceSecurityStateChange(d,"Insufficient screen Look timeout", ThreatOntology.PHYSICAL_ACCESS);
+
 	end
 	
 	rule "Clue-identification-000008"

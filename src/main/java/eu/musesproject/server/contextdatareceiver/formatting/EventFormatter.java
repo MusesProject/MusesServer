@@ -33,6 +33,7 @@ import com.ibm.icu.util.StringTokenizer;
 
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
@@ -71,6 +72,8 @@ public class EventFormatter {
 					cepFileEvent = convertToEmailEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.VIRUS_FOUND)){
 					cepFileEvent = convertToVirusFoundEvent(contextEvent);
+				} else if (contextEvent.getType().equals(EventTypes.CHANGE_SECURITY_PROPERTY)){
+					cepFileEvent = convertToChangeSecurityPropertyEvent(contextEvent);
 				} else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 				}
@@ -86,6 +89,35 @@ public class EventFormatter {
 		
 	}
 	
+	private static Event convertToChangeSecurityPropertyEvent(
+			ContextEvent contextEvent) {
+
+		ChangeSecurityPropertyEvent cepFileEvent = new ChangeSecurityPropertyEvent();
+		Map<String, String> prop = contextEvent.getProperties();
+		Map<String, String> properties = null;
+		JSONObject propJSON;
+		try {
+			propJSON = new JSONObject(prop.get("properties"));
+
+			properties = new HashMap<String, String>();
+			for (Iterator iterator = propJSON.keys(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String value = propJSON.getString(key);
+				properties.put(key, value);
+			}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		cepFileEvent.setType(EventTypes.CHANGE_SECURITY_PROPERTY);
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setProperty(properties.get("property"));
+		cepFileEvent.setValue(properties.get("value"));
+		return cepFileEvent;
+	}
+
 	private static Event convertToVirusFoundEvent(ContextEvent contextEvent) {
 		VirusFoundEvent cepFileEvent = new VirusFoundEvent();
 		Map<String,String> prop = contextEvent.getProperties();
@@ -183,10 +215,14 @@ public class EventFormatter {
 		cepFileEvent.setType(contextEvent.getType());
 		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());	
-		cepFileEvent.setPasswordProtected(Boolean.valueOf(properties.get("passwordprotected")));
+		cepFileEvent.setIsPasswordProtected(Boolean.valueOf(properties.get("ispasswordprotected")));
 		cepFileEvent.setPatternProtected(Boolean.valueOf(properties.get("patternprotected")));
-		cepFileEvent.setTrustedAVInstalled(Boolean.valueOf("trustedavinstalled"));
+		cepFileEvent.setTrustedAntivirusInstalled(Boolean.valueOf("istrustedantivirusinstalled"));
 		cepFileEvent.setRooted(Boolean.valueOf("isrooted"));
+		cepFileEvent.setRootPermissionGiven(Boolean.valueOf("isrootpermissiongiven"));
+		cepFileEvent.setIpaddress(properties.get("ipaddress"));
+		cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties.get("screentimeoutinseconds")));
+		
 		return cepFileEvent;
 	}
 	public static ConnectivityEvent convertToConnectivityEvent(ContextEvent contextEvent){			

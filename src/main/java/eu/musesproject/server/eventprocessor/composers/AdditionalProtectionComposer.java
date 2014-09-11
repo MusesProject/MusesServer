@@ -43,10 +43,11 @@ public class AdditionalProtectionComposer {
 		DeviceProtectionEvent protectionEvent = (DeviceProtectionEvent)event;
 		
 		composedProtection.setType(EventTypes.DEVICE_PROTECTION);
-		composedProtection.setPasswordProtected(protectionEvent.isPasswordProtected());
+		composedProtection.setPasswordProtected(protectionEvent.getIsPasswordProtected());
 		composedProtection.setPatternProtected(protectionEvent.isPatternProtected());
 		composedProtection.setRooted(protectionEvent.isRooted());
-		composedProtection.setTrustedAVInstalled(protectionEvent.isTrustedAVInstalled());
+		composedProtection.setTrustedAVInstalled(protectionEvent.isTrustedAntivirusInstalled());
+		
 		return composedProtection;
 	}
 

@@ -22,6 +22,7 @@ package eu.musesproject.server.eventprocessor.composers;
  */
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
@@ -74,6 +75,10 @@ public static Clue composeClue(Event event, String name, String type){
 			VirusFoundEvent virusFoundEvent = (VirusFoundEvent)event;
 			composedClue.setId((int)virusFoundEvent.getTimestamp());
 			composedClue.setTimestamp(virusFoundEvent.getTimestamp());
+		}else if (event instanceof DeviceProtectionEvent){
+			DeviceProtectionEvent deviceProtectionEvent = (DeviceProtectionEvent) event;
+			composedClue.setId((int)deviceProtectionEvent.getTimestamp());
+			composedClue.setTimestamp(deviceProtectionEvent.getTimestamp());
 		}
 		composedClue.setName(name);
 		composedClue.setType(type);

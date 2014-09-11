@@ -22,6 +22,7 @@ package eu.musesproject.server.eventprocessor.composers;
  */
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
@@ -59,6 +60,14 @@ public class AccessRequestComposer {
 			requestedCorporateAsset = testGetRequestedAsset(emailEvent.getAttachmentName());
 			composedRequest.setAction(emailEvent.getType());//Get the action over the asset
 			composedRequest.setEventId(emailEvent.getTimestamp());
+		}else if (event.getType().equals(EventTypes.CHANGE_SECURITY_PROPERTY)){
+			ChangeSecurityPropertyEvent changeSecurityPropertyEvent = (ChangeSecurityPropertyEvent) event;
+			requestedCorporateAsset = new Asset();//TODO It is not clear what is the asset when a device setting is changed
+			requestedCorporateAsset.setId(0);
+			requestedCorporateAsset.setLocation("device");
+			requestedCorporateAsset.setValue(400);
+			composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
+			composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
 		}
 		
 		requestedCorporateAsset.setValue(0);
