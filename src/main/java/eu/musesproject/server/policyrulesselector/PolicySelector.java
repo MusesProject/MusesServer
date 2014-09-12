@@ -318,7 +318,7 @@ public class PolicySelector {
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
-				result += "<condition>any</condition>";
+				result += "<condition>"+decision.getCondition()+"</condition>";
 				result += "<riskTreatment>Allowed</riskTreatment>";
 			}			
 			result += "</allow>";
@@ -327,7 +327,7 @@ public class PolicySelector {
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
-				result += "<condition>any</condition>";
+				result += "<condition>"+decision.getCondition()+"</condition>";
 				if (decision.getRiskCommunication()!=null){
 					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
 					if (rt!=null){
@@ -345,6 +345,7 @@ public class PolicySelector {
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
+				//result += "<condition><noAttachments>0</noAttachments></condition>";//
 				if (decision.getCondition()!=null){
 					result += "<condition>"+decision.getCondition()+"</condition>";
 				}if (decision.getRiskCommunication()!=null){

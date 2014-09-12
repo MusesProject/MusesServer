@@ -246,7 +246,7 @@ public class Rt2aeGlobal {
 	}
 	
 
-	public int composeAccessRequest(FileObserverEvent event, ConnectivityEvent connEvent, String mode){//Simulate response from RT2AE, for demo purposes
+	public int composeAccessRequest(FileObserverEvent event, ConnectivityEvent connEvent, String mode, String condition){//Simulate response from RT2AE, for demo purposes
 		logger.info("[composeAccessRequest] event,conn");
 		Decision[] decisions = new Decision[1];
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
@@ -255,7 +255,7 @@ public class Rt2aeGlobal {
 		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
 		//Simulate response from RT2AE, for demo purposes
-		PolicyCompliance policyCompliance = policyCompliance(composedRequest, connEvent, mode);
+		PolicyCompliance policyCompliance = policyCompliance(composedRequest, connEvent, mode, condition);
 		
 		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		decisions[0] = decision;
@@ -323,7 +323,7 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 	
-	public int composeAccessRequest(Event event, String message, String mode){//Simulate response from RT2AE, for demo purposes
+	public int composeAccessRequest(Event event, String message, String mode, String condition){//Simulate response from RT2AE, for demo purposes
 		logger.info("[composedAccessRequest]");
 		Decision[] decisions = new Decision[1];
 		
@@ -336,8 +336,19 @@ public class Rt2aeGlobal {
 		
 		
 		
-		PolicyCompliance policyCompliance = policyCompliance(composedRequest, event, mode);
+		PolicyCompliance policyCompliance = policyCompliance(composedRequest, event, mode, condition);
 		decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
+
+		//Control based on policy compliance
+		//TODO Disable when RT2AE is implemented
+		if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
+			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+		}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
+			decision = Decision.STRONG_DENY_ACCESS;
+		}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
+			decision = Decision.GRANTED_ACCESS;
+		}
+		decision.setCondition(condition);
 		decisions[0] = decision;
 		
 		//Select the most appropriate policy according to the decision and the action of the request		
@@ -406,7 +417,7 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 
-	private PolicyCompliance policyCompliance(AccessRequest composedRequest, Event event, String mode) {//TODO Demo purposes: RT2AE by-pass
+	private PolicyCompliance policyCompliance(AccessRequest composedRequest, Event event, String mode, String condition) {
 		logger.info("[policyCompliance]");
 		PolicyCompliance compliance = new PolicyCompliance();
 		compliance.setRequestId(composedRequest.getId());
@@ -446,6 +457,9 @@ public class Rt2aeGlobal {
 		
 		return compliance;
 	}
+	
+	
+	
 	
 	private Decision testDecideBasedOnRisk(AccessRequest composedRequest,	ConnectivityEvent connEvent) {//TODO Demo purposes: RT2AE by-pass
 		logger.info("[policyCompliance]");
