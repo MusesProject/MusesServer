@@ -659,9 +659,10 @@ public class DBManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				em.close();
+				//em.close();
 			}
 			
+			//this.setOutcomes(threat.getOutcomes());
 			Iterator<Outcome> o = threat.getOutcomes().iterator();
 			while(o.hasNext()){
 				Outcome outcome = o.next();
@@ -676,7 +677,7 @@ public class DBManager {
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
-					em.close();
+					//em.close();
 				}
 				
 			}
@@ -715,6 +716,20 @@ public class DBManager {
 			}
 		}
 	}
+	
+	/**
+     * Get Outcome list
+     * @return List<Outcome>Outcomes
+     */
+	public List<Outcome> getOutcomes() {
+			
+		List<Outcome> outcome = em.createNamedQuery("Outcome.findAll",Outcome.class).getResultList();
+
+		return outcome;				
+	}
+
+
+	
 	
 	/**
      * Get AccessRequest list
