@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,6 +16,7 @@ import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Asset;
 import eu.musesproject.server.entity.Clue;
+import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.User;
@@ -28,16 +25,13 @@ import eu.musesproject.server.scheduler.ModuleType;
 public class DBManagerTest {
 	
 	static DBManager dbmanager = null;
-	private static EntityManagerFactory emf;
-	private static EntityManager em;
 
 	
 	@BeforeClass
 	public  static void setUpBeforeClass() throws Exception {
 		ModuleType module = null;
 		dbmanager = new DBManager(module);
-		
-		
+
 	}
 
 	@Test
@@ -164,6 +158,23 @@ public class DBManagerTest {
 			fail("The Asset was not inserted in the database");*/
 		
 	}
+	
+	@Test
+	public void testGetOutcomes() {
+		List<Outcome> List = dbmanager.getOutcomes();
+		if (List.size()>0){
+			Iterator<Outcome> i = List.iterator();
+			while(i.hasNext()){
+				Outcome outcome = i.next();
+				assertNotNull(outcome);
+			}
+		}else{
+			fail("There is not any Outcome in the database,please first try to store Outcome in the database");
+		}	
+		
+	}
+
+	
 
 	@Test
 	public void testGetThreats() {
@@ -191,7 +202,24 @@ public class DBManagerTest {
 
 	@Test
 	public void testSetThreats() {
-		fail("Not yet implemented");
+		Outcome outcome = new Outcome();
+		List<Outcome> outcomes = new ArrayList<Outcome>();
+		outcome.setCostbenefit(0);
+		SecureRandom random = new SecureRandom();
+		outcome.setDescription("outcome");
+		
+		outcomes.add(outcome);
+		Threat threat = new Threat();
+		threat.setBadOutcomeCount(0);
+		threat.setOutcomes(outcomes);
+		threat.setDescription(new BigInteger(30, random).toString(5));
+		threat.setProbability(0);
+		
+		List<Threat> threats = new ArrayList<Threat>();
+		threats.add(threat);
+		dbmanager.setThreats(threats);	
+
+		
 	}
 
 	@Test
