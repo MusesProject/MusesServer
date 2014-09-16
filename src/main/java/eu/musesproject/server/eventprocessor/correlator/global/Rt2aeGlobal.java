@@ -258,6 +258,18 @@ public class Rt2aeGlobal {
 		PolicyCompliance policyCompliance = policyCompliance(composedRequest, connEvent, mode, condition);
 		
 		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
+		
+		// Control based on policy compliance
+		// TODO Disable when RT2AE is implemented
+		if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)) {
+			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+		} else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)) {
+			decision = Decision.STRONG_DENY_ACCESS;
+		} else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)) {
+			decision = Decision.GRANTED_ACCESS;
+		}
+		decision.setCondition(condition);
+
 		decisions[0] = decision;
 		
 		//Select the most appropriate policy according to the decision and the action of the request		
