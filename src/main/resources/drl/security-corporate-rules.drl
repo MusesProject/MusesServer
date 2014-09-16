@@ -270,7 +270,7 @@ rule "Blacklist app 00001"
 	end	
 	
 	
-	rule "AccessRequest Change Security Property"
+	rule "AccessRequest Change Security Property-password-protected"
 	no-loop true
 	dialect "mvel"
 	when
@@ -279,6 +279,18 @@ rule "Blacklist app 00001"
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
 		int id = Rt2aeGlobal.composeAccessRequest(e,"","DENY", "<isPasswordProtected>false</isPasswordProtected>");
+
+	end
+	
+	rule "AccessRequest Change Security Property-screen-timeout"
+	no-loop true
+	dialect "mvel"
+	when
+		e: ChangeSecurityPropertyEvent()
+		d: DeviceProtectionEvent(screenTimeoutInSeconds<60)
+	then
+		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
 
 	end
 	
