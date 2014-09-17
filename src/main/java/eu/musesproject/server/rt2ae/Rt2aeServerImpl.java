@@ -79,12 +79,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 	/**
 	 * 
-	 * Commit test.
-	 * 
-	 */
-	
-	/**
-	 * 
 	 * This function is the version 6 of the decideBasedOnRiskPolicy. This
 	 * version computes the Decision based on the AccessRequest computing the
 	 * threats and their probabilities as well as accepting opportunities as
