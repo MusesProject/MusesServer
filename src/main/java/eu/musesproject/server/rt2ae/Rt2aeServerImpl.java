@@ -23,14 +23,19 @@ package eu.musesproject.server.rt2ae;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
 
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.risktrust.AccessRequest;
+import eu.musesproject.server.risktrust.Asset;
 import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
@@ -45,13 +50,15 @@ import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.risktrust.Threat;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
+import eu.musesproject.server.scheduler.ModuleType;
 
 public class Rt2aeServerImpl implements Rt2ae {
 
 	private final int RISK_TREATMENT_SIZE = 20;
 	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
+	private DBManager dbManager = new DBManager(ModuleType.RT2AE);
+	private RiskPolicy riskPolicy;
 
-	
 	/**
 
 	* DecideBasedOnRiskPolicy is a function whose aim is to compute a Decision based on RiskPolicy.
@@ -69,6 +76,236 @@ public class Rt2aeServerImpl implements Rt2ae {
 		return decideBasedOnRiskPolicy_testing_version(accessRequest,policyCompliance, context);
 		//return decideBasedOnRiskPolicy_version_4(accessRequest, policyCompliance, context);
 	}  
+	
+	/**
+	 * 
+	 * This function is the version 6 of the decideBasedOnRiskPolicy. This
+	 * version computes the Decision based on the AccessRequest computing the
+	 * threats and their probabilities as well as accepting opportunities as
+	 * well if needed. It stores certain elements in the DB if needed. It also
+	 * compares against a risk policy.
+	 * 
+	 * @param accessRequest
+	 *            the access request
+	 * @return Decision
+	 * 
+	 */
+	public Decision decideBasedOnRiskPolicy_version_6(
+			AccessRequest accessRequest, RiskPolicy rPolicy) {
+
+		// function variables and assignments
+
+		double costOpportunity = 0.0;
+		double combinedProbabilityThreats = 1.0;
+		double combinedProbabilityOpportunities = 1.0;
+		double singleThreatProbabibility = 0.0;
+		double singleOpportunityProbability = 0.0;
+		int opcount = 0;
+		int threatcount = 0;
+
+		riskPolicy = rPolicy;
+		EventProcessorImpl eventProcessorImpl = new EventProcessorImpl();
+
+		List<Asset> requestedAssets = new ArrayList<Asset>(
+				Arrays.asList(accessRequest.getRequestedCorporateAsset()));
+
+		List<Clue> clues = new ArrayList<Clue>();
+
+		// infer clues from the access request
+
+		for (Asset asset : requestedAssets) {
+
+			clues = eventProcessorImpl.getCurrentClues(accessRequest,
+					accessRequest.getUser().getUsertrustvalue(), accessRequest
+							.getDevice().getDevicetrustvalue());
+
+			Clue userName = new Clue();
+			userName.setName(accessRequest.getUser().toString()); // TODO
+																	// temporary
+																	// solution,
+																	// users
+																	// must have
+																	// a
+																	// nickname
+																	// or unique
+																	// identifier!!
+			clues.add(userName);
+
+			Clue assetName = new Clue();
+			assetName.setName(asset.getTitle());
+			clues.add(assetName);
+
+			for (Clue clue : clues) {
+				logger.info("The clue associated with Asset "
+						+ asset.getTitle() + " is " + clue.getName() + "\n");
+			}
+		}
+
+		List<eu.musesproject.server.entity.Threat> currentThreats = new ArrayList<eu.musesproject.server.entity.Threat>();
+		String threatName = "";
+
+		// combine clues with the asset and the user to generate a single threat
+
+		for (Clue clue : clues) {
+
+			threatName = threatName + clue.getName();
+
+		}
+
+		eu.musesproject.server.entity.Threat threat = new eu.musesproject.server.entity.Threat();
+		threat.setDescription("Threat" + threatName);
+		threat.setProbability(0.5);
+		eu.musesproject.server.entity.Outcome o = new eu.musesproject.server.entity.Outcome();
+		o.setDescription("Compromised Asset");
+		o.setCostbenefit(-requestedAssets.iterator().next().getValue());
+		threat.setOutcomes(new ArrayList<eu.musesproject.server.entity.Outcome>(
+				Arrays.asList(o)));
+
+		// check if the threat already exists in the database
+
+		boolean exists = false;
+		List<eu.musesproject.server.entity.Threat> dbThreats = dbManager
+				.getThreats();
+		eu.musesproject.server.entity.Threat existingThreat = new eu.musesproject.server.entity.Threat();
+
+		for (eu.musesproject.server.entity.Threat threat2 : dbThreats) {
+			if (threat2.getDescription().equalsIgnoreCase(
+					threat.getDescription())) {
+				exists = true;
+				existingThreat = threat2;
+			}
+		}
+
+		// if doesn't exist, insert a new one
+
+		if (!exists) {
+
+			int oC = threat.getOccurences() + 1;
+			threat.setOccurences(oC);
+			currentThreats.add(threat);
+			dbManager.setThreats(currentThreats);
+
+			logger.info("The newly created Threat from the Clues is: "
+					+ threat.getDescription() + " with probability "
+					+ threat.getProbability()
+					+ " for the following outcome: \""
+					+ threat.getOutcomes().iterator().next().getDescription()
+					+ "\" with the following potential cost (in kEUR): "
+					+ threat.getOutcomes().iterator().next().getCostbenefit()
+					+ "\n");
+
+			// if already exists, update occurrences and update it in the
+			// database
+
+		} else {
+
+			int oC = existingThreat.getOccurences() + 1;
+			existingThreat.setOccurences(oC);
+			currentThreats.add(existingThreat);
+
+			logger.info("Occurences: " + existingThreat.getOccurences()
+					+ " - Bad Count: " + existingThreat.getBadOutcomeCount());
+
+			dbManager.setThreats(currentThreats);
+
+			logger.info("The inferred Threat from the Clues is: "
+					+ existingThreat.getDescription()
+					+ " with probability "
+					+ existingThreat.getProbability()
+					+ " for the following outcome: \""
+					+ existingThreat.getOutcomes().iterator().next()
+							.getDescription()
+					+ "\" with the following potential cost (in kEUR): "
+					+ existingThreat.getOutcomes().iterator().next()
+							.getCostbenefit() + "\n");
+
+		}
+
+		// infer some probabilities from the threats and opportunities (if
+		// present)
+
+		for (eu.musesproject.server.entity.Threat t : currentThreats) {
+
+			costOpportunity += t.getOutcomes().iterator().next()
+					.getCostbenefit();
+
+			if (t.getOutcomes().iterator().next().getCostbenefit() < 0) {
+
+				combinedProbabilityThreats = combinedProbabilityThreats
+						* t.getProbability();
+				singleThreatProbabibility = singleThreatProbabibility
+						+ t.getProbability();
+				threatcount++;
+
+			} else {
+
+				combinedProbabilityOpportunities = combinedProbabilityOpportunities
+						* t.getProbability();
+				singleOpportunityProbability = singleOpportunityProbability
+						+ t.getProbability();
+				opcount++;
+
+			}
+		}
+
+		if (threatcount > 1)
+			singleThreatProbabibility = singleThreatProbabibility
+					- combinedProbabilityThreats;
+		if (opcount > 1)
+			singleOpportunityProbability = singleOpportunityProbability
+					- combinedProbabilityOpportunities;
+
+		// log some useful info
+
+		logger.info("Decission data is: ");
+		logger.info("- Risk Policy threshold: " + riskPolicy.getRiskvalue());
+		logger.info("- Cost Oportunity: " + costOpportunity);
+		logger.info("- Combined Probability of the all possible Threats happening together: "
+				+ combinedProbabilityThreats);
+		logger.info("- Combined Probability of the all the possible Opportunities happening together: "
+				+ combinedProbabilityOpportunities);
+		logger.info("- Combined Probability of only one of the possible Threats happening: "
+				+ singleThreatProbabibility);
+		logger.info("- Combined Probability of only one of the possible Opportunities happening: "
+				+ singleOpportunityProbability);
+		logger.info("Making a decision...");
+		logger.info(".");
+		logger.info("..");
+		logger.info("...");
+
+		// compute the decision based on the risk policy, the threat
+		// probabilities, the user trust level and the cost benefit
+
+		if (riskPolicy.getRiskvalue() == 0.0) {
+
+			return Decision.GRANTED_ACCESS;
+
+		}
+
+		if (riskPolicy.getRiskvalue() == 1.0) {
+
+			return Decision.STRONG_DENY_ACCESS;
+
+		}
+
+		if ((combinedProbabilityThreats + ((Double) 1.0 - accessRequest
+				.getUser().getUsertrustvalue().getValue())) / 2 <= riskPolicy
+				.getRiskvalue()) {
+
+			return Decision.GRANTED_ACCESS;
+
+		} else {
+
+			if (costOpportunity > 0)
+
+				return Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+
+			else
+
+				return Decision.STRONG_DENY_ACCESS;
+
+		}
+	}
       
 	/**  
 	 * This function is the version 1 of the decideBasedOnRiskPolicy. This version computes the Decision based on the Context and the AccessRequest
