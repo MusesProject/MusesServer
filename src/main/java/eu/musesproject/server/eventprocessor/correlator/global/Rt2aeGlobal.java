@@ -261,13 +261,13 @@ public class Rt2aeGlobal {
 		
 		// Control based on policy compliance
 		// TODO Disable when RT2AE is implemented
-		if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)) {
+		/*if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)) {
 			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 		} else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)) {
 			decision = Decision.STRONG_DENY_ACCESS;
 		} else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)) {
 			decision = Decision.GRANTED_ACCESS;
-		}
+		}*/
 		decision.setCondition(condition);
 
 		decisions[0] = decision;
@@ -353,13 +353,13 @@ public class Rt2aeGlobal {
 
 		//Control based on policy compliance
 		//TODO Disable when RT2AE is implemented
-		if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
+		/*if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
 			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 		}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
 			decision = Decision.STRONG_DENY_ACCESS;
 		}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
 			decision = Decision.GRANTED_ACCESS;
-		}
+		}*/
 		decision.setCondition(condition);
 		decisions[0] = decision;
 		
