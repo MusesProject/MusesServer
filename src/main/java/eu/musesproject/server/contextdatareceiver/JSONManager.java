@@ -171,6 +171,8 @@ public class JSONManager {
 			e.printStackTrace();
 			Logger.getLogger(JSONManager.class).info("Exception with JSON message:"+message);
 			Logger.getLogger(JSONManager.class).info("*******");
+		} catch (Throwable t){
+			t.printStackTrace();
 		}
 		
 		return resultList;
@@ -269,6 +271,9 @@ public class JSONManager {
 					contextEvent.setType(EventTypes.FILEOBSERVER);
 					properties.put("event", contextEventType);
 				}else if (contextEventType.equals(ActionType.OPEN_APPLICATION)){
+					contextEvent.setType(EventTypes.APPOBSERVER);
+					properties.put("event", contextEventType);
+				}else if (contextEventType.equals(ActionType.UNINSTALL)){
 					contextEvent.setType(EventTypes.APPOBSERVER);
 					properties.put("event", contextEventType);
 				}else if (contextEventType.equals(ActionType.SEND_MAIL)){

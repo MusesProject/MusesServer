@@ -87,6 +87,15 @@ declare DeviceProtectionEvent
 	@expires (1m)
 end
 
+function boolean requiredApp(String name){
+	boolean result = false;
+	if (name.equals("Avast")){
+		result = true;
+	}	
+
+	return result;
+}
+
 rule "Rule firing"
 	no-loop true
 	dialect "mvel"
@@ -213,7 +222,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
 	when
-		e: AppObserverEvent(name=="Gmail")
+		e: AppObserverEvent(name=="Gmail",event=="open_application")
 	then
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
@@ -231,7 +240,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
 	when
-		e: AppObserverEvent(name!="Gmail")
+		e: AppObserverEvent(name!="Gmail",event=="open_application")
 	then
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
@@ -251,7 +260,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
 	when
-		e: AppObserverEvent(name=="Wifi Analyzer")
+		e: AppObserverEvent(name=="Wifi Analyzer",event=="open_application")
 	then
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
@@ -352,6 +361,25 @@ rule "Blacklist app 00001"
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
+		
+	end
+
+	
+	rule "Required application list"
+	no-loop true
+	dialect "mvel"
+	when
+		e: AppObserverEvent(eval(requiredApp(this.name)),event=="uninstall")
+	then
+		StatusGlobal.log("A required application is trying to get uninstalled.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a required application, it is not allowed to uninstall","DENY","<appname>Avast</appname>");
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
