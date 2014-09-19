@@ -21,6 +21,10 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
@@ -37,7 +41,7 @@ import eu.musesproject.server.risktrust.UserTrustValue;
 
 public class AccessRequestComposer {
 	
-	
+	private static Logger logger = Logger.getLogger(AccessRequestComposer.class.getName());
 	public static AccessRequest composeAccessRequest(Event event){
 		
 		AccessRequest composedRequest = new AccessRequest();
@@ -68,6 +72,8 @@ public class AccessRequestComposer {
 			requestedCorporateAsset.setValue(400);
 			composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
 			composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
+		}else {
+			logger.log(Level.INFO, "Unsupported Event type:"+event.getType());
 		}
 		
 		requestedCorporateAsset.setValue(0);

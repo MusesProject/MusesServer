@@ -76,6 +76,7 @@ public class EventFormatter {
 					cepFileEvent = convertToChangeSecurityPropertyEvent(contextEvent);
 				} else {
 					cepFileEvent = new Event();// Any other unsupported sensor
+					Logger.getLogger(EventFormatter.class).error("Unsupported sensor:"+contextEvent.getType());
 				}
 			}else{
 				Logger.getLogger(EventFormatter.class).error("ContextEvent type is null");
