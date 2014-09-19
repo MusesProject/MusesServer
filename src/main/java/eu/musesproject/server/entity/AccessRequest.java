@@ -1,7 +1,9 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +17,8 @@ import java.util.List;
 @NamedQueries ({
 	@NamedQuery(name="AccessRequest.findAll", 
 				query="SELECT a FROM AccessRequest a"),
+	@NamedQuery(name="AccessRequest.findAccessrequestbyTimestampandThreat", 
+				query="SELECT a FROM AccessRequest a where a.modification =:modification and a.threat =:threat"),
 	@NamedQuery(name="AccessRequest.findById", 
 				query="SELECT a FROM AccessRequest a where a.accessRequestId = :accessRequestId")
 })
@@ -30,6 +34,16 @@ public class AccessRequest implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modification;
+
+	
+	private int solved;
+	
+	@ManyToOne
+	@JoinColumn(name="threat_id")
+	private Threat threat;
+
+	@Column(name="user_action")
+	private int userAction;
 
 	//bi-directional many-to-one association to Asset
 	@ManyToOne
@@ -186,6 +200,50 @@ public class AccessRequest implements Serializable {
 		threatClue.setAccessRequest(null);
 
 		return threatClue;
+	}
+
+	/**
+	 * @return the solved
+	 */
+	public int getSolved() {
+		return solved;
+	}
+
+	/**
+	 * @param solved the solved to set
+	 */
+	public void setSolved(int solved) {
+		this.solved = solved;
+	}
+
+	
+
+	/**
+	 * @return the userAction
+	 */
+	public int getUserAction() {
+		return userAction;
+	}
+
+	/**
+	 * @param userAction the userAction to set
+	 */
+	public void setUserAction(int userAction) {
+		this.userAction = userAction;
+	}
+
+	/**
+	 * @return the threat
+	 */
+	public Threat getThreat() {
+		return threat;
+	}
+
+	/**
+	 * @param threat the threat to set
+	 */
+	public void setThreat(Threat threat) {
+		this.threat = threat;
 	}
 
 }

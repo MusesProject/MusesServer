@@ -24,7 +24,6 @@ package eu.musesproject.server.rt2ae;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -59,6 +58,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
 	private DBManager dbManager = new DBManager(ModuleType.RT2AE);
 	private RiskPolicy riskPolicy;
+	String privateloungewifi = "Please go to the private lounge secure Wi-Fi";
+	String wifisniffing = "Wi-Fi sniffing";
+	String malwarerisktreatment = "Your device seems to have a Malware,please scan you device with an Antivirus or use another device";
 
 	/**
 
@@ -69,12 +71,20 @@ public class Rt2aeServerImpl implements Rt2ae {
 	* @param context the context
 
 	*/  
-	@SuppressWarnings({ "null", "static-access" })
+	@SuppressWarnings({"static-access" })
 	@Override
 	public Decision decideBasedOnRiskPolicy(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub  
+		RiskPolicy rPolicy = new RiskPolicy();
 
-		return decideBasedOnRiskPolicy_testing_version(accessRequest,policyCompliance, context);
+		Decision decision = Decision.STRONG_DENY_ACCESS;
+		
+		if(policyCompliance.equals(policyCompliance.DENY)){
+			decision.setCondition(policyCompliance.getReason());
+			return decision;
+		} else{
+			return decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
+		}
 	}  
 	
 	/**
@@ -314,13 +324,13 @@ public class Rt2aeServerImpl implements Rt2ae {
 	 * @param context            
 	 * @return   
 	 */
+	@SuppressWarnings("static-access")
 	public Decision decideBasedOnRiskPolicy_version_1(AccessRequest accessRequest,Context context) {
 		// TODO Auto-generated method stub
 		Decision decision = Decision.STRONG_DENY_ACCESS;
 		
 		if (accessRequest.getRequestedCorporateAsset().getValue() <= 1000000 ) {
 			
-			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 			
 			Random r = new Random();
 			int valeur = 0 + r.nextInt(100 - 0);
@@ -328,7 +338,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 			accessRequest.getUser().getUsertrustvalue().setValue(valeur);
 			accessRequest.getDevice().getDevicetrustvalue().setValue(valeur);
 			
-			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
@@ -340,7 +349,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-				RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+				RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 				if (riskTreatments.length > 0){
 					riskTreatments[0] = riskTreatment;	
 				}				
@@ -368,15 +377,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 	 * @param context
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	public Decision decideBasedOnRiskPolicy_version_2(AccessRequest accessRequest,Context context) {
 		// TODO Auto-generated method stub
 			
 			Decision decision = Decision.STRONG_DENY_ACCESS;
 
-			
-			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
-				
-			List<Clue> clue  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 	
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
@@ -391,11 +397,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 				for (int i = 0; i < threats.size(); i++) {
 					
 					if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-						if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing")  && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase(wifisniffing)  && threats.get(i).getProbability()>0.5){ 
 								
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							if (riskTreatments.length > 0){
 								riskTreatments[0] = riskTreatment;	
 							}				
@@ -409,7 +415,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment1 = new RiskTreatment("Your device seems to have a Malware,please scan you device with an Antivirus or use another device");
+							RiskTreatment riskTreatment1 = new RiskTreatment(malwarerisktreatment);
 							if (riskTreatments.length > 0){
 								riskTreatments[0] = riskTreatment1;	
 							}				
@@ -437,7 +443,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							if (riskTreatments.length > 0){
 								riskTreatments[0] = riskTreatment;	
 							}				
@@ -512,15 +518,15 @@ public class Rt2aeServerImpl implements Rt2ae {
 				for (int i = 0; i < threats.size(); i++) {
 					
 					if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-						if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase(wifisniffing) && threats.get(i).getProbability()>0.5){ 
 							
-							Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
+							Outcome requestPotentialOutcome = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 							
 							if(probability.getValue()<=0.5){	
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5% of chances that the asset that you wan to access will lose 0.5% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 
 								if (riskTreatments.length > 0){
@@ -544,7 +550,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							if(probability.getValue()<=0.5){
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Malware,please scan you device with an Antivirus or use another device");
+								RiskTreatment riskTreatment = new RiskTreatment(malwarerisktreatment);
 								RiskTreatment riskTreatment1 = new RiskTreatment("TThere is around 0.5%  of chances that the asset that you wan to access will lose 0.5% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 
 								if (riskTreatments.length > 0){
@@ -595,7 +601,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							if(probability.getValue()<=0.5){
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5%  of chances that the asset that you wan to access will lose 0.5% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 
 								if (riskTreatments.length > 0){
@@ -677,15 +683,15 @@ public class Rt2aeServerImpl implements Rt2ae {
 				for (int i = 0; i < threats.size(); i++) {
 					
 					if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-						if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase(wifisniffing) && threats.get(i).getProbability()>0.5){ 
 							
-							Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
+							Outcome requestPotentialOutcome = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 							
 							if(probability.getValue()<=0.5){	
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5% of chances that the asset that you wan to access will lose 0.5% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 
 								if (riskTreatments.length > 0){
@@ -702,7 +708,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 									
 									eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 									RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-									RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+									RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 									RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5% of chances that the asset that you wan to access will lose 0.5% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 
 									if (riskTreatments.length > 0){
@@ -729,7 +735,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							if(probability.getValue()<=0.5){
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Malware,please scan you device with an Antivirus or use another device");
+								RiskTreatment riskTreatment = new RiskTreatment(malwarerisktreatment);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5%  of chances that the asset that you wan to access will lose 0.5% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 
 								if (riskTreatments.length > 0){
@@ -780,7 +786,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							if(probability.getValue()<=0.5){
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5%  of chances that the asset that you wan to access will lose 0.5% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 
 								if (riskTreatments.length > 0){
@@ -798,7 +804,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 									
 									eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 									RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-									RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+									RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 									RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5% of chances that the asset that you wan to access will lose 0.5% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 									if (riskTreatments.length > 0){
@@ -863,9 +869,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 		// TODO Auto-generated method stub
 			Decision decision = Decision.STRONG_DENY_ACCESS;
 
-			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
-			
-			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
@@ -929,7 +932,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 		
@@ -937,9 +939,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		for (int i = 0; i < threats.size(); i++) {
 			
 			if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-				if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing")  && threats.get(i).getProbability()<=0.5){ 
+				if(threats.get(i).getType().equalsIgnoreCase(wifisniffing)  && threats.get(i).getProbability()<=0.5){ 
 					
-					Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
+					Outcome requestPotentialOutcome = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					
 					if(probability == null){
@@ -950,7 +952,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.5){	
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is less that 50% of chances that the asset that you wan to access will lose 50% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 							if (riskTreatments.length > 0){
@@ -968,7 +970,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is more than 50% of chances that the asset that you wan to access will lose 50% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 								if (riskTreatments.length > 0){
@@ -1003,7 +1005,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.5){
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Malware,please scan you device with an Antivirus or use another device");
+							RiskTreatment riskTreatment = new RiskTreatment(malwarerisktreatment);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 50% of chances that the asset that you wan to access will lose around 33% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 	
 							if (riskTreatments.length > 0){
@@ -1069,7 +1071,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.5){
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 50%  of chances that the asset that you wan to access will lose 20% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 	
 							if (riskTreatments.length > 0){
@@ -1088,7 +1090,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5% of chances that the asset that you wan to access will lose 0.5% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 								if (riskTreatments.length > 0){
@@ -1149,15 +1151,15 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 		
-		Outcome requestPotentialOutcomes = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
+		Outcome requestPotentialOutcomes = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
 		Probability probabilitys = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcomes, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
 			
 			if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-				if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()<0.3){ 
+				if(threats.get(i).getType().equalsIgnoreCase(wifisniffing) && threats.get(i).getProbability()<0.3){ 
 					
-					Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
+					Outcome requestPotentialOutcome = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						decision = Decision.STRONG_DENY_ACCESS;
@@ -1167,7 +1169,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.3){	
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 30% of chances that the asset that you want to access will lose 50% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 							if (riskTreatments.length > 0){
@@ -1185,7 +1187,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 0.5% of chances that the asset that you wan to access will lose 0.5% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 								if (riskTreatments.length > 0){
@@ -1221,7 +1223,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.3){
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Malware,please scan you device with an Antivirus or use another device");
+							RiskTreatment riskTreatment = new RiskTreatment(malwarerisktreatment);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 30%  of chances that the asset that you wan to access will lose 50% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 	
 							if (riskTreatments.length > 0){
@@ -1285,7 +1287,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.3){
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 30%  of chances that the asset that you wan to access will lose 20% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 	
 							if (riskTreatments.length > 0){
@@ -1304,7 +1306,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 30% of chances that the asset that you wan to access will lose 20% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 								if (riskTreatments.length > 0){
@@ -1367,9 +1369,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		for (int i = 0; i < threats.size(); i++) {
 			
 			if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-				if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()<0.1){ 
+				if(threats.get(i).getType().equalsIgnoreCase(wifisniffing) && threats.get(i).getProbability()<0.1){ 
 					
-					Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
+					Outcome requestPotentialOutcome = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 					if(probability == null){
 						decision = Decision.STRONG_DENY_ACCESS;
@@ -1379,7 +1381,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.1){	
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 10% of chances that the asset that you wan to access will lose 50% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 							if (riskTreatments.length > 0){
@@ -1397,7 +1399,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 10% of chances that the asset that you wan to access will lose 50% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 								if (riskTreatments.length > 0){
@@ -1432,7 +1434,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.1){
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Malware,please scan you device with an Antivirus or use another device");
+							RiskTreatment riskTreatment = new RiskTreatment(malwarerisktreatment);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 10%  of chances that the asset that you wan to access will lose 50% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 	
 							if (riskTreatments.length > 0){
@@ -1497,7 +1499,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						if(probability.getValue()<=0.1){
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-							RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+							RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 							RiskTreatment riskTreatment1 = new RiskTreatment("There is around 10%  of chances that the asset that you wan to access will lose 50% of this value if you access it with this device,please scan you device with an Antivirus or use another device");
 	
 							if (riskTreatments.length > 0){
@@ -1516,7 +1518,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								
 								eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 								RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-								RiskTreatment riskTreatment = new RiskTreatment("Please go to the private lounge secure Wi-Fi");
+								RiskTreatment riskTreatment = new RiskTreatment(privateloungewifi);
 								RiskTreatment riskTreatment1 = new RiskTreatment("There is around 10% of chances that the asset that you wan to access will lose 50% of this value if you access it with by using this Wi-Fi connection,please try to connect to a secure Wi-Fi connection");
 	
 								if (riskTreatments.length > 0){
@@ -1691,6 +1693,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				/**
 				 * the security incident has not cost
 				 */	
+				System.out.println(" securityIncident cost is 0");
+
 				
 			}else {
 				/**
