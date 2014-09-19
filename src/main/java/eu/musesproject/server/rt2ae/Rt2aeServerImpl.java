@@ -39,6 +39,7 @@ import eu.musesproject.server.risktrust.Asset;
 import eu.musesproject.server.risktrust.Clue;
 import eu.musesproject.server.risktrust.Context;
 import eu.musesproject.server.risktrust.Decision;
+import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
@@ -74,7 +75,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 		// TODO Auto-generated method stub  
 
 		return decideBasedOnRiskPolicy_testing_version(accessRequest,policyCompliance, context);
-		//return decideBasedOnRiskPolicy_version_4(accessRequest, policyCompliance, context);
 	}  
 	
 	/**
@@ -200,6 +200,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		} else {
 
 			int oC = existingThreat.getOccurences() + 1;
+			//System.out.println("occurence: "+oC);
 			existingThreat.setOccurences(oC);
 			currentThreats.add(existingThreat);
 
@@ -344,7 +345,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 					riskTreatments[0] = riskTreatment;	
 				}				
 				riskCommunication.setRiskTreatment(riskTreatments);
-				//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 				Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 				return decision;
@@ -378,7 +378,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
-			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
 			
@@ -390,8 +389,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				for (int i = 0; i < threats.size(); i++) {
 					
 					if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-						//System.out.println(threats.get(i));
-						if(threats.get(i).getType() == "Wi-Fi sniffing" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing")  && threats.get(i).getProbability()>0.5){ 
 								
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
@@ -400,13 +398,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 								riskTreatments[0] = riskTreatment;	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 							return decision;
 						
 						}
-						if(threats.get(i).getType() == "Malware" && threats.get(i).getProbability()>0.5){
+						if(threats.get(i).getType().equalsIgnoreCase("Malware") && threats.get(i).getProbability()>0.5){
 							
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
@@ -415,13 +412,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 								riskTreatments[0] = riskTreatment;	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 							return decision;
 							
 						}
-						if(threats.get(i).getType() == "Spyware" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Spyware") && threats.get(i).getProbability()>0.5){ 
 							
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
@@ -430,13 +426,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 								riskTreatments[0] = riskTreatment;	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 							return decision;
 							
 						}
-						if(threats.get(i).getType() == "Unsecure Connexion" && threats.get(i).getProbability()>0.5 ){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Unsecure Connexion") && threats.get(i).getProbability()>0.5 ){ 
 							
 							eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 							RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
@@ -445,19 +440,18 @@ public class Rt2aeServerImpl implements Rt2ae {
 								riskTreatments[0] = riskTreatment;	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 							return decision;
 							
 						}
-						if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Jailbroken") && threats.get(i).getProbability()>0.5){ 
 							
 							Decision decision = Decision.STRONG_DENY_ACCESS;
 							return decision;
 							
 						}
-						if(threats.get(i).getType()=="Device under attack" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Device under attack") && threats.get(i).getProbability()>0.5){ 
 							
 							Decision decision = Decision.STRONG_DENY_ACCESS;
 							return decision;
@@ -467,10 +461,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						Decision decision = Decision.GRANTED_ACCESS;; 
 						return decision;
 						
-						/*if(threats.get(i).getType()=="Phishing scams"){ 
-							
-						
-						}*/
+					
 					
 					}
 				}
@@ -484,9 +475,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			return decision;
 			
 			
-			/*Decision decision = Decision.STRONG_DENY_ACCESS;
-			return decision;*/
-		
+			
 	}
 	
 	
@@ -508,7 +497,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
-			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
 			
@@ -520,8 +508,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				for (int i = 0; i < threats.size(); i++) {
 					
 					if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-						//System.out.println(threats.get(i));
-						if(threats.get(i).getType() == "Wi-Fi sniffing" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()>0.5){ 
 							
 							Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -538,7 +525,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 								decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 								return decision;
@@ -547,7 +533,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								return decision;
 							}
 						}
-						if(threats.get(i).getType() == "Malware" && threats.get(i).getProbability()>0.5){
+						if(threats.get(i).getType().equalsIgnoreCase("Malware") && threats.get(i).getProbability()>0.5){
 							Outcome requestPotentialOutcome = new Outcome("Malware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -564,7 +550,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 								}		
 							
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 							return decision;
@@ -573,7 +558,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								return decision;
 							}
 						}
-						if(threats.get(i).getType() == "Spyware" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Spyware") && threats.get(i).getProbability()>0.5){ 
 							Outcome requestPotentialOutcome = new Outcome("Spyware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -590,7 +575,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								return decision;
@@ -600,7 +584,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							}
 							
 						}
-						if(threats.get(i).getType() == "Unsecure Connexion" && threats.get(i).getProbability()>0.5 ){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Unsecure Connexion") && threats.get(i).getProbability()>0.5 ){ 
 							Outcome requestPotentialOutcome = new Outcome("Unsecure Connexion", -accessRequest.getRequestedCorporateAsset().getValue()/3);
 
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -616,7 +600,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 								decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 								return decision;
@@ -626,13 +609,13 @@ public class Rt2aeServerImpl implements Rt2ae {
 							}
 							
 						}
-						if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Jailbroken") && threats.get(i).getProbability()>0.5){ 
 							
 							Decision decision = Decision.STRONG_DENY_ACCESS;
 							return decision;
 							
 						}
-						if(threats.get(i).getType()=="Device under attack" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Device under attack") && threats.get(i).getProbability()>0.5){ 
 							
 							Decision decision = Decision.STRONG_DENY_ACCESS;
 							return decision;
@@ -678,7 +661,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
-			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			
 			if (threats.isEmpty()){			
@@ -689,8 +671,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				for (int i = 0; i < threats.size(); i++) {
 					
 					if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-						//System.out.println(threats.get(i));
-						if(threats.get(i).getType() == "Wi-Fi sniffing" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()>0.5){ 
 							
 							Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -707,7 +688,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 								decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 								return decision;
@@ -725,7 +705,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 									}				
 									riskCommunication.setRiskTreatment(riskTreatments);
-									//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 									Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 									decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 									
@@ -737,7 +716,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								
 							}
 						}
-						if(threats.get(i).getType() == "Malware" && threats.get(i).getProbability()>0.5){
+						if(threats.get(i).getType().equalsIgnoreCase("Malware") && threats.get(i).getProbability()>0.5){
 							Outcome requestPotentialOutcome = new Outcome("Malware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -754,7 +733,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 								}		
 							
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 							return decision;
@@ -763,7 +741,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								return decision;
 							}
 						}
-						if(threats.get(i).getType() == "Spyware" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Spyware") && threats.get(i).getProbability()>0.5){ 
 							Outcome requestPotentialOutcome = new Outcome("Spyware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -780,7 +758,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								return decision;
@@ -790,7 +767,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							}
 							
 						}
-						if(threats.get(i).getType() == "Unsecure Connexion" && threats.get(i).getProbability()>0.5 ){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Unsecure Connexion") && threats.get(i).getProbability()>0.5 ){ 
 							Outcome requestPotentialOutcome = new Outcome("Unsecure Connexion", -accessRequest.getRequestedCorporateAsset().getValue()/3);
 
 							Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -806,7 +783,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 								decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 								return decision;
@@ -825,7 +801,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 									}				
 									riskCommunication.setRiskTreatment(riskTreatments);
-									//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 									Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 									decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								
@@ -837,7 +812,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							}
 							
 						}
-						if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()>0.5){ 
+						if(threats.get(i).getType().equalsIgnoreCase("Jailbroken") && threats.get(i).getProbability()>0.5){ 
 							
 							Decision decision = Decision.STRONG_DENY_ACCESS;
 							return decision;
@@ -861,8 +836,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			return decision;
 			
 			
-			/*Decision decision = Decision.STRONG_DENY_ACCESS;
-			return decision;*/
+			
 		
 	}
 	
@@ -883,21 +857,19 @@ public class Rt2aeServerImpl implements Rt2ae {
 		// TODO Auto-generated method stub
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
-			//public,internal,confidentiality,strictlyconfidential
 			
 			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
-			//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
-			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="public"){
+			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("public")){
 				Decision decision = Decision.GRANTED_ACCESS;
 				logger.info("Decision: GRANTED_ACCESS");
 				
 				return decision;	
 			}
 			
-			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="internal"){
+			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("internal")){
 				if (threats.isEmpty()){			
 					Decision decision = Decision.GRANTED_ACCESS;
 					logger.info("Decision: GRANTED_ACCESS");
@@ -909,7 +881,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 
-			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="confidential"){
+			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("confidential")){
 				if (!threats.isEmpty()){			
 					Decision decision = Decision.GRANTED_ACCESS;
 					logger.info("Decision: GRANTED_ACCESS");
@@ -921,7 +893,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 			
-			if(accessRequest.getRequestedCorporateAsset().getConfidential_level()=="strictlyconfidential"){
+			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("strictlyconfidential")){
 				if (threats.isEmpty()){			
 					Decision decision = Decision.GRANTED_ACCESS;
 					logger.info("Decision: GRANTED_ACCESS");
@@ -935,9 +907,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 			logger.info("Decision: GRANTED_ACCESS");
 			return decision;
 			
-			
-			/*Decision decision = Decision.STRONG_DENY_ACCESS;
-			return decision;*/
 		
 	}
 	
@@ -955,13 +924,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 		
-		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
 			
 			if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-				//System.out.println(threats.get(i));
-				if(threats.get(i).getType() == "Wi-Fi sniffing" && threats.get(i).getProbability()<=0.5){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing")  && threats.get(i).getProbability()<=0.5){ 
 					
 					Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -983,7 +950,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							logger.info("Decision: MAYBE_ACCESS");
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
@@ -1002,7 +968,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								logger.info("Decision: UPTOYOU_ACCESS");
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
@@ -1017,7 +982,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Malware" && threats.get(i).getProbability()<=0.5){
+				if(threats.get(i).getType().equalsIgnoreCase("Malware")  && threats.get(i).getProbability()<=0.5){
 					Outcome requestPotentialOutcome = new Outcome("Malware", -accessRequest.getRequestedCorporateAsset().getValue()/3);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1039,7 +1004,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							}		
 						
 						riskCommunication.setRiskTreatment(riskTreatments);
-						//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 						Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 						logger.info("Decision: UPTOYOU_ACCESS");
 						decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
@@ -1051,7 +1015,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Spyware" && threats.get(i).getProbability()<0.3){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Spyware") && threats.get(i).getProbability()<0.3){ 
 					Outcome requestPotentialOutcome = new Outcome("Spyware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1072,7 +1036,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							logger.info("Decision: UPTOYOU_ACCESS");
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
@@ -1085,7 +1048,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					}
 					
 				}
-				if(threats.get(i).getType() == "Unsecure Connexion" && threats.get(i).getProbability()<0.5 ){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Unsecure Connexion") && threats.get(i).getProbability()<0.5 ){ 
 					Outcome requestPotentialOutcome = new Outcome("Unsecure Connexion", -accessRequest.getRequestedCorporateAsset().getValue()/5);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1106,7 +1069,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 							logger.info("Decision: MAYBE_ACCESS");
@@ -1126,7 +1088,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								logger.info("Decision: UPTOYOU_ACCESS");
@@ -1141,7 +1102,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					}
 					
 				}
-				if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()>0){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Jailbroken") && threats.get(i).getProbability()>0){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
 					logger.info("Decision: STRONG_DENY_ACCESS");
@@ -1177,15 +1138,13 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 		
-		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		Outcome requestPotentialOutcomes = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 		Probability probabilitys = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcomes, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
 			
 			if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-				//System.out.println(threats.get(i));
-				if(threats.get(i).getType() == "Wi-Fi sniffing" && threats.get(i).getProbability()<0.3){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()<0.3){ 
 					
 					Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1206,7 +1165,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 							logger.info("Decision: MAYBE_ACCESS");
@@ -1225,7 +1183,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								logger.info("Decision: UPTOYOU_ACCESS");
@@ -1241,7 +1198,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Malware" && threats.get(i).getProbability()<0.3){
+				if(threats.get(i).getType().equalsIgnoreCase("Malware") && threats.get(i).getProbability()<0.3){
 					Outcome requestPotentialOutcome = new Outcome("Malware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1263,7 +1220,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							}		
 						
 						riskCommunication.setRiskTreatment(riskTreatments);
-						//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 						Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 						decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 						logger.info("Decision: UPTOYOU_ACCESS");
@@ -1274,7 +1230,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Spyware" && threats.get(i).getProbability()<0.2){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Spyware") && threats.get(i).getProbability()<0.2){ 
 					Outcome requestPotentialOutcome = new Outcome("Spyware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1295,7 +1251,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 							logger.info("Decision: UPTOYOU_ACCESS");
@@ -1307,7 +1262,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Unsecure Connexion" && threats.get(i).getProbability()<0.3 ){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Unsecure Connexion") && threats.get(i).getProbability()<0.3 ){ 
 					Outcome requestPotentialOutcome = new Outcome("Unsecure Connexion", -accessRequest.getRequestedCorporateAsset().getValue()/5);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1328,7 +1283,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication); 
 							logger.info("Decision: MAYBE_ACCESS");
@@ -1348,7 +1302,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication);
 								logger.info("Decision: UPTOYOU_ACCESS");
@@ -1362,7 +1315,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					}
 					
 				}
-				if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()<0.3){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Jailbroken") && threats.get(i).getProbability()<0.3){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
 					logger.info("Decision: STRONG_DENY_ACCESS");
@@ -1397,13 +1350,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 		
-		//Probability responsePotentialOutcome = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
 			
 			if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
-				//System.out.println(threats.get(i));
-				if(threats.get(i).getType() == "Wi-Fi sniffing" && threats.get(i).getProbability()<0.1){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Wi-Fi sniffing") && threats.get(i).getProbability()<0.1){ 
 					
 					Outcome requestPotentialOutcome = new Outcome("Wi-Fi sniffing", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1424,7 +1375,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 							decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							logger.info("Decision: MAYBE_ACCESS");
@@ -1443,7 +1393,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 								}				
 								riskCommunication.setRiskTreatment(riskTreatments);
-								//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 								Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 								decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 								logger.info("Decision: UPTOYOU_ACCESS");
@@ -1458,7 +1407,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Malware" && threats.get(i).getProbability()<0.1){
+				if(threats.get(i).getType().equalsIgnoreCase("Malware") && threats.get(i).getProbability()<0.1){
 					Outcome requestPotentialOutcome = new Outcome("Malware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1480,7 +1429,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 							}		
 						
 						riskCommunication.setRiskTreatment(riskTreatments);
-						//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 						Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 						decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 						logger.info("Decision: UPTOYOU_ACCESS");
@@ -1492,7 +1440,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Spyware" && threats.get(i).getProbability()>0.1){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Spyware")  && threats.get(i).getProbability()>0.1){ 
 					Outcome requestPotentialOutcome = new Outcome("Spyware", -accessRequest.getRequestedCorporateAsset().getValue()/2);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1513,7 +1461,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 							}				
 							riskCommunication.setRiskTreatment(riskTreatments);
-							//Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 							Decision decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 							decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication); 
 							logger.info("Decision: UPTOYOU_ACCESS");
@@ -1525,7 +1472,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Unsecure Connexion" && threats.get(i).getProbability()>0.1 ){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Unsecure Connexion") && threats.get(i).getProbability()>0.1 ){ 
 					Outcome requestPotentialOutcome = new Outcome("Unsecure Connexion", -accessRequest.getRequestedCorporateAsset().getValue()/3);
 
 					Probability probability = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcome, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
@@ -1580,14 +1527,14 @@ public class Rt2aeServerImpl implements Rt2ae {
 						}
 					}
 				}
-				if(threats.get(i).getType() == "Jailbroken" && threats.get(i).getProbability()<0.1){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Jailbroken") && threats.get(i).getProbability()<0.1){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
 					logger.info("Decision: STRONG_DENY_ACCESS");
 					return decision;
 					
 				}
-				if(threats.get(i).getType()=="Device under attack" && threats.get(i).getProbability()<0.1){ 
+				if(threats.get(i).getType().equalsIgnoreCase("Device under attack") && threats.get(i).getProbability()<0.1){ 
 					
 					Decision decision = Decision.STRONG_DENY_ACCESS;
 					logger.info("Decision: STRONG_DENY_ACCESS");
@@ -1756,7 +1703,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 	public static void main (String [] arg){
 		
-		/*Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
+		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
 
 		rt2ae = new Rt2aeServerImpl();
 		
@@ -1778,11 +1725,13 @@ public class Rt2aeServerImpl implements Rt2ae {
 		requestedCorporateAsset.setConfidential_level("confidential");
 
 		accessRequest.setRequestedCorporateAsset(requestedCorporateAsset);
-		Context context = new Context();
-
 		
-		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_5(accessRequest, context);*/
-
+		RiskPolicy rPolicy = new RiskPolicy();
+		
+		
+		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
+		
+		System.out.println("Decision: "+decision2.toString());
 		
    }
 	
