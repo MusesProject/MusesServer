@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,6 +31,14 @@ public class DBManagerTest {
 	public  static void setUpBeforeClass() throws Exception {
 		ModuleType module = null;
 		dbmanager = new DBManager(module);
+
+	}
+	
+	@AfterClass
+	public  static void setUpAfterClass() throws Exception {
+		ModuleType module = null;
+		dbmanager = new DBManager(module);
+		
 
 	}
 
@@ -212,7 +220,7 @@ public class DBManagerTest {
 		Threat threat = new Threat();
 		threat.setBadOutcomeCount(0);
 		threat.setOutcomes(outcomes);
-		threat.setDescription(new BigInteger(30, random).toString(5));
+		threat.setDescription("test2");
 		threat.setProbability(0);
 		
 		List<Threat> threats = new ArrayList<Threat>();

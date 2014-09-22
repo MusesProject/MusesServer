@@ -71,16 +71,5 @@ public class Rt2aegenerateobjects {
 		return null;
 	}
 
-	  /*public static void main (String[] args){
-		  
-		 Rt2aegenerateobjects generator = new Rt2aegenerateobjects();
-		 SecurityIncident var = generator.generateSecurityIncident();
-		 List<SecurityIncident> vars = generator.generateListSecurityIncident();
-		 for (int i = 0; i < vars.size(); i++) {
-				System.out.println("costbenefit: "+vars.get(i).getCostBenefit()+" description: "+vars.get(i).getDescription()+ " Probability: "+vars.get(i).getProbability()+" deviceId: "+vars.get(i).getDeviceid());
-				System.out.println("\n");
-		}
-		System.out.println("costbenefit: "+var.getCostBenefit()+" description: "+var.getDescription()+ " Probability: "+var.getProbability()+" deviceId: "+var.getDeviceid());
-	  
-	  }*/
+	 
 }

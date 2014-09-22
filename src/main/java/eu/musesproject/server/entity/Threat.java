@@ -17,6 +17,8 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="Threat.findAll", 
 			    query="SELECT t FROM Threat t"),
+    @NamedQuery(name="Threat.findThreatById", 
+			    query="SELECT t FROM Threat t where t.threat_id = :threat_id"),
 	@NamedQuery(name="Threat.findThreatbyDescription", 
 	 			query="SELECT t FROM Threat t where t.description = :description"),
 	
@@ -26,7 +28,7 @@ public class Threat implements Serializable {
 	
 	@Id
 	@Column(name="threat_id")
-	private int threatId;
+	private int threat_id;
 
 	private int badOutcomeCount;
 
@@ -47,11 +49,11 @@ public class Threat implements Serializable {
 	}
 
 	public int getThreatId() {
-		return this.threatId;
+		return this.threat_id;
 	}
 
 	public void setThreatId(int threatId) {
-		this.threatId = threatId;
+		this.threat_id = threatId;
 	}
 
 	public int getBadOutcomeCount() {

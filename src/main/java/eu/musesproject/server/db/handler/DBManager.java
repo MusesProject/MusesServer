@@ -1,6 +1,7 @@
 package eu.musesproject.server.db.handler;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -522,6 +523,18 @@ public class DBManager {
 
 		return assets;		
 	}
+    
+    /**
+     * Delete Asset by description 
+     * @param title
+     */
+	public void deleteAssetByTitle(String title) {
+				
+		em.createNamedQuery("Asset.deleteAssetByTitle",Asset.class)
+				.setParameter("title", title)
+				.getResultList();
+				
+	}
       
     /**
      * Save Asset list in the DB 
@@ -593,6 +606,18 @@ public class DBManager {
 
 		return clues;		
 	}
+    
+    /**
+     * Delete Clue by value 
+     * @param value
+     */
+	public void deleteClueByValue(String value) {
+				
+		em.createNamedQuery("Asset.deleteClueByValue",Clue.class)
+				.setParameter("value", value)
+				.getResultList();
+				
+	}
 
 	/**
      * Save Clue list in the DB 
@@ -642,6 +667,19 @@ public class DBManager {
 	}
 	
 	/**
+     * Get Threat list by id
+     * @param id
+     * @return List<Threat>
+     */
+	public List<Threat> findThreatById(Threat threat_id) {
+				
+		List<Threat> threat = em.createNamedQuery("Threat.findThreatById",Threat.class)
+				.setParameter("threat_id", threat_id)
+				.getResultList();
+		return threat;		
+	}
+	
+	/**
      * Save Threat list in the DB 
      * @param Threat
      */
@@ -650,12 +688,32 @@ public class DBManager {
 		Iterator<Threat> i = threats.iterator();
 		while(i.hasNext()){
 			Threat threat = i.next();
+			Threat threat1 = new Threat();
+
 		
 			try {
 				EntityTransaction entityTransaction = em.getTransaction();
 				entityTransaction.begin();
-				em.persist(threat);
-				entityTransaction.commit();
+				if (this.findThreatbydescription(threat.getDescription()).size()>0){
+					List<Threat>	listtThreats = this.findThreatbydescription(threat.getDescription());
+					listtThreats.get(0).setOccurences(threat.getOccurences());
+					listtThreats.get(0).setProbability(threat.getProbability());
+					listtThreats.get(0).setBadOutcomeCount(threat.getBadOutcomeCount());
+					listtThreats.get(0).setDescription(threat.getDescription());
+					em.merge(listtThreats.get(0));
+					entityTransaction.commit();
+
+
+				}else{
+					threat1.setDescription(threat.getDescription());
+					threat1.setProbability(threat.getProbability());
+					threat1.setBadOutcomeCount(threat.getBadOutcomeCount());
+					threat1.setOccurences(threat.getOccurences());
+					em.persist(threat1);
+					entityTransaction.commit();
+
+					
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -682,6 +740,18 @@ public class DBManager {
 				
 			}
 		}
+	}
+	
+	 /**
+     * Delete Threat by description 
+     * @param descritpion
+     */
+	public void deletefThreatByDescription(String description) {
+				
+		em.createNamedQuery("Threat.deleteContentOfThreatTable",Threat.class)
+				.setParameter("description", description)
+				.getResultList();
+				
 	}
 	
 	/**
@@ -742,6 +812,88 @@ public class DBManager {
 
 		return accesrequests;
 	}
+	
+	/**
+     * Save AccessRequest list in the DB 
+     * @param accessRequests
+     */
+	public void setAccessRequests(List<AccessRequest> accessRequests) {
+				
+		Iterator<AccessRequest> i = accessRequests.iterator();
+		while(i.hasNext()){
+			AccessRequest accessrequest = i.next();
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				em.persist(accessrequest);
+				entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				//em.close();
+			}
+		}
+	}
+	
+	/**
+     * Get AccessRequest list by date and threat 
+     * @param modification
+     * @param threat_id
+     * @return List<AccessRequest>
+     */
+	public  List<AccessRequest> findAccessrequestbyTimestampandThreat(Date modification,Threat threatid) {
+  		
+		List<AccessRequest> accessrequests = em.createNamedQuery("AccessRequest.findAccessrequestbyTimestampandThreat",AccessRequest.class)
+				.setParameter("modification", modification)
+				.setParameter("threatid", threatid)
+				.getResultList();
+		return accessrequests;		
+	}
+	
+	/**
+     * Anonymize AccessRequest list  
+     * @param accessRequests
+     */
+	public void anonymizeAccessRequests(List<AccessRequest> accessRequests) {
+		
+		Iterator<AccessRequest> i = accessRequests.iterator();
+		while(i.hasNext()){
+			AccessRequest accessrequest = i.next();
+
+			try {
+				EntityTransaction entityTransaction = em.getTransaction();
+				entityTransaction.begin();
+				if(findAccessrequestbyTimestampandThreat(accessrequest.getModification(), accessrequest.getThreat()).size()>0){
+					List<AccessRequest> listaccessrequest = findAccessrequestbyTimestampandThreat(accessrequest.getModification(),accessrequest.getThreat());
+					listaccessrequest.get(0).setSolved((short) 1);
+					List<Threat> threats = findThreatById(accessrequest.getThreat());
+					String description = threats.get(0).getDescription();
+					String text = description.replace(accessrequest.getUser().getName(), "");
+					threats.get(0).setDescription(text);
+					accessrequest.setUser(null);
+					//listaccessrequest.get(0).merge();
+					em.merge(threats.get(0));
+					em.merge(accessrequest);
+
+					}else{
+						em.persist(accessrequest);
+
+						//access.persist();
+					}	
+				
+			entityTransaction.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				//em.close();
+			}
+			
+		}
+		
+	}
+	
+	
+	
 	
 					/**----------------------------------------------------------------**/
 				    
