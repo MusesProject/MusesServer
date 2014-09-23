@@ -80,8 +80,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		RiskPolicy rPolicy = new RiskPolicy();
 
 		Decision decision = Decision.STRONG_DENY_ACCESS;
-		
-		if(policyCompliance.equals(policyCompliance.DENY)){
+		if(policyCompliance.getResult().equals(policyCompliance.DENY)){
 			decision.setCondition(policyCompliance.getReason());
 			return decision;
 		} else{
