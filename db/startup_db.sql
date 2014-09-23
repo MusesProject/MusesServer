@@ -17,11 +17,11 @@ CREATE TABLE IF NOT EXISTS `access_request` (
   `action` enum('DOWNLOAD_FILE','OPEN_APP','INSTALL_APP','OPEN_FILE') NOT NULL COMMENT 'Possible value of user actions for this concrete access request',
   `asset_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table ASSETS(asset_id)',
   `user_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table USERS(user_id)',
-  `decision_id` bigint(20) unsigned NOT NULL COMMENT 'Foreign key to the final decision associated to the access request, once the decision is taken. FK to table DECISIONS(decision_id)',
+  `decision_id` bigint(20) unsigned DEFAULT NULL COMMENT 'Foreign key to the final decision associated to the access request, once the decision is taken. FK to table DECISIONS(decision_id)',
   `modification` datetime DEFAULT NULL COMMENT 'Time of detection of the access request',
-  `threat_id` int(11) NOT NULL,
-  `solved` int(11) NOT NULL,
-  `user_action` int(11) NOT NULL,
+  `threat_id` int(11) DEFAULT NULL,
+  `solved` int(11) DEFAULT NULL,
+  `user_action` int(11) DEFAULT NULL,
   PRIMARY KEY (`access_request_id`),
   UNIQUE KEY `access-request-threat_id` (`threat_id`),
   KEY `access_request-simple_events:event_id_idx` (`decision_id`),
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `assets` (
   `confidential_level` enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLYCONFIDENTIAL') NOT NULL,
   `location` varchar(100) NOT NULL COMMENT 'Location of the asset in the hard drive',
   PRIMARY KEY (`asset_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='This one will store all Assets data. All fields are defined in the table.' AUTO_INCREMENT=1626 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='This one will store all Assets data. All fields are defined in the table.' AUTO_INCREMENT=1628 ;
 
 --
 -- Dumping data for table `assets`
@@ -237,7 +237,9 @@ INSERT INTO `assets` (`asset_id`, `title`, `description`, `value`, `confidential
 (1622, 'Patent', 'Asset_Unige', 0, 'PUBLIC', 'Geneva'),
 (1623, 'Patent', 'Asset_Unige', 0, 'PUBLIC', 'Geneva'),
 (1624, 'Patent', 'Asset_Unige', 0, 'PUBLIC', 'Geneva'),
-(1625, 'Patent', 'Asset_Unige', 0, 'PUBLIC', 'Geneva');
+(1625, 'Patent', 'Asset_Unige', 0, 'PUBLIC', 'Geneva'),
+(1626, 'Patent', 'Asset_Unige', 0, 'PUBLIC', 'Geneva'),
+(1627, 'Patent', 'Asset_Unige', 0, 'PUBLIC', 'Geneva');
 
 -- --------------------------------------------------------
 
@@ -250,7 +252,7 @@ CREATE TABLE IF NOT EXISTS `clue` (
   `clue_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `value` longtext NOT NULL,
   PRIMARY KEY (`clue_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=54 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=56 ;
 
 --
 -- Dumping data for table `clue`
@@ -309,7 +311,9 @@ INSERT INTO `clue` (`clue_id`, `value`) VALUES
 (50, 'Wi-FI'),
 (51, 'Wi-FI'),
 (52, 'Wi-FI'),
-(53, 'Wi-FI');
+(53, 'Wi-FI'),
+(54, 'Wi-FI'),
+(55, 'Wi-FI');
 
 -- --------------------------------------------------------
 
@@ -575,7 +579,7 @@ CREATE TABLE IF NOT EXISTS `outcome` (
   `threat_id` bigint(20) NOT NULL,
   PRIMARY KEY (`outcome_id`),
   KEY `threat_outcome_link` (`threat_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=29 ;
 
 --
 -- Dumping data for table `outcome`
@@ -605,7 +609,9 @@ INSERT INTO `outcome` (`outcome_id`, `description`, `costbenefit`, `threat_id`) 
 (23, 'outcome', 0, 26),
 (24, 'outcome', 0, 26),
 (25, 'outcome', 0, 26),
-(26, 'outcome', 0, 26);
+(26, 'outcome', 0, 26),
+(27, 'outcome', 0, 26),
+(28, 'outcome', 0, 26);
 
 -- --------------------------------------------------------
 
@@ -683,7 +689,7 @@ CREATE TABLE IF NOT EXISTS `risk_policy` (
   `riskvalue` double NOT NULL,
   `description` longtext NOT NULL,
   PRIMARY KEY (`risk_policy_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=45 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=47 ;
 
 --
 -- Dumping data for table `risk_policy`
@@ -733,7 +739,9 @@ INSERT INTO `risk_policy` (`risk_policy_id`, `riskvalue`, `description`) VALUES
 (41, 0, 'myrsikpolicy'),
 (42, 0, 'myrsikpolicy'),
 (43, 0, 'myrsikpolicy'),
-(44, 0, 'myrsikpolicy');
+(44, 0, 'myrsikpolicy'),
+(45, 0, 'myrsikpolicy'),
+(46, 0, 'myrsikpolicy');
 
 -- --------------------------------------------------------
 
@@ -1045,7 +1053,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username_UNIQUE` (`username`),
   KEY `role_id_idx` (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='This table contains user information, similar to a profile. It has personal data (name, email) as well as company data (user''s role inside the company). Additionally, a trust value has been included for RT2AE calculation processes.' AUTO_INCREMENT=229 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='This table contains user information, similar to a profile. It has personal data (name, email) as well as company data (user''s role inside the company). Additionally, a trust value has been included for RT2AE calculation processes.' AUTO_INCREMENT=231 ;
 
 --
 -- Dumping data for table `users`
@@ -1076,7 +1084,9 @@ INSERT INTO `users` (`user_id`, `name`, `surname`, `email`, `username`, `passwor
 (225, 'Pinkman', 'Jesse', 'jesse.pinkman@muses.eu', '342211231012', 'walterwhite', 0, 0.9999, 0),
 (226, 'Pinkman', 'Jesse', 'jesse.pinkman@muses.eu', '2422123334033', 'walterwhite', 0, 0.9999, 0),
 (227, 'Pinkman', 'Jesse', 'jesse.pinkman@muses.eu', '3124123131143', 'walterwhite', 0, 0.9999, 0),
-(228, 'Pinkman', 'Jesse', 'jesse.pinkman@muses.eu', '3413223441224', 'walterwhite', 0, 0.9999, 0);
+(228, 'Pinkman', 'Jesse', 'jesse.pinkman@muses.eu', '3413223441224', 'walterwhite', 0, 0.9999, 0),
+(229, 'Pinkman', 'Jesse', 'jesse.pinkman@muses.eu', '3302103221122', 'walterwhite', 0, 0.9999, 0),
+(230, 'Pinkman', 'Jesse', 'jesse.pinkman@muses.eu', '3431221421233', 'walterwhite', 0, 0.9999, 0);
 
 -- --------------------------------------------------------
 
