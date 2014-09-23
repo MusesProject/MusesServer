@@ -497,6 +497,32 @@ public class DBManager {
 
 	}
 	
+	/**
+     * Get Device list by id 
+     * @param device_id
+     * @return List<Device>
+     */
+	public  List<Device> findDeviceById(int device_id) {
+  		
+		List<Device> devices = em.createNamedQuery("Device.findById",Device.class)
+				.setParameter("device_id", device_id)
+				.getResultList();
+		return devices;		
+	}
+	
+	/**
+     * Get Device list by id 
+     * @param device_id
+     * @return List<Device>
+     */
+	public  void merge(Device  device) {
+  		
+		EntityTransaction entityTransaction = em.getTransaction();
+		entityTransaction.begin();
+		em.persist(device);
+		entityTransaction.commit();
+	}
+	
 	 /**
      * Get Asset list
      * @return List<Asset>
