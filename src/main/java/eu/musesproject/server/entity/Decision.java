@@ -1,7 +1,9 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
  * 
  */
 @Entity
+@Table(name="decision")
 @NamedQuery(name="Decision.findAll", query="SELECT d FROM Decision d")
 public class Decision implements Serializable {
 	private static final long serialVersionUID = 1L;
