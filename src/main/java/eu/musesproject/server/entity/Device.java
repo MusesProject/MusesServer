@@ -25,7 +25,7 @@ public class Device implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="device_id")
-	private int deviceId;
+	private int device_id;
 
 	@Lob
 	private byte[] certificate;
@@ -75,12 +75,12 @@ public class Device implements Serializable {
 	public Device() {
 	}
 
-	public int getDeviceId() {
-		return this.deviceId;
+	public int getDevice_id() {
+		return this.device_id;
 	}
 
-	public void setDeviceId(int deviceId) {
-		this.deviceId = deviceId;
+	public void setDevice_id(int deviceId) {
+		this.device_id = deviceId;
 	}
 
 	public byte[] getCertificate() {
