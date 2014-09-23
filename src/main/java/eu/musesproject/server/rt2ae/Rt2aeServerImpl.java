@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import javax.persistence.EntityTransaction;
+
 import org.apache.log4j.Logger;
 
 import eu.musesproject.server.db.handler.DBManager;
@@ -78,8 +80,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		RiskPolicy rPolicy = new RiskPolicy();
 
 		Decision decision = Decision.STRONG_DENY_ACCESS;
-		
-		if(policyCompliance.equals(policyCompliance.DENY)){
+		if(policyCompliance.getResult().equals(policyCompliance.DENY)){
 			decision.setCondition(policyCompliance.getReason());
 			return decision;
 		} else{
@@ -1655,22 +1656,27 @@ public class Rt2aeServerImpl implements Rt2ae {
 	}
 	
 	/**
-	* WarnDeviceSecurityStateChange is a function whose aim is to check that if the DeviceSecurityState has changed.
+	* WarnDeviceSecurityStateChange is a function whose aim is to update the device trust value based on the new DeviceSecurityState.
 	* @param deviceSecurityState the device security state
 	*/
 	@Override
 	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
 		// TODO Auto-generated method stub
+		eu.musesproject.server.entity.Device device = dbManager.findDeviceById(deviceSecurityState.getDevice_id()).get(0);
 
-		if( deviceSecurityState == null)
-		{
-			
-			System.out.println(" The deviceSecurityState object is null");
+		int countadditionalprotection = device.getAdditionalProtections().size();
+
+		int countclues = deviceSecurityState.getClues().size();
+		
+		deviceSecurityState.getDevice_id();
+		List<Clue> listclues = deviceSecurityState.getClues();
+		if(listclues.size()<=5){
+			device.setTrustValue(countadditionalprotection/(countadditionalprotection+countclues+1));
+		}else{
+			device.setTrustValue(countadditionalprotection/(countadditionalprotection+countclues));
 		}
-		else{
-			
-			System.out.println(" The deviceSecurityState object is not null");
-		}
+		dbManager.merge(device);
+		
 		
 	}
 

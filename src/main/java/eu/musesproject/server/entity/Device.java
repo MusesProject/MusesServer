@@ -14,6 +14,8 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="Device.findAll", 
 				query="SELECT d FROM Device d"),
+				@NamedQuery(name="Device.findById", 
+				query="SELECT d FROM Device d where d.device_id = :device_id"),
 	@NamedQuery(name="Device.findByIMEI", 
 				query="SELECT d FROM Device d where d.imei = :imei")
 })
