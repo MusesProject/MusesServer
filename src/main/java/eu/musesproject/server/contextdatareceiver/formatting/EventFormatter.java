@@ -74,6 +74,8 @@ public class EventFormatter {
 					cepFileEvent = convertToVirusFoundEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.CHANGE_SECURITY_PROPERTY)){
 					cepFileEvent = convertToChangeSecurityPropertyEvent(contextEvent);
+				} else if (contextEvent.getType().equals(EventTypes.SAVE_ASSET)){
+					cepFileEvent = convertToFileObserverSaveEvent(contextEvent);
 				} else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 					Logger.getLogger(EventFormatter.class).error("Unsupported sensor:"+contextEvent.getType());
@@ -90,6 +92,23 @@ public class EventFormatter {
 		
 	}
 	
+	private static Event convertToFileObserverSaveEvent(
+			ContextEvent contextEvent) {
+		FileObserverEvent cepFileEvent = new FileObserverEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		if (getElement(properties.get("properties"), "fileevent")!=null){
+			cepFileEvent.setEvent(getElement(properties.get("properties"), "fileevent"));
+		}
+	
+		cepFileEvent.setType(contextEvent.getType());
+		
+		cepFileEvent.setPath(getElement(properties.get("properties"), "path"));
+		cepFileEvent.setId(Integer.valueOf(getElement(properties.get("properties"), "id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setUid(getElement(properties.get("properties"), "id"));
+		return cepFileEvent;
+	}
+
 	private static Event convertToChangeSecurityPropertyEvent(
 			ContextEvent contextEvent) {
 

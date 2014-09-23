@@ -30,13 +30,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.client.model.decisiontable.PolicyDT;
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
 import eu.musesproject.server.eventprocessor.composers.AdditionalProtectionComposer;
 import eu.musesproject.server.eventprocessor.composers.ClueComposer;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AdditionalProtection;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
-import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
@@ -53,6 +54,7 @@ import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.RiskTreatment;
 import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.rt2ae.Rt2aeServerImpl;
+import eu.musesproject.server.scheduler.ModuleType;
 
 public class Rt2aeGlobal {
 	
@@ -63,6 +65,7 @@ public class Rt2aeGlobal {
 	private static List<Clue> deviceSecurityClues = new ArrayList<Clue>();
 	private static List<AccessRequest> requests = new ArrayList<AccessRequest>();
 	private static List<AdditionalProtection> additionalProtections = new ArrayList<AdditionalProtection>();
+	private DBManager dbManager = new DBManager(ModuleType.EP);
 	
 	private static Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 
@@ -89,11 +92,25 @@ public class Rt2aeGlobal {
 
 	
 	public Clue deviceSecurityStateChange(Event event, String name, String type){
+		eu.musesproject.server.entity.Device device = null;
 		logger.info("[deviceSecurityStateChange]");
 		Clue composedClue = ClueComposer.composeClue(event, name, type);
 		deviceSecurityClues.add(composedClue);
 		DeviceSecurityState deviceSecurityState = new DeviceSecurityState();
-		deviceSecurityState.setDevice_id(0);//TODO Set device id and manage a different object to manage clues for each device
+		//Manage device in database
+		eu.musesproject.server.entity.Device deviceInstance = dbManager.getDeviceByIMEI(event.getDeviceId());
+		if (deviceInstance==null) {
+			device = new eu.musesproject.server.entity.Device();
+			device.setImei(event.getDeviceId());
+			device.setName(event.getDeviceId());
+			DeviceType deviceType = new DeviceType();
+			deviceType.setDeviceTypeId(1222);//TODO manage device type conveniently
+			device.setDeviceType(deviceType);
+			dbManager.saveDevice(device);
+		}else{
+			device = deviceInstance;
+		}
+		deviceSecurityState.setDevice_id(device.getDevice_id());//TODO Set device id and manage a different object to manage clues for each device
 		deviceSecurityState.setClues(deviceSecurityClues);
 		rt2aeServer.warnDeviceSecurityStateChange(deviceSecurityState);
 		return composedClue;
@@ -129,6 +146,7 @@ public class Rt2aeGlobal {
 		
 		for (Iterator<AccessRequest> iterator = requests.iterator(); iterator.hasNext();) {
 			AccessRequest accessRequest = (AccessRequest) iterator.next();
+			Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:accessRequest.getId()"+accessRequest.getId());
 			if (accessRequest.getId()==requestId){
 				eventId = accessRequest.getEventId();
 			}
@@ -136,6 +154,7 @@ public class Rt2aeGlobal {
 		
 		for (Iterator<Clue> iterator = clues.iterator(); iterator.hasNext();) {
 			Clue clue = (Clue) iterator.next();
+			Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:clue.getId-"+clue.getId()+" eventId:"+(int)eventId);
 			if (clue.getId()==(int)eventId){
 				clue.setRequestId(requestId);
 				aux = convertClue(clue);
@@ -353,13 +372,13 @@ public class Rt2aeGlobal {
 
 		//Control based on policy compliance
 		//TODO Disable when RT2AE is implemented
-		if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
+		/*if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
 			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 		}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
 			decision = Decision.STRONG_DENY_ACCESS;
 		}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
 			decision = Decision.GRANTED_ACCESS;
-		}
+		}*/
 		decision.setCondition(condition);
 		decisions[0] = decision;
 		

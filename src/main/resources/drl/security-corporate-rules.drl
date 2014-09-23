@@ -387,3 +387,22 @@ rule "Blacklist app 00001"
 		retract(e);
 		
 	end
+	
+	rule "AccessRequest Detection Save File in a monitored folder"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="close_write")
+		
+	then
+		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type Save File in a Monitored folder");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Up to the user: Confidential documents shall only be saved on a device if really needed.","ALLOW","<path>"+e.getPath()+"</path>");		
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection save file type:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
+	end

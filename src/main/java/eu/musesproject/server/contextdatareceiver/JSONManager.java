@@ -285,6 +285,9 @@ public class JSONManager {
 				}else if (contextEventType.equals(ActionType.SECURITY_PROPERTY_CHANGED)){
 					contextEvent.setType(EventTypes.CHANGE_SECURITY_PROPERTY);
 					properties.put("event", contextEventType);
+				}else if (contextEventType.equals(ActionType.SAVE_ASSET)){
+					contextEvent.setType(EventTypes.SAVE_ASSET);
+					properties.put("event", contextEventType);
 				}else if (contextEventType.equals(ActionType.UPDATE)){
 					Logger.getLogger(JSONManager.class).log(Level.INFO, "Action type for update of events");
 					return null; //This is not a concrete type of action, it just reflects that the list of events is an update_events request type

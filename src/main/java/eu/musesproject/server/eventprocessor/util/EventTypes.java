@@ -31,4 +31,5 @@ public class EventTypes {
 	public final static String SEND_MAIL = "ACTION_SEND_MAIL";
 	public final static String VIRUS_FOUND = "VIRUS_FOUND";
 	public final static String CHANGE_SECURITY_PROPERTY = "security_property_changed";
+	public final static String SAVE_ASSET = "SAVE_ASSET";
 }

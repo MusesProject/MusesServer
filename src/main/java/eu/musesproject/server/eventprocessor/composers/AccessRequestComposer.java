@@ -72,6 +72,12 @@ public class AccessRequestComposer {
 			requestedCorporateAsset.setValue(400);
 			composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
 			composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
+		}else if (event.getType().equals(EventTypes.SAVE_ASSET)){
+			FileObserverEvent fileEvent = (FileObserverEvent) event;
+			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
+			requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
+			composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+			composedRequest.setEventId(fileEvent.getTimestamp());
 		}else {
 			logger.log(Level.INFO, "Unsupported Event type:"+event.getType());
 		}
@@ -90,7 +96,7 @@ public class AccessRequestComposer {
 		composedRequest.setDevice(device);
 		composedRequest.setRequestedCorporateAsset(requestedCorporateAsset);
 		
-		
+		logger.log(Level.INFO, "AccessRequest event id:"+composedRequest.getEventId());
 		
 		return composedRequest;
 	}
