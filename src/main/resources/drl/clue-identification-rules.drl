@@ -211,10 +211,10 @@ rule "Clue-identification-00000"
 	
 	rule "Clue-identification-000009"
 	no-loop true
-	//salience 65000
+	salience 65000
 	dialect "mvel"
 	when
-		e: FileObserverEvent(event=="close_write")
+		e: FileObserverEvent(event=="save_asset")
 		
 	then
 		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		

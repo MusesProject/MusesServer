@@ -97,7 +97,8 @@ public class EventFormatter {
 		FileObserverEvent cepFileEvent = new FileObserverEvent();
 		Map<String,String> properties = contextEvent.getProperties();
 		if (getElement(properties.get("properties"), "fileevent")!=null){
-			cepFileEvent.setEvent(getElement(properties.get("properties"), "fileevent"));
+			//cepFileEvent.setEvent(getElement(properties.get("properties"), "fileevent"));
+			cepFileEvent.setEvent(properties.get("event"));
 		}
 	
 		cepFileEvent.setType(contextEvent.getType());
@@ -266,6 +267,8 @@ public class EventFormatter {
 	}
 	
 	public static FileObserverEvent convertToFileObserverEvent(ContextEvent contextEvent){
+		String resourcePath = null;
+		String resourceType = null;
 		FileObserverEvent cepFileEvent = new FileObserverEvent();
 		Map<String,String> properties = contextEvent.getProperties();
 		if (properties.get("event")!=null){//TODO Changes for System test
@@ -276,9 +279,17 @@ public class EventFormatter {
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		}		
 		cepFileEvent.setType(contextEvent.getType());
+		resourcePath = getElement(properties.get("properties"), "resourcePath");
+		if (resourcePath != null){
+			cepFileEvent.setPath(resourcePath);
+		}else{
+			cepFileEvent.setPath(getElement(properties.get("properties"), "path"));
+		}
+		resourceType = getElement(properties.get("properties"), "resourceType");
+		if (resourceType != null){
+			cepFileEvent.setResourceType(resourceType);
+		}
 		
-		cepFileEvent.setPath(getElement(properties.get("properties"), "resourcePath"));
-		cepFileEvent.setResourceType(getElement(properties.get("properties"), "resourceType"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;

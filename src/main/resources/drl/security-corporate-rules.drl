@@ -222,6 +222,7 @@ rule "Connectivity"
 rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
+	enabled false
 	when
 		e: AppObserverEvent(name=="Gmail",event=="open_application")
 	then
@@ -392,7 +393,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
 	when
-		e: FileObserverEvent(event=="close_write")
+		e: FileObserverEvent(event=="save_asset")
 		
 	then
 		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type Save File in a Monitored folder");
@@ -401,6 +402,26 @@ rule "Blacklist app 00001"
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection save file type:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
+	end
+	
+	
+		rule "AccessRequest Detection Open File in a monitored folder"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="open_asset", path=="/storage/sdcard0/Swe/companyfile.txt", username=="muses")
+		
+	then
+		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type Open File in a Monitored folder");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"This asset is confidential and it shall not be opened, according to your current role.","DENY","<path>"+e.getPath()+"</path>");		
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
