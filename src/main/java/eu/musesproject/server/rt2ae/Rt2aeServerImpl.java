@@ -197,7 +197,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			int oC = threat.getOccurences() + 1;
 			threat.setOccurences(oC);
 			currentThreats.add(threat);
-			//dbManager.setThreats(currentThreats);
+			dbManager.setThreats(currentThreats);
 
 			logger.info("The newly created Threat from the Clues is: "
 					+ threat.getDescription() + " with probability "
