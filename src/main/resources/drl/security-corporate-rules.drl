@@ -110,17 +110,42 @@ rule "Rule firing"
 
 	end
 
-rule "AccessRequest Detection open asset type sensitive"
+rule "AccessRequest Detection open asset type sensitive unsecure wifi"
 	no-loop true
 	dialect "mvel"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+		//conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*") 
 	then
 		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE", "wifiencryption!=WPA2");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","DENY","<resourceType>sensitive</resourceType>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","DENY","<resourceType>sensitive</resourceType>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		retract(e);
+		
+	end
+
+rule "AccessRequest Detection open asset type sensitive secure wifi"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
+		//conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*") 
+	then
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE", "wifiencryption!=WPA2");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","ALLOW","<resourceType>sensitive</resourceType>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());
@@ -131,6 +156,8 @@ rule "AccessRequest Detection open asset type sensitive"
 		
 	end
 	
+	
+	
 	rule "AccessRequest Detection open asset type insensitive"
 	no-loop true
 	dialect "mvel"
@@ -140,7 +167,8 @@ rule "AccessRequest Detection open asset type sensitive"
 	then
 		StatusGlobal.log("1.2.A new AccessRequest has been detected: FileObserverEvent. Type open");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
-		int id = Rt2aeGlobal.composeAccessRequest(e,conn,"ALLOW", "any");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"ALLOW", "any");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Action allowed, this is a public file","ALLOW","<resourceType>"+e.getResourceType()+"</resourceType>");
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection open asset type insensitive:"+e.getEvent() + " " + e.getTimestamp());
