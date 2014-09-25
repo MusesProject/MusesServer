@@ -81,7 +81,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		Decision decision = Decision.STRONG_DENY_ACCESS;
 		if(policyCompliance.getResult().equals(policyCompliance.DENY)){
-			decision.setCondition(policyCompliance.getReason());
+			decision.setInformation(policyCompliance.getReason());
 			return decision;
 		} else{
 			return decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
@@ -113,6 +113,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		double singleOpportunityProbability = 0.0;
 		int opcount = 0;
 		int threatcount = 0;
+
+		
+		Decision decision = Decision.STRONG_DENY_ACCESS;
 
 		riskPolicy = rPolicy;
 		EventProcessorImpl eventProcessorImpl = new EventProcessorImpl();
@@ -288,8 +291,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 		// probabilities, the user trust level and the cost benefit
 
 		if (riskPolicy.getRiskvalue() == 0.0) {
+			
+			decision = Decision.GRANTED_ACCESS; 
 
-			return Decision.GRANTED_ACCESS;
+			return decision;
 
 		}
 
@@ -302,19 +307,23 @@ public class Rt2aeServerImpl implements Rt2ae {
 		if ((combinedProbabilityThreats + ((Double) 1.0 - accessRequest
 				.getUser().getUsertrustvalue().getValue())) / 2 <= riskPolicy
 				.getRiskvalue()) {
+			decision = Decision.GRANTED_ACCESS; 
 
-			return Decision.GRANTED_ACCESS;
+			return decision;
 
 		} else {
 
-			if (costOpportunity > 0)
+			if (costOpportunity > 0){
+				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS; 
 
-				return Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+				return decision;
+			}
+			else{
 
-			else
-
+				decision = Decision.STRONG_DENY_ACCESS; 
+				decision.setInformation(" There is too much risk in your situation to allow you to get access to the Asset");
 				return Decision.STRONG_DENY_ACCESS;
-
+			}
 		}
 	}
       
@@ -1719,9 +1728,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 	public static void main (String [] arg){
 		
+		
 		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
 
 		rt2ae = new Rt2aeServerImpl();
+		
+
 		
 		AccessRequest accessRequest = new AccessRequest();
 		accessRequest.setId(1);
