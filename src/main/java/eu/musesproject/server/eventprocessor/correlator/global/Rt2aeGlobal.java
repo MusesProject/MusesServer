@@ -112,7 +112,11 @@ public class Rt2aeGlobal {
 		}
 		deviceSecurityState.setDevice_id(device.getDevice_id());//TODO Set device id and manage a different object to manage clues for each device
 		deviceSecurityState.setClues(deviceSecurityClues);
-		rt2aeServer.warnDeviceSecurityStateChange(deviceSecurityState);
+		try{
+			rt2aeServer.warnDeviceSecurityStateChange(deviceSecurityState);
+		}catch(java.lang.IllegalStateException e){
+			logger.error("Please, check database:An error has produced while calling RT2AE server: warnDeviceSecurityStateChange:"+e.getLocalizedMessage());
+		}
 		return composedClue;
 	}
 	
