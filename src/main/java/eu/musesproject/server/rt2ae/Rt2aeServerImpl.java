@@ -197,7 +197,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			int oC = threat.getOccurences() + 1;
 			threat.setOccurences(oC);
 			currentThreats.add(threat);
-			dbManager.setThreats(currentThreats);
+			//dbManager.setThreats(currentThreats);
 
 			logger.info("The newly created Threat from the Clues is: "
 					+ threat.getDescription() + " with probability "
@@ -289,25 +289,50 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		// compute the decision based on the risk policy, the threat
 		// probabilities, the user trust level and the cost benefit
+		
+		if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")) {
+			decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
+			logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
+			
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
+			RiskTreatment riskTreatment = new RiskTreatment("Confidential data should not be stored on mobile devices unless it is absolutely necessary");
+			if (riskTreatments.length > 0){
+				riskTreatments[0] = riskTreatment;	
+			}				
+			riskCommunication.setRiskTreatment(riskTreatments);
+
+			decision.setRiskCommunication(riskCommunication);
+			return decision;
+
+		}
 
 		if (riskPolicy.getRiskvalue() == 0.0) {
 			
 			decision = Decision.GRANTED_ACCESS; 
+			logger.info("Decision: GRANTED_ACCESS");
 
 			return decision;
 
 		}
 
 		if (riskPolicy.getRiskvalue() == 1.0) {
+			decision = Decision.STRONG_DENY_ACCESS; 
+			logger.info("Decision: STRONG_DENY_ACCESS");
+			
 
-			return Decision.STRONG_DENY_ACCESS;
+			return decision;
 
 		}
+		
+		
 
 		if ((combinedProbabilityThreats + ((Double) 1.0 - accessRequest
 				.getUser().getUsertrustvalue().getValue())) / 2 <= riskPolicy
 				.getRiskvalue()) {
+			
 			decision = Decision.GRANTED_ACCESS; 
+			logger.info("Decision: GRANTED_ACCESS");
 
 			return decision;
 
@@ -315,6 +340,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			if (costOpportunity > 0){
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS; 
+				logger.info("Decision: MAYBE_ACCESS_WITH_RISKTREATMENTS");
 
 				return decision;
 			}
@@ -322,6 +348,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 				decision = Decision.STRONG_DENY_ACCESS; 
 				decision.setInformation(" There is too much risk in your situation to allow you to get access to the Asset");
+				logger.info("Decision: MAYBE_ACCESS_WITH_RISKTREATMENTS");
 				return Decision.STRONG_DENY_ACCESS;
 			}
 		}
