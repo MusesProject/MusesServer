@@ -376,8 +376,8 @@ public class Rt2aeGlobal {
 			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		}catch(javax.persistence.EntityExistsException e){
 			logger.error("Please, check database persistence:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
-		}catch(java.lang.IllegalStateException e){
-			logger.error("Please, check database illegal state:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+		}catch(Exception e){
+			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
 		}		
 		//Control based on policy compliance
 		//TODO Disable when RT2AE is implemented

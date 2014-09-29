@@ -266,30 +266,34 @@ public class EventFormatter {
 			return cepFileEvent;
 	}
 	
-	public static FileObserverEvent convertToFileObserverEvent(ContextEvent contextEvent){
+	public static FileObserverEvent convertToFileObserverEvent(
+			ContextEvent contextEvent) {
 		String resourcePath = null;
 		String resourceType = null;
 		FileObserverEvent cepFileEvent = new FileObserverEvent();
-		Map<String,String> properties = contextEvent.getProperties();
-		if (properties.get("event")!=null){//TODO Changes for System test
+		Map<String, String> properties = contextEvent.getProperties();
+		if (properties.get("event") != null) {// TODO Changes for System test
 			cepFileEvent.setEvent(properties.get("event"));
 		}
-		//cepFileEvent.setEvent(properties.get("method"));//TODO Changes for System test
-		if (properties.get("id")!=null){//TODO Changes for System test
+
+		if (properties.get("id") != null) {// TODO Changes for System test
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
-		}		
-		cepFileEvent.setType(contextEvent.getType());
-		resourcePath = getElement(properties.get("properties"), "resourcePath");
-		if (resourcePath != null){
-			cepFileEvent.setPath(resourcePath);
-		}else{
-			cepFileEvent.setPath(getElement(properties.get("properties"), "path"));
 		}
+		cepFileEvent.setType(contextEvent.getType());
+
+		resourcePath = getElement(properties.get("properties"), "resourcePath");
+		if (resourcePath != null) {
+			cepFileEvent.setPath(resourcePath);
+		} else {
+			cepFileEvent.setPath(getElement(properties.get("properties"),
+					"path"));
+		}
+
 		resourceType = getElement(properties.get("properties"), "resourceType");
-		if (resourceType != null){
+		if (resourceType != null) {
 			cepFileEvent.setResourceType(resourceType);
 		}
-		
+
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
@@ -300,7 +304,7 @@ public class EventFormatter {
 			JSONObject root = new JSONObject(properties);
 			result = root.getString(element);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Logger.getLogger(EventFormatter.class).error("Error while trying to get JSON Object:"+e.getLocalizedMessage());
 		}
 		return result;
 		
