@@ -300,6 +300,10 @@ public class PolicySelector {
 			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
 			result += "<id></id>"; //TODO Add resource identification
 			result += "</deny>";
+		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){
+			result += "<up-to-you><!-- Allow these URLs (could be regular expressions) -->";
+			result += "<id></id>"; //TODO Add resource identification
+			result += "</up-to-you>";
 		}
 		result += "</action>";
 		result += "</files>";		
@@ -360,6 +364,26 @@ public class PolicySelector {
 				}
 			}	
 			result += "</maybe>";
+		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){
+			result += "<up-to-you><!-- Allow these URLs (could be regular expressions) -->";
+			if ((asset != null)){
+				result += "<id>"+asset.getId()+"</id>";
+				result += "<path>"+asset.getLocation()+"</path>";
+				//result += "<condition><noAttachments>0</noAttachments></condition>";//
+				if (decision.getCondition()!=null){
+					result += "<condition>"+decision.getCondition()+"</condition>";
+				}if (decision.getRiskCommunication()!=null){
+					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
+					if (rt!=null){
+						if (rt.length>0){
+							if (rt[0].getTextualDescription()!=null){
+								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
+							}
+						}
+					}
+				}
+			}	
+			result += "</up-to-you>";
 		}
 		result += "</action>";
 		result += "</files>";		
