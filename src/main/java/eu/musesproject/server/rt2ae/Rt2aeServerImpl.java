@@ -306,8 +306,22 @@ public class Rt2aeServerImpl implements Rt2ae {
 			return decision;
 
 		}
+		
+		if (clues.get(0).getName().contains("VIRUS")){
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[1];
+			RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+			riskTreatments[0] = riskTreatment;	
+			riskCommunication.setRiskTreatment(riskTreatments);
+			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+			logger.info("Decision: MAYBE_ACCESS");
+			logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+			return decision;
+			
+		}
 
-		if (riskPolicy.getRiskvalue() == 0.0) {
+		/*if (riskPolicy.getRiskvalue() == 0.0) {
 			
 			decision = Decision.GRANTED_ACCESS; 
 			logger.info("Decision: GRANTED_ACCESS");
@@ -323,7 +337,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			return decision;
 
-		}
+		}*/
 		
 		
 
@@ -1711,7 +1725,13 @@ public class Rt2aeServerImpl implements Rt2ae {
 		}else{
 			device.setTrustValue(countadditionalprotection/(countadditionalprotection+countclues));
 		}
-		dbManager.merge(device);
+		try {
+			
+			dbManager.merge(device);
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		
 		
 	}
