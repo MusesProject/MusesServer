@@ -89,7 +89,7 @@ end
 
 function boolean requiredApp(String name){
 	boolean result = false;
-	if (name.equals("Avast")){
+	if (name.contains("com.avast.android.mobilesecurity")){
 		result = true;
 	}	
 
@@ -322,17 +322,18 @@ rule "Blacklist app 00001"
 		e:EmailEvent(numberAttachments==0)
 	then
 		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
-		int id = Rt2aeGlobal.composeAccessRequest(e,"","ALLOW", "<noAttachments>0</noAttachments>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Email action allowed","ALLOW", "<noAttachments>0</noAttachments>");
 	end	
 	
 	rule "AccessRequest Email with Attachments"
 	no-loop true
 	dialect "mvel"
 	when
+		v: VirusFoundEvent()
 		e:EmailEvent(numberAttachments>0)
 	then
 		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
-		int id = Rt2aeGlobal.composeAccessRequest(e,"","DENY", "<noAttachments>1</noAttachments>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are not allowed to send an email with any attachments since you have a virus","DENY", "<noAttachments>1</noAttachments>");
 	end	
 	
 	
@@ -344,7 +345,7 @@ rule "Blacklist app 00001"
 		d: DeviceProtectionEvent(isPasswordProtected==false)
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"","DENY", "<isPasswordProtected>false</isPasswordProtected>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"The screen lock is required by the security policies","DENY", "<isPasswordProtected>false</isPasswordProtected>");
 
 	end
 	
@@ -403,11 +404,13 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
 	when
-		e: AppObserverEvent(eval(requiredApp(this.name)),event=="uninstall")
+		//e: AppObserverEvent(eval(requiredApp(this.name)),event=="uninstall")
+		e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="uninstall")
 	then
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a required application, it is not allowed to uninstall","DENY","<appname>Avast</appname>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"The Anti virus application is required by the security policies","DENY","<appname>"+e.getName()+"</appname>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"The Anti virus application is required by the security policies","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
@@ -437,12 +440,11 @@ rule "Blacklist app 00001"
 	end
 	
 	
-		rule "AccessRequest Detection Open File in a monitored folder"
+	rule "AccessRequest Detection Open File in a monitored folder"
 	no-loop true
 	dialect "mvel"
 	when
-		e: FileObserverEvent(event=="open_asset", path=="/storage/sdcard0/Swe/companyfile.txt", username=="muses")
-		
+		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*", username=="muses")
 	then
 		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type Open File in a Monitored folder");
 		Rt2aeGlobal.setStatus(Constants.STARTED);

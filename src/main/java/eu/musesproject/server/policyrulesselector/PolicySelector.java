@@ -332,7 +332,10 @@ public class PolicySelector {
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
 				result += "<condition>"+decision.getCondition()+"</condition>";
-				if (decision.getRiskCommunication()!=null){
+				if (decision.getInformation()!=null){
+					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
+				}
+				/*if (decision.getRiskCommunication()!=null){
 					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
 					if (rt!=null){
 						if (rt.length>0){
@@ -341,7 +344,7 @@ public class PolicySelector {
 							}
 						}
 					}
-				}
+				}*/
 			}	
 			result += "</deny>";
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
@@ -352,7 +355,11 @@ public class PolicySelector {
 				//result += "<condition><noAttachments>0</noAttachments></condition>";//
 				if (decision.getCondition()!=null){
 					result += "<condition>"+decision.getCondition()+"</condition>";
-				}if (decision.getRiskCommunication()!=null){
+				}
+				if (decision.getInformation()!=null){
+					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
+				}
+				/*if (decision.getRiskCommunication()!=null){
 					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
 					if (rt!=null){
 						if (rt.length>0){
@@ -361,7 +368,7 @@ public class PolicySelector {
 							}
 						}
 					}
-				}
+				}*/
 			}	
 			result += "</maybe>";
 		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){
@@ -372,7 +379,11 @@ public class PolicySelector {
 				//result += "<condition><noAttachments>0</noAttachments></condition>";//
 				if (decision.getCondition()!=null){
 					result += "<condition>"+decision.getCondition()+"</condition>";
-				}if (decision.getRiskCommunication()!=null){
+				}
+				if (decision.getInformation()!=null){
+					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
+				}
+				/*if (decision.getRiskCommunication()!=null){
 					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
 					if (rt!=null){
 						if (rt.length>0){
@@ -381,7 +392,7 @@ public class PolicySelector {
 							}
 						}
 					}
-				}
+				}*/
 			}	
 			result += "</up-to-you>";
 		}

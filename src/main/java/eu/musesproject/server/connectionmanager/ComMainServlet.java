@@ -51,11 +51,12 @@ public class ComMainServlet extends HttpServlet {
 		this.sessionHandler=sessionHandler;
 		this.helper=helper;
 		this.connectionManager=communicationManager;
+		logger.log(Level.INFO, MUSES_TAG + "ComMainServlet");
 	}
 	
 
 	public ComMainServlet() {
-		
+		logger.log(Level.INFO, MUSES_TAG + "Empty constructor");
 	}
 	
 	/**
@@ -66,10 +67,13 @@ public class ComMainServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
+		logger.log(Level.INFO, MUSES_TAG + "init");
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
+		logger.log(Level.INFO, MUSES_TAG + "Calling ConnectionCallbacksImpl...");
 		ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		logger.log(Level.INFO, MUSES_TAG + "Done");
 	}
 	
 	/**
@@ -83,6 +87,7 @@ public class ComMainServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		logger.log(Level.INFO, MUSES_TAG + "doPost");
 		// Retrieve value from request header
 		String connectionType = request.getHeader("connection-type");
 

@@ -278,7 +278,7 @@ public class Rt2aeGlobal {
 		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
 		Context context = new Context();//TODO This context should be extracted from the event
 		//Simulate response from RT2AE, for demo purposes
-		PolicyCompliance policyCompliance = policyCompliance(composedRequest, connEvent, mode, condition);
+		PolicyCompliance policyCompliance = policyCompliance(composedRequest, "",  connEvent, mode, condition); //TODO Fix empty string
 		
 		Decision decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		
@@ -371,7 +371,7 @@ public class Rt2aeGlobal {
 		
 		
 		
-		PolicyCompliance policyCompliance = policyCompliance(composedRequest, event, mode, condition);
+		PolicyCompliance policyCompliance = policyCompliance(composedRequest, message, event, mode, condition);
 		try{
 			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		}catch(javax.persistence.EntityExistsException e){
@@ -457,7 +457,7 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 
-	private PolicyCompliance policyCompliance(AccessRequest composedRequest, Event event, String mode, String condition) {
+	private PolicyCompliance policyCompliance(AccessRequest composedRequest, String message, Event event, String mode, String condition) {
 		logger.info("[policyCompliance]");
 		PolicyCompliance compliance = new PolicyCompliance();
 		compliance.setRequestId(composedRequest.getId());
@@ -469,20 +469,24 @@ public class Rt2aeGlobal {
 				if (!connEvent.getWifiEncryption().contains("WPA2")){
 					compliance.setResult(PolicyCompliance.MAYBE);
 					compliance.setCompliance(false);
-					compliance.setReason("Action not allowed. Please, change WIFI encryption to WPA2");
+					//compliance.setReason("Action not allowed. Please, change WIFI encryption to WPA2");
+					compliance.setReason(message);
 					compliance.setCondition("wifiencryption!=WPA2");
 				}else{
 					compliance.setResult(PolicyCompliance.ALLOW);
 					compliance.setCompliance(true);
-					compliance.setReason("Action allowed");
+					//compliance.setReason("Action allowed");
+					compliance.setReason(message);
 				}
 			}
 		}else if (mode.equals("DENY")){
 			if (event instanceof AppObserverEvent){
 				AppObserverEvent appEvent = (AppObserverEvent)event;
-				compliance.setReason("Action not allowed. Blacklisted application");
+				//compliance.setReason("Action not allowed. Blacklisted application");
+				compliance.setReason(message);
 			}else{
-				compliance.setReason("Action not allowed");
+				//compliance.setReason("Action not allowed");
+				compliance.setReason(message);
 			}
 			compliance.setResult(PolicyCompliance.DENY);
 			compliance.setCompliance(false);
@@ -490,7 +494,8 @@ public class Rt2aeGlobal {
 		}else if (mode.equals("ALLOW")){
 			compliance.setResult(PolicyCompliance.ALLOW);
 			compliance.setCompliance(true);
-			compliance.setReason("Action allowed because it is compliant with policies. To be confirmed by RT2AE");
+			//compliance.setReason("Action allowed because it is compliant with policies. To be confirmed by RT2AE");
+			compliance.setReason(message);
 		}
 		
 		logger.info("		Compliance for access request "+compliance.getRequestId()+" :"+compliance.getResult()+" "+compliance.getReason());

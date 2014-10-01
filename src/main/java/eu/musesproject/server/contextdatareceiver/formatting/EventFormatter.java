@@ -281,13 +281,13 @@ public class EventFormatter {
 		}
 		cepFileEvent.setType(contextEvent.getType());
 
-		resourcePath = getElement(properties.get("properties"), "resourcePath");
+		/*resourcePath = getElement(properties.get("properties"), "resourcePath");
 		if (resourcePath != null) {
 			cepFileEvent.setPath(resourcePath);
-		} else {
+		} else {*/
 			cepFileEvent.setPath(getElement(properties.get("properties"),
 					"path"));
-		}
+		//}
 
 		resourceType = getElement(properties.get("properties"), "resourceType");
 		if (resourceType != null) {
@@ -333,9 +333,9 @@ public class EventFormatter {
 		}
 		
 		cepFileEvent.setType(EventTypes.APPOBSERVER);
-		cepFileEvent.setAppPackage(getElement(properties.get("properties"), "package"));
+		cepFileEvent.setAppPackage(getElement(properties.get("properties"), "packagename"));
 		cepFileEvent.setName(getElement(properties.get("properties"), "appname"));
-		cepFileEvent.setVersion(getElement(properties.get("properties"), "version"));
+		//cepFileEvent.setVersion(getElement(properties.get("properties"), "version"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setUid(properties.get("id"));
 		return cepFileEvent;
