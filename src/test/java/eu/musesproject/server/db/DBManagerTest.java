@@ -31,14 +31,14 @@ public class DBManagerTest {
 	public  static void setUpBeforeClass() throws Exception {
 		ModuleType module = null;
 		dbmanager = new DBManager(module);
+		dbmanager.open();
 
 	}
 	
 	@AfterClass
 	public  static void setUpAfterClass() throws Exception {
 		ModuleType module = null;
-		dbmanager = new DBManager(module);
-		
+		dbmanager.close();
 
 	}
 

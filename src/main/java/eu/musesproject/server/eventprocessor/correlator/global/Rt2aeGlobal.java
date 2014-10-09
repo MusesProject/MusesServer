@@ -98,6 +98,7 @@ public class Rt2aeGlobal {
 		deviceSecurityClues.add(composedClue);
 		DeviceSecurityState deviceSecurityState = new DeviceSecurityState();
 		//Manage device in database
+		dbManager.open();
 		eu.musesproject.server.entity.Device deviceInstance = dbManager.getDeviceByIMEI(event.getDeviceId());
 		if (deviceInstance==null) {
 			device = new eu.musesproject.server.entity.Device();
@@ -117,6 +118,8 @@ public class Rt2aeGlobal {
 		}catch(java.lang.IllegalStateException e){
 			logger.error("Please, check database:An error has produced while calling RT2AE server: warnDeviceSecurityStateChange:"+e.getLocalizedMessage());
 		}
+		
+		dbManager.close();
 		return composedClue;
 	}
 	

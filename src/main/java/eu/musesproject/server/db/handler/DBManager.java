@@ -33,18 +33,24 @@ import eu.musesproject.server.scheduler.ModuleType;
 
 public class DBManager {
 	
-	private final EntityManagerFactory emf;
-	private final EntityManager em;
+	private EntityManagerFactory emf;
+	private EntityManager em;
 	ModuleType module;
 	
 	public DBManager(ModuleType module) {
 		this.module = module;
-	    emf = Persistence.createEntityManagerFactory("server"); // FIXME change to muses
-	    em = emf.createEntityManager();	
-		
-	    
 	}
 	
+	public void open(){
+	    emf = Persistence.createEntityManagerFactory("server"); // FIXME change to muses
+	    em = emf.createEntityManager();	
+	}
+	
+	
+	public void close() {
+		if (emf != null) emf.close();
+		if (em != null) em.close();
+	}
 	
 	
 	public void inform(SimpleEvent event) {
