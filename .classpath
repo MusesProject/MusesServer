@@ -26,5 +26,6 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.6.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

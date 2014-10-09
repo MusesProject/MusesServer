@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><change-set xmlns="http://drools.org/drools-5.0/change-set"><add><resource type="DRL" source="file:///C:/Users/szamarripa/cleanEnvironment/gitServer/MusesServer/target/classes/drl"/></add></change-set>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><change-set xmlns="http://drools.org/drools-5.0/change-set"><add><resource source="file:///C:/Users/yasir/Github_Repos/MusesServer/target/classes/drl" type="DRL"/></add></change-set>

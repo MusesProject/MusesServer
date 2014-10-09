@@ -48,8 +48,8 @@ public class DBManager {
 	
 	
 	public void close() {
-		if (emf != null) emf.close();
-		if (em != null) em.close();
+		if (emf != null)emf.close();
+		if (em != null)em.close();
 	}
 	
 	
