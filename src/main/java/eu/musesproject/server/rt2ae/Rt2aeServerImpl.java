@@ -176,7 +176,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				Arrays.asList(o)));
 
 		// check if the threat already exists in the database
-
+		dbManager.open();
 		boolean exists = false;
 		List<eu.musesproject.server.entity.Threat> dbThreats = dbManager
 				.getThreats();
@@ -197,7 +197,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			int oC = threat.getOccurences() + 1;
 			threat.setOccurences(oC);
 			currentThreats.add(threat);
-			//dbManager.setThreats(currentThreats);
+			dbManager.setThreats(currentThreats);
 
 			logger.info("The newly created Threat from the Clues is: "
 					+ threat.getDescription() + " with probability "
@@ -234,6 +234,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 							.getCostbenefit() + "\n");
 
 		}
+		
+		dbManager.close();
+
 
 		// infer some probabilities from the threats and opportunities (if
 		// present)
@@ -366,6 +369,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				return Decision.STRONG_DENY_ACCESS;
 			}
 		}
+		
+
 	}
       
 	/**  
@@ -1712,6 +1717,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 	@Override
 	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
 		// TODO Auto-generated method stub
+		dbManager.open();
+
 		eu.musesproject.server.entity.Device device = dbManager.findDeviceById(deviceSecurityState.getDevice_id()).get(0);
 
 		int countadditionalprotection = device.getAdditionalProtections().size();
@@ -1727,12 +1734,15 @@ public class Rt2aeServerImpl implements Rt2ae {
 		}
 		try {
 			
+			
 			dbManager.merge(device);
+			
 
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+		dbManager.close();
+
 		
 	}
 
