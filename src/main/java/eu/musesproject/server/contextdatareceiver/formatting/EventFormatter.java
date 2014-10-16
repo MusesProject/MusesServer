@@ -88,6 +88,15 @@ public class EventFormatter {
 		}
 		
 		Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
+		
+		if (cepFileEvent instanceof DeviceProtectionEvent){
+			DeviceProtectionEvent dEvent = (DeviceProtectionEvent) cepFileEvent;
+			Logger.getLogger(EventFormatter.class).info("isPasswordProtected:"+dEvent.getIsPasswordProtected());
+		}else if (cepFileEvent instanceof ChangeSecurityPropertyEvent){
+			ChangeSecurityPropertyEvent dEvent = (ChangeSecurityPropertyEvent) cepFileEvent;
+			Logger.getLogger(EventFormatter.class).info("isPasswordProtected:"+dEvent.getIsPasswordProtected());
+			Logger.getLogger(EventFormatter.class).info("accessibilityEnabled:"+dEvent.getAccessibilityEnabled());
+		}
 		return (Event)cepFileEvent;
 		
 	}
@@ -134,8 +143,13 @@ public class EventFormatter {
 
 		cepFileEvent.setType(EventTypes.CHANGE_SECURITY_PROPERTY);
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
-		cepFileEvent.setProperty(properties.get("property"));
-		cepFileEvent.setValue(properties.get("value"));
+		cepFileEvent.setIsPasswordProtected(Boolean.valueOf(properties.get("ispasswordprotected")));
+		cepFileEvent.setTrustedAntivirusInstalled(Boolean.valueOf("istrustedantivirusinstalled"));
+		cepFileEvent.setIpAddress(properties.get("ipaddress"));
+		cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties.get("screentimeoutinseconds")));
+		cepFileEvent.setAccessibilityEnabled(Boolean.valueOf(properties.get("accessibilityenabled")));
+		
+		
 		return cepFileEvent;
 	}
 
