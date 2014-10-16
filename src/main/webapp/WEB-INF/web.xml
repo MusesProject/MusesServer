@@ -53,6 +53,11 @@
 
    <!--  Defining the servlets -->     
   
+  <servlet>
+    <servlet-name>CorrelationStartupServlet</servlet-name>
+    <servlet-class>eu.musesproject.server.eventprocessor.correlator.engine.CorrelationStartupServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+</servlet>
   
   <servlet>
     <description></description>
