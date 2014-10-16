@@ -27,10 +27,15 @@ public class ChangeSecurityPropertyEvent extends Event {
 	private String type;
 	private long timestamp;
 	private String event;
-	private String property;
-	private String value;
+	//private String property;
+	//private String value;
 
-	
+	private boolean isPasswordProtected;
+	private boolean accessibilityEnabled;
+	private int screenTimeoutInSeconds;
+	private boolean isTrustedAntivirusInstalled;
+	private String ipAddress;
+	private boolean musesDatabaseExists;
 	
 	
 	public int getId() {
@@ -57,18 +62,43 @@ public class ChangeSecurityPropertyEvent extends Event {
 	public void setEvent(String event) {
 		this.event = event;
 	}
-	public String getProperty() {
-		return property;
+	public boolean getIsPasswordProtected() {
+		return isPasswordProtected;
 	}
-	public void setProperty(String property) {
-		this.property = property;
+	public void setIsPasswordProtected(boolean isPasswordProtected) {
+		this.isPasswordProtected = isPasswordProtected;
 	}
-	public String getValue() {
-		return value;
+	public boolean getAccessibilityEnabled() {
+		return accessibilityEnabled;
 	}
-	public void setValue(String value) {
-		this.value = value;
+	public void setAccessibilityEnabled(boolean accessibilityEnabled) {
+		this.accessibilityEnabled = accessibilityEnabled;
 	}
+	public int getScreenTimeoutInSeconds() {
+		return screenTimeoutInSeconds;
+	}
+	public void setScreenTimeoutInSeconds(int screenTimeoutInSeconds) {
+		this.screenTimeoutInSeconds = screenTimeoutInSeconds;
+	}
+	public boolean isTrustedAntivirusInstalled() {
+		return isTrustedAntivirusInstalled;
+	}
+	public void setTrustedAntivirusInstalled(boolean isTrustedAntivirusInstalled) {
+		this.isTrustedAntivirusInstalled = isTrustedAntivirusInstalled;
+	}
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+	public boolean isMusesDatabaseExists() {
+		return musesDatabaseExists;
+	}
+	public void setMusesDatabaseExists(boolean musesDatabaseExists) {
+		this.musesDatabaseExists = musesDatabaseExists;
+	}
+	
 	
 
 
