@@ -51,6 +51,12 @@ public class AccessRequestComposer {
 			FileObserverEvent fileEvent = (FileObserverEvent) event;
 			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
 			requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
+			if (fileEvent.getResourceType().equals("sensitive")){
+				requestedCorporateAsset.setConfidential_level("CONFIDENTIAL");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+			}else{
+				requestedCorporateAsset.setConfidential_level("PUBLIC");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+			}
+			
 			composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
 			composedRequest.setEventId(fileEvent.getTimestamp());
 		}else if (event.getType().equals(EventTypes.APPOBSERVER)){

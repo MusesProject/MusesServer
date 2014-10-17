@@ -235,7 +235,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		}
 		
-		dbManager.close();
+		
 
 
 		// infer some probabilities from the threats and opportunities (if
@@ -1755,7 +1755,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		dbManager.close();
+		
 
 		
 	}

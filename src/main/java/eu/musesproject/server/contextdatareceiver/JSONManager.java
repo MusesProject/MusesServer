@@ -133,51 +133,94 @@ public class JSONManager {
 
 	}
 	
-	public static List<ContextEvent> processJSONMessage(String message){
-		//Action action = null;
-		Map<String,String> properties = null;
+	public static List<ContextEvent> processJSONMessage(String message) {
+		// Action action = null;
+		Map<String, String> properties = null;
 		ContextEvent contextEvent = null;
-		List<ContextEvent> resultList = new ArrayList<ContextEvent>();
-		Logger.getLogger(JSONManager.class).info("JSONMessage received: Processing message...");
-		try {
+		String username = null;
+		String deviceId = null;
+		String requestType = null;
+		JSONObject root = null;
+
+		try{
 			// Process the root JSON object
-			JSONObject root = new JSONObject(message);		
-			//TODO Get the action part
-			JSONObject actionJson = root.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
-			
-
-			contextEvent = extractActionContextEvent(actionJson);
-			if (contextEvent!=null){
-				resultList.add(contextEvent);
-			}	
-			
-			// Get the List<ContextEvent> from each sensor			
-			JSONObject sensorJson = root.getJSONObject(JSONIdentifiers.SENSOR_IDENTIFIER);
-
-			for (Iterator iterator = sensorJson.keys(); iterator.hasNext();) {
-				String contextEventType = (String) iterator.next();
-				JSONObject contextEventJson = sensorJson.getJSONObject(contextEventType);
-				contextEvent = extractContextEvent(contextEventJson);
-				Logger.getLogger(JSONManager.class.getName()).log(Level.INFO, "A new event has been received.");
-				printContextEventInfo(contextEvent);
-				if (contextEvent == null){
-					Logger.getLogger(JSONManager.class).log(Level.INFO, "Extracted event as null! Original message:"+contextEventJson);
-				}else{
-					resultList.add(contextEvent);
-				}
-			}
-
+			root = new JSONObject(message);
+			requestType = root.getString(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER);
+		
 		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Logger.getLogger(JSONManager.class).info("Exception with JSON message:"+message);
-			Logger.getLogger(JSONManager.class).info("*******");
-		} catch (Throwable t){
-			t.printStackTrace();
 		}
 		
+		List<ContextEvent> resultList = new ArrayList<ContextEvent>();
+		if (requestType.equals(RequestType.UPDATE_CONTEXT_EVENTS)) {
+			Logger.getLogger(JSONManager.class)
+					.log(Level.INFO,
+							"Update context events JSONMessage received: Processing message...");
+		} else if ((requestType.equals(RequestType.ONLINE_DECISION)||(requestType.equals(RequestType.LOCAL_DECISION)))) {// TODO Remove LOCAL_DECISION when sensors are updated conveniently
+			Logger.getLogger(JSONManager.class)
+					.log(Level.INFO,
+							"Online decision JSONMessage received: Processing message...");
+
+			try {
+				
+				// Get the action part
+				JSONObject actionJson = root
+						.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
+
+				contextEvent = extractActionContextEvent(actionJson);
+				resultList.add(contextEvent);
+
+				// Get the List<ContextEvent> from each sensor
+				JSONObject sensorJson = root
+						.getJSONObject(JSONIdentifiers.SENSOR_IDENTIFIER);
+
+				for (Iterator iterator = sensorJson.keys(); iterator.hasNext();) {
+					String contextEventType = (String) iterator.next();
+					JSONObject contextEventJson = sensorJson
+							.getJSONObject(contextEventType);
+					contextEvent = extractContextEvent(contextEventJson);
+					Logger.getLogger(JSONManager.class.getName()).log(
+							Level.INFO, "A new event has been received.");
+					printContextEventInfo(contextEvent);
+					resultList.add(contextEvent);
+				}
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else if (requestType.equals(RequestType.USER_ACTION)) {
+			
+			try {
+				// TODO Get the behavior part
+				JSONObject behaviorJson = root
+						.getJSONObject(JSONIdentifiers.USER_BEHAVIOR);
+				contextEvent = new ContextEvent();
+				contextEvent.setType(EventTypes.USERBEHAVIOR);
+				properties = new HashMap<String,String>();
+				for (Iterator iterator = behaviorJson.keys(); iterator.hasNext();) {
+					String key = (String) iterator.next();
+					if ((!key.equals(ContextEvent.KEY_TYPE))&&(!key.equals(ContextEvent.KEY_TIMESTAMP))){
+						String value = behaviorJson.getString(key);
+						properties.put(key, value);
+					}
+				}
+				contextEvent.setProperties(properties);
+				Logger.getLogger(JSONManager.class.getName()).log(
+						Level.INFO, "A new event has been received.");
+				printContextEventInfo(contextEvent);
+				resultList.add(contextEvent);
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 		return resultList;
-		
+
 	}
+	
 	
 	public static void printContextEventInfo(ContextEvent contextEvent){
 		Map<String, String> properties = null;

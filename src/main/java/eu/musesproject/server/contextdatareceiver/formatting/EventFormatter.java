@@ -295,13 +295,17 @@ public class EventFormatter {
 		}
 		cepFileEvent.setType(contextEvent.getType());
 
-		/*resourcePath = getElement(properties.get("properties"), "resourcePath");
-		if (resourcePath != null) {
-			cepFileEvent.setPath(resourcePath);
-		} else {*/
-			cepFileEvent.setPath(getElement(properties.get("properties"),
+		
+		cepFileEvent.setPath(getElement(properties.get("properties"),
 					"path"));
-		//}
+		
+		if (cepFileEvent.getPath()==null){
+			resourcePath = getElement(properties.get("properties"), "resourcePath");
+			if (resourcePath != null) {
+				cepFileEvent.setPath(resourcePath);
+			}
+		}
+			
 
 		resourceType = getElement(properties.get("properties"), "resourceType");
 		if (resourceType != null) {

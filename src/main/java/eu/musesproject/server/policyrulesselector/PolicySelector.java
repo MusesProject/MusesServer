@@ -358,8 +358,7 @@ public class PolicySelector {
 				}
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
-				}
-				/*if (decision.getRiskCommunication()!=null){
+				}else if (decision.getRiskCommunication()!=null){					
 					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
 					if (rt!=null){
 						if (rt.length>0){
@@ -368,7 +367,7 @@ public class PolicySelector {
 							}
 						}
 					}
-				}*/
+				}
 			}	
 			result += "</maybe>";
 		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){

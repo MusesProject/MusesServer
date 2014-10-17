@@ -118,12 +118,9 @@ rule "AccessRequest Detection open asset type sensitive unsecure wifi"
 		//conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
 		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*") 
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
-		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE", "wifiencryption!=WPA2");
-		//int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","DENY","<resourceType>sensitive</resourceType>");
-		//int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open a sensitive document but you are connected with an unsecured WiFi.\nOther people can observe what you transmit. Please, switch to a secure WiFi first.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open a sensitive document but you are connected with an unsecured WiFi.\nOther people can observe what you transmit. Please, switch to a secure WiFi first.","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());

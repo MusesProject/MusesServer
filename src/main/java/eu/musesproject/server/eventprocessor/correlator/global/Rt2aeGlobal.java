@@ -119,7 +119,7 @@ public class Rt2aeGlobal {
 			logger.error("Please, check database:An error has produced while calling RT2AE server: warnDeviceSecurityStateChange:"+e.getLocalizedMessage());
 		}
 		
-		dbManager.close();
+		//dbManager.close();
 		return composedClue;
 	}
 	
@@ -380,6 +380,7 @@ public class Rt2aeGlobal {
 		}catch(javax.persistence.EntityExistsException e){
 			logger.error("Please, check database persistence:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
 		}catch(Exception e){
+			e.printStackTrace();
 			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
 		}		
 		//Control based on policy compliance

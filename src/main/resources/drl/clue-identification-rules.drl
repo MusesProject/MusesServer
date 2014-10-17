@@ -114,13 +114,13 @@ rule "Clue-identification-00000"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
 		conn: ConnectivityEvent(wifiEncryption!="WPA2",deviceId==e.deviceId)
-		not Clue(name=="Encryption without WPA2 protocol might be unsecure",timestamp==e.timestamp)
+		not Clue(name=="UnsecureWifi:Encryption without WPA2 protocol might be unsecure",timestamp==e.timestamp)
 	then
 		
 		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());
 		StatusGlobal.log(conn.getBluetoothConnected());		
 		StatusGlobal.log("Identifier:"+e.getTimestamp());
-		Clue clue = Rt2aeGlobal.composeClue(e,"Encryption without WPA2 protocol might be unsecure", ThreatOntology.DATA_LEAKAGE);
+		Clue clue = Rt2aeGlobal.composeClue(e,"UnsecureWifi:Encryption without WPA2 protocol might be unsecure", ThreatOntology.DATA_LEAKAGE);
 		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
 		clue.setUsername(e.getUsername());
 		clue.setDeviceId(e.getDeviceId());

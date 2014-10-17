@@ -114,11 +114,11 @@ public class TestEventProcessor extends TestCase {
 	/**
 	 * 
 	 */
-	public void testAuthorizedResources(){
+	/*public void testAuthorizedResources(){
 		String authorizedResources = PolicyEnforcementPoint.authorizedResources(UseCaseFactory.getUserByRole(UseCaseFactory.ROLE_MANAGER), UseCaseFactory.DESCENDANTS);
 		assertTrue(!authorizedResources.contains("NOT authorized"));
 		
-	}
+	}*/
 	
 	/**
 	 * 
