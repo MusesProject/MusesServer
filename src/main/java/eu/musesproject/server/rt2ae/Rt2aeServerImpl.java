@@ -323,6 +323,20 @@ public class Rt2aeServerImpl implements Rt2ae {
 			return decision;
 			
 		}
+		
+		if (clues.get(0).getName().contains("UnsecureWifi") && (accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("CONFIDENTIAL")||accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("STRICTLYCONFIDENTIAL"))){
+			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+			RiskTreatment [] riskTreatments = new RiskTreatment[1];
+			RiskTreatment riskTreatment = new RiskTreatment("You are connected to an unsecure network, please connect to a secure network");
+			riskTreatments[0] = riskTreatment;	
+			riskCommunication.setRiskTreatment(riskTreatments);
+			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+			logger.info("Decision: MAYBE_ACCESS");
+			logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
+			return decision;
+			
+		}
 
 		/*if (riskPolicy.getRiskvalue() == 0.0) {
 			
@@ -365,7 +379,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 				decision = Decision.STRONG_DENY_ACCESS; 
 				decision.setInformation(" There is too much risk in your situation to allow you to get access to the Asset");
-				logger.info("Decision: MAYBE_ACCESS_WITH_RISKTREATMENTS");
+				logger.info("Decision: STRONG_DENY_ACCESS_WITH_RISKTREATMENTS");
 				return Decision.STRONG_DENY_ACCESS;
 			}
 		}
