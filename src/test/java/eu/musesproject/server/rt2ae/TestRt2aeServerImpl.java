@@ -47,7 +47,6 @@ import eu.musesproject.server.risktrust.UserTrustValue;
 
 public class TestRt2aeServerImpl {
 	
-	private Logger logger = Logger.getLogger(TestEventProcessor.class.getName());
 	private Rt2aeServerImpl rt2ae = null;
 
 
@@ -71,7 +70,6 @@ public class TestRt2aeServerImpl {
 	*/
 	public void testDecideBasedOnRiskPolicy() {
 		
-		logger.info("Running testUserConnectingIntranet");
 		rt2ae = new Rt2aeServerImpl();
 		
 		AccessRequest accessRequest = new AccessRequest();
