@@ -123,13 +123,13 @@ public class TestEventProcessor extends TestCase {
 	/**
 	 * 
 	 */
-	public void testCreateXACMLRequest(){
+	/*public void testCreateXACMLRequest(){
 		String xacmlRequest = PolicyEnforcementPoint.createXACMLRequest(UseCaseFactory.getUserByRole(UseCaseFactory.ROLE_MANAGER), UseCaseFactory.DESCENDANTS);
 		PDP pdp = PolicyDecisionPoint.getPDPNewInstance();
 		String evaluation = pdp.evaluate(xacmlRequest);
 		assertTrue(!evaluation.contains("Indeterminate"));
 		
-	}
+	}*/
 	
 	/**
 	 * 

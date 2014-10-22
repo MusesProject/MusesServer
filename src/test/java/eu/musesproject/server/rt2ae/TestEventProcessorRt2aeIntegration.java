@@ -698,44 +698,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		}
 	}
 	
-	public final void testDebug(){
-		
-		EventProcessor processor = null;
-		MusesCorrelationEngineImpl engine = null;
-		
-		List<ContextEvent> list = JSONManager.processJSONMessage(testDebug, "online_decision");
-		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
-		if (des==null){
-			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
-			assertNotNull(engine);
-			des = EventProcessorImpl.getMusesEngineService();
-		}
-		
-		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
-			ContextEvent contextEvent = (ContextEvent) iterator.next();
-			assertNotNull(contextEvent);
-			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
-			JSONObject root;
-			try {
-			
-				root = new JSONObject(testDebug);
-				formattedEvent.setSessionId(defaultSessionId);
-				formattedEvent.setUsername(root
-						.getString(JSONIdentifiers.AUTH_USERNAME));
-				formattedEvent.setDeviceId(root
-						.getString(JSONIdentifiers.AUTH_DEVICE_ID));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			formattedEvent.setSessionId(defaultSessionId);
-			des.insertFact(formattedEvent);
-		}
-	}
 	
-
 	public final void testUninstall(){
 		
 		EventProcessor processor = null;
