@@ -38,7 +38,7 @@ public class DBManagerTest {
 	@AfterClass
 	public  static void setUpAfterClass() throws Exception {
 		ModuleType module = null;
-		dbmanager.close();
+		//dbmanager.close();
 
 	}
 
