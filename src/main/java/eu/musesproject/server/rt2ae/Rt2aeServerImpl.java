@@ -60,6 +60,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
 	private DBManager dbManager = new DBManager(ModuleType.RT2AE);
 	private RiskPolicy riskPolicy;
+	String sendingemail = "You have a virus and you want to send an attachment via E-Mail.\n With this, you put the receiver of the E-Mail at risk. Remove the virus first.";
+	String saveconfidentieldocument = "You want to save a confidential document on your device.\n If you loose your device, other people may be able to access the document.";
+	String opensensitivedocumentinunsecurenetwork = "You are trying to open a sensitive document, but you are connected with an unsecured WiFi.\n Other people can observe what you transmit. Switch to a secure WiFi first.";
 	String privateloungewifi = "Please go to the private lounge secure Wi-Fi";
 	String wifisniffing = "Wi-Fi sniffing";
 	String malwarerisktreatment = "Your device seems to have a Malware,please scan you device with an Antivirus or use another device";
@@ -299,7 +302,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 			RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-			RiskTreatment riskTreatment = new RiskTreatment("Confidential data should not be stored on mobile devices unless it is absolutely necessary");
+			RiskTreatment riskTreatment = new RiskTreatment(saveconfidentieldocument);
 			if (riskTreatments.length > 0){
 				riskTreatments[0] = riskTreatment;	
 			}				
@@ -313,7 +316,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		if (clues.get(0).getName().contains("VIRUS")){
 			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 			RiskTreatment [] riskTreatments = new RiskTreatment[1];
-			RiskTreatment riskTreatment = new RiskTreatment("Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+			RiskTreatment riskTreatment = new RiskTreatment(sendingemail);
 			riskTreatments[0] = riskTreatment;	
 			riskCommunication.setRiskTreatment(riskTreatments);
 			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
@@ -327,7 +330,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		if (clues.get(0).getName().contains("UnsecureWifi") && (accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("CONFIDENTIAL")||accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("STRICTLYCONFIDENTIAL"))){
 			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 			RiskTreatment [] riskTreatments = new RiskTreatment[1];
-			RiskTreatment riskTreatment = new RiskTreatment("You are connected to an unsecure network, please connect to a secure network");
+			RiskTreatment riskTreatment = new RiskTreatment(opensensitivedocumentinunsecurenetwork);
 			riskTreatments[0] = riskTreatment;	
 			riskCommunication.setRiskTreatment(riskTreatments);
 			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
