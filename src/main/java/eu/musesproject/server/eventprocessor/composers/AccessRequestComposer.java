@@ -47,46 +47,50 @@ public class AccessRequestComposer {
 		AccessRequest composedRequest = new AccessRequest();
 		Asset requestedCorporateAsset = new Asset();
 		
-		if (event.getType().equals(EventTypes.FILEOBSERVER)){			
-			FileObserverEvent fileEvent = (FileObserverEvent) event;
-			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
-			requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
-			
-			if ((fileEvent.getResourceType()!=null)&&(fileEvent.getResourceType().equals("sensitive"))){
-				requestedCorporateAsset.setConfidential_level("CONFIDENTIAL");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
-			}else{
-				requestedCorporateAsset.setConfidential_level("PUBLIC");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+		if (event.getType()!=null){
+			if (event.getType().equals(EventTypes.FILEOBSERVER)){			
+				FileObserverEvent fileEvent = (FileObserverEvent) event;
+				requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
+				requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
+				
+				if ((fileEvent.getResourceType()!=null)&&(fileEvent.getResourceType().equals("sensitive"))){
+					requestedCorporateAsset.setConfidential_level("CONFIDENTIAL");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+				}else{
+					requestedCorporateAsset.setConfidential_level("PUBLIC");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+				}
+				
+				composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+				composedRequest.setEventId(fileEvent.getTimestamp());
+			}else if (event.getType().equals(EventTypes.APPOBSERVER)){
+				AppObserverEvent appEvent = (AppObserverEvent) event;
+				requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
+				requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
+				composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+				composedRequest.setEventId(appEvent.getTimestamp());
+			}else if (event.getType().equals(EventTypes.SEND_MAIL)){
+				EmailEvent emailEvent = (EmailEvent) event;
+				requestedCorporateAsset = testGetRequestedAsset(emailEvent.getAttachmentName());
+				composedRequest.setAction(emailEvent.getType());//Get the action over the asset
+				composedRequest.setEventId(emailEvent.getTimestamp());
+			}else if (event.getType().equals(EventTypes.CHANGE_SECURITY_PROPERTY)){
+				ChangeSecurityPropertyEvent changeSecurityPropertyEvent = (ChangeSecurityPropertyEvent) event;
+				requestedCorporateAsset = new Asset();//TODO It is not clear what is the asset when a device setting is changed
+				requestedCorporateAsset.setId(0);
+				requestedCorporateAsset.setLocation("device");
+				requestedCorporateAsset.setValue(400);
+				composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
+				composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
+			}else if (event.getType().equals(EventTypes.SAVE_ASSET)){
+				FileObserverEvent fileEvent = (FileObserverEvent) event;
+				requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
+				requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
+				composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+				composedRequest.setEventId(fileEvent.getTimestamp());
+			}else {
+				logger.log(Level.INFO, "Unsupported Event type:"+event.getType());
 			}
-			
-			composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
-			composedRequest.setEventId(fileEvent.getTimestamp());
-		}else if (event.getType().equals(EventTypes.APPOBSERVER)){
-			AppObserverEvent appEvent = (AppObserverEvent) event;
-			requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
-			requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
-			composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
-			composedRequest.setEventId(appEvent.getTimestamp());
-		}else if (event.getType().equals(EventTypes.SEND_MAIL)){
-			EmailEvent emailEvent = (EmailEvent) event;
-			requestedCorporateAsset = testGetRequestedAsset(emailEvent.getAttachmentName());
-			composedRequest.setAction(emailEvent.getType());//Get the action over the asset
-			composedRequest.setEventId(emailEvent.getTimestamp());
-		}else if (event.getType().equals(EventTypes.CHANGE_SECURITY_PROPERTY)){
-			ChangeSecurityPropertyEvent changeSecurityPropertyEvent = (ChangeSecurityPropertyEvent) event;
-			requestedCorporateAsset = new Asset();//TODO It is not clear what is the asset when a device setting is changed
-			requestedCorporateAsset.setId(0);
-			requestedCorporateAsset.setLocation("device");
-			requestedCorporateAsset.setValue(400);
-			composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
-			composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
-		}else if (event.getType().equals(EventTypes.SAVE_ASSET)){
-			FileObserverEvent fileEvent = (FileObserverEvent) event;
-			requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
-			requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
-			composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
-			composedRequest.setEventId(fileEvent.getTimestamp());
-		}else {
-			logger.log(Level.INFO, "Unsupported Event type:"+event.getType());
+		}else{
+			logger.log(Level.INFO, "Null type for event instantiated as:" + event.getClass().getName());
 		}
 		
 		requestedCorporateAsset.setValue(0);

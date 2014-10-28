@@ -43,7 +43,7 @@ import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 
 public class JSONManager {
-	public Logger logger = Logger.getLogger(JSONManager.class.getName());
+	public static Logger logger = Logger.getLogger(JSONManager.class.getName());
 	
 	/**
 	 * Method to be called by the ConnectionManager/DataHandler when the message is originated from the sensors
@@ -78,8 +78,12 @@ public class JSONManager {
 						.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
 
 				contextEvent = extractActionContextEvent(actionJson);
-				resultList.add(contextEvent);
-
+				if (contextEvent != null){
+					logger.log(Level.INFO, "Correct action extraction for message:" + message);
+					resultList.add(contextEvent);
+				}else{
+					logger.log(Level.INFO, "Unsupported json message:" + message);
+				}
 				// Get the List<ContextEvent> from each sensor
 				JSONObject sensorJson = root
 						.getJSONObject(JSONIdentifiers.SENSOR_IDENTIFIER);
@@ -335,7 +339,7 @@ public class JSONManager {
 					Logger.getLogger(JSONManager.class).log(Level.INFO, "Action type for update of events");
 					return null; //This is not a concrete type of action, it just reflects that the list of events is an update_events request type
 				}else{
-					Logger.getLogger(JSONManager.class).log(Level.INFO, "Action not supported");
+					Logger.getLogger(JSONManager.class).log(Level.INFO, "Action not supported for json:"+contextEventJson.toString());
 					return null;
 				}
 			}

@@ -87,7 +87,12 @@ public class EventFormatter {
 			Logger.getLogger(EventFormatter.class).error("ContextEvent is null in formatContextEvent");
 		}
 		
-		Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
+		if (cepFileEvent!=null){
+			Logger.getLogger(EventFormatter.class).info("Formatted event:"+ cepFileEvent.getClass());
+		}else{
+			Logger.getLogger(EventFormatter.class).info("Formatted event is null for context event:" + contextEvent );
+		}
+		
 		
 		if (cepFileEvent instanceof DeviceProtectionEvent){
 			DeviceProtectionEvent dEvent = (DeviceProtectionEvent) cepFileEvent;
