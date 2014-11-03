@@ -119,7 +119,7 @@ rule "Clue-identification-00000"
 	then
 		
 		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());
-		StatusGlobal.log(conn.getBluetoothConnected());		
+		//StatusGlobal.log(conn.getBluetoothConnected());		
 		StatusGlobal.log("Identifier:"+e.getTimestamp());
 		Clue clue = Rt2aeGlobal.composeClue(e,"UnsecureWifi:Encryption without WPA2 protocol might be unsecure", ThreatOntology.DATA_LEAKAGE);
 		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());

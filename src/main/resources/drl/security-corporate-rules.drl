@@ -146,7 +146,7 @@ rule "AccessRequest Detection open asset type sensitive unsecure wifi"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
@@ -177,7 +177,7 @@ rule "AccessRequest Detection open asset type sensitive secure wifi"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
@@ -209,8 +209,7 @@ rule "AccessRequest Detection open asset type sensitive secure wifi"
 			request.setId(id);
 			request.setEvent_date(new Date(System.currentTimeMillis()));
 			insert(request);
-			retract(e);
-			//retract(conn);
+			////retract(e);
 		}else{
 			StatusGlobal.log("****Rule open asset type insensitive with event null******");
 		}	
@@ -310,7 +309,7 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
@@ -338,7 +337,7 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
@@ -472,7 +471,7 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		
 	end
 	
@@ -491,7 +490,7 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		
 	end
 
@@ -514,7 +513,7 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 
 	end
 	
@@ -538,7 +537,7 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
@@ -564,7 +563,7 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
-		retract(e);
+		////retract(e);
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}

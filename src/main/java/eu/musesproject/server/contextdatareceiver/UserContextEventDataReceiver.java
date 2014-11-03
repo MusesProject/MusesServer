@@ -135,7 +135,11 @@ public class UserContextEventDataReceiver {
 				formattedEvent.setDeviceId(deviceId);
 				logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> Inserting events into WM:"+formattedEvent);
 				logger.info("Inserting event into the WM:"+formattedEvent);
-				des.insertFact(formattedEvent);
+				try{
+					des.insertFact(formattedEvent);
+				}catch(NullPointerException e){
+					logger.info("formatter Event not inserted due to NullPointerException");
+				}
 			}else{
 				logger.error("Formatted event is null.");
 			}
