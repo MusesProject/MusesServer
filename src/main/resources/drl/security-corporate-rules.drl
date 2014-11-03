@@ -96,6 +96,19 @@ function boolean requiredApp(String name){
 	return result;
 }
 
+function String eventSignature(Event event){
+	String result = null;
+	if (event instanceof FileObserverEvent){
+		result = "";
+		FileObserverEvent fEvent = (FileObserverEvent)event;
+		result += fEvent.getType();
+		result += fEvent.getEvent();
+		result += fEvent.getPath();
+		result += fEvent.getResourceType();
+	}
+	return result;
+}
+
 rule "Rule firing"
 	no-loop true
 	dialect "mvel"
@@ -112,45 +125,62 @@ rule "Rule firing"
 
 rule "AccessRequest Detection open asset type sensitive unsecure wifi"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
 		//conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*") 
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
+		not AccessRequest(event=="AccessRequest Detection open asset type sensitive unsecure wifi") 
+		//not AccessRequest(event==e.path)
 	then
 		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event conn****:"+conn);
+		if(conn!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open a sensitive document, but you are connected with an unsecured WiFi.\nOther people can observe what you transmit. Switch to a secure WiFi first.","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
+		//request.setEvent(e.getPath());
+		request.setEvent("AccessRequest Detection open asset type sensitive unsecure wifi");
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
-		
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 	end
+	
 
 rule "AccessRequest Detection open asset type sensitive secure wifi"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
-		//conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*") 
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*")
+		not AccessRequest(event=="AccessRequest Detection open asset type sensitive secure wifi") 
+		//not AccessRequest(event==e.path)
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type sensitive secure wifi");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE", "wifiencryption!=WPA2");
 		//int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","ALLOW","<resourceType>sensitive</resourceType>");
+		StatusGlobal.log("****Event conn****:"+conn);
+		if(conn!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a sensitive asset","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
+		//request.setEvent(e.getPath());
+		request.setEvent("AccessRequest Detection open asset type sensitive secure wifi");
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 		
 	end
 	
@@ -158,43 +188,55 @@ rule "AccessRequest Detection open asset type sensitive secure wifi"
 	
 	rule "AccessRequest Detection open asset type insensitive"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="insensitive")
 		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+		not AccessRequest(event=="AccessRequest Detection open asset type insensitive")
+		//not AccessRequest(event==e.path)
 	then
-		StatusGlobal.log("1.2.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		StatusGlobal.log("1.2.A new AccessRequest has been detected: FileObserverEvent. Type open asset type insensitive");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"ALLOW", "any");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Action allowed, this is a public file","ALLOW","<resourceType>"+e.getResourceType()+"</resourceType>");
-		AccessRequest request = new AccessRequest();
-		StatusGlobal.log("**********"+id);
-		StatusGlobal.log("AccessRequest Detection open asset type insensitive:"+e.getEvent() + " " + e.getTimestamp());
-		request.setId(id);
-		request.setEvent_date(new Date(System.currentTimeMillis()));
-		insert(request);
-		retract(e);
-		//retract(conn);
+		StatusGlobal.log("****Event****:"+e);
+		if(e!=null){
+			int id = Rt2aeGlobal.composeAccessRequest(e,"Action allowed, this is a public file","ALLOW","<resourceType>"+e.getResourceType()+"</resourceType>");
+			AccessRequest request = new AccessRequest();
+			//request.setEvent(e.getPath());
+			request.setEvent("AccessRequest Detection open asset type insensitive");
+			StatusGlobal.log("**********"+id);
+			StatusGlobal.log("AccessRequest Detection open asset type insensitive:"+e.getEvent() + " " + e.getTimestamp());
+			request.setId(id);
+			request.setEvent_date(new Date(System.currentTimeMillis()));
+			insert(request);
+			retract(e);
+			//retract(conn);
+		}else{
+			StatusGlobal.log("****Rule open asset type insensitive with event null******");
+		}	
 	end
 	
-	rule "AccessRequest Detection open type"
-	no-loop true
-	dialect "mvel"
-	when
-		e: FileObserverEvent(event=="open")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
-	then
-		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type open");
-		Rt2aeGlobal.setStatus(Constants.STARTED);
-		int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE", "wifiencryption!=WPA2");		
-		AccessRequest request = new AccessRequest();
-		StatusGlobal.log("**********"+id);
-		StatusGlobal.log("AccessRequest Detection open type:"+e.getEvent() + " " + e.getTimestamp());
-		request.setId(id);
-		request.setEvent_date(new Date(System.currentTimeMillis()));
-		insert(request);
-		retract(e);
-	end
+//	rule "AccessRequest Detection open type"
+//	enabled false
+//	no-loop true
+//	dialect "mvel"
+//	when
+//		e: FileObserverEvent(event=="open")
+//		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+//		not AccessRequest(event=="AccessRequest Detection open type")
+//	then
+//		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type open");
+//		Rt2aeGlobal.setStatus(Constants.STARTED);
+//		int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE", "wifiencryption!=WPA2");		
+//		AccessRequest request = new AccessRequest();
+//		request.setEvent("AccessRequest Detection open type");
+//		StatusGlobal.log("**********"+id);
+//		StatusGlobal.log("AccessRequest Detection open type:"+e.getEvent() + " " + e.getTimestamp());
+//		request.setId(id);
+//		request.setEvent_date(new Date(System.currentTimeMillis()));
+//		insert(request);
+//		retract(e);
+//	end
 	
 //TODO Changes for System test	
 rule "AccessRequest ClientServer Connectivity"
@@ -202,11 +244,13 @@ rule "AccessRequest ClientServer Connectivity"
 	dialect "mvel"
 	when
 		e: FileObserverEvent(event=="post")
+		not AccessRequest(event=="AccessRequest ClientServer Connectivity")
 	then
 		StatusGlobal.log("1.4.A new AccessRequest has been detected: FileObserverEvent. Type post");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e);
 		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest ClientServer Connectivity");
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
@@ -219,12 +263,14 @@ rule "AccessRequest Detection access type"
 	dialect "mvel"
 	when
 		e: FileObserverEvent(event=="access")
+		not AccessRequest(event=="AccessRequest Detection access type")
 	then
 		StatusGlobal.log("1.5.A new AccessRequest has been detected: FileObserverEvent. Type access");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e);
 		//GAP (we associate the access requests by id)
 		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Detection access type");
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
@@ -247,59 +293,78 @@ rule "Connectivity"
 	
 rule "Blacklist app 00001"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	enabled false
 	when
 		e: AppObserverEvent(name=="Gmail",event=="open_application")
+		not AccessRequest(event=="Blacklist app 00001")
 	then
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful.\nWith this, other people can gain control over your device.","DENY","<appname>Gmail</appname>");
 		AccessRequest request = new AccessRequest();
+		request.setEvent("Blacklist app 00001");
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
-		
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 	end
 	
 	rule "Not Blacklist app 00001"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: AppObserverEvent(name!="Gmail",event=="open_application")
+		not AccessRequest(event=="Not Blacklist app 00001")
 	then
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"","ALLOW", "<appname>"+e.getName()+"</appname>");
 		AccessRequest request = new AccessRequest();
+		request.setEvent("Not Blacklist app 00001");
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("Not Blacklist app:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 	end
 	
 
 	
 	rule "Blacklist app 00002"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: AppObserverEvent(name=="Wifi Analyzer",event=="open_application")
+		not AccessRequest(event=="Blacklist app 00002")
 	then
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful.\nOther people can gain control over your device.","DENY","<appname>Wifi Analyzer</appname>");
 		AccessRequest request = new AccessRequest();
+		request.setEvent("Blacklist app 00002");
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
-		
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 	end
 	
 	rule "User Behavior"
@@ -318,9 +383,17 @@ rule "Blacklist app 00001"
 	dialect "mvel"
 	when
 		e:EmailEvent(numberAttachments==0)
+		not AccessRequest(event=="AccessRequest Email without Attachments")
 	then
 		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
 		int id = Rt2aeGlobal.composeAccessRequest(e,"Email action allowed","ALLOW", "<noAttachments>0</noAttachments>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Email without Attachments");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
 	end	
 	
 	rule "AccessRequest Email with Attachments"
@@ -329,9 +402,17 @@ rule "Blacklist app 00001"
 	when
 		v: VirusFoundEvent()
 		e:EmailEvent(numberAttachments>0)
+		not AccessRequest(event=="AccessRequest Email with Attachments")
 	then
 		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You have a virus and you want to send an attachment via E-mail.\nWith this, you put the receiver of the E-Mail at risk. Remove the virus first.","DENY", "<noAttachments>1</noAttachments>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Email with Attachments");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
 	end	
 	
 	
@@ -341,22 +422,42 @@ rule "Blacklist app 00001"
 	when
 		e: ChangeSecurityPropertyEvent(isPasswordProtected==false)
 		//d: DeviceProtectionEvent(isPasswordProtected==false)
+		not AccessRequest(event=="AccessRequest Change Security Property-password-protected")
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to disable screen lock, which is an important security mechanism.\nWithout screen lock, other people may access your device.","DENY", "<isPasswordProtected>false</isPasswordProtected>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Change Security Property-password-protected");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
 
 	end
 	
 	rule "AccessRequest Change Security Property-screen-timeout"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: ChangeSecurityPropertyEvent()
 		d: DeviceProtectionEvent(screenTimeoutInSeconds<60)
+		not AccessRequest(event=="AccessRequest Change Security Property-screen-timeout")
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
+		StatusGlobal.log("****Event change device protection****:"+d);
+		if(d!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
-
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Change Security Property-screen-timeout");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 	end
 	
 	rule "AccessRequest Disable Accessibility"
@@ -364,10 +465,18 @@ rule "Blacklist app 00001"
 	dialect "mvel"
 	when
 		e: ChangeSecurityPropertyEvent(accessibilityEnabled==false)
+		not AccessRequest(event=="AccessRequest Disable Accessibility")
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent. ACCESIBILITY DISABLED");
 		//int id = Rt2aeGlobal.composeAccessRequest(e,"The screen lock is required by the security policies","DENY", "<isPasswordProtected>false</isPasswordProtected>");
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to disable accessibility, which is an important security mechanism for MUSES.\n This can cause the device having a lower level of security.","DENY", "<accessibilityEnabled>false</accessibilityEnabled>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Disable Accessibility");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
 
 	end
 	
@@ -377,7 +486,7 @@ rule "Blacklist app 00001"
 	when
 		e: FileObserverEvent(event=="open_asset", path=="/sdcard/Swe/door_1", username=="muses2")
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open door 1 muses2");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e,null,"DENY", "<username>"+e.getUsername()+"</username>");
 		AccessRequest request = new AccessRequest();
@@ -396,7 +505,7 @@ rule "Blacklist app 00001"
 	when
 		e: FileObserverEvent(event=="open_asset", path=="/sdcard/Swe/door_1", username=="muses")
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open door 1");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		int id = Rt2aeGlobal.composeAccessRequest(e,null,"ALLOW", "<username>"+e.getUsername()+"</username>");
 		AccessRequest request = new AccessRequest();
@@ -416,53 +525,70 @@ rule "Blacklist app 00001"
 	when
 		//e: AppObserverEvent(eval(requiredApp(this.name)),event=="uninstall")
 		e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="uninstall")
+		not AccessRequest(event=="Required application list")
 	then
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to uninstall an application that is important for information security. \nUninstalling the application lowers overall information security.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
+		request.setEvent("Required application list");
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
-		
+
 	end
 	
 	rule "AccessRequest Detection Save File in a monitored folder"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: FileObserverEvent(event=="save_asset")
+		not AccessRequest(event=="AccessRequest Detection Save File in a monitored folder")
 		
 	then
 		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type Save File in a Monitored folder");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event fileobserver****:"+e);
+		if(e!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You want to save a confidential document on your device.\nIf you loose your device, other people may be able to access the document.","ALLOW","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Detection Save File in a monitored folder");
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection save file type:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 	end
 	
 	
 	rule "AccessRequest Detection Open File in a monitored folder"
 	no-loop true
-	dialect "mvel"
+	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*", username=="muses")
+		not AccessRequest(event=="AccessRequest Detection Open File in a monitored folder")
 	then
 		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type Open File in a Monitored folder");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event fileobserver****:"+e);
+		if(e!=null){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"You want to access a file, but you do not have the permission to do so.\nFor reasons of information security, you cannot access this file.","DENY","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Detection Open File in a monitored folder");
 		StatusGlobal.log("**********"+id);
 		StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
 		retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 	end
