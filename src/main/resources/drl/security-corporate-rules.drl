@@ -316,30 +316,7 @@ rule "Blacklist app 00001"
 		}
 	end
 	
-	rule "Not Blacklist app 00001"
-	no-loop true
-	dialect "java"
-	when
-		e: AppObserverEvent(name!="Gmail",event=="open_application")
-		not AccessRequest(event=="Not Blacklist app 00001")
-	then
-		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
-		Rt2aeGlobal.setStatus(Constants.STARTED);
-		StatusGlobal.log("****Event app****:"+e);
-		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"","ALLOW", "<appname>"+e.getName()+"</appname>");
-		AccessRequest request = new AccessRequest();
-		request.setEvent("Not Blacklist app 00001");
-		StatusGlobal.log("**********"+id);
-		StatusGlobal.log("Not Blacklist app:"+e.getEvent() + " " + e.getTimestamp());
-		request.setId(id);
-		request.setEvent_date(new Date(System.currentTimeMillis()));
-		insert(request);
-		retract(e);
-		}else{
-		StatusGlobal.log("*****Null object*****");
-		}
-	end
+
 	
 
 	
@@ -446,7 +423,7 @@ rule "Blacklist app 00001"
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
 		StatusGlobal.log("****Event change device protection****:"+d);
-		if(d!=null){
+		if((d!=null)&&(e!=null)){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
 		
 		AccessRequest request = new AccessRequest();
