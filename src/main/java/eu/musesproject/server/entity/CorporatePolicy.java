@@ -1,8 +1,19 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -62,7 +73,11 @@ public class CorporatePolicy implements Serializable {
 	}
 
 	public void setFile(byte[] file) {
-		this.file = file;
+		if (file == null) {
+			this.file = new byte[0];
+		} else {
+			this.file = Arrays.copyOf(file, file.length);
+		}
 	}
 
 	public String getName() {

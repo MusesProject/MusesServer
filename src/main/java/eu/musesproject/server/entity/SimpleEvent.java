@@ -1,8 +1,11 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.sql.Time;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -127,7 +130,11 @@ public class SimpleEvent implements Serializable {
 	}
 
 	public void setEP_can_access(byte[] EP_can_access) {
-		this.EP_can_access = EP_can_access;
+		if (EP_can_access == null) {
+			this.EP_can_access = new byte[0];
+		} else {
+			this.EP_can_access = Arrays.copyOf(EP_can_access, EP_can_access.length);
+		}
 	}
 
 	public byte[] getKRS_can_access() {
@@ -135,7 +142,11 @@ public class SimpleEvent implements Serializable {
 	}
 
 	public void setKRS_can_access(byte[] KRS_can_access) {
-		this.KRS_can_access = KRS_can_access;
+		if (KRS_can_access == null) {
+			this.KRS_can_access = new byte[0];
+		} else {
+			this.KRS_can_access = Arrays.copyOf(KRS_can_access, KRS_can_access.length);
+		}
 	}
 
 	public byte[] getRT2AE_can_access() {
@@ -143,7 +154,11 @@ public class SimpleEvent implements Serializable {
 	}
 
 	public void setRT2AE_can_access(byte[] RT2AE_can_access) {
-		this.RT2AE_can_access = RT2AE_can_access;
+		if (RT2AE_can_access == null) {
+			this.RT2AE_can_access = new byte[0];
+		} else {
+			this.RT2AE_can_access = Arrays.copyOf(RT2AE_can_access, RT2AE_can_access.length);
+		}
 	}
 
 	public Time getTime() {

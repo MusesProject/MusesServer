@@ -1,7 +1,10 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -73,7 +76,11 @@ public class SecurityRule implements Serializable {
 	}
 
 	public void setFile(byte[] file) {
-		this.file = file;
+		if (file == null) {
+			this.file = new byte[0];
+		} else {
+			this.file = Arrays.copyOf(file, file.length);
+		}
 	}
 
 	public Date getModification() {
@@ -97,7 +104,11 @@ public class SecurityRule implements Serializable {
 	}
 
 	public void setRefined(byte[] refined) {
-		this.refined = refined;
+		if (refined == null) {
+			this.refined = new byte[0];
+		} else {
+			this.refined = Arrays.copyOf(refined, refined.length);
+		}
 	}
 
 	public String getStatus() {
