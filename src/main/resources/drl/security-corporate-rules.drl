@@ -12,6 +12,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEv
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusCleanedEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
@@ -56,10 +57,16 @@ declare EmailEvent
 	@expires (1m)
 end
 
-declare VirusFoundEvent
+declare VirusCleanedEvent
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
+end
+
+declare VirusFoundEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (10m)
 end
 
 declare ConnectivityEvent
@@ -391,6 +398,19 @@ rule "Blacklist app 00001"
 		insert(request);
 	end	
 	
+	rule "VirusCleaned"
+	no-loop true
+	dialect "mvel"
+	when
+		c: VirusCleanedEvent()
+		v: VirusFoundEvent()
+	then
+		StatusGlobal.log("VIRUS CLEANED   :"+c.getName);
+		retract(v);
+		StatusGlobal.log("REMOVED PREVIOUS VIRUS FOUND!");
+		
+	end	
+
 	
 	rule "AccessRequest Change Security Property-password-protected"
 	no-loop true
