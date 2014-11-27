@@ -21,6 +21,7 @@ package eu.musesproject.server.eventprocessor.policy.manage;
  * #L%
  */
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.wso2.balana.*;
@@ -35,6 +36,8 @@ import org.wso2.balana.finder.ResourceFinderModule;
 import org.wso2.balana.finder.impl.FileBasedPolicyFinderModule;
 import org.wso2.balana.xacml3.Attributes;
 
+import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.ByteArrayInputStream;
@@ -48,6 +51,7 @@ import java.util.Set;
 public class PolicyEnforcementPoint {
 	
 	private static Balana balana;
+	private static Logger logger = Logger.getLogger(PolicyEnforcementPoint.class.getName());
 	
 	public static String authorizedResources(String user, String resourceType){
 
@@ -123,7 +127,7 @@ public class PolicyEnforcementPoint {
                     }
                 }
             } catch (ParsingException e) {
-                e.printStackTrace(); 
+            	logger.error("ParsingException:" + e.getCause());
             }
 
             if(permitResources.size() > 0){

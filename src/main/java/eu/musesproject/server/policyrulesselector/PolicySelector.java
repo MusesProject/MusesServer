@@ -147,9 +147,9 @@ public class PolicySelector {
             JSONObject xmlJSONObj = XML.toJSONObject(fileContent);
             jsonDevicePolicy = xmlJSONObj.toString();
         } catch (JSONException je) {
-            je.printStackTrace();
+        	logger.error("JSONException:" + je.getCause());
         } catch (IOException e) {
-			e.printStackTrace();
+        	logger.error("IOException:" + e.getCause());
 		} finally{
 			
 			try {
@@ -157,7 +157,7 @@ public class PolicySelector {
 			    	br.close();
 			    }
 			  }catch (IOException e) {
-			    e.printStackTrace();
+				  logger.error("IOException:" + e.getCause());
 			  
 			  }
 			try {
@@ -165,7 +165,7 @@ public class PolicySelector {
 				   	in.close();
 				}
 			}catch (IOException e) {
-			    e.printStackTrace();
+				logger.error("IOException:" + e.getCause());
 			  
 			}
 			try {
@@ -173,7 +173,7 @@ public class PolicySelector {
 				   	is.close();
 				}
 			}catch (IOException e) {
-			    e.printStackTrace();
+				logger.error("IOException:" + e.getCause());
 			  
 			}  			
 		}
@@ -194,7 +194,7 @@ public class PolicySelector {
             JSONObject xmlJSONObj = XML.toJSONObject(policyContent);
             jsonDevicePolicy = xmlJSONObj.toString();
         } catch (JSONException je) {
-            je.printStackTrace();
+        	logger.error("JSONException:" + je.getCause());
         } catch (Exception e){
         	jsonDevicePolicy = "<errorBuildingPolicy/>";
         } finally{			
@@ -203,7 +203,7 @@ public class PolicySelector {
 			    	br.close();
 			    }
 			  }catch (IOException e) {
-			    e.printStackTrace();
+				  logger.error("IOException:" + e.getCause());
 			  
 			  }
 			try {
@@ -211,7 +211,7 @@ public class PolicySelector {
 				   	in.close();
 				}
 			}catch (IOException e) {
-			    e.printStackTrace();
+				logger.error("IOException:" + e.getCause());
 			  
 			}
 			try {
@@ -219,7 +219,7 @@ public class PolicySelector {
 				   	is.close();
 				}
 			}catch (IOException e) {
-			    e.printStackTrace();
+				logger.error("IOException:" + e.getCause());
 			  
 			}  			
 		}
@@ -240,7 +240,7 @@ public class PolicySelector {
             JSONObject xmlJSONObj = XML.toJSONObject(policyContent);
             jsonDevicePolicy = xmlJSONObj.toString();
         } catch (JSONException je) {
-            je.printStackTrace();
+        	logger.error("JSONException:" + je.getCause());
         } catch (Exception e){
         	jsonDevicePolicy = "<errorBuildingPolicy/>";
         } finally{			
@@ -249,7 +249,7 @@ public class PolicySelector {
 			    	br.close();
 			    }
 			  }catch (IOException e) {
-			    e.printStackTrace();
+				logger.error("IOException:" + e.getCause());
 			  
 			  }
 			try {
@@ -257,7 +257,7 @@ public class PolicySelector {
 				   	in.close();
 				}
 			}catch (IOException e) {
-			    e.printStackTrace();
+				logger.error("IOException:" + e.getCause());
 			  
 			}
 			try {
@@ -265,7 +265,7 @@ public class PolicySelector {
 				   	is.close();
 				}
 			}catch (IOException e) {
-			    e.printStackTrace();
+				logger.error("IOException:" + e.getCause());
 			  
 			}  			
 		}
@@ -335,16 +335,6 @@ public class PolicySelector {
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
-				/*if (decision.getRiskCommunication()!=null){
-					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
-					if (rt!=null){
-						if (rt.length>0){
-							if (rt[0].getTextualDescription()!=null){
-								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
-							}
-						}
-					}
-				}*/
 			}	
 			result += "</deny>";
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
@@ -352,7 +342,6 @@ public class PolicySelector {
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
-				//result += "<condition><noAttachments>0</noAttachments></condition>";//
 				if (decision.getCondition()!=null){
 					result += "<condition>"+decision.getCondition()+"</condition>";
 				}
@@ -375,23 +364,12 @@ public class PolicySelector {
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
-				//result += "<condition><noAttachments>0</noAttachments></condition>";//
 				if (decision.getCondition()!=null){
 					result += "<condition>"+decision.getCondition()+"</condition>";
 				}
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
-				/*if (decision.getRiskCommunication()!=null){
-					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
-					if (rt!=null){
-						if (rt.length>0){
-							if (rt[0].getTextualDescription()!=null){
-								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
-							}
-						}
-					}
-				}*/
 			}	
 			result += "</up-to-you>";
 		}
