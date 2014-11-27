@@ -72,7 +72,7 @@ public class PolicySelector {
 	 */
 	
 	public PolicyDT computePolicyBasedOnDecisions( Decision[] decisions, String action){ //Create device policy based on decision
-				
+		String empty = "<empty/>";
 		PolicyDT resultPolicyDT = new PolicyDT();
 		String jsonDevicePolicy = null;
 		if (decisions.length > 0){//TODO This is a sample policy selection, hence the selection of concrete policies based on decisions is yet to be done
@@ -81,17 +81,17 @@ public class PolicySelector {
 				jsonDevicePolicy = getJSONDevicePolicy(decision, action);
 			}else{
 				logger.info("		DECISION returned by RT2AE IS NULL");
-				jsonDevicePolicy = "<empty/>";
+				jsonDevicePolicy = empty;
 			}			
 		}else{
-			jsonDevicePolicy = "<empty/>";
+			jsonDevicePolicy = empty;
 		}
 		resultPolicyDT.setRawPolicy(jsonDevicePolicy);
 		return resultPolicyDT;
 	}	
 	
 	public PolicyDT computePolicyBasedOnDecisions( Decision[] decisions, String action, Asset asset){ //Create device policy based on decision
-		
+		String empty = "<empty/>";
 		PolicyDT resultPolicyDT = new PolicyDT();
 		String jsonDevicePolicy = null;
 		if (decisions.length > 0){//TODO This is a sample policy selection, hence the selection of concrete policies based on decisions is yet to be done
@@ -100,11 +100,11 @@ public class PolicySelector {
 				jsonDevicePolicy = getJSONDevicePolicy(decision, action, asset);
 			}else{
 				logger.info("		DECISION returned by RT2AE IS NULL");
-				jsonDevicePolicy = "<empty/>";
+				jsonDevicePolicy = empty;
 			}
 			
 		}else{
-			jsonDevicePolicy = "<empty/>";
+			jsonDevicePolicy = empty;
 		}
 		resultPolicyDT.setRawPolicy(jsonDevicePolicy);
 		return resultPolicyDT;
@@ -228,6 +228,7 @@ public class PolicySelector {
 	}
 	
 	private String getJSONDevicePolicy(Decision decision, String action, Asset asset){
+		String errorBuildingPolicy = "<errorBuildingPolicy/>";
 		String jsonDevicePolicy = null;
 		BufferedReader br = null;
 		InputStream in = null;
@@ -242,7 +243,7 @@ public class PolicySelector {
         } catch (JSONException je) {
         	logger.error("JSONException:" + je.getCause());
         } catch (Exception e){
-        	jsonDevicePolicy = "<errorBuildingPolicy/>";
+        	jsonDevicePolicy = errorBuildingPolicy;
         } finally{			
 			try {
 			    if (br != null) {
@@ -284,26 +285,32 @@ public class PolicySelector {
 	
 	private String getActionSection(Decision decision, String action){
 		String result = null;
-		
+		String allowIni = "<allow><!-- Allow these URLs (could be regular expressions) -->";
+		String denyIni = "<deny><!-- Allow these URLs (could be regular expressions) -->";
+		String upToYouIni = "<up-to-you><!-- Allow these URLs (could be regular expressions) -->";
+		String allowEnd = "</allow>";
+		String denyEnd = "</deny>";
+		String upToYouEnd = "</up-to-you>"; 
+		String id =  "<id></id>";
 		result = "<files>";
 		result += "<action>";
 		result += "<type>"+action+"</type>";
 		if (decision.equals(Decision.GRANTED_ACCESS)){
-			result += "<allow><!-- Allow these URLs (could be regular expressions) -->";
-			result += "<id></id>"; //TODO Add resource identification
-			result += "</allow>";
+			result += allowIni;
+			result += id; //TODO Add resource identification
+			result += allowEnd;
 		}else if (decision.equals(Decision.STRONG_DENY_ACCESS)){
-			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
-			result += "<id></id>"; //TODO Add resource identification
-			result += "</deny>";
+			result += denyIni;
+			result += id; //TODO Add resource identification
+			result += denyEnd;
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
-			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
-			result += "<id></id>"; //TODO Add resource identification
-			result += "</deny>";
+			result += denyIni;
+			result += id; //TODO Add resource identification
+			result += denyEnd;
 		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){
-			result += "<up-to-you><!-- Allow these URLs (could be regular expressions) -->";
-			result += "<id></id>"; //TODO Add resource identification
-			result += "</up-to-you>";
+			result += upToYouIni;
+			result += id; //TODO Add resource identification
+			result += upToYouEnd;
 		}
 		result += "</action>";
 		result += "</files>";		
@@ -313,21 +320,27 @@ public class PolicySelector {
 	
 	private String getActionSection(Decision decision, String action, Asset asset){
 		String result = null;
-		
+		String allowIni = "<allow><!-- Allow these URLs (could be regular expressions) -->";
+		String denyIni = "<deny><!-- Allow these URLs (could be regular expressions) -->";
+		String upToYouIni = "<up-to-you><!-- Allow these URLs (could be regular expressions) -->";
+		String maybeIni = "<maybe><!-- Allow these URLs (could be regular expressions) -->";
+		String allowEnd = "</allow>";
+		String denyEnd = "</deny>";
+		String upToYouEnd = "</up-to-you>"; 
 		result = "<files>";
 		result += "<action>";
 		result += "<type>"+action+"</type>";
 		if (decision.equals(Decision.GRANTED_ACCESS)){
-			result += "<allow><!-- Allow these URLs (could be regular expressions) -->";
+			result += allowIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
 				result += "<condition>"+decision.getCondition()+"</condition>";
 				result += "<riskTreatment>Allowed</riskTreatment>";
 			}			
-			result += "</allow>";
+			result += allowEnd;
 		}else if (decision.equals(Decision.STRONG_DENY_ACCESS)){
-			result += "<deny><!-- Allow these URLs (could be regular expressions) -->";
+			result += denyIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
@@ -336,9 +349,9 @@ public class PolicySelector {
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
 			}	
-			result += "</deny>";
+			result += denyEnd;
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
-			result += "<maybe><!-- Allow these URLs (could be regular expressions) -->";
+			result += maybeIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
@@ -360,7 +373,7 @@ public class PolicySelector {
 			}	
 			result += "</maybe>";
 		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){
-			result += "<up-to-you><!-- Allow these URLs (could be regular expressions) -->";
+			result += upToYouIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
 				result += "<path>"+asset.getLocation()+"</path>";
@@ -371,7 +384,7 @@ public class PolicySelector {
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
 			}	
-			result += "</up-to-you>";
+			result += upToYouEnd;
 		}
 		result += "</action>";
 		result += "</files>";		
