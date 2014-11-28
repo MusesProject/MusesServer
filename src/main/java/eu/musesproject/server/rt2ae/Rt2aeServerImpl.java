@@ -60,12 +60,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
 	private DBManager dbManager = new DBManager(ModuleType.RT2AE);
 	private RiskPolicy riskPolicy;
-	String sendingemail = "You have a virus and you want to send an attachment via E-Mail.\n With this, you put the receiver of the E-Mail at risk. Remove the virus first.";
-	String saveconfidentieldocument = "You want to save a confidential document on your device.\n If you loose your device, other people may be able to access the document.";
-	String opensensitivedocumentinunsecurenetwork = "You are trying to open a sensitive document, but you are connected with an unsecured WiFi.\n Other people can observe what you transmit. Switch to a secure WiFi first.";
-	String privateloungewifi = "Please go to the private lounge secure Wi-Fi";
-	String wifisniffing = "Wi-Fi sniffing";
-	String malwarerisktreatment = "Your device seems to have a Malware,please scan you device with an Antivirus or use another device";
+	private String sendingemail = "You have a virus and you want to send an attachment via E-Mail.\n With this, you put the receiver of the E-Mail at risk. Remove the virus first.";
+	private String saveconfidentieldocument = "You want to save a confidential document on your device.\n If you loose your device, other people may be able to access the document.";
+	private String opensensitivedocumentinunsecurenetwork = "You are trying to open a sensitive document, but you are connected with an unsecured WiFi.\n Other people can observe what you transmit. Switch to a secure WiFi first.";
+	private String privateloungewifi = "Please go to the private lounge secure Wi-Fi";
+	private String wifisniffing = "Wi-Fi sniffing";
+	private String malwarerisktreatment = "Your device seems to have a Malware,please scan you device with an Antivirus or use another device";
 
 	/**
 
@@ -76,7 +76,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 	* @param context the context
 
 	*/  
-	@SuppressWarnings({"static-access" })
 	@Override
 	public Decision decideBasedOnRiskPolicy(AccessRequest accessRequest, PolicyCompliance policyCompliance, Context context) {
 		// TODO Auto-generated method stub  
@@ -1779,7 +1778,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				/**
 				 * the security incident has not cost
 				 */	
-				System.out.println(" securityIncident cost is 0");
+				//System.out.println(" securityIncident cost is 0");
 
 				
 			}else {
@@ -1830,7 +1829,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
 		
-		System.out.println("Decision: "+decision2.toString());
+		//System.out.println("Decision: "+decision2.toString());
 		
    }
 	
