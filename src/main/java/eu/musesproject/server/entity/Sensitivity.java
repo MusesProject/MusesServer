@@ -10,22 +10,25 @@ import java.util.List;
  * 
  */
 @Entity
+@Table(name="sensitivity")
 @NamedQuery(name="Sensitivity.findAll", query="SELECT s FROM Sensitivity s")
 public class Sensitivity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="sensitivity_id")
+	@Column(name="sensitivity_id", unique=true, nullable=false)
 	private int sensitivityId;
 
+	@Column(nullable=false)
 	private short level;
 
+	@Column(nullable=false, length=50)
 	private String name;
 
-	//bi-directional many-to-one association to Domain
+	//bi-directional many-to-one association to Domains
 	@OneToMany(mappedBy="sensitivity")
-	private List<Domain> domains;
+	private List<Domains> domains;
 
 	public Sensitivity() {
 	}
@@ -54,22 +57,22 @@ public class Sensitivity implements Serializable {
 		this.name = name;
 	}
 
-	public List<Domain> getDomains() {
+	public List<Domains> getDomains() {
 		return this.domains;
 	}
 
-	public void setDomains(List<Domain> domains) {
+	public void setDomains(List<Domains> domains) {
 		this.domains = domains;
 	}
 
-	public Domain addDomain(Domain domain) {
+	public Domains addDomain(Domains domain) {
 		getDomains().add(domain);
 		domain.setSensitivity(this);
 
 		return domain;
 	}
 
-	public Domain removeDomain(Domain domain) {
+	public Domains removeDomain(Domains domain) {
 		getDomains().remove(domain);
 		domain.setSensitivity(null);
 

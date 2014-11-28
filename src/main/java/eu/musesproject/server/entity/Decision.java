@@ -1,9 +1,7 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.*;
-
 import java.util.Date;
 import java.util.List;
 
@@ -20,26 +18,24 @@ public class Decision implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="decision_id")
+	@Column(name="decision_id", unique=true, nullable=false)
 	private String decisionId;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable=false)
 	private Date time;
 
+	@Column(nullable=false, length=1)
 	private String value;
 
 	//bi-directional many-to-one association to AccessRequest
-	@OneToMany(mappedBy="decision")
-	private List<AccessRequest> accessRequests;
-
-	//bi-directional many-to-one association to AccessRequest
 	@ManyToOne
-	@JoinColumn(name="access_request_id")
+	@JoinColumn(name="access_request_id", nullable=false)
 	private AccessRequest accessRequest;
 
 	//bi-directional many-to-one association to RiskCommunication
 	@ManyToOne
-	@JoinColumn(name="risk_communication_id")
+	@JoinColumn(name="risk_communication_id", nullable=false)
 	private RiskCommunication riskCommunication;
 
 	//bi-directional many-to-one association to SecurityIncident
@@ -75,28 +71,6 @@ public class Decision implements Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	public List<AccessRequest> getAccessRequests() {
-		return this.accessRequests;
-	}
-
-	public void setAccessRequests(List<AccessRequest> accessRequests) {
-		this.accessRequests = accessRequests;
-	}
-
-	public AccessRequest addAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().add(accessRequest);
-		accessRequest.setDecision(this);
-
-		return accessRequest;
-	}
-
-	public AccessRequest removeAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().remove(accessRequest);
-		accessRequest.setDecision(null);
-
-		return accessRequest;
 	}
 
 	public AccessRequest getAccessRequest() {

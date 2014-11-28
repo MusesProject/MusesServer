@@ -16,16 +16,16 @@ public class DeviceConfig implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="device_config_id")
+	@Column(name="device_config_id", unique=true, nullable=false)
 	private int deviceConfigId;
 
-	@Column(name="device_config_name")
+	@Column(name="device_config_name", nullable=false, length=30)
 	private String deviceConfigName;
 
-	@Column(name="max_request_time")
+	@Column(name="max_request_time", nullable=false)
 	private int maxRequestTime;
 
-	@Column(name="min_event_cache_size")
+	@Column(name="min_event_cache_size", nullable=false)
 	private int minEventCacheSize;
 
 	public DeviceConfig() {

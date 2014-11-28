@@ -16,25 +16,26 @@ public class RiskInformation implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="risk_information_id")
+	@Column(name="risk_information_id", unique=true, nullable=false)
 	private String riskInformationId;
 
+	@Column(nullable=false)
 	private double probability;
+
+	//bi-directional many-to-one association to Assets
+	@ManyToOne
+	@JoinColumn(name="asset_id", nullable=false)
+	private Assets asset;
+
+	//bi-directional many-to-one association to SimpleEvents
+	@ManyToOne
+	@JoinColumn(name="event_id", nullable=false)
+	private SimpleEvents simpleEvent;
 
 	//bi-directional many-to-one association to ThreatType
 	@ManyToOne
-	@JoinColumn(name="threat_type")
+	@JoinColumn(name="threat_type", nullable=false)
 	private ThreatType threatTypeBean;
-
-	//bi-directional many-to-one association to Asset
-	@ManyToOne
-	@JoinColumn(name="asset_id")
-	private Asset asset;
-
-	//bi-directional many-to-one association to SimpleEvent
-	@ManyToOne
-	@JoinColumn(name="event_id")
-	private SimpleEvent simpleEvent;
 
 	public RiskInformation() {
 	}
@@ -55,28 +56,28 @@ public class RiskInformation implements Serializable {
 		this.probability = probability;
 	}
 
+	public Assets getAsset() {
+		return this.asset;
+	}
+
+	public void setAsset(Assets asset) {
+		this.asset = asset;
+	}
+
+	public SimpleEvents getSimpleEvent() {
+		return this.simpleEvent;
+	}
+
+	public void setSimpleEvent(SimpleEvents simpleEvent) {
+		this.simpleEvent = simpleEvent;
+	}
+
 	public ThreatType getThreatTypeBean() {
 		return this.threatTypeBean;
 	}
 
 	public void setThreatTypeBean(ThreatType threatTypeBean) {
 		this.threatTypeBean = threatTypeBean;
-	}
-
-	public Asset getAsset() {
-		return this.asset;
-	}
-
-	public void setAsset(Asset asset) {
-		this.asset = asset;
-	}
-
-	public SimpleEvent getSimpleEvent() {
-		return this.simpleEvent;
-	}
-
-	public void setSimpleEvent(SimpleEvent simpleEvent) {
-		this.simpleEvent = simpleEvent;
 	}
 
 }

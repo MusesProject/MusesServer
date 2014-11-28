@@ -12,40 +12,42 @@ import java.util.List;
 @Entity
 @Table(name="users")
 @NamedQueries({
-	@NamedQuery(name="User.findAll", 
-			    query="SELECT u FROM User u"),
-	@NamedQuery(name="User.findByUsername", 
-    			query="SELECT u FROM User u where u.username = :username")
+	@NamedQuery(name="Users.findAll", 
+			    query="SELECT u FROM Users u"),
+	@NamedQuery(name="Users.findByUsername", 
+    			query="SELECT u FROM Users u where u.username = :username"),
 })
-public class User implements Serializable {
+public class Users implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="user_id")
-	private int userId;
+	@Column(name="user_id", unique=true, nullable=false)
+	private String userId;
 
+	@Column(length=50)
 	private String email;
 
+	@Column(nullable=false)
 	private int enabled;
 
+	@Column(nullable=false, length=30)
 	private String name;
 
+	@Column(nullable=false, length=50)
 	private String password;
 
-	@Column(name="role_id")
+	@Column(name="role_id", nullable=false)
 	private int roleId;
 
+	@Column(nullable=false, length=50)
 	private String surname;
 
 	@Column(name="trust_value")
 	private double trustValue;
 
+	@Column(nullable=false, length=50)
 	private String username;
-
-	//bi-directional many-to-one association to AccessRequest
-	@OneToMany(mappedBy="user")
-	private List<AccessRequest> accessRequests;
 
 	//bi-directional many-to-one association to AdditionalProtection
 	@OneToMany(mappedBy="user")
@@ -55,9 +57,9 @@ public class User implements Serializable {
 	@OneToMany(mappedBy="user")
 	private List<SecurityIncident> securityIncidents;
 
-	//bi-directional many-to-one association to SimpleEvent
+	//bi-directional many-to-one association to SimpleEvents
 	@OneToMany(mappedBy="user")
-	private List<SimpleEvent> simpleEvents;
+	private List<SimpleEvents> simpleEvents;
 
 	//bi-directional many-to-one association to ThreatClue
 	@OneToMany(mappedBy="user")
@@ -67,14 +69,14 @@ public class User implements Serializable {
 	@OneToMany(mappedBy="user")
 	private List<UserBehaviour> userBehaviours;
 
-	public User() {
+	public Users() {
 	}
 
-	public int getUserId() {
+	public String getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
@@ -142,28 +144,6 @@ public class User implements Serializable {
 		this.username = username;
 	}
 
-	public List<AccessRequest> getAccessRequests() {
-		return this.accessRequests;
-	}
-
-	public void setAccessRequests(List<AccessRequest> accessRequests) {
-		this.accessRequests = accessRequests;
-	}
-
-	public AccessRequest addAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().add(accessRequest);
-		accessRequest.setUser(this);
-
-		return accessRequest;
-	}
-
-	public AccessRequest removeAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().remove(accessRequest);
-		accessRequest.setUser(null);
-
-		return accessRequest;
-	}
-
 	public List<AdditionalProtection> getAdditionalProtections() {
 		return this.additionalProtections;
 	}
@@ -208,22 +188,22 @@ public class User implements Serializable {
 		return securityIncident;
 	}
 
-	public List<SimpleEvent> getSimpleEvents() {
+	public List<SimpleEvents> getSimpleEvents() {
 		return this.simpleEvents;
 	}
 
-	public void setSimpleEvents(List<SimpleEvent> simpleEvents) {
+	public void setSimpleEvents(List<SimpleEvents> simpleEvents) {
 		this.simpleEvents = simpleEvents;
 	}
 
-	public SimpleEvent addSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents addSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().add(simpleEvent);
 		simpleEvent.setUser(this);
 
 		return simpleEvent;
 	}
 
-	public SimpleEvent removeSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents removeSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().remove(simpleEvent);
 		simpleEvent.setUser(null);
 

@@ -12,28 +12,33 @@ import javax.persistence.*;
 @Entity
 @Table(name="clue")
 @NamedQueries({
-@NamedQuery(name="Clue.findAll", query="SELECT c FROM Clue c"),
-@NamedQuery(name="Clue.findByValue", 
-query="SELECT c FROM Clue c where c.value = :value")
+		@NamedQuery(name="Clue.findAll", 
+					query="SELECT c FROM Clue c"),
+		@NamedQuery(name="Clue.findByValue", 
+					query="SELECT c FROM Clue c where c.value = :value"),
+		@NamedQuery(name="Clue.deleteClueByValue", 
+					query="delete FROM Clue c where c.value = :value")
 })
 public class Clue implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="clue_id")
-	private int clueId;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="clue_id", unique=true, nullable=false)
+	private String clueId;
 
 	@Lob
+	@Column(nullable=false)
 	private String value;
 
 	public Clue() {
 	}
 
-	public int getClueId() {
+	public String getClueId() {
 		return this.clueId;
 	}
 
-	public void setClueId(int clueId) {
+	public void setClueId(String clueId) {
 		this.clueId = clueId;
 	}
 

@@ -13,8 +13,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.server.connectionmanager.SessionHandler;
-import eu.musesproject.server.entity.LegalAspect;
-import eu.musesproject.server.entity.SimpleEvent;
+import eu.musesproject.server.entity.LegalAspects;
+import eu.musesproject.server.entity.SimpleEvents;
 
 public class SchedulerImpl implements Scheduler {
 
@@ -30,8 +30,8 @@ public class SchedulerImpl implements Scheduler {
 	
 	@Override
 	public void erase() {
-		List<SimpleEvent> simpleEvents = em.createNamedQuery("SimpleEvent.findAll",SimpleEvent.class).getResultList();
-		for (SimpleEvent event: simpleEvents){
+		List<SimpleEvents> simpleEvents = em.createNamedQuery("SimpleEvent.findAll",SimpleEvents.class).getResultList();
+		for (SimpleEvents event: simpleEvents){
 			boolean [] results = checkHardLimit(event);
 			boolean isKRSAllowed = results[0];
 			boolean isEPAllowed = results[1];
@@ -50,9 +50,9 @@ public class SchedulerImpl implements Scheduler {
 				}
 			} else {
 				logger.log(Level.INFO, MUSES_TAG + " Update component mask for event:" + event.getEventId());
-				event.setKRS_can_access(isKRSAllowed?new byte[]{1}:new byte[]{0});
-				event.setEP_can_access(isEPAllowed?new byte[]{1}:new byte[]{0});
-				event.setRT2AE_can_access(isRT2AEAllowed?new byte[]{1}:new byte[]{0});
+				event.setKRS_can_access(isKRSAllowed?1:0);
+				event.setEP_can_access(isEPAllowed?1:0);
+				event.setRT2AE_can_access(isRT2AEAllowed?1:0);
 				try {
 					entityTransaction.commit();
 				} catch (Exception e) {
@@ -65,9 +65,9 @@ public class SchedulerImpl implements Scheduler {
 		}
 	}
 
-	private boolean [] checkHardLimit(SimpleEvent simpleEvent){
+	private boolean [] checkHardLimit(SimpleEvents simpleEvent){
 		boolean [] accessDBallowed = {true,true,true};
-		LegalAspect legalAspect = em.createNamedQuery("LegalAspect.findAll", LegalAspect.class).getSingleResult();
+		LegalAspects legalAspect = em.createNamedQuery("LegalAspect.findAll", LegalAspects.class).getSingleResult();
 		int numberOfdaysAllowedToStoreDataInKRS = legalAspect.getKRS_hard_limit();
 		int numberOfdaysAllowedToStoreDataInEP = legalAspect.getEP_hard_limit();
 		int numberOfdaysAllowedToStoreDataInRT2AE = legalAspect.getRT2AE_hard_limit();

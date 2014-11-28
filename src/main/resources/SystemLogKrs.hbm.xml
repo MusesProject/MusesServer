@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="SystemLogKrs" table="system_log_krs" catalog="muses">
+        <id name="logId" type="java.lang.Long">
+            <column name="log_id" />
+            <generator class="identity" />
+        </id>
+        <property name="previousEventId" type="long">
+            <column name="previous_event_id" not-null="true">
+                <comment>Previous event. FK to EVENTS(event_id)</comment>
+            </column>
+        </property>
+        <property name="currentEventId" type="long">
+            <column name="current_event_id" not-null="true">
+                <comment>Current event. FK to EVENTS(event_id)</comment>
+            </column>
+        </property>
+        <property name="decisionId" type="long">
+            <column name="decision_id" not-null="true">
+                <comment>Corresponding decision to that event. FK to DECISION(decision_id)</comment>
+            </column>
+        </property>
+        <property name="userBehaviourId" type="long">
+            <column name="user_behaviour_id" not-null="true">
+                <comment>Corresponding user's behaviour for the event. FK to USER_BEHAVIOUR(user_behaviour_id)</comment>
+            </column>
+        </property>
+        <property name="securityIncidentId" type="long">
+            <column name="security_incident_id" not-null="true">
+                <comment>Corresponding security incident for the event. FK to SECURITY_INCIDENT(security_incident_id)</comment>
+            </column>
+        </property>
+        <property name="deviceSecurityState" type="long">
+            <column name="device_security_state" not-null="true">
+                <comment>Corresponding device security state for the event. FK to DEVICE_SECURITY_STATE(device_security_state_id)</comment>
+            </column>
+        </property>
+        <property name="riskTreatment" type="int">
+            <column name="risk_treatment" not-null="true">
+                <comment>Corresponding risk treatment for the event. FK to RISK_TREATMENT(risk_treatment_id)</comment>
+            </column>
+        </property>
+        <property name="startTime" type="timestamp">
+            <column name="start_time" length="19" not-null="true">
+                <comment>When the sequence started</comment>
+            </column>
+        </property>
+        <property name="finishTime" type="timestamp">
+            <column name="finish_time" length="19" not-null="true">
+                <comment>When the sequence finished</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

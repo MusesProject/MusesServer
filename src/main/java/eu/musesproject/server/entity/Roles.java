@@ -11,27 +11,29 @@ import javax.persistence.*;
 @Entity
 @Table(name="roles")
 @NamedQueries({
-	@NamedQuery(name="Role.findAll", 
-				query="SELECT r FROM Role r"),
-	@NamedQuery(name="Role.findByName", 
-				query="SELECT r FROM Role r where r.name = :name")
+	@NamedQuery(name="Roles.findAll", 
+				query="SELECT r FROM Roles r"),
+	@NamedQuery(name="Roles.findByName", 
+				query="SELECT r FROM Roles r where r.name = :name")
 })
-public class Role implements Serializable {
+public class Roles implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="role_id")
+	@Column(name="role_id", unique=true, nullable=false)
 	private int roleId;
 
+	@Column(length=100)
 	private String description;
 
+	@Column(length=50)
 	private String name;
 
 	@Column(name="security_level")
 	private short securityLevel;
 
-	public Role() {
+	public Roles() {
 	}
 
 	public int getRoleId() {

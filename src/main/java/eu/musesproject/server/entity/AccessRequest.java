@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -17,57 +18,45 @@ import java.util.List;
 @NamedQueries ({
 	@NamedQuery(name="AccessRequest.findAll", 
 				query="SELECT a FROM AccessRequest a"),
-	@NamedQuery(name="AccessRequest.findAccessrequestbyTimestampandThreat", 
-				query="SELECT a FROM AccessRequest a where a.modification =:modification and a.threat =:threat"),
+				@NamedQuery(name="AccessRequest.findAccessrequestbyTimestampandThreat", 
+				query="SELECT a FROM AccessRequest a where a.modification =:modification and a.threatId =:threat"),
 	@NamedQuery(name="AccessRequest.findById", 
-				query="SELECT a FROM AccessRequest a where a.accessRequestId = :accessRequestId")
+				query="SELECT a FROM AccessRequest a where a.accessRequestId = :access_request_id")
+
 })
 public class AccessRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="access_request_id")
-	private int accessRequestId;
+	@Column(name="access_request_id", unique=true, nullable=false)
+	private String accessRequestId;
 
+	@Column(nullable=false, length=1)
 	private String action;
+
+	@Column(name="asset_id", nullable=false)
+	private BigInteger assetId;
+
+	@Column(name="decision_id")
+	private BigInteger decisionId;
+
+	@Column(name="event_id", nullable=false)
+	private BigInteger eventId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modification;
 
-	
 	private int solved;
-	
-	@ManyToOne
-	@JoinColumn(name="threat_id")
-	private Threat threat;
+
+	@Column(name="threat_id")
+	private int threatId;
 
 	@Column(name="user_action")
 	private int userAction;
 
-	//bi-directional many-to-one association to Asset
-	@ManyToOne
-	@JoinColumn(name="asset_id")
-	private Asset asset;
-
-	//bi-directional many-to-one association to User
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	private User user;
-
-	//bi-directional many-to-one association to Decision
-	@ManyToOne
-	@JoinColumn(name="decision_id")
-	private Decision decision;
-
-	//bi-directional many-to-one association to SimpleEvent
-	@ManyToOne
-	@JoinColumn(name="event_id")
-	private SimpleEvent simpleEvent;
-
-	//bi-directional many-to-one association to AdditionalProtection
-	@OneToMany(mappedBy="accessRequest")
-	private List<AdditionalProtection> additionalProtections;
+	@Column(name="user_id", nullable=false)
+	private BigInteger userId;
 
 	//bi-directional many-to-one association to Decision
 	@OneToMany(mappedBy="accessRequest")
@@ -80,11 +69,11 @@ public class AccessRequest implements Serializable {
 	public AccessRequest() {
 	}
 
-	public int getAccessRequestId() {
+	public String getAccessRequestId() {
 		return this.accessRequestId;
 	}
 
-	public void setAccessRequestId(int accessRequestId) {
+	public void setAccessRequestId(String accessRequestId) {
 		this.accessRequestId = accessRequestId;
 	}
 
@@ -96,6 +85,30 @@ public class AccessRequest implements Serializable {
 		this.action = action;
 	}
 
+	public BigInteger getAssetId() {
+		return this.assetId;
+	}
+
+	public void setAssetId(BigInteger assetId) {
+		this.assetId = assetId;
+	}
+
+	public BigInteger getDecisionId() {
+		return this.decisionId;
+	}
+
+	public void setDecisionId(BigInteger decisionId) {
+		this.decisionId = decisionId;
+	}
+
+	public BigInteger getEventId() {
+		return this.eventId;
+	}
+
+	public void setEventId(BigInteger eventId) {
+		this.eventId = eventId;
+	}
+
 	public Date getModification() {
 		return this.modification;
 	}
@@ -104,58 +117,36 @@ public class AccessRequest implements Serializable {
 		this.modification = modification;
 	}
 
-	public Asset getAsset() {
-		return this.asset;
+	public int getSolved() {
+		return this.solved;
 	}
 
-	public void setAsset(Asset asset) {
-		this.asset = asset;
+	public void setSolved(int solved) {
+		this.solved = solved;
 	}
 
-	public User getUser() {
-		return this.user;
+	public int getThreatId() {
+		return this.threatId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setThreatId(int threatId) {
+		this.threatId = threatId;
 	}
 
-	public Decision getDecision() {
-		return this.decision;
+	public int getUserAction() {
+		return this.userAction;
 	}
 
-	public void setDecision(Decision decision) {
-		this.decision = decision;
+	public void setUserAction(int userAction) {
+		this.userAction = userAction;
 	}
 
-	public SimpleEvent getSimpleEvent() {
-		return this.simpleEvent;
+	public BigInteger getUserId() {
+		return this.userId;
 	}
 
-	public void setSimpleEvent(SimpleEvent simpleEvent) {
-		this.simpleEvent = simpleEvent;
-	}
-
-	public List<AdditionalProtection> getAdditionalProtections() {
-		return this.additionalProtections;
-	}
-
-	public void setAdditionalProtections(List<AdditionalProtection> additionalProtections) {
-		this.additionalProtections = additionalProtections;
-	}
-
-	public AdditionalProtection addAdditionalProtection(AdditionalProtection additionalProtection) {
-		getAdditionalProtections().add(additionalProtection);
-		additionalProtection.setAccessRequest(this);
-
-		return additionalProtection;
-	}
-
-	public AdditionalProtection removeAdditionalProtection(AdditionalProtection additionalProtection) {
-		getAdditionalProtections().remove(additionalProtection);
-		additionalProtection.setAccessRequest(null);
-
-		return additionalProtection;
+	public void setUserId(BigInteger userId) {
+		this.userId = userId;
 	}
 
 	public List<Decision> getDecisions() {
@@ -200,50 +191,6 @@ public class AccessRequest implements Serializable {
 		threatClue.setAccessRequest(null);
 
 		return threatClue;
-	}
-
-	/**
-	 * @return the solved
-	 */
-	public int getSolved() {
-		return solved;
-	}
-
-	/**
-	 * @param solved the solved to set
-	 */
-	public void setSolved(int solved) {
-		this.solved = solved;
-	}
-
-	
-
-	/**
-	 * @return the userAction
-	 */
-	public int getUserAction() {
-		return userAction;
-	}
-
-	/**
-	 * @param userAction the userAction to set
-	 */
-	public void setUserAction(int userAction) {
-		this.userAction = userAction;
-	}
-
-	/**
-	 * @return the threat
-	 */
-	public Threat getThreat() {
-		return threat;
-	}
-
-	/**
-	 * @param threat the threat to set
-	 */
-	public void setThreat(Threat threat) {
-		this.threat = threat;
 	}
 
 }

@@ -2,14 +2,9 @@ package eu.musesproject.server.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
+
+import java.math.BigInteger;
 
 
 /**
@@ -29,14 +24,14 @@ public class UserAuthorization implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="user_authorization_id")
+	@Column(name="user_authorization_id", unique=true, nullable=false)
 	private int userAuthorizationId;
 
-	@Column(name="role_id")
+	@Column(name="role_id", nullable=false)
 	private int roleId;
 
-	@Column(name="user_id")
-	private int userId;
+	@Column(name="user_id", nullable=false)
+	private BigInteger userId;
 
 	public UserAuthorization() {
 	}
@@ -57,11 +52,11 @@ public class UserAuthorization implements Serializable {
 		this.roleId = roleId;
 	}
 
-	public int getUserId() {
+	public BigInteger getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(BigInteger userId) {
 		this.userId = userId;
 	}
 

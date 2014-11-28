@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="CorporatePolicies" table="corporate_policies" catalog="muses">
+        <id name="corporatePolicyId" type="java.lang.Integer">
+            <column name="corporate_policy_id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="2000" not-null="true">
+                <comment>Policy subject</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="2000" not-null="true">
+                <comment>Policy textual description</comment>
+            </column>
+        </property>
+        <property name="file" type="binary">
+            <column name="file" not-null="true">
+                <comment>Policy formalized in standard format (XACML,JSON,...), to make it machine readable</comment>
+            </column>
+        </property>
+        <property name="date" type="date">
+            <column name="date" length="10" not-null="true">
+                <comment>Date of creation of the policy</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

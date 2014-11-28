@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="RiskInformation" table="risk_information" catalog="muses">
+        <id name="riskInformationId" type="java.lang.Long">
+            <column name="risk_information_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="assets" class="Assets" fetch="select">
+            <column name="asset_id" not-null="true">
+                <comment>FK to table ASSET(asset_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="threatType" class="ThreatType" fetch="select">
+            <column name="threat_type" not-null="true">
+                <comment>FK to table THREAT_TYPE(threat_type_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="simpleEvents" class="SimpleEvents" fetch="select">
+            <column name="event_id" not-null="true">
+                <comment>FK to table EVENTS(event_id)</comment>
+            </column>
+        </many-to-one>
+        <property name="probability" type="double">
+            <column name="probability" precision="22" scale="0" not-null="true">
+                <comment>Probability of the threat</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

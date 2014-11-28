@@ -12,27 +12,31 @@ import java.util.List;
  */
 @Entity
 @Table(name="applications")
-@NamedQuery(name="Application.findAll", query="SELECT a FROM Application a")
-public class Application implements Serializable {
+@NamedQuery(name="Applications.findAll", query="SELECT a FROM Applications a")
+public class Applications implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="app_id")
-	private int appId;
+	@Column(name="app_id", unique=true, nullable=false)
+	private String appId;
 
+	@Column(length=100)
 	private String description;
 
-	private byte[] is_MUSES_aware;
+	private int is_MUSES_aware;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="last_update")
 	private Date lastUpdate;
 
+	@Column(nullable=false, length=30)
 	private String name;
 
+	@Column(length=30)
 	private String vendor;
 
+	@Column(length=20)
 	private String version;
 
 	//bi-directional many-to-one association to AppType
@@ -40,18 +44,18 @@ public class Application implements Serializable {
 	@JoinColumn(name="type")
 	private AppType appType;
 
-	//bi-directional many-to-one association to SimpleEvent
+	//bi-directional many-to-one association to SimpleEvents
 	@OneToMany(mappedBy="application")
-	private List<SimpleEvent> simpleEvents;
+	private List<SimpleEvents> simpleEvents;
 
-	public Application() {
+	public Applications() {
 	}
 
-	public int getAppId() {
+	public String getAppId() {
 		return this.appId;
 	}
 
-	public void setAppId(int appId) {
+	public void setAppId(String appId) {
 		this.appId = appId;
 	}
 
@@ -63,11 +67,11 @@ public class Application implements Serializable {
 		this.description = description;
 	}
 
-	public byte[] getIs_MUSES_aware() {
+	public int getIs_MUSES_aware() {
 		return this.is_MUSES_aware;
 	}
 
-	public void setIs_MUSES_aware(byte[] is_MUSES_aware) {
+	public void setIs_MUSES_aware(int is_MUSES_aware) {
 		this.is_MUSES_aware = is_MUSES_aware;
 	}
 
@@ -111,22 +115,22 @@ public class Application implements Serializable {
 		this.appType = appType;
 	}
 
-	public List<SimpleEvent> getSimpleEvents() {
+	public List<SimpleEvents> getSimpleEvents() {
 		return this.simpleEvents;
 	}
 
-	public void setSimpleEvents(List<SimpleEvent> simpleEvents) {
+	public void setSimpleEvents(List<SimpleEvents> simpleEvents) {
 		this.simpleEvents = simpleEvents;
 	}
 
-	public SimpleEvent addSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents addSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().add(simpleEvent);
 		simpleEvent.setApplication(this);
 
 		return simpleEvent;
 	}
 
-	public SimpleEvent removeSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents removeSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().remove(simpleEvent);
 		simpleEvent.setApplication(null);
 

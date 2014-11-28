@@ -14,12 +14,12 @@ import org.junit.Test;
 
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
-import eu.musesproject.server.entity.Asset;
+import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.Threat;
-import eu.musesproject.server.entity.User;
+import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.scheduler.ModuleType;
 
 public class DBManagerTest {
@@ -31,7 +31,6 @@ public class DBManagerTest {
 	public  static void setUpBeforeClass() throws Exception {
 		ModuleType module = null;
 		dbmanager = new DBManager(module);
-		dbmanager.open();
 
 	}
 	
@@ -44,11 +43,11 @@ public class DBManagerTest {
 
 	@Test
 	public void testGetUsers() {
-		List<User> List = dbmanager.getUsers();
+		List<Users> List = dbmanager.getUsers();
 		if (List.size()>0){
-			Iterator<User> i = List.iterator();
+			Iterator<Users> i = List.iterator();
 			while(i.hasNext()){
-				User user = i.next();
+				Users user = i.next();
 				assertNotNull(user);
 			}
 		}else{
@@ -59,8 +58,8 @@ public class DBManagerTest {
 
 	@Test
 	public void testSetUsers() {
-		List<User> list = new ArrayList<User>();
-		User user = new User();
+		List<Users> list = new ArrayList<Users>();
+		Users user = new Users();
 		user.setEmail("user@muse.eu");
 		user.setName("Pinkman");
 		user.setSurname("Jesse");
@@ -73,7 +72,7 @@ public class DBManagerTest {
 		user.setRoleId(0);
 		user.setEnabled(0);
 		list.add(user);
-		dbmanager.setUsers(list);	
+		dbmanager.setUsers(list);
 		
 		/*List<User> listusers = dbmanager.findUserByUsername(user.getUsername());
 
@@ -86,11 +85,11 @@ public class DBManagerTest {
 
 	@Test
 	public void testGetAssets() {
-		List<Asset> List = dbmanager.getAssets();
+		List<Assets> List = dbmanager.getAssets();
 		if (List.size()>0){
-			Iterator<Asset> i = List.iterator();
+			Iterator<Assets> i = List.iterator();
 			while(i.hasNext()){
-				Asset asset = i.next();
+				Assets asset = i.next();
 				assertNotNull(asset);
 			}
 		}else{
@@ -102,7 +101,7 @@ public class DBManagerTest {
 	@Test
 	public void testFindAssetByTitle() {
 		String title ="Patent";
-		List<Asset> assets = dbmanager.findAssetByTitle(title);
+		List<Assets> assets = dbmanager.findAssetByTitle(title);
 		if(assets.size()>0)
 			assertTrue(true);
 		else
@@ -113,8 +112,8 @@ public class DBManagerTest {
 
 	@Test
 	public void testSetAssets() {
-		List<Asset> list = new ArrayList<Asset>();
-		Asset asset = new Asset();
+		List<Assets> list = new ArrayList<Assets>();
+		Assets asset = new Assets();
 		asset.setDescription("Asset_Unige");
 		asset.setConfidentialLevel("PUBLIC");
 		asset.setTitle("Patent");
@@ -155,7 +154,7 @@ public class DBManagerTest {
 	
 		
 		list.add(clue);
-		dbmanager.setClues(list);	
+		//dbmanager.setClues(list); FIXME	
 		
 		/*List<Clue> listclues = dbmanager.findClueByValue(clue.getValue());
 		

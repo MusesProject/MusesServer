@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Domains" table="domains" catalog="muses">
+        <id name="domainId" type="java.lang.Integer">
+            <column name="domain_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="sensitivity" class="Sensitivity" fetch="select">
+            <column name="sensitivity_id" not-null="true">
+                <comment>Associated sensitivity level (strictly confidential, protected, public,...) FK to sensitivity table</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="50" not-null="true">
+                <comment>Name of the domain (e.g. Offers)</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="100">
+                <comment>Domain description (e.g. Company domain used to store commercial offers to be presented to concrete customers. This kind of information is strictly
+                confidential.)</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="SecurityRules" table="security_rules" catalog="muses">
+        <id name="securityRuleId" type="java.lang.Long">
+            <column name="security_rule_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="sources" class="Sources" fetch="select">
+            <column name="source_id">
+                <comment>FK to table SOURCES(source_id) Identification of the component owner, in other words, the originator of the last version of the rule (e.g. Event Processor
+                if it is manual or based on expert knowledge or Knowledge Refinement System if the current version is the outcome of knowledge refinement)</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="2000" not-null="true">
+                <comment>Name of the security rule</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="2000" not-null="true">
+                <comment>Textual description of the security rule</comment>
+            </column>
+        </property>
+        <property name="file" type="binary">
+            <column name="file">
+                <comment>File in DRL format, containing the rule's code, to make it machine readable</comment>
+            </column>
+        </property>
+        <property name="status" type="string">
+            <column name="status" length="10" not-null="true">
+                <comment>Current status of the rule. Only validated rules will be inserted into the production working memory of the Event Processor.</comment>
+            </column>
+        </property>
+        <property name="refined" type="binary">
+            <column name="refined" not-null="true">
+                <comment>If TRUE (1), the rule has been inferred by the KRS.</comment>
+            </column>
+        </property>
+        <property name="modification" type="timestamp">
+            <column name="modification" length="19" not-null="true">
+                <comment>Date of creation of the rule</comment>
+            </column>
+        </property>
+        <set name="refinedSecurityRuleses" table="refined_security_rules" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="original_security_rule_id" not-null="true">
+                    <comment>Initial security rule which was refined. If it has been inferred this field will be empty.</comment>
+                </column>
+            </key>
+            <one-to-many class="RefinedSecurityRules" />
+        </set>
+    </class>
+</hibernate-mapping>

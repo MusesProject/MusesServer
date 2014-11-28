@@ -17,43 +17,50 @@ public class AdditionalProtection implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="additional_protection_id")
-	private String additionalProtectionId;
+	@Column(name="additional_protection_id", unique=true, nullable=false)
+	private int additionalProtectionId;
+
+	@Column(name="access_request_id")
+	private int accessRequestId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modification;
 
+	@Column(nullable=false, length=50)
 	private String name;
 
-	//bi-directional many-to-one association to AccessRequest
-	@ManyToOne
-	@JoinColumn(name="access_request_id")
-	private AccessRequest accessRequest;
-
-	//bi-directional many-to-one association to SimpleEvent
-	@ManyToOne
-	@JoinColumn(name="event_id")
-	private SimpleEvent simpleEvent;
-
-	//bi-directional many-to-one association to Device
+	//bi-directional many-to-one association to Devices
 	@ManyToOne
 	@JoinColumn(name="device_id")
-	private Device device;
+	private Devices device;
 
-	//bi-directional many-to-one association to User
+	//bi-directional many-to-one association to SimpleEvents
+	@ManyToOne
+	@JoinColumn(name="event_id")
+	private SimpleEvents simpleEvent;
+
+	//bi-directional many-to-one association to Users
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private User user;
+	private Users user;
 
 	public AdditionalProtection() {
 	}
 
-	public String getAdditionalProtectionId() {
+	public int getAdditionalProtectionId() {
 		return this.additionalProtectionId;
 	}
 
-	public void setAdditionalProtectionId(String additionalProtectionId) {
+	public void setAdditionalProtectionId(int additionalProtectionId) {
 		this.additionalProtectionId = additionalProtectionId;
+	}
+
+	public int getAccessRequestId() {
+		return this.accessRequestId;
+	}
+
+	public void setAccessRequestId(int accessRequestId) {
+		this.accessRequestId = accessRequestId;
 	}
 
 	public Date getModification() {
@@ -72,35 +79,27 @@ public class AdditionalProtection implements Serializable {
 		this.name = name;
 	}
 
-	public AccessRequest getAccessRequest() {
-		return this.accessRequest;
-	}
-
-	public void setAccessRequest(AccessRequest accessRequest) {
-		this.accessRequest = accessRequest;
-	}
-
-	public SimpleEvent getSimpleEvent() {
-		return this.simpleEvent;
-	}
-
-	public void setSimpleEvent(SimpleEvent simpleEvent) {
-		this.simpleEvent = simpleEvent;
-	}
-
-	public Device getDevice() {
+	public Devices getDevice() {
 		return this.device;
 	}
 
-	public void setDevice(Device device) {
+	public void setDevice(Devices device) {
 		this.device = device;
 	}
 
-	public User getUser() {
+	public SimpleEvents getSimpleEvent() {
+		return this.simpleEvent;
+	}
+
+	public void setSimpleEvent(SimpleEvents simpleEvent) {
+		this.simpleEvent = simpleEvent;
+	}
+
+	public Users getUser() {
 		return this.user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 

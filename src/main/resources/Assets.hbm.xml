@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Assets" table="assets" catalog="muses">
+        <id name="assetId" type="java.lang.Long">
+            <column name="asset_id" />
+            <generator class="identity" />
+        </id>
+        <property name="title" type="string">
+            <column name="title" length="30" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="100" />
+        </property>
+        <property name="value" type="double">
+            <column name="value" precision="22" scale="0" not-null="true">
+                <comment>represents the real value of the asset</comment>
+            </column>
+        </property>
+        <property name="confidentialLevel" type="string">
+            <column name="confidential_level" length="20" not-null="true" />
+        </property>
+        <property name="location" type="string">
+            <column name="location" length="100" not-null="true">
+                <comment>Location of the asset in the hard drive</comment>
+            </column>
+        </property>
+        <set name="threatClues" table="threat_clue" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="asset_id">
+                    <comment>FK to table ASSETS(asset_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="ThreatClue" />
+        </set>
+        <set name="simpleEventses" table="simple_events" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="asset_id" not-null="true">
+                    <comment>FK to table ASSETS(asset_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SimpleEvents" />
+        </set>
+        <set name="riskInformations" table="risk_information" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="asset_id" not-null="true">
+                    <comment>FK to table ASSET(asset_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="RiskInformation" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -17,16 +17,18 @@ public class DeviceType implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="device_type_id")
+	@Column(name="device_type_id", unique=true, nullable=false)
 	private int deviceTypeId;
 
+	@Column(length=100)
 	private String description;
 
+	@Column(nullable=false, length=30)
 	private String type;
 
-	//bi-directional many-to-one association to Device
+	//bi-directional many-to-one association to Devices
 	@OneToMany(mappedBy="deviceType")
-	private List<Device> devices;
+	private List<Devices> devices;
 
 	public DeviceType() {
 	}
@@ -55,22 +57,22 @@ public class DeviceType implements Serializable {
 		this.type = type;
 	}
 
-	public List<Device> getDevices() {
+	public List<Devices> getDevices() {
 		return this.devices;
 	}
 
-	public void setDevices(List<Device> devices) {
+	public void setDevices(List<Devices> devices) {
 		this.devices = devices;
 	}
 
-	public Device addDevice(Device device) {
+	public Devices addDevice(Devices device) {
 		getDevices().add(device);
 		device.setDeviceType(this);
 
 		return device;
 	}
 
-	public Device removeDevice(Device device) {
+	public Devices removeDevice(Devices device) {
 		getDevices().remove(device);
 		device.setDeviceType(null);
 

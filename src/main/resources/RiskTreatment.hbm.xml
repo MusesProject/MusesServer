@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="RiskTreatment" table="risk_treatment" catalog="muses">
+        <id name="riskTreatmentId" type="java.lang.Integer">
+            <column name="risk_treatment_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="riskCommunication" class="RiskCommunication" fetch="select">
+            <column name="risk_communication_id" not-null="true">
+                <comment>FK to table RISK_COMMUNICATION(risk_communication_id)</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" length="50" not-null="true">
+                <comment>Description of risk treatment</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

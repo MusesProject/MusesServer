@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="DeviceType" table="device_type" catalog="muses">
+        <id name="deviceTypeId" type="java.lang.Integer">
+            <column name="device_type_id" />
+            <generator class="identity" />
+        </id>
+        <property name="type" type="string">
+            <column name="type" length="30" not-null="true">
+                <comment>Types of devices, such as DESKTOP_PC, LAPTOP, TABLET, SMARTPHONE, PALM, PDA</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="100" />
+        </property>
+        <set name="deviceses" table="devices" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="type" not-null="true">
+                    <comment>FK to table DEVICE_TYPE(device_type_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="Devices" />
+        </set>
+    </class>
+</hibernate-mapping>

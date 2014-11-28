@@ -17,9 +17,10 @@ public class RiskCommunication implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="risk_communication_id")
+	@Column(name="risk_communication_id", unique=true, nullable=false)
 	private int riskCommunicationId;
 
+	@Column(nullable=false, length=255)
 	private String description;
 
 	//bi-directional many-to-one association to Decision

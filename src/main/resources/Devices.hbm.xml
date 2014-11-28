@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Devices" table="devices" catalog="muses">
+        <id name="deviceId" type="java.lang.Long">
+            <column name="device_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="deviceType" class="DeviceType" fetch="select">
+            <column name="type" not-null="true">
+                <comment>FK to table DEVICE_TYPE(device_type_id)</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="30" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="100" />
+        </property>
+        <property name="imei" type="string">
+            <column name="IMEI" length="30">
+                <comment>In the format XXXXXX YY ZZZZZZ W</comment>
+            </column>
+        </property>
+        <property name="mac" type="string">
+            <column name="MAC" length="30">
+                <comment>In the format FF:FF:FF:FF:FF:FF:FF:FF</comment>
+            </column>
+        </property>
+        <property name="osName" type="string">
+            <column name="OS_name" length="30">
+                <comment>The operating system of the device</comment>
+            </column>
+        </property>
+        <property name="osVersion" type="string">
+            <column name="OS_version" length="20">
+                <comment>The operating system of the device</comment>
+            </column>
+        </property>
+        <property name="trustValue" type="java.lang.Double">
+            <column name="trust_value" precision="22" scale="0">
+                <comment>The trust value of the device will be between 0 and 1</comment>
+            </column>
+        </property>
+        <property name="securityLevel" type="java.lang.Short">
+            <column name="security_level">
+                <comment>The security level of the device is based on the device security state</comment>
+            </column>
+        </property>
+        <property name="certificate" type="binary">
+            <column name="certificate" />
+        </property>
+        <property name="ownerType" type="string">
+            <column name="owner_type" length="8" />
+        </property>
+        <set name="securityIncidents" table="security_incident" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="device_id">
+                    <comment>FK to table DEVICES(device_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SecurityIncident" />
+        </set>
+        <set name="additionalProtections" table="additional_protection" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="device_id">
+                    <comment>FK to table DEVICES(device_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="AdditionalProtection" />
+        </set>
+        <set name="simpleEventses" table="simple_events" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="device_id" not-null="true">
+                    <comment>FK to table DEVICES(device_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SimpleEvents" />
+        </set>
+        <set name="userBehaviours" table="user_behaviour" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="device_id" not-null="true" />
+            </key>
+            <one-to-many class="UserBehaviour" />
+        </set>
+    </class>
+</hibernate-mapping>

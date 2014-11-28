@@ -11,29 +11,31 @@ import javax.persistence.*;
 @Entity
 @Table(name="domains")
 @NamedQueries({
-	@NamedQuery(name="Domain.findAll", 
-				query="SELECT d FROM Domain d"),
-	@NamedQuery(name="Domain.findByName", 
-				query="SELECT d FROM Domain d where d.name = :name")
+	@NamedQuery(name="Domains.findAll", 
+				query="SELECT d FROM Domains d"),
+	@NamedQuery(name="Domains.findByName", 
+				query="SELECT d FROM Domains d where d.name = :name")
 })
-public class Domain implements Serializable {
+public class Domains implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="domain_id")
+	@Column(name="domain_id", unique=true, nullable=false)
 	private int domainId;
 
+	@Column(length=100)
 	private String description;
 
+	@Column(nullable=false, length=50)
 	private String name;
 
 	//bi-directional many-to-one association to Sensitivity
 	@ManyToOne
-	@JoinColumn(name="sensitivity_id")
+	@JoinColumn(name="sensitivity_id", nullable=false)
 	private Sensitivity sensitivity;
 
-	public Domain() {
+	public Domains() {
 	}
 
 	public int getDomainId() {

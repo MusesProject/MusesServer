@@ -1,19 +1,8 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 
 /**
@@ -22,26 +11,30 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name="corporate_policies")
-@NamedQuery(name="CorporatePolicy.findAll", query="SELECT c FROM CorporatePolicy c")
-public class CorporatePolicy implements Serializable {
+@NamedQuery(name="CorporatePolicies.findAll", query="SELECT c FROM CorporatePolicies c")
+public class CorporatePolicies implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="corporate_policy_id")
+	@Column(name="corporate_policy_id", unique=true, nullable=false)
 	private int corporatePolicyId;
 
 	@Temporal(TemporalType.DATE)
+	@Column(nullable=false)
 	private Date date;
 
+	@Column(nullable=false, length=2000)
 	private String description;
 
 	@Lob
+	@Column(nullable=false)
 	private byte[] file;
 
+	@Column(nullable=false, length=2000)
 	private String name;
 
-	public CorporatePolicy() {
+	public CorporatePolicies() {
 	}
 
 	public int getCorporatePolicyId() {
@@ -73,11 +66,7 @@ public class CorporatePolicy implements Serializable {
 	}
 
 	public void setFile(byte[] file) {
-		if (file == null) {
-			this.file = new byte[0];
-		} else {
-			this.file = Arrays.copyOf(file, file.length);
-		}
+		this.file = file;
 	}
 
 	public String getName() {

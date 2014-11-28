@@ -1,7 +1,6 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.*;
 
 
@@ -16,8 +15,9 @@ public class Outcome implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="outcome_id")
-	private int outcomeId;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="outcome_id", unique=true, nullable=false)
+	private String outcomeId;
 
 	private double costbenefit;
 
@@ -26,17 +26,17 @@ public class Outcome implements Serializable {
 
 	//bi-directional many-to-one association to Threat
 	@ManyToOne
-	@JoinColumn(name="threat_id")
+	@JoinColumn(name="threat_id", nullable=false)
 	private Threat threat;
 
 	public Outcome() {
 	}
 
-	public int getOutcomeId() {
+	public String getOutcomeId() {
 		return this.outcomeId;
 	}
 
-	public void setOutcomeId(int outcomeId) {
+	public void setOutcomeId(String outcomeId) {
 		this.outcomeId = outcomeId;
 	}
 

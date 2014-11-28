@@ -179,7 +179,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 				Arrays.asList(o)));
 
 		// check if the threat already exists in the database
-		dbManager.open();
 		boolean exists = false;
 		List<eu.musesproject.server.entity.Threat> dbThreats = dbManager
 				.getThreats();
@@ -1733,10 +1732,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 	*/
 	@Override
 	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
-		// TODO Auto-generated method stub
-		dbManager.open();
 
-		eu.musesproject.server.entity.Device device = dbManager.findDeviceById(deviceSecurityState.getDevice_id()).get(0);
+		eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
 
 		int countadditionalprotection = device.getAdditionalProtections().size();
 
@@ -1752,7 +1749,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		try {
 			
 			
-			dbManager.merge(device);
+			dbManager.persist(device);
 			
 
 		} catch (Exception e) {

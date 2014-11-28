@@ -12,45 +12,45 @@ import java.util.Date;
  */
 @Entity
 @Table(name="system_log_krs")
-@NamedQuery(name="SystemLogKr.findAll", query="SELECT s FROM SystemLogKr s")
-public class SystemLogKr implements Serializable {
+@NamedQuery(name="SystemLogKrs.findAll", query="SELECT s FROM SystemLogKrs s")
+public class SystemLogKrs implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="log_id")
+	@Column(name="log_id", unique=true, nullable=false)
 	private String logId;
 
-	@Column(name="current_event_id")
+	@Column(name="current_event_id", nullable=false)
 	private BigInteger currentEventId;
 
-	@Column(name="decision_id")
+	@Column(name="decision_id", nullable=false)
 	private BigInteger decisionId;
 
-	@Column(name="device_security_state")
+	@Column(name="device_security_state", nullable=false)
 	private BigInteger deviceSecurityState;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="finish_time")
+	@Column(name="finish_time", nullable=false)
 	private Date finishTime;
 
-	@Column(name="previous_event_id")
+	@Column(name="previous_event_id", nullable=false)
 	private BigInteger previousEventId;
 
-	@Column(name="risk_treatment")
+	@Column(name="risk_treatment", nullable=false)
 	private int riskTreatment;
 
-	@Column(name="security_incident_id")
+	@Column(name="security_incident_id", nullable=false)
 	private BigInteger securityIncidentId;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="start_time")
+	@Column(name="start_time", nullable=false)
 	private Date startTime;
 
-	@Column(name="user_behaviour_id")
+	@Column(name="user_behaviour_id", nullable=false)
 	private BigInteger userBehaviourId;
 
-	public SystemLogKr() {
+	public SystemLogKrs() {
 	}
 
 	public String getLogId() {

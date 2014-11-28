@@ -17,31 +17,33 @@ public class UserBehaviour implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="user_behaviour_id")
+	@Column(name="user_behaviour_id", unique=true, nullable=false)
 	private String userBehaviourId;
 
+	@Column(nullable=false, length=50)
 	private String action;
 
-	@Column(name="additional_info")
+	@Column(name="additional_info", length=50)
 	private String additionalInfo;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable=false)
 	private Date time;
-
-	//bi-directional many-to-one association to User
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	private User user;
-
-	//bi-directional many-to-one association to Device
-	@ManyToOne
-	@JoinColumn(name="device_id")
-	private Device device;
 
 	//bi-directional many-to-one association to Decision
 	@ManyToOne
-	@JoinColumn(name="decision_id")
+	@JoinColumn(name="decision_id", nullable=false)
 	private Decision decision;
+
+	//bi-directional many-to-one association to Devices
+	@ManyToOne
+	@JoinColumn(name="device_id", nullable=false)
+	private Devices device;
+
+	//bi-directional many-to-one association to Users
+	@ManyToOne
+	@JoinColumn(name="user_id", nullable=false)
+	private Users user;
 
 	public UserBehaviour() {
 	}
@@ -78,28 +80,28 @@ public class UserBehaviour implements Serializable {
 		this.time = time;
 	}
 
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Device getDevice() {
-		return this.device;
-	}
-
-	public void setDevice(Device device) {
-		this.device = device;
-	}
-
 	public Decision getDecision() {
 		return this.decision;
 	}
 
 	public void setDecision(Decision decision) {
 		this.decision = decision;
+	}
+
+	public Devices getDevice() {
+		return this.device;
+	}
+
+	public void setDevice(Devices device) {
+		this.device = device;
+	}
+
+	public Users getUser() {
+		return this.user;
+	}
+
+	public void setUser(Users user) {
+		this.user = user;
 	}
 
 }

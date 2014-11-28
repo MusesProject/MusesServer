@@ -15,22 +15,25 @@ public class RiskPolicy implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="risk_policy_id")
-	private int riskPolicyId;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="risk_policy_id", unique=true, nullable=false)
+	private String riskPolicyId;
 
 	@Lob
+	@Column(nullable=false)
 	private String description;
 
+	@Column(nullable=false)
 	private double riskvalue;
 
 	public RiskPolicy() {
 	}
 
-	public int getRiskPolicyId() {
+	public String getRiskPolicyId() {
 		return this.riskPolicyId;
 	}
 
-	public void setRiskPolicyId(int riskPolicyId) {
+	public void setRiskPolicyId(String riskPolicyId) {
 		this.riskPolicyId = riskPolicyId;
 	}
 

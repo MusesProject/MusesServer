@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Outcome" table="outcome" catalog="muses">
+        <id name="outcomeId" type="java.lang.Long">
+            <column name="outcome_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="threat" class="Threat" fetch="select">
+            <column name="threat_id" not-null="true" />
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+        <property name="costbenefit" type="java.lang.Double">
+            <column name="costbenefit" precision="22" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>

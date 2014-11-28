@@ -10,27 +10,31 @@ import java.util.List;
  * 
  */
 @Entity
+@Table(name="dictionary")
 @NamedQuery(name="Dictionary.findAll", query="SELECT d FROM Dictionary d")
 public class Dictionary implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="term_id")
+	@Column(name="term_id", unique=true, nullable=false)
 	private String termId;
 
+	@Column(nullable=false, length=100)
 	private String description;
 
+	@Column(nullable=false, length=1)
 	private String position;
 
-	@Column(name="term_name")
+	@Column(name="term_name", nullable=false, length=50)
 	private String termName;
 
+	@Column(nullable=false, length=30)
 	private String type;
 
-	//bi-directional many-to-one association to TermValue
+	//bi-directional many-to-one association to TermValues
 	@OneToMany(mappedBy="dictionary")
-	private List<TermValue> termValues;
+	private List<TermValues> termValues;
 
 	public Dictionary() {
 	}
@@ -75,22 +79,22 @@ public class Dictionary implements Serializable {
 		this.type = type;
 	}
 
-	public List<TermValue> getTermValues() {
+	public List<TermValues> getTermValues() {
 		return this.termValues;
 	}
 
-	public void setTermValues(List<TermValue> termValues) {
+	public void setTermValues(List<TermValues> termValues) {
 		this.termValues = termValues;
 	}
 
-	public TermValue addTermValue(TermValue termValue) {
+	public TermValues addTermValue(TermValues termValue) {
 		getTermValues().add(termValue);
 		termValue.setDictionary(this);
 
 		return termValue;
 	}
 
-	public TermValue removeTermValue(TermValue termValue) {
+	public TermValues removeTermValue(TermValues termValue) {
 		getTermValues().remove(termValue);
 		termValue.setDictionary(null);
 

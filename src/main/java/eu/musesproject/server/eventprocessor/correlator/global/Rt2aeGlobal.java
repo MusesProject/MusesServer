@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.DeviceType;
+import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
 import eu.musesproject.server.eventprocessor.composers.AdditionalProtectionComposer;
 import eu.musesproject.server.eventprocessor.composers.ClueComposer;
@@ -92,26 +93,26 @@ public class Rt2aeGlobal {
 
 	
 	public Clue deviceSecurityStateChange(Event event, String name, String type){
-		eu.musesproject.server.entity.Device device = null;
+		Devices device = null;
 		logger.info("[deviceSecurityStateChange]");
 		Clue composedClue = ClueComposer.composeClue(event, name, type);
 		deviceSecurityClues.add(composedClue);
 		DeviceSecurityState deviceSecurityState = new DeviceSecurityState();
 		//Manage device in database
-		dbManager.open();
-		eu.musesproject.server.entity.Device deviceInstance = dbManager.getDeviceByIMEI(event.getDeviceId());
+		Devices deviceInstance = dbManager.getDeviceByIMEI(event.getDeviceId());
 		if (deviceInstance==null) {
-			device = new eu.musesproject.server.entity.Device();
+			device = new Devices();
 			device.setImei(event.getDeviceId());
 			device.setName(event.getDeviceId());
 			DeviceType deviceType = new DeviceType();
 			deviceType.setDeviceTypeId(1222);//TODO manage device type conveniently
 			device.setDeviceType(deviceType);
-			dbManager.saveDevice(device);
+			dbManager.persist(device);
 		}else{
 			device = deviceInstance;
 		}
-		deviceSecurityState.setDevice_id(device.getDevice_id());//TODO Set device id and manage a different object to manage clues for each device
+		//FIXME no function right now change to current implementation
+		//deviceSecurityState.setDevice_id(device.getDevice_id());//TODO Set device id and manage a different object to manage clues for each device
 		deviceSecurityState.setClues(deviceSecurityClues);
 		try{
 			rt2aeServer.warnDeviceSecurityStateChange(deviceSecurityState);

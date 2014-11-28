@@ -16,7 +16,7 @@ public class DeviceSecurityState implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="device_security_state_id")
+	@Column(name="device_security_state_id", unique=true, nullable=false)
 	private String deviceSecurityStateId;
 
 	public DeviceSecurityState() {

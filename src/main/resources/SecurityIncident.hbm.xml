@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="SecurityIncident" table="security_incident" catalog="muses">
+        <id name="securityIncidentId" type="java.lang.Long">
+            <column name="security_incident_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="decision" class="Decision" fetch="select">
+            <column name="decision_id">
+                <comment>FK to table DECISION(decision_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="users" class="Users" fetch="select">
+            <column name="user_id">
+                <comment>FK to table USERS(user_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="devices" class="Devices" fetch="select">
+            <column name="device_id">
+                <comment>FK to table DEVICES(device_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="simpleEvents" class="SimpleEvents" fetch="select">
+            <column name="event_id">
+                <comment>FK to table EVENTS(event_id)</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="50" not-null="true">
+                <comment>Description of the security incident</comment>
+            </column>
+        </property>
+        <property name="modification" type="timestamp">
+            <column name="modification" length="19">
+                <comment>Time of detection of the additional protection</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

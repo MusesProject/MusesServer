@@ -17,11 +17,13 @@ public class ThreatType implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="threat_type_id")
+	@Column(name="threat_type_id", unique=true, nullable=false)
 	private int threatTypeId;
 
+	@Column(nullable=false, length=100)
 	private String description;
 
+	@Column(nullable=false, length=50)
 	private String type;
 
 	//bi-directional many-to-one association to RiskInformation

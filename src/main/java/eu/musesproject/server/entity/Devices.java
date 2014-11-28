@@ -12,37 +12,43 @@ import java.util.List;
 @Entity
 @Table(name="devices")
 @NamedQueries({
-	@NamedQuery(name="Device.findAll", 
-				query="SELECT d FROM Device d"),
-				@NamedQuery(name="Device.findById", 
-				query="SELECT d FROM Device d where d.device_id = :device_id"),
+	@NamedQuery(name="Devices.findAll", 
+				query="SELECT d FROM Devices d"),
+	@NamedQuery(name="Devices.findById", 
+				query="SELECT d FROM Devices d where d.deviceId = :device_id"),
 	@NamedQuery(name="Device.findByIMEI", 
-				query="SELECT d FROM Device d where d.imei = :imei")
+				query="SELECT d FROM Devices d where d.imei = :imei")
 })
-public class Device implements Serializable {
+public class Devices implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="device_id")
-	private int device_id;
+	@Column(name="device_id", unique=true, nullable=false)
+	private String deviceId;
 
 	@Lob
 	private byte[] certificate;
 
+	@Column(length=100)
 	private String description;
 
+	@Column(length=30)
 	private String imei;
 
+	@Column(length=30)
 	private String mac;
 
+	@Column(nullable=false, length=30)
 	private String name;
 
+	@Column(length=30)
 	private String OS_name;
 
+	@Column(length=20)
 	private String OS_version;
 
-	@Column(name="owner_type")
+	@Column(name="owner_type", length=1)
 	private String ownerType;
 
 	@Column(name="security_level")
@@ -57,30 +63,30 @@ public class Device implements Serializable {
 
 	//bi-directional many-to-one association to DeviceType
 	@ManyToOne
-	@JoinColumn(name="type")
+	@JoinColumn(name="type", nullable=false)
 	private DeviceType deviceType;
 
 	//bi-directional many-to-one association to SecurityIncident
 	@OneToMany(mappedBy="device")
 	private List<SecurityIncident> securityIncidents;
 
-	//bi-directional many-to-one association to SimpleEvent
+	//bi-directional many-to-one association to SimpleEvents
 	@OneToMany(mappedBy="device")
-	private List<SimpleEvent> simpleEvents;
+	private List<SimpleEvents> simpleEvents;
 
 	//bi-directional many-to-one association to UserBehaviour
 	@OneToMany(mappedBy="device")
 	private List<UserBehaviour> userBehaviours;
 
-	public Device() {
+	public Devices() {
 	}
 
-	public int getDevice_id() {
-		return this.device_id;
+	public String getDeviceId() {
+		return this.deviceId;
 	}
 
-	public void setDevice_id(int deviceId) {
-		this.device_id = deviceId;
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public byte[] getCertificate() {
@@ -215,22 +221,22 @@ public class Device implements Serializable {
 		return securityIncident;
 	}
 
-	public List<SimpleEvent> getSimpleEvents() {
+	public List<SimpleEvents> getSimpleEvents() {
 		return this.simpleEvents;
 	}
 
-	public void setSimpleEvents(List<SimpleEvent> simpleEvents) {
+	public void setSimpleEvents(List<SimpleEvents> simpleEvents) {
 		this.simpleEvents = simpleEvents;
 	}
 
-	public SimpleEvent addSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents addSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().add(simpleEvent);
 		simpleEvent.setDevice(this);
 
 		return simpleEvent;
 	}
 
-	public SimpleEvent removeSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents removeSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().remove(simpleEvent);
 		simpleEvent.setDevice(null);
 

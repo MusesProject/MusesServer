@@ -1,11 +1,8 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.*;
-
 import java.sql.Time;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -16,33 +13,32 @@ import java.util.List;
  */
 @Entity
 @Table(name="simple_events")
-@NamedQuery(name="SimpleEvent.findAll", query="SELECT s FROM SimpleEvent s")
-public class SimpleEvent implements Serializable {
+@NamedQuery(name="SimpleEvents.findAll", query="SELECT s FROM SimpleEvents s")
+public class SimpleEvents implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="event_id")
-	private int eventId;
+	@Column(name="event_id", unique=true, nullable=false)
+	private String eventId;
 
+	@Column(nullable=false, length=5000)
 	private String data;
 
 	@Temporal(TemporalType.DATE)
+	@Column(nullable=false)
 	private Date date;
 
 	private int duration;
 
-	private byte[] EP_can_access;
+	private int EP_can_access;
 
-	private byte[] KRS_can_access;
+	private int KRS_can_access;
 
-	private byte[] RT2AE_can_access;
+	private int RT2AE_can_access;
 
+	@Column(nullable=false)
 	private Time time;
-
-	//bi-directional many-to-one association to AccessRequest
-	@OneToMany(mappedBy="simpleEvent")
-	private List<AccessRequest> accessRequests;
 
 	//bi-directional many-to-one association to AdditionalProtection
 	@OneToMany(mappedBy="simpleEvent")
@@ -56,48 +52,48 @@ public class SimpleEvent implements Serializable {
 	@OneToMany(mappedBy="simpleEvent")
 	private List<SecurityIncident> securityIncidents;
 
-	//bi-directional many-to-one association to Source
+	//bi-directional many-to-one association to Applications
 	@ManyToOne
-	@JoinColumn(name="source_id")
-	private Source source;
+	@JoinColumn(name="app_id", nullable=false)
+	private Applications application;
 
-	//bi-directional many-to-one association to Application
+	//bi-directional many-to-one association to Assets
 	@ManyToOne
-	@JoinColumn(name="app_id")
-	private Application application;
+	@JoinColumn(name="asset_id", nullable=false)
+	private Assets asset;
 
-	//bi-directional many-to-one association to Asset
+	//bi-directional many-to-one association to Devices
 	@ManyToOne
-	@JoinColumn(name="asset_id")
-	private Asset asset;
-
-	//bi-directional many-to-one association to Device
-	@ManyToOne
-	@JoinColumn(name="device_id")
-	private Device device;
+	@JoinColumn(name="device_id", nullable=false)
+	private Devices device;
 
 	//bi-directional many-to-one association to EventType
 	@ManyToOne
-	@JoinColumn(name="event_type_id")
+	@JoinColumn(name="event_type_id", nullable=false)
 	private EventType eventType;
 
-	//bi-directional many-to-one association to User
+	//bi-directional many-to-one association to Sources
 	@ManyToOne
-	@JoinColumn(name="user_id")
-	private User user;
+	@JoinColumn(name="source_id")
+	private Sources source;
+
+	//bi-directional many-to-one association to Users
+	@ManyToOne
+	@JoinColumn(name="user_id", nullable=false)
+	private Users user;
 
 	//bi-directional many-to-one association to ThreatClue
 	@OneToMany(mappedBy="simpleEvent")
 	private List<ThreatClue> threatClues;
 
-	public SimpleEvent() {
+	public SimpleEvents() {
 	}
 
-	public int getEventId() {
+	public String getEventId() {
 		return this.eventId;
 	}
 
-	public void setEventId(int eventId) {
+	public void setEventId(String eventId) {
 		this.eventId = eventId;
 	}
 
@@ -125,40 +121,28 @@ public class SimpleEvent implements Serializable {
 		this.duration = duration;
 	}
 
-	public byte[] getEP_can_access() {
+	public int getEP_can_access() {
 		return this.EP_can_access;
 	}
 
-	public void setEP_can_access(byte[] EP_can_access) {
-		if (EP_can_access == null) {
-			this.EP_can_access = new byte[0];
-		} else {
-			this.EP_can_access = Arrays.copyOf(EP_can_access, EP_can_access.length);
-		}
+	public void setEP_can_access(int EP_can_access) {
+		this.EP_can_access = EP_can_access;
 	}
 
-	public byte[] getKRS_can_access() {
+	public int getKRS_can_access() {
 		return this.KRS_can_access;
 	}
 
-	public void setKRS_can_access(byte[] KRS_can_access) {
-		if (KRS_can_access == null) {
-			this.KRS_can_access = new byte[0];
-		} else {
-			this.KRS_can_access = Arrays.copyOf(KRS_can_access, KRS_can_access.length);
-		}
+	public void setKRS_can_access(int KRS_can_access) {
+		this.KRS_can_access = KRS_can_access;
 	}
 
-	public byte[] getRT2AE_can_access() {
+	public int getRT2AE_can_access() {
 		return this.RT2AE_can_access;
 	}
 
-	public void setRT2AE_can_access(byte[] RT2AE_can_access) {
-		if (RT2AE_can_access == null) {
-			this.RT2AE_can_access = new byte[0];
-		} else {
-			this.RT2AE_can_access = Arrays.copyOf(RT2AE_can_access, RT2AE_can_access.length);
-		}
+	public void setRT2AE_can_access(int RT2AE_can_access) {
+		this.RT2AE_can_access = RT2AE_can_access;
 	}
 
 	public Time getTime() {
@@ -167,28 +151,6 @@ public class SimpleEvent implements Serializable {
 
 	public void setTime(Time time) {
 		this.time = time;
-	}
-
-	public List<AccessRequest> getAccessRequests() {
-		return this.accessRequests;
-	}
-
-	public void setAccessRequests(List<AccessRequest> accessRequests) {
-		this.accessRequests = accessRequests;
-	}
-
-	public AccessRequest addAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().add(accessRequest);
-		accessRequest.setSimpleEvent(this);
-
-		return accessRequest;
-	}
-
-	public AccessRequest removeAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().remove(accessRequest);
-		accessRequest.setSimpleEvent(null);
-
-		return accessRequest;
 	}
 
 	public List<AdditionalProtection> getAdditionalProtections() {
@@ -257,35 +219,27 @@ public class SimpleEvent implements Serializable {
 		return securityIncident;
 	}
 
-	public Source getSource() {
-		return this.source;
-	}
-
-	public void setSource(Source source) {
-		this.source = source;
-	}
-
-	public Application getApplication() {
+	public Applications getApplication() {
 		return this.application;
 	}
 
-	public void setApplication(Application application) {
+	public void setApplication(Applications application) {
 		this.application = application;
 	}
 
-	public Asset getAsset() {
+	public Assets getAsset() {
 		return this.asset;
 	}
 
-	public void setAsset(Asset asset) {
+	public void setAsset(Assets asset) {
 		this.asset = asset;
 	}
 
-	public Device getDevice() {
+	public Devices getDevice() {
 		return this.device;
 	}
 
-	public void setDevice(Device device) {
+	public void setDevice(Devices device) {
 		this.device = device;
 	}
 
@@ -297,11 +251,19 @@ public class SimpleEvent implements Serializable {
 		this.eventType = eventType;
 	}
 
-	public User getUser() {
+	public Sources getSource() {
+		return this.source;
+	}
+
+	public void setSource(Sources source) {
+		this.source = source;
+	}
+
+	public Users getUser() {
 		return this.user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 

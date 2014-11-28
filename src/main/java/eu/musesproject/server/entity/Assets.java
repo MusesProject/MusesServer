@@ -12,56 +12,58 @@ import java.util.List;
 @Entity
 @Table(name="assets")
 @NamedQueries({
-	@NamedQuery(name="Asset.findAll", 
-			    query="SELECT a FROM Asset a"),
-	@NamedQuery(name="Asset.findByLocation", 
-	 			query="SELECT a FROM Asset a where a.location = :location"),
-	@NamedQuery(name="Asset.findByTitle", 
-		query="SELECT a FROM Asset a where a.title = :title")
+	@NamedQuery(name="Assets.findAll", 
+			    query="SELECT a FROM Assets a"),
+	@NamedQuery(name="Assets.findByLocation", 
+	 			query="SELECT a FROM Assets a where a.location = :location"),
+	@NamedQuery(name="Assets.findByTitle", 
+				query="SELECT a FROM Assets a where a.title = :title"),
+	@NamedQuery(name="Assets.deleteAssetByTitle", 
+				query="delete FROM Assets a where a.title = :title")
 })
-public class Asset implements Serializable {
+public class Assets implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="asset_id")
-	private int assetId;
+	@Column(name="asset_id", unique=true, nullable=false)
+	private String assetId;
 
-	@Column(name="confidential_level")
+	@Column(name="confidential_level", nullable=false, length=1)
 	private String confidentialLevel;
 
+	@Column(length=100)
 	private String description;
 
+	@Column(nullable=false, length=100)
 	private String location;
 
+	@Column(nullable=false, length=30)
 	private String title;
 
+	@Column(nullable=false)
 	private double value;
-
-	//bi-directional many-to-one association to AccessRequest
-	@OneToMany(mappedBy="asset")
-	private List<AccessRequest> accessRequests;
 
 	//bi-directional many-to-one association to RiskInformation
 	@OneToMany(mappedBy="asset")
 	private List<RiskInformation> riskInformations;
 
-	//bi-directional many-to-one association to SimpleEvent
+	//bi-directional many-to-one association to SimpleEvents
 	@OneToMany(mappedBy="asset")
-	private List<SimpleEvent> simpleEvents;
+	private List<SimpleEvents> simpleEvents;
 
 	//bi-directional many-to-one association to ThreatClue
 	@OneToMany(mappedBy="asset")
 	private List<ThreatClue> threatClues;
 
-	public Asset() {
+	public Assets() {
 	}
 
-	public int getAssetId() {
+	public String getAssetId() {
 		return this.assetId;
 	}
 
-	public void setAssetId(int assetId) {
+	public void setAssetId(String assetId) {
 		this.assetId = assetId;
 	}
 
@@ -105,28 +107,6 @@ public class Asset implements Serializable {
 		this.value = value;
 	}
 
-	public List<AccessRequest> getAccessRequests() {
-		return this.accessRequests;
-	}
-
-	public void setAccessRequests(List<AccessRequest> accessRequests) {
-		this.accessRequests = accessRequests;
-	}
-
-	public AccessRequest addAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().add(accessRequest);
-		accessRequest.setAsset(this);
-
-		return accessRequest;
-	}
-
-	public AccessRequest removeAccessRequest(AccessRequest accessRequest) {
-		getAccessRequests().remove(accessRequest);
-		accessRequest.setAsset(null);
-
-		return accessRequest;
-	}
-
 	public List<RiskInformation> getRiskInformations() {
 		return this.riskInformations;
 	}
@@ -149,22 +129,22 @@ public class Asset implements Serializable {
 		return riskInformation;
 	}
 
-	public List<SimpleEvent> getSimpleEvents() {
+	public List<SimpleEvents> getSimpleEvents() {
 		return this.simpleEvents;
 	}
 
-	public void setSimpleEvents(List<SimpleEvent> simpleEvents) {
+	public void setSimpleEvents(List<SimpleEvents> simpleEvents) {
 		this.simpleEvents = simpleEvents;
 	}
 
-	public SimpleEvent addSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents addSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().add(simpleEvent);
 		simpleEvent.setAsset(this);
 
 		return simpleEvent;
 	}
 
-	public SimpleEvent removeSimpleEvent(SimpleEvent simpleEvent) {
+	public SimpleEvents removeSimpleEvent(SimpleEvents simpleEvent) {
 		getSimpleEvents().remove(simpleEvent);
 		simpleEvent.setAsset(null);
 

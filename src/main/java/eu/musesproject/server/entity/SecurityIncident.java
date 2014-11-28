@@ -17,12 +17,13 @@ public class SecurityIncident implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="security_incident_id")
+	@Column(name="security_incident_id", unique=true, nullable=false)
 	private String securityIncidentId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modification;
 
+	@Column(nullable=false, length=50)
 	private String name;
 
 	//bi-directional many-to-one association to Decision
@@ -30,20 +31,20 @@ public class SecurityIncident implements Serializable {
 	@JoinColumn(name="decision_id")
 	private Decision decision;
 
-	//bi-directional many-to-one association to Device
+	//bi-directional many-to-one association to Devices
 	@ManyToOne
 	@JoinColumn(name="device_id")
-	private Device device;
+	private Devices device;
 
-	//bi-directional many-to-one association to SimpleEvent
+	//bi-directional many-to-one association to SimpleEvents
 	@ManyToOne
 	@JoinColumn(name="event_id")
-	private SimpleEvent simpleEvent;
+	private SimpleEvents simpleEvent;
 
-	//bi-directional many-to-one association to User
+	//bi-directional many-to-one association to Users
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private User user;
+	private Users user;
 
 	public SecurityIncident() {
 	}
@@ -80,27 +81,27 @@ public class SecurityIncident implements Serializable {
 		this.decision = decision;
 	}
 
-	public Device getDevice() {
+	public Devices getDevice() {
 		return this.device;
 	}
 
-	public void setDevice(Device device) {
+	public void setDevice(Devices device) {
 		this.device = device;
 	}
 
-	public SimpleEvent getSimpleEvent() {
+	public SimpleEvents getSimpleEvent() {
 		return this.simpleEvent;
 	}
 
-	public void setSimpleEvent(SimpleEvent simpleEvent) {
+	public void setSimpleEvent(SimpleEvents simpleEvent) {
 		this.simpleEvent = simpleEvent;
 	}
 
-	public User getUser() {
+	public Users getUser() {
 		return this.user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 

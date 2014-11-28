@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Threat" table="threat" catalog="muses">
+        <id name="threatId" type="java.lang.Long">
+            <column name="threat_id" />
+            <generator class="identity" />
+        </id>
+        <property name="description" type="string">
+            <column name="description" not-null="true" />
+        </property>
+        <property name="probability" type="double">
+            <column name="probability" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="occurences" type="java.lang.Integer">
+            <column name="occurences" />
+        </property>
+        <property name="badOutcomeCount" type="java.lang.Integer">
+            <column name="badOutcomeCount" />
+        </property>
+        <property name="ttl" type="java.lang.Integer">
+            <column name="ttl" />
+        </property>
+        <set name="outcomes" table="outcome" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="threat_id" not-null="true" />
+            </key>
+            <one-to-many class="Outcome" />
+        </set>
+    </class>
+</hibernate-mapping>

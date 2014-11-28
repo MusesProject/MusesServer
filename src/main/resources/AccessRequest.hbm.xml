@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="AccessRequest" table="access_request" catalog="muses">
+        <id name="accessRequestId" type="java.lang.Long">
+            <column name="access_request_id" />
+            <generator class="identity" />
+        </id>
+        <property name="eventId" type="long">
+            <column name="event_id" not-null="true">
+                <comment>FK to table SIMPLE_EVENTS(event_id)</comment>
+            </column>
+        </property>
+        <property name="action" type="string">
+            <column name="action" length="14" not-null="true">
+                <comment>Possible value of user actions for this concrete access request</comment>
+            </column>
+        </property>
+        <property name="assetId" type="long">
+            <column name="asset_id" not-null="true">
+                <comment>FK to table ASSETS(asset_id)</comment>
+            </column>
+        </property>
+        <property name="userId" type="long">
+            <column name="user_id" not-null="true">
+                <comment>FK to table USERS(user_id)</comment>
+            </column>
+        </property>
+        <property name="decisionId" type="java.lang.Long">
+            <column name="decision_id">
+                <comment>Foreign key to the final decision associated to the access request, once the decision is taken. FK to table DECISIONS(decision_id)</comment>
+            </column>
+        </property>
+        <property name="modification" type="timestamp">
+            <column name="modification" length="19">
+                <comment>Time of detection of the access request</comment>
+            </column>
+        </property>
+        <property name="threatId" type="java.lang.Integer">
+            <column name="threat_id" unique="true" />
+        </property>
+        <property name="solved" type="java.lang.Integer">
+            <column name="solved" />
+        </property>
+        <property name="userAction" type="java.lang.Integer">
+            <column name="user_action" />
+        </property>
+        <set name="decisions" table="decision" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="access_request_id" not-null="true" />
+            </key>
+            <one-to-many class="Decision" />
+        </set>
+        <set name="threatClues" table="threat_clue" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="access_request_id">
+                    <comment>FK to table ACCESS_REQUEST(access_request_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="ThreatClue" />
+        </set>
+    </class>
+</hibernate-mapping>

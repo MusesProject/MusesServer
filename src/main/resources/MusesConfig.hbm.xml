@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="MusesConfig" table="muses_config" catalog="muses">
+        <id name="configId" type="java.lang.Integer">
+            <column name="config_id" />
+            <generator class="identity" />
+        </id>
+        <property name="configName" type="string">
+            <column name="config_name" length="30" not-null="true">
+                <comment>Name of the configuration</comment>
+            </column>
+        </property>
+        <property name="accessAttemptsBeforeBlocking" type="int">
+            <column name="access_attempts_before_blocking" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

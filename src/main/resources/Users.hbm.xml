@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Users" table="users" catalog="muses">
+        <id name="userId" type="java.lang.Long">
+            <column name="user_id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="30" not-null="true">
+                <comment>First and middle names</comment>
+            </column>
+        </property>
+        <property name="surname" type="string">
+            <column name="surname" length="50" not-null="true" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="50">
+                <comment>user's e-mail</comment>
+            </column>
+        </property>
+        <property name="username" type="string">
+            <column name="username" length="50" not-null="true" unique="true">
+                <comment>The user name used to login</comment>
+            </column>
+        </property>
+        <property name="password" type="string">
+            <column name="password" length="50" not-null="true">
+                <comment>The user's password</comment>
+            </column>
+        </property>
+        <property name="enabled" type="int">
+            <column name="enabled" not-null="true">
+                <comment>Specify whether the user's account is active (1) or not (0)</comment>
+            </column>
+        </property>
+        <property name="trustValue" type="java.lang.Double">
+            <column name="trust_value" precision="22" scale="0">
+                <comment>The trust value of the user will be between 0 and 1</comment>
+            </column>
+        </property>
+        <property name="roleId" type="int">
+            <column name="role_id" not-null="true">
+                <comment>FK to table ROLE(role_id)</comment>
+            </column>
+        </property>
+        <set name="securityIncidents" table="security_incident" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="user_id">
+                    <comment>FK to table USERS(user_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SecurityIncident" />
+        </set>
+        <set name="threatClues" table="threat_clue" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="user_id">
+                    <comment>FK to table USERS(user_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="ThreatClue" />
+        </set>
+        <set name="additionalProtections" table="additional_protection" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="user_id">
+                    <comment>FK to table USERS(user_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="AdditionalProtection" />
+        </set>
+        <set name="userBehaviours" table="user_behaviour" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="user_id" not-null="true" />
+            </key>
+            <one-to-many class="UserBehaviour" />
+        </set>
+        <set name="simpleEventses" table="simple_events" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="user_id" not-null="true">
+                    <comment>FK to table USERS(user_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SimpleEvents" />
+        </set>
+    </class>
+</hibernate-mapping>

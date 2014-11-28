@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="UserBehaviour" table="user_behaviour" catalog="muses">
+        <id name="userBehaviourId" type="java.lang.Long">
+            <column name="user_behaviour_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="decision" class="Decision" fetch="select">
+            <column name="decision_id" not-null="true">
+                <comment>FK to table DECISION(decision_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="users" class="Users" fetch="select">
+            <column name="user_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="devices" class="Devices" fetch="select">
+            <column name="device_id" not-null="true" />
+        </many-to-one>
+        <property name="action" type="string">
+            <column name="action" length="50" not-null="true">
+                <comment>The action made by the user</comment>
+            </column>
+        </property>
+        <property name="time" type="timestamp">
+            <column name="time" length="19" not-null="true">
+                <comment>Date of the recording</comment>
+            </column>
+        </property>
+        <property name="additionalInfo" type="string">
+            <column name="additional_info" length="50">
+                <comment>Useful additional information</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

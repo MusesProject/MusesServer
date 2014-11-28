@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Sources" table="sources" catalog="muses">
+        <id name="sourceId" type="java.lang.Long">
+            <column name="source_id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="50" not-null="true">
+                <comment>Name of the source component that originates actions, events,...</comment>
+            </column>
+        </property>
+        <set name="securityRuleses" table="security_rules" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="source_id">
+                    <comment>FK to table SOURCES(source_id) Identification of the component owner, in other words, the originator of the last version of the rule (e.g. Event
+                    Processor if it is manual or based on expert knowledge or Knowledge Refinement System if the current version is the outcome of knowledge refinement)</comment>
+                </column>
+            </key>
+            <one-to-many class="SecurityRules" />
+        </set>
+        <set name="simpleEventses" table="simple_events" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="source_id">
+                    <comment>FK to table SOURCES(source_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SimpleEvents" />
+        </set>
+    </class>
+</hibernate-mapping>

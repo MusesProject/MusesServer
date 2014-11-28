@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Dictionary" table="dictionary" catalog="muses">
+        <id name="termId" type="java.lang.Long">
+            <column name="term_id" />
+            <generator class="identity" />
+        </id>
+        <property name="termName" type="string">
+            <column name="term_name" length="50" not-null="true">
+                <comment>Name of the term in the dictionary</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="100" not-null="true">
+                <comment>Description of the term</comment>
+            </column>
+        </property>
+        <property name="position" type="string">
+            <column name="position" length="11" not-null="true">
+                <comment>Position of the term in a rule</comment>
+            </column>
+        </property>
+        <property name="type" type="string">
+            <column name="type" length="30" not-null="true">
+                <comment>Type of the term</comment>
+            </column>
+        </property>
+        <set name="termValueses" table="term_values" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="term_id" not-null="true">
+                    <comment>FK to the term which takes this value: table DICTIONARY(term_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="TermValues" />
+        </set>
+    </class>
+</hibernate-mapping>

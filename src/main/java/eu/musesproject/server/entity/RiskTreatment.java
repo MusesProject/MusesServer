@@ -16,14 +16,15 @@ public class RiskTreatment implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="risk_treatment_id")
+	@Column(name="risk_treatment_id", unique=true, nullable=false)
 	private int riskTreatmentId;
 
+	@Column(nullable=false, length=50)
 	private String description;
 
 	//bi-directional many-to-one association to RiskCommunication
 	@ManyToOne
-	@JoinColumn(name="risk_communication_id")
+	@JoinColumn(name="risk_communication_id", nullable=false)
 	private RiskCommunication riskCommunication;
 
 	public RiskTreatment() {

@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="SimpleEvents" table="simple_events" catalog="muses">
+        <id name="eventId" type="java.lang.Long">
+            <column name="event_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="users" class="Users" fetch="select">
+            <column name="user_id" not-null="true">
+                <comment>FK to table USERS(user_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="sources" class="Sources" fetch="select">
+            <column name="source_id">
+                <comment>FK to table SOURCES(source_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="assets" class="Assets" fetch="select">
+            <column name="asset_id" not-null="true">
+                <comment>FK to table ASSETS(asset_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="applications" class="Applications" fetch="select">
+            <column name="app_id" not-null="true">
+                <comment>FK to table APPLICATIONS(app_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="devices" class="Devices" fetch="select">
+            <column name="device_id" not-null="true">
+                <comment>FK to table DEVICES(device_id)</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="eventType" class="EventType" fetch="select">
+            <column name="event_type_id" not-null="true">
+                <comment>Type of the event. This is a reference to the EVENT_TYPES table, whose possible values are: {USER_ACTION,SENSOR_CONTEXT,USER_FEEDBACK} as simple
+                events</comment>
+            </column>
+        </many-to-one>
+        <property name="data" type="string">
+            <column name="data" length="5000" not-null="true">
+                <comment>Raw event content (this is the content of the whole event in JSON format)</comment>
+            </column>
+        </property>
+        <property name="date" type="date">
+            <column name="date" length="10" not-null="true">
+                <comment>Date when the event happens</comment>
+            </column>
+        </property>
+        <property name="time" type="time">
+            <column name="time" length="8" not-null="true">
+                <comment>Time at when the event happens</comment>
+            </column>
+        </property>
+        <property name="duration" type="java.lang.Integer">
+            <column name="duration">
+                <comment>Duration in milliseconds</comment>
+            </column>
+        </property>
+        <property name="epCanAccess" type="java.lang.Integer">
+            <column name="EP_can_access">
+                <comment>If TRUE (1) the Event Processor can access these data</comment>
+            </column>
+        </property>
+        <property name="rt2aeCanAccess" type="java.lang.Integer">
+            <column name="RT2AE_can_access">
+                <comment>If TRUE (1) the RT2AE can access these data</comment>
+            </column>
+        </property>
+        <property name="krsCanAccess" type="java.lang.Integer">
+            <column name="KRS_can_access">
+                <comment>If TRUE (1) the Knowledge Refinement System can access these data</comment>
+            </column>
+        </property>
+        <set name="riskInformations" table="risk_information" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="event_id" not-null="true">
+                    <comment>FK to table EVENTS(event_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="RiskInformation" />
+        </set>
+        <set name="securityIncidents" table="security_incident" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="event_id">
+                    <comment>FK to table EVENTS(event_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SecurityIncident" />
+        </set>
+        <set name="additionalProtections" table="additional_protection" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="event_id">
+                    <comment>FK to table EVENTS(event_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="AdditionalProtection" />
+        </set>
+        <set name="threatClues" table="threat_clue" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="event_id">
+                    <comment>FK to table EVENTS(event_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="ThreatClue" />
+        </set>
+    </class>
+</hibernate-mapping>

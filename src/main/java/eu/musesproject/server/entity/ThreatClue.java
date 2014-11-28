@@ -17,38 +17,40 @@ public class ThreatClue implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="threat_clue_id")
+	@Column(name="threat_clue_id", unique=true, nullable=false)
 	private String threatClueId;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable=false)
 	private Date modification;
 
+	@Column(nullable=false, length=50)
 	private String name;
-
-	//bi-directional many-to-one association to ThreatType
-	@ManyToOne
-	@JoinColumn(name="threat_type_id")
-	private ThreatType threatType;
 
 	//bi-directional many-to-one association to AccessRequest
 	@ManyToOne
 	@JoinColumn(name="access_request_id")
 	private AccessRequest accessRequest;
 
-	//bi-directional many-to-one association to Asset
+	//bi-directional many-to-one association to Assets
 	@ManyToOne
 	@JoinColumn(name="asset_id")
-	private Asset asset;
+	private Assets asset;
 
-	//bi-directional many-to-one association to SimpleEvent
+	//bi-directional many-to-one association to SimpleEvents
 	@ManyToOne
 	@JoinColumn(name="event_id")
-	private SimpleEvent simpleEvent;
+	private SimpleEvents simpleEvent;
 
-	//bi-directional many-to-one association to User
+	//bi-directional many-to-one association to ThreatType
+	@ManyToOne
+	@JoinColumn(name="threat_type_id", nullable=false)
+	private ThreatType threatType;
+
+	//bi-directional many-to-one association to Users
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private User user;
+	private Users user;
 
 	public ThreatClue() {
 	}
@@ -77,14 +79,6 @@ public class ThreatClue implements Serializable {
 		this.name = name;
 	}
 
-	public ThreatType getThreatType() {
-		return this.threatType;
-	}
-
-	public void setThreatType(ThreatType threatType) {
-		this.threatType = threatType;
-	}
-
 	public AccessRequest getAccessRequest() {
 		return this.accessRequest;
 	}
@@ -93,27 +87,35 @@ public class ThreatClue implements Serializable {
 		this.accessRequest = accessRequest;
 	}
 
-	public Asset getAsset() {
+	public Assets getAsset() {
 		return this.asset;
 	}
 
-	public void setAsset(Asset asset) {
+	public void setAsset(Assets asset) {
 		this.asset = asset;
 	}
 
-	public SimpleEvent getSimpleEvent() {
+	public SimpleEvents getSimpleEvent() {
 		return this.simpleEvent;
 	}
 
-	public void setSimpleEvent(SimpleEvent simpleEvent) {
+	public void setSimpleEvent(SimpleEvents simpleEvent) {
 		this.simpleEvent = simpleEvent;
 	}
 
-	public User getUser() {
+	public ThreatType getThreatType() {
+		return this.threatType;
+	}
+
+	public void setThreatType(ThreatType threatType) {
+		this.threatType = threatType;
+	}
+
+	public Users getUser() {
 		return this.user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 

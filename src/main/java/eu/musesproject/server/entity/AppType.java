@@ -17,16 +17,18 @@ public class AppType implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="app_type_id")
+	@Column(name="app_type_id", unique=true, nullable=false)
 	private String appTypeId;
 
+	@Column(length=100)
 	private String description;
 
+	@Column(nullable=false, length=30)
 	private String type;
 
-	//bi-directional many-to-one association to Application
+	//bi-directional many-to-one association to Applications
 	@OneToMany(mappedBy="appType")
-	private List<Application> applications;
+	private List<Applications> applications;
 
 	public AppType() {
 	}
@@ -55,22 +57,22 @@ public class AppType implements Serializable {
 		this.type = type;
 	}
 
-	public List<Application> getApplications() {
+	public List<Applications> getApplications() {
 		return this.applications;
 	}
 
-	public void setApplications(List<Application> applications) {
+	public void setApplications(List<Applications> applications) {
 		this.applications = applications;
 	}
 
-	public Application addApplication(Application application) {
+	public Applications addApplication(Applications application) {
 		getApplications().add(application);
 		application.setAppType(this);
 
 		return application;
 	}
 
-	public Application removeApplication(Application application) {
+	public Applications removeApplication(Applications application) {
 		getApplications().remove(application);
 		application.setAppType(null);
 

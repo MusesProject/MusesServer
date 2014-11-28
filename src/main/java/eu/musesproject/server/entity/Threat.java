@@ -11,32 +11,33 @@ import java.util.List;
  * The persistent class for the threat database table.
  * 
  */
-
 @Entity
 @Table(name="threat")
-@NamedQueries({
+@NamedQueries ({
 	@NamedQuery(name="Threat.findAll", 
-			    query="SELECT t FROM Threat t"),
-    @NamedQuery(name="Threat.findThreatById", 
-			    query="SELECT t FROM Threat t where t.threat_id = :threat_id"),
+		    	query="SELECT t FROM Threat t"),
+	@NamedQuery(name="Threat.findThreatById", 
+		    	query="SELECT t FROM Threat t where t.threatId = :threat_id"),
 	@NamedQuery(name="Threat.findThreatbyDescription", 
-	 			query="SELECT t FROM Threat t where t.description = :description"),
-	
+ 				query="SELECT t FROM Threat t where t.description = :description"),
 })
 public class Threat implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@Column(name="threat_id")
-	private int threat_id;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="threat_id", unique=true, nullable=false)
+	private String threatId;
 
 	private int badOutcomeCount;
 
 	@Lob
+	@Column(nullable=false)
 	private String description;
 
 	private int occurences;
 
+	@Column(nullable=false)
 	private double probability;
 
 	private int ttl;
@@ -48,12 +49,12 @@ public class Threat implements Serializable {
 	public Threat() {
 	}
 
-	public int getThreatId() {
-		return this.threat_id;
+	public String getThreatId() {
+		return this.threatId;
 	}
 
-	public void setThreatId(int threatId) {
-		this.threat_id = threatId;
+	public void setThreatId(String threatId) {
+		this.threatId = threatId;
 	}
 
 	public int getBadOutcomeCount() {

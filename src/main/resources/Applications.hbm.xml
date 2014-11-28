@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="Applications" table="applications" catalog="muses">
+        <id name="appId" type="java.lang.Long">
+            <column name="app_id" />
+            <generator class="identity" />
+        </id>
+        <version name="version" type="string">
+            <column name="version" length="20">
+                <comment>The current version of the application</comment>
+            </column>
+        </version>
+        <many-to-one name="appType" class="AppType" fetch="select">
+            <column name="type">
+                <comment>FK to table APP_TYPE(app_type_id)</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="30" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="100" />
+        </property>
+        <property name="lastUpdate" type="timestamp">
+            <column name="last_update" length="19">
+                <comment>Last update of application</comment>
+            </column>
+        </property>
+        <property name="vendor" type="string">
+            <column name="vendor" length="30">
+                <comment>Vendor of the application</comment>
+            </column>
+        </property>
+        <property name="isMusesAware" type="java.lang.Integer">
+            <column name="is_MUSES_aware">
+                <comment>If TRUE (1) -&gt; the application can be monitored easily (it interacts with the system through the API)</comment>
+            </column>
+        </property>
+        <set name="simpleEventses" table="simple_events" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="app_id" not-null="true">
+                    <comment>FK to table APPLICATIONS(app_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="SimpleEvents" />
+        </set>
+    </class>
+</hibernate-mapping>

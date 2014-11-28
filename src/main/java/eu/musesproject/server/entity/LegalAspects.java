@@ -10,24 +10,28 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="legal_aspects")
-@NamedQuery(name="LegalAspect.findAll", query="SELECT l FROM LegalAspect l")
-public class LegalAspect implements Serializable {
+@NamedQuery(name="LegalAspects.findAll", query="SELECT l FROM LegalAspects l")
+public class LegalAspects implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(unique=true, nullable=false, length=50)
 	private String description;
 
-	@Column(name="data_complete_erasure")
+	@Column(name="data_complete_erasure", nullable=false)
 	private byte[] dataCompleteErasure;
 
+	@Column(nullable=false)
 	private int EP_hard_limit;
 
+	@Column(nullable=false)
 	private int KRS_hard_limit;
 
+	@Column(nullable=false)
 	private int RT2AE_hard_limit;
 
-	public LegalAspect() {
+	public LegalAspects() {
 	}
 
 	public String getDescription() {

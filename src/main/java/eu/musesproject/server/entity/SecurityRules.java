@@ -1,10 +1,7 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-
 import javax.persistence.*;
-
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -16,43 +13,48 @@ import java.util.List;
 @Entity
 @Table(name="security_rules")
 @NamedQueries ({
-	@NamedQuery(name="SecurityRule.findAll", 
-				query="SELECT s FROM SecurityRule s"),
-	@NamedQuery(name="SecurityRule.findByStatus", 
-				query="SELECT s FROM SecurityRule s where s.status = :status")
+	@NamedQuery(name="SecurityRules.findAll", 
+				query="SELECT s FROM SecurityRules s"),
+	@NamedQuery(name="SecurityRules.findByStatus", 
+				query="SELECT s FROM SecurityRules s where s.status = :status")
 })
-public class SecurityRule implements Serializable {
+public class SecurityRules implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="security_rule_id")
+	@Column(name="security_rule_id", unique=true, nullable=false)
 	private String securityRuleId;
 
+	@Column(nullable=false, length=2000)
 	private String description;
 
 	@Lob
 	private byte[] file;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable=false)
 	private Date modification;
 
+	@Column(nullable=false, length=2000)
 	private String name;
 
+	@Column(nullable=false)
 	private byte[] refined;
 
+	@Column(nullable=false, length=1)
 	private String status;
 
-	//bi-directional many-to-one association to RefinedSecurityRule
+	//bi-directional many-to-one association to RefinedSecurityRules
 	@OneToMany(mappedBy="securityRule")
-	private List<RefinedSecurityRule> refinedSecurityRules;
+	private List<RefinedSecurityRules> refinedSecurityRules;
 
-	//bi-directional many-to-one association to Source
+	//bi-directional many-to-one association to Sources
 	@ManyToOne
 	@JoinColumn(name="source_id")
-	private Source source;
+	private Sources source;
 
-	public SecurityRule() {
+	public SecurityRules() {
 	}
 
 	public String getSecurityRuleId() {
@@ -76,11 +78,7 @@ public class SecurityRule implements Serializable {
 	}
 
 	public void setFile(byte[] file) {
-		if (file == null) {
-			this.file = new byte[0];
-		} else {
-			this.file = Arrays.copyOf(file, file.length);
-		}
+		this.file = file;
 	}
 
 	public Date getModification() {
@@ -104,11 +102,7 @@ public class SecurityRule implements Serializable {
 	}
 
 	public void setRefined(byte[] refined) {
-		if (refined == null) {
-			this.refined = new byte[0];
-		} else {
-			this.refined = Arrays.copyOf(refined, refined.length);
-		}
+		this.refined = refined;
 	}
 
 	public String getStatus() {
@@ -119,33 +113,33 @@ public class SecurityRule implements Serializable {
 		this.status = status;
 	}
 
-	public List<RefinedSecurityRule> getRefinedSecurityRules() {
+	public List<RefinedSecurityRules> getRefinedSecurityRules() {
 		return this.refinedSecurityRules;
 	}
 
-	public void setRefinedSecurityRules(List<RefinedSecurityRule> refinedSecurityRules) {
+	public void setRefinedSecurityRules(List<RefinedSecurityRules> refinedSecurityRules) {
 		this.refinedSecurityRules = refinedSecurityRules;
 	}
 
-	public RefinedSecurityRule addRefinedSecurityRule(RefinedSecurityRule refinedSecurityRule) {
+	public RefinedSecurityRules addRefinedSecurityRule(RefinedSecurityRules refinedSecurityRule) {
 		getRefinedSecurityRules().add(refinedSecurityRule);
 		refinedSecurityRule.setSecurityRule(this);
 
 		return refinedSecurityRule;
 	}
 
-	public RefinedSecurityRule removeRefinedSecurityRule(RefinedSecurityRule refinedSecurityRule) {
+	public RefinedSecurityRules removeRefinedSecurityRule(RefinedSecurityRules refinedSecurityRule) {
 		getRefinedSecurityRules().remove(refinedSecurityRule);
 		refinedSecurityRule.setSecurityRule(null);
 
 		return refinedSecurityRule;
 	}
 
-	public Source getSource() {
+	public Sources getSource() {
 		return this.source;
 	}
 
-	public void setSource(Source source) {
+	public void setSource(Sources source) {
 		this.source = source;
 	}
 

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="ThreatType" table="threat_type" catalog="muses">
+        <id name="threatTypeId" type="java.lang.Integer">
+            <column name="threat_type_id" />
+            <generator class="identity" />
+        </id>
+        <property name="type" type="string">
+            <column name="type" length="50" not-null="true">
+                <comment>Types of threat, such as WI-FI_SNIFFING, UNSECURE_NETWORK,MALWARE,SPYWARE,..</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="100" not-null="true">
+                <comment>Description of the threat</comment>
+            </column>
+        </property>
+        <set name="riskInformations" table="risk_information" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="threat_type" not-null="true">
+                    <comment>FK to table THREAT_TYPE(threat_type_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="RiskInformation" />
+        </set>
+        <set name="threatClues" table="threat_clue" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="threat_type_id" not-null="true">
+                    <comment>FK to table THREAT_TYPE(threat_type_id)</comment>
+                </column>
+            </key>
+            <one-to-many class="ThreatClue" />
+        </set>
+    </class>
+</hibernate-mapping>

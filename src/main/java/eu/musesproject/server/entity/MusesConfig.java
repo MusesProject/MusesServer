@@ -16,13 +16,13 @@ public class MusesConfig implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="config_id")
+	@Column(name="config_id", unique=true, nullable=false)
 	private int configId;
 
-	@Column(name="access_attempts_before_blocking")
+	@Column(name="access_attempts_before_blocking", nullable=false)
 	private int accessAttemptsBeforeBlocking;
 
-	@Column(name="config_name")
+	@Column(name="config_name", nullable=false, length=30)
 	private String configName;
 
 	public MusesConfig() {
