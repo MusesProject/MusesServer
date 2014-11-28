@@ -57,6 +57,7 @@ public class DBManager {
 		    Transaction trans=session.beginTransaction();
 		    session.save(transientInstance);
 		    trans.commit();
+		    session.close();
 		    logger.log(Level.INFO, MUSES_TAG + ":persist successful");
 		} catch (RuntimeException re) {
 			logger.log(Level.ERROR, MUSES_TAG + ":persist failed"+ re);
@@ -80,6 +81,7 @@ public class DBManager {
 			}
 			session.save(event);
 			trans.commit();
+			session.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
@@ -96,6 +98,7 @@ public class DBManager {
 				allowedEvents.add(event);
 			}
 		}
+		session.close();
 		return allowedEvents;
 	}
 	
@@ -113,6 +116,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Users.findByUsername").setString("username", username);;
 	    List<Users> userList = query.list();
+	    session.close();
 		for (Users u: userList){
 			if (u.getUsername().equals(username)) {
 				return u;
@@ -131,7 +135,8 @@ public class DBManager {
 	public Devices getDeviceByIMEI(String imei){
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Devices.findByIMEI").setString("imei", imei);
-	    List<Devices> deviceList = query.list();		
+	    List<Devices> deviceList = query.list();
+	    session.close();
 		for (Devices d: deviceList) {
 			if (d.getImei().equals(imei)){
 				return d;
@@ -151,6 +156,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Roles.findByName").setString("name", name);
 	    List<Roles> roleList = query.list();		
+	    session.close();
 		for (Roles r: roleList) {
 			if (r.getName().equals(name)){
 				return r;
@@ -168,7 +174,8 @@ public class DBManager {
 	public Domains getDomainByName(String name){
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Domains.findByName").setString("name", name);
-	    List<Domains> domainList = query.list();		
+	    List<Domains> domainList = query.list();
+	    session.close();
 		for (Domains d: domainList) {
 			if (d.getName().equals(name)){
 				return d;
@@ -186,7 +193,8 @@ public class DBManager {
 	public Assets getAssetByLocation(String location) {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Assets.findByName").setString("location", location);
-	    List<Assets> assetList = query.list();		
+	    List<Assets> assetList = query.list();
+	    session.close();
 		for (Assets a: assetList) {
 			if (a.getLocation().equals(location)){
 				return a;
@@ -204,7 +212,8 @@ public class DBManager {
 	public UserAuthorization getUserAuthByUserId(BigInteger userId) {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("UserAuthorization.findByUserId").setBigInteger("user_id", userId);
-	    List<UserAuthorization> userAuthorizationsList = query.list();		
+	    List<UserAuthorization> userAuthorizationsList = query.list();
+	    session.close();
 		for (UserAuthorization u: userAuthorizationsList) {
 			if (u.getUserId() == userId){
 				return u;
@@ -223,7 +232,8 @@ public class DBManager {
     public List<EventType> getEventTypeByKey(String key) {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("EventType.findByKey").setString("event_type_key", key);
-	    List<EventType> eventTypeList = query.list();		
+	    List<EventType> eventTypeList = query.list();
+	    session.close();
 		return eventTypeList;
     }
     
@@ -238,6 +248,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("SecurityRule.findByStatus").setString("status", status);
 	    List<SecurityRules> securityRuleList = query.list();
+	    session.close();
 		return securityRuleList;
     }
 
@@ -250,6 +261,7 @@ public class DBManager {
     public List<Decision> getDecisionByAccessRequestId(String accessRequestId) {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("AccessRequest.findById").setString("access_request_id", accessRequestId);
+	    session.close();
 	    AccessRequest accessRequest = (AccessRequest) query.uniqueResult();
     	return accessRequest.getDecisions();
     }
@@ -264,6 +276,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("RefinedSecurityRules.findByStatus").setString("status", status);
 	    List<RefinedSecurityRules> refinedSecurityRuleList = query.list();
+	    session.close();
     	List<RefinedSecurityRules> foundList = new ArrayList<RefinedSecurityRules>();
 		for (RefinedSecurityRules r: refinedSecurityRuleList){
 			if (r.getStatus().equals(status)){
@@ -288,6 +301,7 @@ public class DBManager {
 	public List<Users> getUsers() {	
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Users.findAll");
+	    session.close();
 		List<Users> users = query.list();
 		return users;
 	}
@@ -300,6 +314,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Users.findByUsername").setString("username", username);
 	    List<Users> users = query.list();
+	    session.close();
 		return users;
 	}
 	
@@ -313,6 +328,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Devices.findById").setString("device_id", device_id);
 		List<Devices> devices = query.list();
+		session.close();
 		return devices;		
 	}
 
@@ -325,6 +341,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Assets.findAll");
 	    List<Assets> assets = query.list();
+	    session.close();
 		return assets;		
 	}
     
@@ -336,7 +353,8 @@ public class DBManager {
     public List<Assets> findAssetByTitle(String title) {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Assets.findByTitle").setString("title", title);
-		List<Assets> assets = query.list(); 
+		List<Assets> assets = query.list();
+		session.close();
 		return assets;		
 	}
     
@@ -347,7 +365,8 @@ public class DBManager {
 	
     public void deleteAssetByTitle(String title) {
 	    Session session = sessionFactory.openSession();
-	    session.getNamedQuery("Assets.deleteAssetByTitle").setString("title", title);		
+	    session.getNamedQuery("Assets.deleteAssetByTitle").setString("title", title);
+	    session.close();
 	}
       
 	/**
@@ -359,6 +378,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Clue.findAll");
 		List<Clue> clues = query.list();
+		session.close();
 		return clues;		
 	}
 
@@ -372,6 +392,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Clue.findByValue").setString("value", value);
 		List<Clue> clues = query.list();
+		session.close();
 		return clues;		
 	}
     
@@ -382,6 +403,7 @@ public class DBManager {
 	public void deleteClueByValue(String value) {
 	    Session session = sessionFactory.openSession();
 	    session.getNamedQuery("Clue.deleteClueByValue").setString("value", value);
+	    session.close();
 	}
 	
 	/**
@@ -392,6 +414,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Threat.findAll");
 		List<Threat> threats = query.list();
+		session.close();
 		return threats;		
 	}
 	
@@ -404,6 +427,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Threat.findThreatbyDescription").setString("description", description);
 		List<Threat> threats = query.list();
+		session.close();
 		return threats;		
 	}
 	
@@ -416,6 +440,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Threat.findThreatById").setString("threat_id", threat_id.getThreatId());
 		List<Threat> threats = query.list();
+		session.close();
 		return threats;		
 	}
 	
@@ -450,9 +475,7 @@ public class DBManager {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
-				//em.close();
-			}
+			} 
 			
 			//this.setOutcomes(threat.getOutcomes());
 			Iterator<Outcome> o = threat.getOutcomes().iterator();
@@ -466,11 +489,10 @@ public class DBManager {
 				    trans.commit();
 				} catch (Exception e) {
 					e.printStackTrace();
-				} finally {
-					//em.close();
 				}
 				
 			}
+			session.close();
 		}
 	}
 
@@ -487,6 +509,7 @@ public class DBManager {
 			Transaction trans=session.beginTransaction();
 		    session.save(user);
 		    trans.commit();
+		    session.close();
 			try {
 				
 			} catch (Exception e) {
@@ -509,6 +532,7 @@ public class DBManager {
 			Transaction trans=session.beginTransaction();
 		    session.save(asset);
 		    trans.commit();
+		    session.close();
 			try {
 				
 			} catch (Exception e) {
@@ -530,6 +554,7 @@ public class DBManager {
 			Transaction trans=session.beginTransaction();
 		    session.save(clue);
 		    trans.commit();
+		    session.close();
 			try {
 				
 			} catch (Exception e) {
@@ -552,6 +577,7 @@ public class DBManager {
 			Transaction trans=session.beginTransaction();
 		    session.save(riskPolicy);
 		    trans.commit();
+		    session.close();
 			try {
 				
 			} catch (Exception e) {
@@ -574,6 +600,7 @@ public class DBManager {
 			Transaction trans=session.beginTransaction();
 		    session.save(accessrequest);
 		    trans.commit();
+		    session.close();
 			try {
 				
 			} catch (Exception e) {
@@ -591,6 +618,7 @@ public class DBManager {
 	public void deletefThreatByDescription(String description) {
 	    Session session = sessionFactory.openSession();
 	    session.getNamedQuery("Threat.deleteContentOfThreatTable"); // FIXME not implemented
+	    session.close();
 	}
 	
 	/**
@@ -601,6 +629,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("RiskPolicy.findAll");
 		List<RiskPolicy> riskpolicy = query.list();
+		session.close();
 		return riskpolicy;				
 	}
 
@@ -612,6 +641,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("Outcome.findAll");
 		List<Outcome> outcome = query.list();
+		session.close();
 		return outcome;				
 	}
 
@@ -626,6 +656,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("AccessRequest.findAll");
 		List<AccessRequest> accesrequests = query.list();
+		session.close();
 		return accesrequests;
 	}
 	
@@ -640,6 +671,7 @@ public class DBManager {
 	    Session session = sessionFactory.openSession();
 	    Query query = session.getNamedQuery("AccessRequest.findAccessrequestbyTimestampandThreat"); // FIXME not implemented
 		List<AccessRequest> accessrequests = query.list();
+		session.close();
 		return accessrequests;		
 	}
 	
