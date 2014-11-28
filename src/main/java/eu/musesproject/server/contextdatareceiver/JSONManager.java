@@ -329,6 +329,9 @@ public class JSONManager {
 				}else if (contextEventType.equals(ActionType.VIRUS_FOUND)){
 					contextEvent.setType(EventTypes.VIRUS_FOUND);
 					properties.put("event", contextEventType);
+				}else if (contextEventType.equals(ActionType.VIRUS_CLEANED)){
+					contextEvent.setType(EventTypes.VIRUS_CLEANED);
+					properties.put("event", contextEventType);
 				}else if (contextEventType.equals(ActionType.SECURITY_PROPERTY_CHANGED)){
 					contextEvent.setType(EventTypes.CHANGE_SECURITY_PROPERTY);
 					properties.put("event", contextEventType);

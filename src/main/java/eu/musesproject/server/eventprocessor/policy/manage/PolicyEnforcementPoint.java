@@ -21,6 +21,7 @@ package eu.musesproject.server.eventprocessor.policy.manage;
  * #L%
  */
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.wso2.balana.*;
@@ -35,6 +36,8 @@ import org.wso2.balana.finder.ResourceFinderModule;
 import org.wso2.balana.finder.impl.FileBasedPolicyFinderModule;
 import org.wso2.balana.xacml3.Attributes;
 
+import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.ByteArrayInputStream;
@@ -48,6 +51,7 @@ import java.util.Set;
 public class PolicyEnforcementPoint {
 	
 	private static Balana balana;
+	private static Logger logger = Logger.getLogger(PolicyEnforcementPoint.class.getName());
 	
 	public static String authorizedResources(String user, String resourceType){
 
@@ -58,18 +62,19 @@ public class PolicyEnforcementPoint {
 
         initBalana();
 
-        System.out.println("\nYou can check the authorization for children or descendants resource " +
+        
+        logger.info("\nYou can check the authorization for children or descendants resource " +
                                                                         "under root resources \n");
 
-        System.out.println("root-");
-        System.out.println("    ------ private ---- leadership");
-        System.out.println("    -              ---- support");
-        System.out.println("    -              ---- team");
-        System.out.println("    -              ---- business");
-        System.out.println("    -");
-        System.out.println("    ------ public  ---- developments");
-        System.out.println("    -              ---- news");
-        System.out.println();
+        logger.info("root-");
+        logger.info("    ------ private ---- leadership");
+        logger.info("    -              ---- support");
+        logger.info("    -              ---- team");
+        logger.info("    -              ---- business");
+        logger.info("    -");
+        logger.info("    ------ public  ---- developments");
+        logger.info("    -              ---- news");
+
 
         if ((console = System.console()) != null){
             userName = console.readLine("\nCheck authorized resources for user : ");
@@ -94,15 +99,15 @@ public class PolicyEnforcementPoint {
             String request = createXACMLRequest(userName, type);
             PDP pdp = PolicyDecisionPoint.getPDPNewInstance();
 
-            System.out.println("\n======================== XACML Request ====================");
-            System.out.println(request);
-            System.out.println("===========================================================");
+            logger.info("\n======================== XACML Request ====================");
+            logger.info(request);
+            logger.info("===========================================================");
 
             String response = pdp.evaluate(request);
 
-            System.out.println("\n======================== XACML Response ===================");
-            System.out.println(response);
-            System.out.println("===========================================================");
+            logger.info("\n======================== XACML Response ===================");
+            logger.info(response);
+            logger.info("===========================================================");
 
             Set<String> permitResources = new HashSet<String>();
             Set<String> denyResources = new HashSet<String>();
@@ -123,7 +128,7 @@ public class PolicyEnforcementPoint {
                     }
                 }
             } catch (ParsingException e) {
-                e.printStackTrace(); 
+            	logger.error("ParsingException:" + e.getCause());
             }
 
             if(permitResources.size() > 0){
@@ -148,7 +153,7 @@ public class PolicyEnforcementPoint {
         try{
             // using file based policy repository. so set the policy location as system property
             String policyLocation = (new File(".")).getCanonicalPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "policies";
-            System.out.println(policyLocation);
+            logger.info(policyLocation);
             System.setProperty(FileBasedPolicyFinderModule.POLICY_DIR_PROPERTY, policyLocation);
         } catch (IOException e) {
             System.err.println("Can not locate policy repository");
