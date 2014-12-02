@@ -4,14 +4,16 @@
 "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.password">muses11</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/muses</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.password">muses11</property>
+		<property name="hibernate.show_sql">true</property>
         <property name="hibernate.current_session_context_class">thread</property>
-        <property name="hibernate.search.autoregister_listeners">false</property>
+        
+        <!-- mapping -->
+        
         <mapping class="eu.musesproject.server.entity.AccessRequest"/>
         <mapping class="eu.musesproject.server.entity.AdditionalProtection"/>
         <mapping class="eu.musesproject.server.entity.Applications"/>
