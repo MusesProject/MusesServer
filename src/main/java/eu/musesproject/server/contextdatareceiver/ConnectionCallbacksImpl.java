@@ -57,17 +57,19 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		String sessionId = null;
 		String username = null;
 		String deviceId = null;
+		String requestId = null;
 
-		public ProcessThread(List<ContextEvent> contextList, String id, String user, String device) {
+		public ProcessThread(List<ContextEvent> contextList, String id, String user, String device, String request) {
 			list = contextList;
 			sessionId = id;
 			username = user;
 			deviceId = device;
+			requestId = request;
 		}
 
 		public void run() {
 			UserContextEventDataReceiver.getInstance().processContextEventList(
-					list, sessionId, username, deviceId);
+					list, sessionId, username, deviceId, requestId);
 		}
 	}
 	private void startConnection() {
@@ -83,6 +85,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		String requestType = null;
 		String username = null;
 		String deviceId = null;
+		String requestId = null;
 
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
 		ConnectionCallbacksImpl.receiveData = rData;
@@ -117,12 +120,14 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 								.getString(JSONIdentifiers.AUTH_USERNAME);
 						deviceId = root
 								.getString(JSONIdentifiers.AUTH_DEVICE_ID);
+						requestId = root
+								.getString(JSONIdentifiers.REQUEST_ID);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
-					Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId));
+					Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId, requestId));
 					t.start();
 
 					logger.log(Level.INFO,

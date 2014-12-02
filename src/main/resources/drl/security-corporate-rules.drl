@@ -368,7 +368,7 @@ rule "Blacklist app 00001"
 		e:EmailEvent(numberAttachments==0)
 		not AccessRequest(event=="AccessRequest Email without Attachments")
 	then
-		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
+		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject()+ "Request id:"+ e.getHashId());
 		int id = Rt2aeGlobal.composeAccessRequest(e,"Email action allowed","ALLOW", "<noAttachments>0</noAttachments>");
 		
 		AccessRequest request = new AccessRequest();
