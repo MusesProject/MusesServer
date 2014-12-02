@@ -16,7 +16,7 @@ import java.util.List;
 				query="SELECT d FROM Devices d"),
 	@NamedQuery(name="Devices.findById", 
 				query="SELECT d FROM Devices d where d.deviceId = :device_id"),
-	@NamedQuery(name="Device.findByIMEI", 
+	@NamedQuery(name="Devices.findByIMEI", 
 				query="SELECT d FROM Devices d where d.imei = :imei")
 })
 public class Devices implements Serializable {
