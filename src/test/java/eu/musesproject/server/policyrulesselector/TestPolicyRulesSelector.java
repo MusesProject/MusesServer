@@ -68,7 +68,7 @@ public class TestPolicyRulesSelector extends TestCase {
 		//First, we build the action associated to the decision to be taken
 		String action = ActionType.OPEN;
 		
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, action);
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions("test_hash", decisions, action);
 		assertNotNull(policyDT);
 		assertNotNull(policyDT.getRawPolicy());
 	}

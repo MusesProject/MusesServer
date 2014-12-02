@@ -255,7 +255,7 @@ public class Rt2aeGlobal {
 		PolicySelector policySelector = new PolicySelector();
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 		logger.info(policyDT.getRawPolicy());
 		logger.info(decision.toString());
@@ -304,7 +304,7 @@ public class Rt2aeGlobal {
 		PolicySelector policySelector = new PolicySelector();
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
@@ -345,7 +345,7 @@ public class Rt2aeGlobal {
 		PolicySelector policySelector = new PolicySelector();
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
@@ -400,7 +400,7 @@ public class Rt2aeGlobal {
 		PolicySelector policySelector = new PolicySelector();
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 
 		logger.info("		" + policyDT.getRawPolicy());
@@ -443,7 +443,7 @@ public class Rt2aeGlobal {
 		PolicySelector policySelector = new PolicySelector();
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 
 		logger.info("		" + policyDT.getRawPolicy());
@@ -563,7 +563,7 @@ public class Rt2aeGlobal {
 		PolicySelector policySelector = new PolicySelector();
 		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> request action:"+composedRequest.getAction());
-		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
 		logger.log(Level.INFO, MUSES_TAG + "Rt2aeGlobal=> Selecting policy action:"+composedRequest.getAction());
 
 		logger.info("		" + policyDT.getRawPolicy());

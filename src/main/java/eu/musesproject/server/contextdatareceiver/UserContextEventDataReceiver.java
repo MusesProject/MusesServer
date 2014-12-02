@@ -111,7 +111,7 @@ public class UserContextEventDataReceiver {
 		return formattedEvent;
 	}
 	
-	public void processContextEventList(List<ContextEvent> list, String currentSessionId, String username, String deviceId){
+	public void processContextEventList(List<ContextEvent> list, String currentSessionId, String username, String deviceId, String requestId){
 		
 		logger.info("processContextEventList: Processing list of "+list.size()+" elements.");
 		logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> processing events:"+list.size());		
@@ -133,6 +133,9 @@ public class UserContextEventDataReceiver {
 				formattedEvent.setSessionId(currentSessionId);
 				formattedEvent.setUsername(username);
 				formattedEvent.setDeviceId(deviceId);
+				if (requestId != null){
+					formattedEvent.setHashId(requestId);
+				}
 				logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> Inserting events into WM:"+formattedEvent);
 				logger.info("Inserting event into the WM:"+formattedEvent);
 				try{

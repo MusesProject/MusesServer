@@ -32,6 +32,7 @@ public class Event extends CepFact {
 	String sessionId;
 	String username;
 	String deviceId;
+	String hashId;
 
 	public Event() {
 		super();
@@ -88,5 +89,15 @@ public class Event extends CepFact {
 	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
 	}
+
+	public String getHashId() {
+		return hashId;
+	}
+
+	public void setHashId(String hashId) {
+		this.hashId = hashId;
+	}
+
+
 
 }
