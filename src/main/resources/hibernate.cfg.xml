@@ -10,6 +10,7 @@
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">muses11</property>
 		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.current_session_context_class">thread</property>
         <!-- mapping -->
         
         <mapping class="eu.musesproject.server.entity.AccessRequest"/>
