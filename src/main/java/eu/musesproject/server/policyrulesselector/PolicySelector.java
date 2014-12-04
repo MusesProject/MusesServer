@@ -296,7 +296,7 @@ public class PolicySelector {
 		result += "<action>";
 		result += "<type>"+action+"</type>";
 		if (requestId != null){
-			result = "<requestid>"+requestId+"</requestid>";
+			result = "<request_id>"+requestId+"</request_id>";
 		}
 		if (decision.equals(Decision.GRANTED_ACCESS)){
 			result += allowIni;
@@ -334,7 +334,7 @@ public class PolicySelector {
 		result += "<action>";
 		result += "<type>"+action+"</type>";
 		if (requestId != 0){
-			result +="<requestid>"+requestId+"</requestid>";
+			result +="<request_id>"+requestId+"</request_id>";
 		}
 		if (decision.equals(Decision.GRANTED_ACCESS)){
 			result += allowIni;
