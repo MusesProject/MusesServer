@@ -90,7 +90,7 @@ public class PolicySelector {
 		return resultPolicyDT;
 	}	
 	
-	public PolicyDT computePolicyBasedOnDecisions( String requestId,  Decision[] decisions, String action, Asset asset){ //Create device policy based on decision
+	public PolicyDT computePolicyBasedOnDecisions( int requestId,  Decision[] decisions, String action, Asset asset){ //Create device policy based on decision
 		String empty = "<empty/>";
 		PolicyDT resultPolicyDT = new PolicyDT();
 		String jsonDevicePolicy = null;
@@ -227,7 +227,7 @@ public class PolicySelector {
         return jsonDevicePolicy;
 	}
 	
-	private String getJSONDevicePolicy(String requestId, Decision decision, String action, Asset asset){
+	private String getJSONDevicePolicy(int requestId, Decision decision, String action, Asset asset){
 		String errorBuildingPolicy = "<errorBuildingPolicy/>";
 		String jsonDevicePolicy = null;
 		BufferedReader br = null;
@@ -321,7 +321,7 @@ public class PolicySelector {
 		return result;
 	}
 	
-	private String getActionSection(Decision decision, String action, String requestId, Asset asset){
+	private String getActionSection(Decision decision, String action, int requestId, Asset asset){
 		String result = null;
 		String allowIni = "<allow><!-- Allow these URLs (could be regular expressions) -->";
 		String denyIni = "<deny><!-- Allow these URLs (could be regular expressions) -->";
@@ -333,7 +333,7 @@ public class PolicySelector {
 		result = "<files>";
 		result += "<action>";
 		result += "<type>"+action+"</type>";
-		if (requestId != null){
+		if (requestId != 0){
 			result +="<requestid>"+requestId+"</requestid>";
 		}
 		if (decision.equals(Decision.GRANTED_ACCESS)){
