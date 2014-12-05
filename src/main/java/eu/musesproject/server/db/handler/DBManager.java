@@ -53,10 +53,11 @@ public class DBManager {
 	public void persist(Object transientInstance) {
 		try {
 			logger.log(Level.INFO, MUSES_TAG + ":persisting object instance");
-			Session session=getSessionFactory().getCurrentSession();
+			Session session=getSessionFactory().openSession();
 		    Transaction trans=session.beginTransaction();
 		    session.save(transientInstance);
 		    trans.commit();
+		    session.close();
 		    logger.log(Level.INFO, MUSES_TAG + ":persist successful");
 		} catch (RuntimeException re) {
 			logger.log(Level.ERROR, MUSES_TAG + ":persist failed"+ re);
@@ -66,7 +67,7 @@ public class DBManager {
 
 	public void inform(SimpleEvents event) {
 		try {
-			Session session=getSessionFactory().getCurrentSession();
+			Session session=getSessionFactory().openSession();
 		    Transaction trans=session.beginTransaction();
 			if (module.equals(ModuleType.KRS)){
 				event.setKRS_can_access(0);
@@ -80,6 +81,7 @@ public class DBManager {
 			}
 			session.save(event);
 			trans.commit();
+			session.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
@@ -87,7 +89,7 @@ public class DBManager {
 
 	
 	public List<SimpleEvents> getEvent(){
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("SimpleEvents.findAll");
 	    List<SimpleEvents> simpleEvents = query.list();
 		List<SimpleEvents> allowedEvents = new ArrayList<SimpleEvents>();
@@ -96,7 +98,7 @@ public class DBManager {
 				allowedEvents.add(event);
 			}
 		}
-		
+		session.close();
 		return allowedEvents;
 	}
 	
@@ -111,7 +113,7 @@ public class DBManager {
 	 */
 	
 	public Users getUserByUsername(String username) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Users.findByUsername").setString("username", username);;
 	    List<Users> userList = query.list();
 	    
@@ -120,6 +122,7 @@ public class DBManager {
 				return u;
 			}
 		}
+		session.close();
 		return null;
 	}
 	
@@ -131,7 +134,7 @@ public class DBManager {
 	 */
 	
 	public Devices getDeviceByIMEI(String imei){
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Devices.findByIMEI").setString("imei", imei);
 	    List<Devices> deviceList = query.list();
 	    
@@ -140,6 +143,7 @@ public class DBManager {
 				return d;
 			}
 		}
+		session.close();
 		return null;
 	}
 	
@@ -151,7 +155,7 @@ public class DBManager {
 	 */
 	
 	public Roles getRoleByName(String name){
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Roles.findByName").setString("name", name);
 	    List<Roles> roleList = query.list();		
 	    
@@ -160,6 +164,7 @@ public class DBManager {
 				return r;
 			}
 		}
+		session.close();
 		return null;
 	}
 	
@@ -170,7 +175,7 @@ public class DBManager {
 	 */
 	
 	public Domains getDomainByName(String name){
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Domains.findByName").setString("name", name);
 	    List<Domains> domainList = query.list();
 	    
@@ -179,6 +184,7 @@ public class DBManager {
 				return d;
 			}
 		}
+		session.close();
 		return null;
 	}
 	
@@ -189,7 +195,7 @@ public class DBManager {
 	 */
 	
 	public Assets getAssetByLocation(String location) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Assets.findByName").setString("location", location);
 	    List<Assets> assetList = query.list();
 	    
@@ -198,6 +204,7 @@ public class DBManager {
 				return a;
 			}
 		}
+		session.close();
 		return null;
 	}
 	
@@ -208,7 +215,7 @@ public class DBManager {
 	 */
 	
 	public UserAuthorization getUserAuthByUserId(BigInteger userId) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("UserAuthorization.findByUserId").setBigInteger("user_id", userId);
 	    List<UserAuthorization> userAuthorizationsList = query.list();
 	    
@@ -217,6 +224,7 @@ public class DBManager {
 				return u;
 			}
 		}
+		session.close();
 		return null;
 	}
 
@@ -228,10 +236,10 @@ public class DBManager {
      */
     
     public List<EventType> getEventTypeByKey(String key) {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("EventType.findByKey").setString("event_type_key", key);
 	    List<EventType> eventTypeList = query.list();
-	    
+	    session.close();
 		return eventTypeList;
     }
     
@@ -243,10 +251,10 @@ public class DBManager {
      */
     
     public List<SecurityRules> getSecurityRulesByStatus(String status) {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("SecurityRule.findByStatus").setString("status", status);
 	    List<SecurityRules> securityRuleList = query.list();
-	    
+	    session.close();
 		return securityRuleList;
     }
 
@@ -257,10 +265,11 @@ public class DBManager {
      */
 
     public List<Decision> getDecisionByAccessRequestId(String accessRequestId) {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("AccessRequest.findById").setString("access_request_id", accessRequestId);
 	    
 	    AccessRequest accessRequest = (AccessRequest) query.uniqueResult();
+	    session.close();
     	return accessRequest.getDecisions();
     }
     
@@ -271,7 +280,7 @@ public class DBManager {
      */
     
     public List<RefinedSecurityRules> getRefinedSecurityRulesByStatus(String status) {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("RefinedSecurityRules.findByStatus").setString("status", status);
 	    List<RefinedSecurityRules> refinedSecurityRuleList = query.list();
 	    
@@ -281,6 +290,7 @@ public class DBManager {
 				foundList.add(r);
 			}
 		}
+		session.close();
 		return foundList;
     }
 
@@ -297,10 +307,10 @@ public class DBManager {
      * @return List<User>
      */
 	public List<Users> getUsers() {	
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Users.findAll");
-	    
 		List<Users> users = query.list();
+		session.close();
 		return users;
 	}
     
@@ -309,10 +319,10 @@ public class DBManager {
      * @param username
      */
 	public List<Users> findUserByUsername(String username) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Users.findByUsername").setString("username", username);
 	    List<Users> users = query.list();
-	    
+	    session.close();
 		return users;
 	}
 	
@@ -323,10 +333,10 @@ public class DBManager {
      * @return List<Device>
      */
 	public List<Devices> findDeviceById(String device_id) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Devices.findById").setString("device_id", device_id);
 		List<Devices> devices = query.list();
-		
+		session.close();
 		return devices;		
 	}
 
@@ -336,10 +346,10 @@ public class DBManager {
      */
     
 	public List<Assets> getAssets() {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Assets.findAll");
 	    List<Assets> assets = query.list();
-	    
+	    session.close();
 		return assets;		
 	}
     
@@ -349,10 +359,10 @@ public class DBManager {
      * @return List<Asset>
      */
     public List<Assets> findAssetByTitle(String title) {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Assets.findByTitle").setString("title", title);
 		List<Assets> assets = query.list();
-		
+		session.close();
 		return assets;		
 	}
     
@@ -362,9 +372,9 @@ public class DBManager {
      */
 	
     public void deleteAssetByTitle(String title) {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    session.getNamedQuery("Assets.deleteAssetByTitle").setString("title", title);
-	    
+	    session.close();
 	}
       
 	/**
@@ -373,10 +383,10 @@ public class DBManager {
      */
 	
     public List<Clue> getClues() {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Clue.findAll");
 		List<Clue> clues = query.list();
-		
+		session.close();
 		return clues;		
 	}
 
@@ -387,10 +397,10 @@ public class DBManager {
      * @return List<Clue>
      */
     public List<Clue> findClueByValue(String value) {
-    	Session session=getSessionFactory().getCurrentSession();
+    	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Clue.findByValue").setString("value", value);
 		List<Clue> clues = query.list();
-		
+		session.close();
 		return clues;		
 	}
     
@@ -399,9 +409,9 @@ public class DBManager {
      * @param value
      */
 	public void deleteClueByValue(String value) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    session.getNamedQuery("Clue.deleteClueByValue").setString("value", value);
-	    
+	    session.close();
 	}
 	
 	/**
@@ -409,10 +419,10 @@ public class DBManager {
      * @return List<Threat>
      */
 	public List<Threat> getThreats() {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Threat.findAll");
 		List<Threat> threats = query.list();
-		
+		session.close();
 		return threats;		
 	}
 	
@@ -422,10 +432,10 @@ public class DBManager {
      * @return List<Threat>
      */
 	public List<Threat> findThreatbydescription(String description) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Threat.findThreatbyDescription").setString("description", description);
 		List<Threat> threats = query.list();
-		
+		session.close();
 		return threats;		
 	}
 	
@@ -435,10 +445,10 @@ public class DBManager {
      * @return List<Threat>
      */
 	public List<Threat> findThreatById(Threat threat_id) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Threat.findThreatById").setString("threat_id", threat_id.getThreatId());
 		List<Threat> threats = query.list();
-		
+		session.close();
 		return threats;		
 	}
 	
@@ -453,7 +463,7 @@ public class DBManager {
 			Threat threat = i.next();
 			Threat threat1 = new Threat();
 			try {
-				Session session=getSessionFactory().getCurrentSession();
+				Session session=getSessionFactory().openSession();
 				Transaction trans=session.beginTransaction();
 				if (this.findThreatbydescription(threat.getDescription()).size()>0){
 					List<Threat>	listtThreats = this.findThreatbydescription(threat.getDescription());
@@ -472,6 +482,7 @@ public class DBManager {
 				    trans.commit();
 				    
 				}
+				session.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
@@ -479,7 +490,7 @@ public class DBManager {
 			//this.setOutcomes(threat.getOutcomes());
 			Iterator<Outcome> o = threat.getOutcomes().iterator();
 			while(o.hasNext()){
-				Session session=getSessionFactory().getCurrentSession();
+				Session session=getSessionFactory().openSession();
 				Transaction trans=session.beginTransaction();
 				Outcome outcome = o.next();
 				try {
@@ -493,7 +504,7 @@ public class DBManager {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+				session.close();
 			}
 		}
 	}
@@ -506,14 +517,13 @@ public class DBManager {
 		
 		Iterator<Users> i = users.iterator();
 		while(i.hasNext()){
-			Users user = i.next();
-			Session session=getSessionFactory().getCurrentSession();
-			Transaction trans=session.beginTransaction();
-		    session.save(user);
-		    trans.commit();
-		    
 			try {
-				
+				Users user = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(user);
+				trans.commit();
+				session.close();				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
@@ -529,14 +539,13 @@ public class DBManager {
 		
 		Iterator<Assets> i = assets.iterator();
 		while(i.hasNext()){
-			Assets asset = i.next();
-			Session session=getSessionFactory().getCurrentSession();
-			Transaction trans=session.beginTransaction();
-		    session.save(asset);
-		    trans.commit();
-		    
 			try {
-				
+				Assets asset = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(asset);
+				trans.commit();
+				session.close();				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
@@ -551,14 +560,14 @@ public class DBManager {
 		
 		Iterator<Clue> i = clues.iterator();
 		while(i.hasNext()){
-			Clue clue = i.next();
-			Session session=getSessionFactory().getCurrentSession();
-			Transaction trans=session.beginTransaction();
-		    session.save(clue);
-		    trans.commit();
 		    
 			try {
-				
+				Clue clue = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(clue);
+				trans.commit();
+				session.close();				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
@@ -574,13 +583,13 @@ public class DBManager {
 		
 		Iterator<RiskPolicy> i = riskPolicies.iterator();
 		while(i.hasNext()){
-			RiskPolicy riskPolicy = i.next();
-			Session session=getSessionFactory().getCurrentSession();
-			Transaction trans=session.beginTransaction();
-		    session.save(riskPolicy);
-		    trans.commit();
 			try {
-				
+				RiskPolicy riskPolicy = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(riskPolicy);
+				trans.commit();
+				session.close();				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
@@ -596,14 +605,13 @@ public class DBManager {
 		
 		Iterator<AccessRequest> i = accessRequests.iterator();
 		while(i.hasNext()){
-			AccessRequest accessrequest = i.next();
-			Session session=getSessionFactory().getCurrentSession();
-			Transaction trans=session.beginTransaction();
-		    session.save(accessrequest);
-		    trans.commit();
-		    
 			try {
-				
+				AccessRequest accessrequest = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(accessrequest);
+				trans.commit();
+				session.close();				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
@@ -617,8 +625,9 @@ public class DBManager {
      * @param descritpion
      */
 	public void deletefThreatByDescription(String description) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    session.getNamedQuery("Threat.deleteContentOfThreatTable"); // FIXME not implemented
+	    session.close();
 	}
 	
 	/**
@@ -626,9 +635,10 @@ public class DBManager {
      * @return List<RiskPolicy>
      */
 	public List<RiskPolicy> getRiskPolicies() {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("RiskPolicy.findAll");
 		List<RiskPolicy> riskpolicy = query.list();
+		session.close();
 		return riskpolicy;				
 	}
 
@@ -637,9 +647,10 @@ public class DBManager {
      * @return List<Outcome>Outcomes
      */
 	public List<Outcome> getOutcomes() {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("Outcome.findAll");
 		List<Outcome> outcome = query.list();
+		session.close();
 		return outcome;				
 	}
 
@@ -651,9 +662,10 @@ public class DBManager {
      * @return List<AccessRequest>
      */
 	public List<AccessRequest> getAccessRequests() {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("AccessRequest.findAll");
 		List<AccessRequest> accesrequests = query.list();
+		session.close();
 		return accesrequests;
 	}
 	
@@ -665,9 +677,10 @@ public class DBManager {
      * @return List<AccessRequest>
      */
 	public  List<AccessRequest> findAccessrequestbyTimestampandThreat(Date modification,Threat threatid) {
-		Session session=getSessionFactory().getCurrentSession();
+		Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("AccessRequest.findAccessrequestbyTimestampandThreat"); // FIXME not implemented
 		List<AccessRequest> accessrequests = query.list();
+		session.close();
 		return accessrequests;		
 	}
 	
@@ -681,7 +694,7 @@ public class DBManager {
 //			AccessRequest accessrequest = i.next();
 //
 //			try {
-//				Session session=getSessionFactory().getCurrentSession();
+//				Session session=getSessionFactory().openSession();
 //				Transaction trans=session.beginTransaction();
 //				if(findAccessrequestbyTimestampandThreat(accessrequest.getModification(), accessrequest.getThreat()).size()>0){
 //					List<AccessRequest> listaccessrequest = findAccessrequestbyTimestampandThreat(accessrequest.getModification(),accessrequest.getThreat());
