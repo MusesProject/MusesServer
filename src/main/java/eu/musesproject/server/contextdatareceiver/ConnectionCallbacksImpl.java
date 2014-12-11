@@ -120,8 +120,9 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 								.getString(JSONIdentifiers.AUTH_USERNAME);
 						deviceId = root
 								.getString(JSONIdentifiers.AUTH_DEVICE_ID);
-						requestId = root
-								.getInt(JSONIdentifiers.REQUEST_IDENTIFIER);
+						if (requestType.equals(RequestType.ONLINE_DECISION)){
+							requestId = root.getInt(JSONIdentifiers.REQUEST_IDENTIFIER);
+						}
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
