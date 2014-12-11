@@ -86,6 +86,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision.setInformation(policyCompliance.getReason());
 			return decision;
 		} else{
+			
+			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("PUBLIC") ){
+				decision = Decision.GRANTED_ACCESS;
+				return decision;
+			}
 			return decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
 		}
 	}  
@@ -1732,30 +1737,34 @@ public class Rt2aeServerImpl implements Rt2ae {
 	@Override
 	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
 
-		eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
-
-		int countadditionalprotection = device.getAdditionalProtections().size();
-
-		int countclues = deviceSecurityState.getClues().size();
+		if(dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).size()!=0){
+			eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
+	
+			int countadditionalprotection = device.getAdditionalProtections().size();
+	
+			int countclues = deviceSecurityState.getClues().size();
+			
+			deviceSecurityState.getDevice_id();
+			List<Clue> listclues = deviceSecurityState.getClues();
+			if(listclues.size()<=5){
+				device.setTrustValue(countadditionalprotection/(countadditionalprotection+countclues+1));
+			}else{
+				device.setTrustValue(countadditionalprotection/(countadditionalprotection+countclues));
+			}
+			try {
+				
+				
+				dbManager.persist(device);
+				
+	
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		
-		deviceSecurityState.getDevice_id();
-		List<Clue> listclues = deviceSecurityState.getClues();
-		if(listclues.size()<=5){
-			device.setTrustValue(countadditionalprotection/(countadditionalprotection+countclues+1));
 		}else{
-			device.setTrustValue(countadditionalprotection/(countadditionalprotection+countclues));
+			logger.info("The device is not stored in the database, make sure that your device is registred,please contact the CSO");
+			
 		}
-		try {
-			
-			
-			dbManager.persist(device);
-			
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-
 		
 	}
 
