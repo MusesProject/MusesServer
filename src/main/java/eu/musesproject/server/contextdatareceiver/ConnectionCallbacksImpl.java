@@ -120,12 +120,13 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 								.getString(JSONIdentifiers.AUTH_USERNAME);
 						deviceId = root
 								.getString(JSONIdentifiers.AUTH_DEVICE_ID);
-						if (requestType.equals(RequestType.ONLINE_DECISION)){
+						//if (requestType.equals(RequestType.ONLINE_DECISION)){
 							requestId = root.getInt(JSONIdentifiers.REQUEST_IDENTIFIER);
-						}
+						//}
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.log(Level.INFO, "JSON identifier not found:"+e.getMessage());
 					}
 					
 					Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId, requestId));
