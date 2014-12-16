@@ -30,7 +30,7 @@ import eu.musesproject.server.contextdatareceiver.ConnectionCallbacksImpl;
 public class ComMainServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());;
+	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());
 	private Helper helper;
 	private SessionHandler sessionHandler;
 	private ConnectionManager connectionManager;
@@ -98,7 +98,7 @@ public class ComMainServlet extends HttpServlet {
 		
 		// Retrieve data in the request
 		dataAttachedInCurrentReuqest = helper.getRequestData(request);
-		logger.log(Level.INFO, MUSES_TAG + "Info SS*, Request type:"+connectionType+" with data:"+dataAttachedInCurrentReuqest);
+		logger.log(Level.INFO, MUSES_TAG + " Info SS*, Request type:"+connectionType+" with data: "+dataAttachedInCurrentReuqest);
 
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
@@ -125,7 +125,7 @@ public class ComMainServlet extends HttpServlet {
 				
 		// if "poll" request
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
-			System.out.println("Poll request..");
+			//System.out.println("Poll request..");
 			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 					dataToSendBackInResponse = dataHandler.getData();
