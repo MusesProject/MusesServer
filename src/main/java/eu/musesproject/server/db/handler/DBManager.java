@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -16,7 +18,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
 import eu.musesproject.server.entity.AccessRequest;
+import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Decision;
@@ -196,7 +200,7 @@ public class DBManager {
 	
 	public Assets getAssetByLocation(String location) {
 		Session session=getSessionFactory().openSession();
-	    Query query = session.getNamedQuery("Assets.findByName").setString("location", location);
+	    Query query = session.getNamedQuery("Assets.findByLocation").setString("location", location);
 	    List<Assets> assetList = query.list();
 	    
 		for (Assets a: assetList) {
@@ -235,12 +239,26 @@ public class DBManager {
      * @return EventType
      */
     
-    public List<EventType> getEventTypeByKey(String key) {
+    public List<EventType> getEventTypeListByKey(String key) {
     	Session session=getSessionFactory().openSession();
 	    Query query = session.getNamedQuery("EventType.findByKey").setString("event_type_key", key);
 	    List<EventType> eventTypeList = query.list();
 	    session.close();
 		return eventTypeList;
+    }
+    
+    /**
+     * Get EventType object by key 
+     * @param key
+     * @return EventType
+     */
+    
+    public EventType getEventTypeByKey(String key) {
+    	Session session=getSessionFactory().openSession();
+    	Query query = session.getNamedQuery("EventType.findByKey").setString("eventTypeKey", key);
+	    EventType eventType = (EventType) query.uniqueResult();
+	    session.close();
+		return eventType;
     }
     
    
@@ -726,6 +744,7 @@ public class DBManager {
 	}
 		
 	}
+
 	
 	
 	
@@ -735,6 +754,34 @@ public class DBManager {
 									/*** END RT2AE DB METHODS***/
 				
 				/**----------------------------------------------------------------**/
+	
+	
+	
+
+	public void setSimpleEvents(List<SimpleEvents> list) {
+		Iterator<SimpleEvents> i = list.iterator();
+		while(i.hasNext()){
+			try {
+				SimpleEvents event = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(event);
+				trans.commit();
+				session.close();				
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+		}
+		
+	}
+
+	public Applications getApplicationByName(String name) {
+		Session session=getSessionFactory().openSession();
+    	Query query = session.getNamedQuery("Applications.findAppByName").setString("name", name);
+    	Applications app = (Applications) query.uniqueResult();
+	    session.close();
+		return app;
+	}
 
 }
 	

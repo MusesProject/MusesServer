@@ -27,6 +27,9 @@ package eu.musesproject.server.contextdatareceiver;
  */
 
 
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,9 +43,13 @@ import eu.musesproject.server.connectionmanager.StubConnectionManager;
 import eu.musesproject.server.contextdatareceiver.formatting.EventFormatter;
 import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.db.eventcorrelation.StubEventCorrelationData;
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
+import eu.musesproject.server.eventprocessor.util.EventTypes;
+import eu.musesproject.server.scheduler.ModuleType;
 
 
 /**
@@ -54,6 +61,7 @@ import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
 
 public class UserContextEventDataReceiver {
 	
+	private static DBManager dbManager = new DBManager(ModuleType.EP);
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static UserContextEventDataReceiver INSTANCE = new UserContextEventDataReceiver();
 	private StubEventCorrelationData data = null;
@@ -113,6 +121,7 @@ public class UserContextEventDataReceiver {
 	
 	public void processContextEventList(List<ContextEvent> list, String currentSessionId, String username, String deviceId, int requestId){
 		
+	
 		logger.info("processContextEventList: Processing list of "+list.size()+" elements.");
 		logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> processing events:"+list.size());		
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -133,9 +142,9 @@ public class UserContextEventDataReceiver {
 				formattedEvent.setSessionId(currentSessionId);
 				formattedEvent.setUsername(username);
 				formattedEvent.setDeviceId(deviceId);
-				if (requestId != 0){
+				//if (requestId != 0){
 					formattedEvent.setHashId(requestId);
-				}
+				//}
 				logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> Inserting events into WM:"+formattedEvent);
 				logger.info("Inserting event into the WM:"+formattedEvent);
 				try{
@@ -146,7 +155,32 @@ public class UserContextEventDataReceiver {
 			}else{
 				logger.error("Formatted event is null.");
 			}
+			
+			//Database storage of simple events
+			
+			storeEvent(formattedEvent.getType(), username, "musesawaew", deviceId, "Geneva", event.getProperties().toString());
 		}
+	}
+	
+	public static void storeEvent(String eventType, String username,
+			String applicationName, String deviceId, String assetLocation,
+			String rawEvent) {
+
+		// Database insertion
+
+		List<SimpleEvents> list = new ArrayList<SimpleEvents>();
+		SimpleEvents event = new SimpleEvents();
+		event.setEventType(dbManager.getEventTypeByKey(eventType));
+		event.setUser(dbManager.getUserByUsername(username));
+		event.setData(rawEvent);
+		event.setApplication(dbManager.getApplicationByName(applicationName));
+		event.setAsset(dbManager.getAssetByLocation(assetLocation));
+		event.setDate(new Date());
+		event.setDevice(dbManager.getDeviceByIMEI(deviceId));
+		event.setTime(new Time(new Date().getTime()));
+		list.add(event);
+		dbManager.setSimpleEvents(list);
+
 	}
 
 }

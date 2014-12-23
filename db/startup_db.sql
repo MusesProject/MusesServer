@@ -438,7 +438,28 @@ CREATE TABLE `event_type` (
 
 LOCK TABLES `event_type` WRITE;
 /*!40000 ALTER TABLE `event_type` DISABLE KEYS */;
-INSERT INTO `event_type` VALUES (12,'key','high'),(13,'key','high'),(20,'key','high'),(21,'key','high'),(22,'key','high'),(23,'key','high'),(24,'key','high'),(25,'key','high'),(26,'key','high'),(27,'key','high'),(28,'key','high'),(29,'key','high'),(30,'key','high'),(31,'key','high'),(32,'key','high'),(33,'key','high'),(34,'key','high'),(35,'key','high'),(36,'key','high'),(37,'key','high'),(38,'key','high');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (1,'LOG_IN','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (2,'LOG_OUT','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (3,'START','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (4,'RESUME','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (5,'STOP','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (6,'RESTART','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (7,'ACTION_REMOTE_FILE_ACCESS','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (8,'CONTEXT_SENSOR_CONNECTIVITY','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (9,'CONTEXT_SENSOR_DEVICE_PROTECTION','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (10,'ACTION_APP_OPEN','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (11,'ACTION_SEND_MAIL','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (12,'VIRUS_FOUND','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (13,'VIRUS_CLEANED','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (14,'SECURITY_PROPERTY_CHANGED','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (15,'SAVE_ASSET','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (16,'CONTEXT_SENSOR_PACKAGE','SIMPLE_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (17,'SECURITY_VIOLATION','COMPLEX_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (18,'SECURITY_INCIDENT','COMPLEX_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (19,'CONFIGURATION_CHANGE','COMPLEX_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (20,'DECISION','COMPLEX_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (21,'DEVICE_POLICY_SENT','COMPLEX_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (22,'CLUE_DETECTED','COMPLEX_EVENT');
 /*!40000 ALTER TABLE `event_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -789,9 +810,9 @@ CREATE TABLE `simple_events` (
   `event_type_id` int(10) unsigned NOT NULL COMMENT 'Type of the event. This is a reference to the EVENT_TYPES table, whose possible values are: {USER_ACTION,SENSOR_CONTEXT,USER_FEEDBACK} as simple events',
   `user_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table USERS(user_id)',
   `device_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table DEVICES(device_id)',
-  `app_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table APPLICATIONS(app_id)',
-  `asset_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table ASSETS(asset_id)',
-  `data` varchar(5000) NOT NULL COMMENT 'Raw event content (this is the content of the whole event in JSON format)',
+  `app_id` bigint(20) unsigned COMMENT 'FK to table APPLICATIONS(app_id)',
+  `asset_id` bigint(20) unsigned COMMENT 'FK to table ASSETS(asset_id)',
+  `data` varchar(50000) NOT NULL COMMENT 'Raw event content (this is the content of the whole event in JSON format)',
   `date` date NOT NULL COMMENT 'Date when the event happens',
   `time` time NOT NULL COMMENT 'Time at when the event happens',
   `duration` int(11) DEFAULT '0' COMMENT 'Duration in milliseconds',

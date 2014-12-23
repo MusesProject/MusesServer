@@ -226,6 +226,7 @@ public class JSONManager {
 	}
 	
 	
+	
 	public static void printContextEventInfo(ContextEvent contextEvent){
 		Map<String, String> properties = null;
 		if ((contextEvent!=null)&&(contextEvent.getType()!=null)){

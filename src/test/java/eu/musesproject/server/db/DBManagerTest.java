@@ -1,10 +1,14 @@
 package eu.musesproject.server.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,14 +16,18 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.ibm.icu.util.Calendar;
+
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RiskPolicy;
+import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.Users;
+import eu.musesproject.server.eventprocessor.util.EventTypes;
 import eu.musesproject.server.scheduler.ModuleType;
 
 public class DBManagerTest {
@@ -271,7 +279,22 @@ public class DBManagerTest {
 		dbmanager.setRiskPolicies(list);
 		
 	}
-
 	
+	@Test
+	public void testSetSimpleEvents() {
+		List<SimpleEvents> list = new ArrayList<SimpleEvents>();
+		SimpleEvents event = new SimpleEvents();
+		event.setEventType(dbmanager.getEventTypeByKey(EventTypes.LOG_IN));
+		event.setUser(dbmanager.getUserByUsername("muses"));
+		event.setData("jsonstring");
+		event.setApplication(dbmanager.getApplicationByName("musesawaew"));
+		event.setAsset(dbmanager.getAssetByLocation("Geneva"));
+		event.setDate(new Date());
+		event.setDevice(dbmanager.getDeviceByIMEI("9aa326e4fd9ccf61"));
+		event.setTime(new Time(new Date().getTime()));
+		list.add(event);
+		dbmanager.setSimpleEvents(list);
+
+	}
 
 }

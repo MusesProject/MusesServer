@@ -1,7 +1,9 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +14,10 @@ import java.util.List;
  */
 @Entity
 @Table(name="applications")
-@NamedQuery(name="Applications.findAll", query="SELECT a FROM Applications a")
+@NamedQueries({
+	@NamedQuery(name="Applications.findAll", query="SELECT a FROM Applications a"),
+	@NamedQuery(name="Applications.findAppByName", query="SELECT a FROM Applications a where a.name = :name")
+})
 public class Applications implements Serializable {
 	private static final long serialVersionUID = 1L;
 

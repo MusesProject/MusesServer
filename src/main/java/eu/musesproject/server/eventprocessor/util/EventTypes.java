@@ -25,12 +25,26 @@ public class EventTypes {
 	//public final static String FILEOBSERVER = "CONTEXT_SENSOR_FILEOBSERVER";
 	public final static String FILEOBSERVER = "ACTION_REMOTE_FILE_ACCESS";
 	public final static String CONNECTIVITY = "CONTEXT_SENSOR_CONNECTIVITY";
+	public final static String PACKAGE = "CONTEXT_SENSOR_PACKAGE";
 	public final static String DEVICE_PROTECTION = "CONTEXT_SENSOR_DEVICE_PROTECTION";
 	public final static String APPOBSERVER = "ACTION_APP_OPEN";
 	public final static String USERBEHAVIOR = "USER_BEHAVIOR";
 	public final static String SEND_MAIL = "ACTION_SEND_MAIL";
 	public final static String VIRUS_FOUND = "VIRUS_FOUND";
 	public final static String VIRUS_CLEANED = "VIRUS_CLEANED";
-	public final static String CHANGE_SECURITY_PROPERTY = "security_property_changed";
+	public final static String CHANGE_SECURITY_PROPERTY = "security_property_changed";//TODO Check lower_case reason
 	public final static String SAVE_ASSET = "SAVE_ASSET";
+	public final static String DECISION = "DECISION";
+	public final static String LOG_IN = "LOG_IN";
+	public final static String LOG_OUT = "LOG_OUT";
+	public final static String START = "START";
+	public final static String RESUME = "RESUME";
+	public final static String STOP = "STOP";
+	public final static String RESTART = "RESTART";
+	public final static String SECURITY_INCIDENT = "SECURITY_INCIDENT";	
+	public final static String SECURITY_VIOLATION = "SECURITY_VIOLATION";	
+	public final static String CONFIGURATION_CHANGE = "CONFIGURATION_CHANGE";	
+	
+	
+	
 }
