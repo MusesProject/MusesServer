@@ -158,7 +158,7 @@ public class UserContextEventDataReceiver {
 			
 			//Database storage of simple events
 			
-			storeEvent(formattedEvent.getType(), username, "musesawaew", deviceId, "Geneva", event.getProperties().toString());
+			storeEvent(formattedEvent.getType(), username, "musesawaew", deviceId, "Geneva", event.getProperties().toString());//TODO Identify application and asset for the whole range of event types
 		}
 	}
 	
