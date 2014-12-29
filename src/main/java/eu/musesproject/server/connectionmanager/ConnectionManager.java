@@ -75,7 +75,7 @@ public class ConnectionManager implements IConnectionManager{
 	
 	@Override
 	public void sendData(String sessionId, String dta) { // FIXME if several packets are sent with same session ID there is no way to find out which one was sent
-		if (!sessionId.equals(null) && !dta.equals(null) && !dta.equals("")) {
+		if (sessionId != null && dta != null && !dta.equals("")) {
 			dataHandler = new DataHandler(sessionId, dta);	
 			addDataHandler(dataHandler);
 		}

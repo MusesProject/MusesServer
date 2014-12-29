@@ -5,12 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -18,7 +12,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
@@ -87,7 +80,7 @@ public class DBManager {
 			trans.commit();
 			session.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.ERROR, e.getMessage());
 		} 
 	}
 
@@ -502,7 +495,7 @@ public class DBManager {
 				}
 				session.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.ERROR, e.getMessage());
 			} 
 			
 			//this.setOutcomes(threat.getOutcomes());
@@ -520,7 +513,7 @@ public class DBManager {
 				    trans.commit();
 				    
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.log(Level.ERROR, e.getMessage());
 				}
 				session.close();
 			}
@@ -543,7 +536,7 @@ public class DBManager {
 				trans.commit();
 				session.close();				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.ERROR, e.getMessage());
 			} 
 		}
 	}
@@ -565,7 +558,7 @@ public class DBManager {
 				trans.commit();
 				session.close();				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.ERROR, e.getMessage());
 			} 
 		}
 	}
@@ -587,7 +580,7 @@ public class DBManager {
 				trans.commit();
 				session.close();				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.ERROR, e.getMessage());
 			} 
 		}
 	}
@@ -609,7 +602,7 @@ public class DBManager {
 				trans.commit();
 				session.close();				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.ERROR, e.getMessage());
 			} 
 		}
 	}
@@ -631,7 +624,7 @@ public class DBManager {
 				trans.commit();
 				session.close();				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.ERROR, e.getMessage());
 			} 
 		}
 	}
@@ -707,8 +700,8 @@ public class DBManager {
      * @param accessRequests
      */
 	public void anonymizeAccessRequests(List<AccessRequest> accessRequests) {
-		Iterator<AccessRequest> i = accessRequests.iterator();
-		while(i.hasNext()){
+//		Iterator<AccessRequest> i = accessRequests.iterator();
+//		while(i.hasNext()){
 //			AccessRequest accessrequest = i.next();
 //
 //			try {
@@ -741,9 +734,9 @@ public class DBManager {
 //			
 //		}
 		
-	}
+//	}
 		
-	}
+}
 
 	
 	
