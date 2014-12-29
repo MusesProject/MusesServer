@@ -343,9 +343,9 @@ public class DBManager {
      * @param device_id
      * @return List<Device>
      */
-	public List<Devices> findDeviceById(String device_id) {
+	public List<Devices> findDeviceById(String deviceId) {
 		Session session=getSessionFactory().openSession();
-	    Query query = session.getNamedQuery("Devices.findById").setString("device_id", device_id);
+	    Query query = session.getNamedQuery("Devices.findById").setString("device_id", deviceId);
 		List<Devices> devices = query.list();
 		session.close();
 		return devices;		
@@ -455,9 +455,9 @@ public class DBManager {
      * @param id
      * @return List<Threat>
      */
-	public List<Threat> findThreatById(Threat threat_id) {
+	public List<Threat> findThreatById(Threat threatId) {
 		Session session=getSessionFactory().openSession();
-	    Query query = session.getNamedQuery("Threat.findThreatById").setString("threat_id", threat_id.getThreatId());
+	    Query query = session.getNamedQuery("Threat.findThreatById").setString("threat_id", threatId.getThreatId());
 		List<Threat> threats = query.list();
 		session.close();
 		return threats;		
@@ -762,7 +762,7 @@ public class DBManager {
 				trans.commit();
 				session.close();				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.log(Level.ERROR, e.getMessage());
 			} 
 		}
 		

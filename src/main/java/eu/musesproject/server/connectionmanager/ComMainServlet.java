@@ -71,8 +71,6 @@ public class ComMainServlet extends HttpServlet {
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
-		logger.log(Level.INFO, MUSES_TAG + "Calling ConnectionCallbacksImpl...");
-		ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
 		logger.log(Level.INFO, MUSES_TAG + "Done");
 	}
 	
@@ -125,7 +123,6 @@ public class ComMainServlet extends HttpServlet {
 				
 		// if "poll" request
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
-			//System.out.println("Poll request..");
 			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 					dataToSendBackInResponse = dataHandler.getData();
@@ -215,69 +212,6 @@ public class ComMainServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		String connectionType = request.getParameter("connection-type");
-//		String dataAttachedInCurrentReuqest = request.getParameter(DATA);
-//		
-//		// create cookie if not in the request
-//		helper.setCookie(request);
-//		Cookie cookie = helper.getCookie();
-//		String currentJSessionID = cookie.getValue();
-//		
-//		// if "connect" request
-//		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
-//			logger.info("Connect request .. Id: " + currentJSessionID );
-//		}
-//		
-//		//if "send-data" request
-//		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
-//			// Callback the FL to receive data from the client and get the response data back into string
-//			String dataToSendBackInResponse = null;
-//			if (dataAttachedInCurrentReuqest != null){
-//				//dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
-//			}
-//			response.addHeader(DATA,dataToSendBackInResponse);
-//			logger.log(Level.INFO, "Send data request .. Id: " + currentJSessionID );
-//			logger.log(Level.INFO, "Data avaialble for the request .. attaching in response header.. data: " + dataToSendBackInResponse);
-//		}
-//		
-//		// if "poll" request
-//		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.POLL)) {
-//			logger.log(Level.INFO, "Poll request ..");
-//			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
-//				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
-//					response.addHeader(DATA,dataHandler.getData());
-//					logger.log(Level.INFO, "Poll request data available.. attaching in response header..");
-//					break; // FIXME temporary as multiple same session ids are in the list right now
-//				}
-//			}
-//		}
-//		
-//		// if "ack" request
-//		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.ACK)) {
-//			// Clean up the data handler object from the list 
-//			connectionManager.removeDataHandler(connectionManager.getDataHandlerObject(currentJSessionID));
-//			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DATA_SENT_SUCCESFULLY);
-//			logger.log(Level.INFO, "Ack request ..");
-//		}
-//		
-//		// if disconnect request 
-//		// invalidate session from Servlet
-//		// remove it from the session id list
-//		// Callback the Functional layer about the disconnect
-//		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
-//			helper.disconnect(request);
-//			sessionHandler.removeSessionIdFromList(currentJSessionID);
-//			sessionHandler.removeCookieToList(cookie);
-//			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
-//			logger.log(Level.INFO, "Connection disconnected with ID: " + currentJSessionID);
-//		} 
-//		
-//		// Add session id to the List
-//		sessionHandler.addSessionIdToList(currentJSessionID);
-//		// Setup response to send back
-//
-//		response.setContentType("text/html");
-//		response.addCookie(cookie);
 	}
 
 }
