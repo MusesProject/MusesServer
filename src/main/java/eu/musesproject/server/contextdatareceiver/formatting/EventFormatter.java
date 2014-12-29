@@ -21,25 +21,17 @@ package eu.musesproject.server.contextdatareceiver.formatting;
  * #L%
  */
 
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 
 import com.ibm.icu.util.StringTokenizer;
 
 import eu.musesproject.contextmodel.ContextEvent;
-import eu.musesproject.server.db.handler.DBManager;
-import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
@@ -52,7 +44,6 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEv
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusCleanedEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
-import eu.musesproject.server.scheduler.ModuleType;
 
 
 
