@@ -22,10 +22,12 @@ package eu.musesproject.server.contextdatareceiver;
  */
 
 import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.client.model.RequestType;
 import eu.musesproject.contextmodel.ContextEvent;
@@ -33,6 +35,8 @@ import eu.musesproject.server.authentication.AuthenticationManager;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
+import eu.musesproject.server.eventprocessor.util.Constants;
+import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 
 public class ConnectionCallbacksImpl implements IConnectionCallbacks {
@@ -104,9 +108,37 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				JSONObject authResponse = AuthenticationManager.getInstance().authenticate(root, sessionId);
 				logger.log(Level.INFO, MUSES_TAG + "Info SS, Login request=>authenticating ..... authentication response is:"+authResponse.toString()	);
 				if (authResponse != null) {
+					try {
+						username = root
+								.getString(JSONIdentifiers.AUTH_USERNAME);
+						deviceId = root
+								.getString(JSONIdentifiers.AUTH_DEVICE_ID);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+						logger.log(Level.INFO, "JSON identifier not found:"+e.getMessage());
+					}
+					UserContextEventDataReceiver.storeEvent(EventTypes.LOG_IN, username, "musesawaew", deviceId, "Geneva", authResponse.toString());
 					return authResponse.toString();
 				}
-			} else {
+			}else if (requestType.equals(RequestType.LOGOUT)) {
+				logger.log(Level.INFO, "Logout request");
+				JSONObject authResponse = AuthenticationManager.getInstance().logout(root, sessionId);
+				logger.log(Level.INFO, MUSES_TAG + "Info SS, Logout request");
+				try {
+						username = root
+								.getString(JSONIdentifiers.AUTH_USERNAME);
+						deviceId = root
+								.getString(JSONIdentifiers.AUTH_DEVICE_ID);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+						logger.log(Level.INFO, "JSON identifier not found:"+e.getMessage());
+					}
+					UserContextEventDataReceiver.storeEvent(EventTypes.LOG_OUT, username, "musesawaew", deviceId, "Geneva", authResponse.toString());
+					return authResponse.toString();
+				
+			}	else {
 				//Data exchange: We should check if sessionId is correctly authenticated
 				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
 
@@ -122,6 +154,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 								.getString(JSONIdentifiers.AUTH_DEVICE_ID);
 						//if (requestType.equals(RequestType.ONLINE_DECISION)){
 							requestId = root.getInt(JSONIdentifiers.REQUEST_IDENTIFIER);
+							logger.log(Level.INFO, "requestId"+requestId);
 						//}
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block

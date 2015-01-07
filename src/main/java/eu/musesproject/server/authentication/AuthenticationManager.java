@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.contextdatareceiver.JSONManager;
+import eu.musesproject.server.eventprocessor.util.Constants;
 
 /*
  * #%L
@@ -72,13 +73,46 @@ public class AuthenticationManager {
 				logger.log(Level.INFO, "Authentication successful");
 				authSessionIdList.add(sessionId);
 				// Send authentication response with success message
-				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, "SUCCESS",	"Successfully authenticated");
+				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, Constants.SUCCESS,	"Successfully authenticated");
 				logger.log(Level.INFO, response.toString());
 
 			} else {
 				logger.log(Level.INFO, "Authentication failed");
 				// Send authentication response with failure message
-				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, "FAIL", "Incorrect password");
+				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, Constants.FAIL, "Incorrect password");
+				logger.log(Level.INFO, response.toString());
+
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return response;
+	}
+	
+	public JSONObject logout(JSONObject root, String sessionId){
+		String username = null;
+		String deviceId = null;
+		JSONObject response = null;
+		try {
+			// retrieveCredentials
+			username = root.getString(JSONIdentifiers.AUTH_USERNAME);
+			deviceId = root.getString(JSONIdentifiers.AUTH_DEVICE_ID);
+
+			System.out.println("Logout attempt : " + username
+					+ "-" + deviceId);
+			// Authentication
+			if (isAuthenticated(sessionId)){
+				logger.log(Level.INFO, "Logout successful");
+				authSessionIdList.remove(sessionId);
+				// Send authentication response with success message
+				response = JSONManager.createJSON(JSONIdentifiers.LOGOUT_RESPONSE, Constants.SUCCESS,	"Successfully logged out");
+				logger.log(Level.INFO, response.toString());
+
+			} else {
+				logger.log(Level.INFO, "Logout failed");
+				// Send authentication response with failure message
+				response = JSONManager.createJSON(JSONIdentifiers.LOGOUT_RESPONSE, Constants.FAIL, "No session found");
 				logger.log(Level.INFO, response.toString());
 
 			}
@@ -98,7 +132,6 @@ public class AuthenticationManager {
 	}
 
 	public boolean isAuthenticated(String sessionId) {
-		authSessionIdList.add("EIIWJ232");//Remove
 		return authSessionIdList.contains(sessionId);
 	}
 

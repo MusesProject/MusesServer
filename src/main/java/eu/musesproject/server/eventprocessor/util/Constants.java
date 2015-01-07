@@ -30,4 +30,6 @@ public class Constants {
 	public final static String ACCESS_REQUEST = "AccessRequest";
 	public final static String COMPANY_NAME = "Acme";
 	public final static String CONFIDENTIAL = "confidential";
+	public final static String SUCCESS = "SUCCESS";
+	public final static String FAIL = "FAIL";
 }
