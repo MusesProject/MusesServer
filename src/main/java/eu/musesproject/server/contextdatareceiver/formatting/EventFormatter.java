@@ -40,6 +40,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusCleanedEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent;
@@ -60,8 +61,9 @@ public class EventFormatter {
 					cepFileEvent = convertToConnectivityEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.DEVICE_PROTECTION)) {
 					cepFileEvent = convertToDeviceProtectionEvent(contextEvent);
-				} else if (contextEvent.getType().equals("CONTEXT_SENSOR_APP")) {
-					cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
+				} else if (contextEvent.getType().equals(EventTypes.APP)) {
+					//cepFileEvent = new Event();// TODO Manage CONTEXT_SENSOR_APP event information
+					cepFileEvent = convertToSensorAppEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.PACKAGE)) {
 					cepFileEvent = convertToPackageObserverEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.APPOBSERVER)){
@@ -108,6 +110,20 @@ public class EventFormatter {
 		
 	}
 	
+	private static Event convertToSensorAppEvent(ContextEvent contextEvent) {
+		SensorAppEvent cepFileEvent = new SensorAppEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setBackgroundProcess(properties.get("backgroundprocess"));
+		cepFileEvent.setAppVersion(properties.get("appversion"));
+		cepFileEvent.setAppName(properties.get("appname"));
+		cepFileEvent.setPackageName(properties.get("packagename"));
+		
+		return cepFileEvent;
+	}
+
 	private static Event convertToFileObserverSaveEvent(
 			ContextEvent contextEvent) {
 		FileObserverEvent cepFileEvent = new FileObserverEvent();

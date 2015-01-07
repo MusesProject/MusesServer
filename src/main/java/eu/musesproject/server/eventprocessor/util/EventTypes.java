@@ -26,6 +26,7 @@ public class EventTypes {
 	public final static String FILEOBSERVER = "ACTION_REMOTE_FILE_ACCESS";
 	public final static String CONNECTIVITY = "CONTEXT_SENSOR_CONNECTIVITY";
 	public final static String PACKAGE = "CONTEXT_SENSOR_PACKAGE";
+	public final static String APP = "CONTEXT_SENSOR_APP";
 	public final static String DEVICE_PROTECTION = "CONTEXT_SENSOR_DEVICE_PROTECTION";
 	public final static String APPOBSERVER = "ACTION_APP_OPEN";
 	public final static String USERBEHAVIOR = "USER_BEHAVIOR";

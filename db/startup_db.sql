@@ -460,6 +460,7 @@ INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES
 INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (20,'DECISION','COMPLEX_EVENT');
 INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (21,'DEVICE_POLICY_SENT','COMPLEX_EVENT');
 INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (22,'CLUE_DETECTED','COMPLEX_EVENT');
+INSERT INTO `event_type` (`event_type_id`,`event_type_key`,`event_level`) VALUES (23,'CONTEXT_SENSOR_APP','SIMPLE_EVENT');
 /*!40000 ALTER TABLE `event_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
