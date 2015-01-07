@@ -178,6 +178,10 @@ public class UserContextEventDataReceiver {
 		event.setDate(new Date());
 		event.setDevice(dbManager.getDeviceByIMEI(deviceId));
 		event.setTime(new Time(new Date().getTime()));
+		event.setSource(dbManager.getSourceByName("EP"));
+		event.setKRS_can_access(1);
+		event.setEP_can_access(1);
+		event.setRT2AE_can_access(1);
 		list.add(event);
 		dbManager.setSimpleEvents(list);
 

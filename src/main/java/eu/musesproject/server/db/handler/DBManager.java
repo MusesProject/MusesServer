@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -12,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
@@ -26,6 +28,7 @@ import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityRules;
 import eu.musesproject.server.entity.SimpleEvents;
+import eu.musesproject.server.entity.Sources;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
@@ -774,6 +777,14 @@ public class DBManager {
     	Applications app = (Applications) query.uniqueResult();
 	    session.close();
 		return app;
+	}
+
+	public Sources getSourceByName(String name) {
+		Session session=getSessionFactory().openSession();
+    	Query query = session.getNamedQuery("Sources.findByName").setString("name", name);
+	    Sources source = (Sources) query.uniqueResult();
+	    session.close();
+		return source;
 	}
 
 }

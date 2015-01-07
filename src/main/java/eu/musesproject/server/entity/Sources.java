@@ -1,7 +1,9 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.List;
 
 
@@ -11,7 +13,12 @@ import java.util.List;
  */
 @Entity
 @Table(name="sources")
-@NamedQuery(name="Sources.findAll", query="SELECT s FROM Sources s")
+
+@NamedQueries({
+	@NamedQuery(name="Sources.findAll", query="SELECT s FROM Sources s"),
+	@NamedQuery(name="Sources.findByName", 
+				query="SELECT s FROM Sources s where s.name = :name")	
+})
 public class Sources implements Serializable {
 	private static final long serialVersionUID = 1L;
 
