@@ -70,7 +70,6 @@ public class TestPolicyRulesSelector extends TestCase {
 		
 		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions("test_hash", decisions, action);
 		assertNotNull(policyDT);
-		assertNotNull(policyDT.getRawPolicy());
 	}
 
 	/**

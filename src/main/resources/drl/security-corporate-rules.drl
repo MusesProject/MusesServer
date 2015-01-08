@@ -16,6 +16,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusCleanedEv
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -94,6 +95,12 @@ declare DeviceProtectionEvent
 	@expires (1m)
 end
 
+declare SensorAppEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
 function boolean requiredApp(String name){
 	boolean result = false;
 	if (name.contains("com.avast.android.mobilesecurity")){
@@ -127,6 +134,19 @@ rule "Rule firing"
 		StatusGlobal.log("Rule firing correctly working!");
 		StatusGlobal.log("User:"+e.getUsername()+" Device:"+e.getDeviceId());
 		//int id = Rt2aeGlobal.sendDefaultDevicePolicy(e);
+
+	end
+	
+rule "Sensor app"
+	no-loop true
+	dialect "mvel"
+	when
+		e: SensorAppEvent()
+	then
+		StatusGlobal.log("-------------------------------------------------------------------------");
+		StatusGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("SensorAppEvent!");
+		StatusGlobal.log("User:"+e.getUsername()+" Device:"+e.getDeviceId());
 
 	end
 
