@@ -18,6 +18,7 @@ import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
+import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
@@ -811,6 +812,18 @@ public class DBManager {
 	    List<SensorConfiguration> sensorConfigList = query.list();
 		session.close();
 		return sensorConfigList;
+	}
+	
+    /**
+     * Get Connection Config
+     * @return ConnectionConfig
+     */
+	public ConnectionConfig getConnectionConfig() {	
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("ConnectionConfig.findLast");
+		ConnectionConfig config = (ConnectionConfig)query.uniqueResult();
+		session.close();
+		return config;
 	}
 
 }

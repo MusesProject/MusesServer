@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="ConnectionConfig" table="connection_config" catalog="muses">
+        <id name="configId" type="java.lang.Integer">
+            <column name="config_id" />
+            <generator class="identity" />
+        </id>
+        <property name="timeout" type="int">
+            <column name="timeout" not-null="true" />
+        </property>
+        <property name="pollTimeout" type="int">
+            <column name="poll_timeout" not-null="true" />
+        </property>
+        <property name="sleepPollTimeout" type="int">
+            <column name="sleep_poll_timeout" not-null="true" />
+        </property>
+        <property name="pollingEnabled" type="int">
+            <column name="polling_enabled" not-null="true">
+                <comment>Specify whether the polling is enabled (1) or not (0)</comment>
+            </column>
+        </property>
+        <property name="loginAttempts" type="int">
+            <column name="login_attempts" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
