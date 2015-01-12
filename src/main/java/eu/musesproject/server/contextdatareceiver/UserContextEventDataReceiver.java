@@ -45,10 +45,10 @@ import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.db.eventcorrelation.StubEventCorrelationData;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.SimpleEvents;
+import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
-import eu.musesproject.server.eventprocessor.util.EventTypes;
 import eu.musesproject.server.scheduler.ModuleType;
 
 
@@ -171,7 +171,13 @@ public class UserContextEventDataReceiver {
 		List<SimpleEvents> list = new ArrayList<SimpleEvents>();
 		SimpleEvents event = new SimpleEvents();
 		event.setEventType(dbManager.getEventTypeByKey(eventType));
-		event.setUser(dbManager.getUserByUsername(username));
+		Users user = dbManager.getUserByUsername(username);
+		if (user != null){
+			event.setUser(user);
+		}else{
+			event.setUser(dbManager.getUserByUsername("notfound"));
+		}
+		
 		event.setData(rawEvent);
 		event.setApplication(dbManager.getApplicationByName(applicationName));
 		event.setAsset(dbManager.getAssetByLocation(assetLocation));

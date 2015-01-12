@@ -479,6 +479,7 @@ DROP TABLE IF EXISTS `muses_config`;
 CREATE TABLE `muses_config` (
   `config_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `config_name` varchar(30) NOT NULL COMMENT 'Name of the configuration',
+  `silent_mode` tinyint(1) NOT NULL COMMENT 'Specify whether all devices should run MUSES application in silent mode (true), or verbose (false)',
   `access_attempts_before_blocking` int(10) unsigned NOT NULL DEFAULT '5',
   PRIMARY KEY (`config_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='MUSES Server configuration parameters';
@@ -492,6 +493,7 @@ LOCK TABLES `muses_config` WRITE;
 /*!40000 ALTER TABLE `muses_config` DISABLE KEYS */;
 /*!40000 ALTER TABLE `muses_config` ENABLE KEYS */;
 UNLOCK TABLES;
+INSERT INTO `muses`.`muses_config` (`config_id`, `config_name`, `silent_mode`, `access_attempts_before_blocking`) VALUES ('1', 'SILENT', '1', '3');
 
 --
 -- Table structure for table `outcome`
@@ -1100,5 +1102,34 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+
+DROP TABLE IF EXISTS `sensor_configuration`;
+
+CREATE TABLE sensor_configuration	 (
+	id INTEGER PRIMARY KEY,
+	sensor_type VARCHAR(45) NOT NULL,
+	keyproperty VARCHAR(45) NOT NULL,
+	valueproperty VARCHAR(45) NOT NULL
+)ENGINE=InnoDB AUTO_INCREMENT=278 DEFAULT CHARSET=utf8 COMMENT='This table contains sensor configuration properties';
+
+INSERT INTO `sensor_configuration` VALUES(1,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','avast! Mobile Security');
+INSERT INTO `sensor_configuration` VALUES(2,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Mobile Security & Antivirus');
+INSERT INTO `sensor_configuration` VALUES(3,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Avira Antivirus Security');
+INSERT INTO `sensor_configuration` VALUES(4,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Norton Security & Antivirus');
+INSERT INTO `sensor_configuration` VALUES(5,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','CM Security & Find My Phone');
+INSERT INTO `sensor_configuration` VALUES(6,'CONTEXT_SENSOR_DEVICE_PROTECTION','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(7,'CONTEXT_SENSOR_LOCATION','mindistance','10');
+INSERT INTO `sensor_configuration` VALUES(8,'CONTEXT_SENSOR_LOCATION','mindtime','400');
+INSERT INTO `sensor_configuration` VALUES(9,'CONTEXT_SENSOR_LOCATION','radius','12.0');
+INSERT INTO `sensor_configuration` VALUES(10,'CONTEXT_SENSOR_LOCATION','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(11,'CONTEXT_SENSOR_FILEOBSERVER','path','/SWE/');
+INSERT INTO `sensor_configuration` VALUES(12,'CONTEXT_SENSOR_FILEOBSERVER','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(13,'CONTEXT_SENSOR_APP','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(14,'CONTEXT_SENSOR_CONNECTIVITY','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(15,'CONTEXT_SENSOR_INTERACTION','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(16,'CONTEXT_SENSOR_PACKAGE','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(17,'CONTEXT_SENSOR_SETTINGS','enabled','true');
+INSERT INTO `sensor_configuration` VALUES(18,'CONTEXT_SENSOR_NOTIFICATION','enabled','true');
 
 -- Dump completed on 2015-01-08 10:44:09

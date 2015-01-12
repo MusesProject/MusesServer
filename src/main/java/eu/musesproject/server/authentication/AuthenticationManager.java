@@ -1,7 +1,6 @@
 package eu.musesproject.server.authentication;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Level;
@@ -10,9 +9,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import eu.musesproject.client.model.JSONIdentifiers;
-import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.contextdatareceiver.JSONManager;
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.util.Constants;
+import eu.musesproject.server.scheduler.ModuleType;
 
 /*
  * #%L
@@ -39,6 +40,7 @@ public class AuthenticationManager {
 	private static AuthenticationManager authenticationManagerSingleton = null;
 	public Logger logger = Logger.getLogger(AuthenticationManager.class.getName());
 	private List<String> authSessionIdList = new ArrayList<String>();
+	private static DBManager dbManager = new DBManager(ModuleType.EP);
 	
 	/**
 	 * Creare authentication manager singleton if not created
@@ -62,21 +64,36 @@ public class AuthenticationManager {
 			password = root.getString(JSONIdentifiers.AUTH_PASSWORD);
 			deviceId = root.getString(JSONIdentifiers.AUTH_DEVICE_ID);
 
-			System.out.println("Login attempt with credentials: " + username
+			logger.log(Level.INFO,"Login attempt with credentials: " + username
 					+ "-" + password + "-" + deviceId);
 			// Authentication
-			if (username.equals("muses") && (password.equals("muses"))) {
-				// TODO
-																			// Authentication
-																			// with
-																			// database
+			// with
+			// database
+			
+			Users user = dbManager.getUserByUsername(username);
+			
+			if ((user != null)&&(user.getPassword().equalsIgnoreCase(password)&&(user.getEnabled()==1))){
+			
+																			
 				logger.log(Level.INFO, "Authentication successful");
 				authSessionIdList.add(sessionId);
 				// Send authentication response with success message
 				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, Constants.SUCCESS,	"Successfully authenticated");
 				logger.log(Level.INFO, response.toString());
 
-			} else {
+			} else if (user == null) {
+				logger.log(Level.INFO, "Authentication failed: user not found");
+				// Send authentication response with failure message
+				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, Constants.FAIL, "User not found");
+				logger.log(Level.INFO, response.toString());
+
+			} else if (user.getEnabled()!=1) {
+				logger.log(Level.INFO, "Authentication failed: user not enabled");
+				// Send authentication response with failure message
+				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, Constants.FAIL, "User not enabled");
+				logger.log(Level.INFO, response.toString());
+
+			}else {
 				logger.log(Level.INFO, "Authentication failed");
 				// Send authentication response with failure message
 				response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, Constants.FAIL, "Incorrect password");

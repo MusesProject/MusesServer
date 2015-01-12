@@ -89,6 +89,16 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 	
 	private final String testLogin = "{\"password\":\"muses\",\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"muses\",\"requesttype\":\"login\"}";
 	
+	private final String testLoginFailPass = "{\"password\":\"jsfdkjf\",\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"muses\",\"requesttype\":\"login\"}";
+	
+	private final String testLoginFailUser = "{\"password\":\"jsfdkjf\",\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"dfasdf\",\"requesttype\":\"login\"}";
+	
+	private final String testLoginSuccess = "{\"password\":\"pass\",\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"joe\",\"requesttype\":\"login\"}";
+	
+	private final String testLoginNotEnabled = "{\"password\":\"56836458345673465\",\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"notfound\",\"requesttype\":\"login\"}";
+	
+	//private final String testLoginNotEnabled = "{\"password\":\"swe_test\",\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"swe-tester-2\",\"requesttype\":\"login\"}";
+	
 	private final String testLogout = "{\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"muses\",\"requesttype\":\"logout\"}";
 	
 	public final void testCluesDeviceStateSecurityIncident(){
@@ -1111,7 +1121,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 	
 	}
 	
-	public final void testLogin(){
+	public final void testLoginLogout(){
 		EventProcessor processor = null;
 		MusesCorrelationEngineImpl engine = null;
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
@@ -1124,8 +1134,71 @@ public final void testPolicyOpenConfAssetInSecure(){
 		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testLogout);
-		//callback.receiveCb(defaultSessionId, testEmailWithAttachmentsHashId);
-		//callback.receiveCb(defaultSessionId, testVirusFoundHashId);
+
+	}
+	
+	public final void testLoginFailPass(){
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLoginFailPass);
+
+
+	}
+	
+	public final void testLoginFailUser(){
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLoginFailUser);
+
+
+	}
+	
+	public final void testLoginSuccess(){
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLoginSuccess);
+
+
+	}
+	
+	public final void testLoginNotEnabled(){
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLoginNotEnabled);
+
+
 	}
 	
 	public final void testRestart(){
@@ -1136,6 +1209,24 @@ public final void testPolicyOpenConfAssetInSecure(){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public final void testConfigSync(){
+		final String testConfigSync = "{\"device_id\":\"9aa326e4fd9ccf61\",\"username\":\"muses\",\"requesttype\":\"config_sync\"}";
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLogin);
+		callback.receiveCb(defaultSessionId, testConfigSync);
+
+
 	}
 
 }
