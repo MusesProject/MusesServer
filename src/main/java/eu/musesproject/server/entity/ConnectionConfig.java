@@ -11,11 +11,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="connection_config")
-@NamedQueries({
-	@NamedQuery(name="ConnectionConfig.findAll", query="SELECT c FROM ConnectionConfig c"),
-	@NamedQuery(name="ConnectionConfig.findLast", 
-    			query="SELECT c FROM ConnectionConfig c ORDER BY configId DESC"),
-})
+@NamedQuery(name="ConnectionConfig.findAll", query="SELECT c FROM ConnectionConfig c")
 
 public class ConnectionConfig implements Serializable {
 	private static final long serialVersionUID = 1L;

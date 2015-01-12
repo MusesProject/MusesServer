@@ -11,11 +11,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="muses_config")
-@NamedQueries({
-	@NamedQuery(name="MusesConfig.findAll", query="SELECT m FROM MusesConfig m"),
-	@NamedQuery(name="MusesConfig.findLast", 
-    			query="SELECT m FROM MusesConfig m ORDER BY configId DESC"),
-})
+@NamedQuery(name="MusesConfig.findAll", query="SELECT m FROM MusesConfig m")
 
 public class MusesConfig implements Serializable {
 	private static final long serialVersionUID = 1L;

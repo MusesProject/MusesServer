@@ -794,12 +794,18 @@ public class DBManager {
      * Get MUSES Config
      * @return MusesConfig
      */
-	public MusesConfig getMusesConfig() {	
+	public MusesConfig getMusesConfig() {
+		MusesConfig musesConfig = null;
 		Session session=getSessionFactory().openSession();
-	    Query query = session.getNamedQuery("MusesConfig.findLast");
-		MusesConfig config = (MusesConfig)query.uniqueResult();
+	    Query query = session.getNamedQuery("MusesConfig.findAll");
+	    
+		List<MusesConfig> configList = query.list();
+		for (Iterator iterator = configList.iterator(); iterator.hasNext();) {
+			musesConfig = (MusesConfig) iterator.next();
+			
+		}
 		session.close();
-		return config;
+		return musesConfig;
 	}
 	
     /**
@@ -819,11 +825,17 @@ public class DBManager {
      * @return ConnectionConfig
      */
 	public ConnectionConfig getConnectionConfig() {	
+		ConnectionConfig connConfig = null;
 		Session session=getSessionFactory().openSession();
-	    Query query = session.getNamedQuery("ConnectionConfig.findLast");
-		ConnectionConfig config = (ConnectionConfig)query.uniqueResult();
+	    Query query = session.getNamedQuery("ConnectionConfig.findAll");
+		List<ConnectionConfig> configList = query.list();
+		for (Iterator iterator = configList.iterator(); iterator.hasNext();) {
+			connConfig = (ConnectionConfig) iterator.next();
+			
+		}
 		session.close();
-		return config;
+		return connConfig;
+
 	}
 
 }
