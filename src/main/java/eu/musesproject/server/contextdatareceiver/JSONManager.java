@@ -410,7 +410,7 @@ public class JSONManager {
             connConfigXML += xmlProperty(JSONIdentifiers.TIMEOUT, connConfig.getTimeout());
             connConfigXML += xmlProperty(JSONIdentifiers.POLL_TIMEOUT, connConfig.getPollTimeout());
             connConfigXML += xmlProperty(JSONIdentifiers.SLEEP_POLL_TIMEOUT, connConfig.getSleepPollTimeout());
-            connConfigXML += xmlProperty(JSONIdentifiers.POLLING_ENABLED, String.valueOf(connConfig.isPollingEnabled()));
+            connConfigXML += xmlProperty(JSONIdentifiers.POLLING_ENABLED, connConfig.getPollingEnabled());
             connConfigXML += xmlProperty(JSONIdentifiers.LOGIN_ATTEMPTS, connConfig.getLoginAttempts());
             
             root.put(JSONIdentifiers.CONNECTION_CONFIG,XML.toJSONObject(connConfigXML));

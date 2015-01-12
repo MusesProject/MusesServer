@@ -35,7 +35,7 @@ public class ConnectionConfig implements Serializable {
 	private int sleepPollTimeout;
 	
 	@Column(name="polling_enabled", nullable=false, length=10)
-	private boolean pollingEnabled;
+	private int pollingEnabled;
 	
 	@Column(name="login_attempts", nullable=false)
 	private int loginAttempts;
@@ -75,20 +75,20 @@ public class ConnectionConfig implements Serializable {
 		this.sleepPollTimeout = sleepPollTimeout;
 	}
 
-	public boolean isPollingEnabled() {
-		return pollingEnabled;
-	}
-
-	public void setPollingEnabled(boolean pollingEnabled) {
-		this.pollingEnabled = pollingEnabled;
-	}
-
 	public int getLoginAttempts() {
 		return loginAttempts;
 	}
 
 	public void setLoginAttempts(int loginAttempts) {
 		this.loginAttempts = loginAttempts;
+	}
+
+	public int getPollingEnabled() {
+		return pollingEnabled;
+	}
+
+	public void setPollingEnabled(int pollingEnabled) {
+		this.pollingEnabled = pollingEnabled;
 	}
 
 	
