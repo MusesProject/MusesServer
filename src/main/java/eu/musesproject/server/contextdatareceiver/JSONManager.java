@@ -389,7 +389,7 @@ public class JSONManager {
             if (config.getConfigName()!=null){
             	configXML += xmlProperty(JSONIdentifiers.CONFIG_NAME, config.getConfigName());
             }
-            root.put(JSONIdentifiers.MUSES_CONFIG,XML.toJSONObject(configXML).toString());
+            root.put(JSONIdentifiers.MUSES_CONFIG,XML.toJSONObject(configXML));
             
             //Sensor configuration
             String sensorConfigXML = "";
