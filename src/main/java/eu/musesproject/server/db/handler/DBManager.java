@@ -22,11 +22,13 @@ import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
 import eu.musesproject.server.entity.EventType;
+import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RefinedSecurityRules;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityRules;
+import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Sources;
 import eu.musesproject.server.entity.Threat;
@@ -785,6 +787,30 @@ public class DBManager {
 	    Sources source = (Sources) query.uniqueResult();
 	    session.close();
 		return source;
+	}
+	
+    /**
+     * Get MUSES Config
+     * @return MusesConfig
+     */
+	public MusesConfig getMusesConfig() {	
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("MusesConfig.findLast");
+		MusesConfig config = (MusesConfig)query.uniqueResult();
+		session.close();
+		return config;
+	}
+	
+    /**
+     * Get Sensor Configuration
+     * @return List<SensorConfiguration>
+     */
+	public List<SensorConfiguration> getSensorConfiguration() {	
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("SensorConfiguration.findAll");
+	    List<SensorConfiguration> sensorConfigList = query.list();
+		session.close();
+		return sensorConfigList;
 	}
 
 }

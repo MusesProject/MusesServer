@@ -1,6 +1,7 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
 
 
@@ -10,7 +11,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="muses_config")
-@NamedQuery(name="MusesConfig.findAll", query="SELECT m FROM MusesConfig m")
+@NamedQueries({
+	@NamedQuery(name="MusesConfig.findAll", query="SELECT m FROM MusesConfig m"),
+	@NamedQuery(name="MusesConfig.findLast", 
+    			query="SELECT m FROM MusesConfig m ORDER BY configId DESC"),
+})
+
 public class MusesConfig implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -24,6 +30,9 @@ public class MusesConfig implements Serializable {
 
 	@Column(name="config_name", nullable=false, length=30)
 	private String configName;
+	
+	@Column(name="silent_mode", nullable=false, length=10)
+	private boolean silentMode;
 
 	public MusesConfig() {
 	}
@@ -50,6 +59,14 @@ public class MusesConfig implements Serializable {
 
 	public void setConfigName(String configName) {
 		this.configName = configName;
+	}
+	
+	public boolean getSilentMode() {
+		return this.silentMode;
+	}
+
+	public void setSilentMode(boolean silentMode) {
+		this.silentMode = silentMode;
 	}
 
 }

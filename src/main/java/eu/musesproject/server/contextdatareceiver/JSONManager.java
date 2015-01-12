@@ -30,15 +30,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.XML;
+
 
 import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.entity.MusesConfig;
+import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 
@@ -363,15 +368,53 @@ public class JSONManager {
 
             root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, requestType);
             
-            root.put("auth-result", authResult);
+            root.put(JSONIdentifiers.AUTH_RESULT, authResult);
             
-            root.put("auth-message", authMessage);
+            root.put(JSONIdentifiers.AUTH_MESSAGE, authMessage);
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
 		return root;
+	}
+	
+	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig) {
+		JSONObject root = new JSONObject();
+		try {
+
+            root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, requestType);
+            String configXML = "";
+            configXML += xmlProperty(JSONIdentifiers.SILENT_MODE, String.valueOf(config.getSilentMode()));
+            if (config.getConfigName()!=null){
+            	configXML += xmlProperty(JSONIdentifiers.CONFIG_NAME, config.getConfigName());
+            }
+            root.put(JSONIdentifiers.MUSES_CONFIG,XML.toJSONObject(configXML).toString());
+            
+            //Sensor configuration
+            String sensorConfigXML = "";
+            for (Iterator iterator = sensorConfig.iterator(); iterator
+					.hasNext();) {
+				SensorConfiguration sensorConfiguration = (SensorConfiguration) iterator
+						.next();
+				sensorConfigXML += "<"+JSONIdentifiers.SENSOR_PROPERTY+">";
+				sensorConfigXML += xmlProperty(JSONIdentifiers.SENSOR_TYPE, StringEscapeUtils.escapeXml(String.valueOf(sensorConfiguration.getSensorType())));
+				sensorConfigXML += xmlProperty(JSONIdentifiers.KEY, StringEscapeUtils.escapeXml(String.valueOf(sensorConfiguration.getKeyProperty())));
+				sensorConfigXML += xmlProperty(JSONIdentifiers.VALUE, StringEscapeUtils.escapeXml(String.valueOf(sensorConfiguration.getValueProperty())));
+				sensorConfigXML += "</"+JSONIdentifiers.SENSOR_PROPERTY+">";
+			}
+
+            root.put(JSONIdentifiers.SENSOR_CONFIGURATION, XML.toJSONObject(sensorConfigXML));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return root;
+	}
+	
+	private static String xmlProperty(String tag, String value){
+		return "<"+tag+">"+value+"</"+tag+">";
 	}
 
 }

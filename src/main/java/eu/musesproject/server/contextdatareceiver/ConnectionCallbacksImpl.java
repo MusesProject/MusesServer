@@ -35,8 +35,11 @@ import eu.musesproject.server.authentication.AuthenticationManager;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
-import eu.musesproject.server.eventprocessor.util.Constants;
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.MusesConfig;
+import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
+import eu.musesproject.server.scheduler.ModuleType;
 
 
 public class ConnectionCallbacksImpl implements IConnectionCallbacks {
@@ -48,6 +51,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	public static volatile String lastSessionId = null;
 	private static volatile String data = "";
 	public static volatile String receiveData;
+	private static DBManager dbManager = new DBManager(ModuleType.EP);
 
 	public ConnectionCallbacksImpl(){
 		connManager = ConnectionManager.getInstance();
@@ -138,7 +142,23 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					UserContextEventDataReceiver.storeEvent(EventTypes.LOG_OUT, username, "musesawaew", deviceId, "Geneva", authResponse.toString());
 					return authResponse.toString();
 				
-			}	else {
+			}else if (requestType.equals(RequestType.CONFIG_SYNC)) {
+				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
+					logger.log(Level.INFO, MUSES_TAG + "Config sync requested");
+					MusesConfig config = dbManager.getMusesConfig();
+					logger.log(Level.INFO, MUSES_TAG + config.getConfigName() + " silent mode:"+config.getSilentMode());
+					
+					List<SensorConfiguration> sensorConfig = dbManager.getSensorConfiguration();
+					
+					JSONObject response = JSONManager.createConfigUpdateJSON(RequestType.CONFIG_UPDATE, config, sensorConfig);
+					logger.log(Level.INFO, response.toString());
+					connManager.sendData(sessionId, response.toString());
+				} else {//Current sessionId has not been authenticated
+					JSONObject response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, "FAIL", "Data cannot be processed: Failed authentication");
+					logger.log(Level.INFO, response.toString());
+					connManager.sendData(sessionId, response.toString());
+				}
+			}else {
 				//Data exchange: We should check if sessionId is correctly authenticated
 				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
 
