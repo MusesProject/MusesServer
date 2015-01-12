@@ -1132,4 +1132,20 @@ INSERT INTO `sensor_configuration` VALUES(16,'CONTEXT_SENSOR_PACKAGE','enabled',
 INSERT INTO `sensor_configuration` VALUES(17,'CONTEXT_SENSOR_SETTINGS','enabled','true');
 INSERT INTO `sensor_configuration` VALUES(18,'CONTEXT_SENSOR_NOTIFICATION','enabled','true');
 
+
+DROP TABLE IF EXISTS `connection_config`;
+
+CREATE TABLE `connection_config` (
+  `config_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `timeout`  int unsigned NOT NULL DEFAULT '5000',
+  `poll_timeout`  int unsigned NOT NULL DEFAULT '10000',
+  `sleep_poll_timeout`  int unsigned NOT NULL DEFAULT '10000',
+  `polling_enabled` tinyint(1) NOT NULL COMMENT 'Specify whether the polling is enabled or not',
+  `login_attempts` int(10) unsigned NOT NULL DEFAULT '5',
+  PRIMARY KEY (`config_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server Connection configuration parameters';
+
+
+INSERT INTO `connection_config` VALUES(1,5000,10000,60000,1,5);
+
 -- Dump completed on 2015-01-08 10:44:09

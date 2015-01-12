@@ -36,6 +36,7 @@ import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
 import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
@@ -145,12 +146,16 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 			}else if (requestType.equals(RequestType.CONFIG_SYNC)) {
 				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
 					logger.log(Level.INFO, MUSES_TAG + "Config sync requested");
+					//MUSES Configuration
 					MusesConfig config = dbManager.getMusesConfig();
 					logger.log(Level.INFO, MUSES_TAG + config.getConfigName() + " silent mode:"+config.getSilentMode());
-					
+					//Connection Configuration
+					ConnectionConfig connectionConfig = dbManager.getConnectionConfig();
+					logger.log(Level.INFO, MUSES_TAG + " Connection config id:" + connectionConfig.getConfigId());
+					//Sensor Configuration
 					List<SensorConfiguration> sensorConfig = dbManager.getSensorConfiguration();
 					
-					JSONObject response = JSONManager.createConfigUpdateJSON(RequestType.CONFIG_UPDATE, config, sensorConfig);
+					JSONObject response = JSONManager.createConfigUpdateJSON(RequestType.CONFIG_UPDATE, config, sensorConfig, connectionConfig);
 					logger.log(Level.INFO, response.toString());
 					connManager.sendData(sessionId, response.toString());
 				} else {//Current sessionId has not been authenticated

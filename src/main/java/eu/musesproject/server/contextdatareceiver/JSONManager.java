@@ -23,7 +23,6 @@ package eu.musesproject.server.contextdatareceiver;
 
 
 
-import java.awt.Desktop.Action;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,11 +36,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-
 import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
@@ -379,7 +378,7 @@ public class JSONManager {
 		return root;
 	}
 	
-	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig) {
+	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig, ConnectionConfig connConfig) {
 		JSONObject root = new JSONObject();
 		try {
 
@@ -405,6 +404,17 @@ public class JSONManager {
 			}
 
             root.put(JSONIdentifiers.SENSOR_CONFIGURATION, XML.toJSONObject(sensorConfigXML));
+            
+            //Connection configuration
+            String connConfigXML = "";
+            connConfigXML += xmlProperty(JSONIdentifiers.TIMEOUT, connConfig.getTimeout());
+            connConfigXML += xmlProperty(JSONIdentifiers.POLL_TIMEOUT, connConfig.getPollTimeout());
+            connConfigXML += xmlProperty(JSONIdentifiers.SLEEP_POLL_TIMEOUT, connConfig.getSleepPollTimeout());
+            connConfigXML += xmlProperty(JSONIdentifiers.POLLING_ENABLED, String.valueOf(connConfig.isPollingEnabled()));
+            connConfigXML += xmlProperty(JSONIdentifiers.LOGIN_ATTEMPTS, connConfig.getLoginAttempts());
+            
+            root.put(JSONIdentifiers.CONNECTION_CONFIG,XML.toJSONObject(connConfigXML));
+            
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -414,6 +424,10 @@ public class JSONManager {
 	}
 	
 	private static String xmlProperty(String tag, String value){
+		return "<"+tag+">"+value+"</"+tag+">";
+	}
+	
+	private static String xmlProperty(String tag, int value){
 		return "<"+tag+">"+value+"</"+tag+">";
 	}
 

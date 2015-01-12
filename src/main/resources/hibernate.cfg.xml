@@ -18,6 +18,7 @@
         <mapping class="eu.musesproject.server.entity.AppType"/>
         <mapping class="eu.musesproject.server.entity.Assets"/>
         <mapping class="eu.musesproject.server.entity.Clue"/>
+        <mapping class="eu.musesproject.server.entity.ConnectionConfig"/>
         <mapping class="eu.musesproject.server.entity.CorporatePolicies"/>
         <mapping class="eu.musesproject.server.entity.Decision"/>
         <mapping class="eu.musesproject.server.entity.DeviceConfig"/>
