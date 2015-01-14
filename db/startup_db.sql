@@ -199,6 +199,34 @@ INSERT INTO `clue` VALUES (1,'Wi-FI'),(2,'Wi-FI'),(3,'Wi-FI'),(4,'Wi-FI'),(5,'Wi
 UNLOCK TABLES;
 
 --
+-- Table structure for table `connection_config`
+--
+
+DROP TABLE IF EXISTS `connection_config`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `connection_config` (
+  `config_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `timeout` int(10) unsigned NOT NULL DEFAULT '5000',
+  `poll_timeout` int(10) unsigned NOT NULL DEFAULT '10000',
+  `sleep_poll_timeout` int(10) unsigned NOT NULL DEFAULT '10000',
+  `polling_enabled` tinyint(1) NOT NULL COMMENT 'Specify whether the polling is enabled or not',
+  `login_attempts` int(10) unsigned NOT NULL DEFAULT '5',
+  PRIMARY KEY (`config_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server Connection configuration parameters';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `connection_config`
+--
+
+LOCK TABLES `connection_config` WRITE;
+/*!40000 ALTER TABLE `connection_config` DISABLE KEYS */;
+INSERT INTO `connection_config` VALUES (1,5000,10000,60000,1,5);
+/*!40000 ALTER TABLE `connection_config` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `corporate_policies`
 --
 
@@ -482,7 +510,7 @@ CREATE TABLE `muses_config` (
   `silent_mode` tinyint(1) NOT NULL COMMENT 'Specify whether all devices should run MUSES application in silent mode (true), or verbose (false)',
   `access_attempts_before_blocking` int(10) unsigned NOT NULL DEFAULT '5',
   PRIMARY KEY (`config_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='MUSES Server configuration parameters';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server configuration parameters';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -491,9 +519,9 @@ CREATE TABLE `muses_config` (
 
 LOCK TABLES `muses_config` WRITE;
 /*!40000 ALTER TABLE `muses_config` DISABLE KEYS */;
+INSERT INTO `muses_config` VALUES (1,'SILENT',1,3);
 /*!40000 ALTER TABLE `muses_config` ENABLE KEYS */;
 UNLOCK TABLES;
-INSERT INTO `muses`.`muses_config` (`config_id`, `config_name`, `silent_mode`, `access_attempts_before_blocking`) VALUES ('1', 'SILENT', '1', '3');
 
 --
 -- Table structure for table `outcome`
@@ -777,6 +805,32 @@ LOCK TABLES `sensitivity` WRITE;
 /*!40000 ALTER TABLE `sensitivity` DISABLE KEYS */;
 INSERT INTO `sensitivity` VALUES (25,'sensitivity',1);
 /*!40000 ALTER TABLE `sensitivity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sensor_configuration`
+--
+
+DROP TABLE IF EXISTS `sensor_configuration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sensor_configuration` (
+  `id` int(11) NOT NULL,
+  `sensor_type` varchar(45) NOT NULL,
+  `keyproperty` varchar(45) NOT NULL,
+  `valueproperty` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='This table contains sensor configuration properties';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sensor_configuration`
+--
+
+LOCK TABLES `sensor_configuration` WRITE;
+/*!40000 ALTER TABLE `sensor_configuration` DISABLE KEYS */;
+INSERT INTO `sensor_configuration` VALUES (1,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','avast! Mobile Security'),(2,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Mobile Security & Antivirus'),(3,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Avira Antivirus Security'),(4,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Norton Security & Antivirus'),(5,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','CM Security & Find My Phone'),(6,'CONTEXT_SENSOR_DEVICE_PROTECTION','enabled','true'),(7,'CONTEXT_SENSOR_LOCATION','mindistance','10'),(8,'CONTEXT_SENSOR_LOCATION','mindtime','400'),(9,'CONTEXT_SENSOR_LOCATION','radius','12.0'),(10,'CONTEXT_SENSOR_LOCATION','enabled','true'),(11,'CONTEXT_SENSOR_FILEOBSERVER','path','/SWE/'),(12,'CONTEXT_SENSOR_FILEOBSERVER','enabled','true'),(13,'CONTEXT_SENSOR_APP','enabled','true'),(14,'CONTEXT_SENSOR_CONNECTIVITY','enabled','true'),(15,'CONTEXT_SENSOR_INTERACTION','enabled','true'),(16,'CONTEXT_SENSOR_PACKAGE','enabled','true'),(17,'CONTEXT_SENSOR_SETTINGS','enabled','true'),(18,'CONTEXT_SENSOR_NOTIFICATION','enabled','true');
+/*!40000 ALTER TABLE `sensor_configuration` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1088,9 +1142,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-
-INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',1,200,100),(2,'swe tester 2','swe','swe@swe-con.se','swe-tester-2','swe_test',0,1,0),(3,'swe tester 3','swe','swe@swe-con.se','swe-tester-3','swe_test',0,1,0),(4,'swe tester 4','swe','swe@swe-con.se','swe-tester-4','swe_test',0,1,0),(5,'swe tester 5','swe','swe@swe-con.se','swe-tester-5','swe_test',0,1,0),(6,'swe tester 6','swe','swe@swe-con.se','swe-tester-6','swe_test',0,1,0),(7,'swe tester 7','swe','swe@swe-con.se','swe-tester-7','swe_test',0,1,0),(8,'swe tester 8','swe','swe@swe-con.se','swe-tester-8','swe_test',0,1,0),(9,'swe tester 9','swe','swe@swe-con.se','swe-tester-9','swe_test',0,1,0),(10,'swe tester 10','swe','swe@swe-con.se','swe-tester-10','swe_test',0,1,0),(11,'notfound','notfound','notfound@muses.com','notfound','56836458345673465',0,0,0),(200,'John','Doe','joe@email.com','joe','pass',1,200,100),(201,'Joe','david','david@email.com','david','pass',1,200,101),(206,'Pinkman','Jesse','jesse.pinkman@muses.eu','junior','walterwhite',0,0.9999,0),(207,'Pinkman','Jesse','jesse.pinkman@muses.eu','hank','walterwhite',0,0.9999,0),(209,'Pinkman','Jesse','jesse.pinkman@muses.eu','1032332241110','walterwhite',0,0.9999,0),(210,'Pinkman','Jesse','jesse.pinkman@muses.eu','130341233403','walterwhite',0,0.9999,0),(211,'Pinkman','Jesse','jesse.pinkman@muses.eu','1404023114313','walterwhite',0,0.9999,0),(212,'Pinkman','Jesse','jesse.pinkman@muses.eu','3241113212132','walterwhite',0,0.9999,0),(213,'Pinkman','Jesse','jesse.pinkman@muses.eu','2344114311100','walterwhite',0,0.9999,0),(214,'Pinkman','Jesse','jesse.pinkman@muses.eu','3403203020234','walterwhite',0,0.9999,0),(215,'Pinkman','Jesse','jesse.pinkman@muses.eu','1233411420410','walterwhite',0,0.9999,0),(216,'Pinkman','Jesse','jesse.pinkman@muses.eu','102023032313','walterwhite',0,0.9999,0),(217,'Pinkman','Jesse','jesse.pinkman@muses.eu','1113333143424','walterwhite',0,0.9999,0),(218,'Pinkman','Jesse','jesse.pinkman@muses.eu','212002322402','walterwhite',0,0.9999,0),(219,'Pinkman','Jesse','jesse.pinkman@muses.eu','314432010013','walterwhite',0,0.9999,0),(220,'Pinkman','Jesse','jesse.pinkman@muses.eu','2033310120144','walterwhite',0,0.9999,0),(221,'Pinkman','Jesse','jesse.pinkman@muses.eu','1332143110412','walterwhite',0,0.9999,0),(222,'Pinkman','Jesse','jesse.pinkman@muses.eu','1414442402432','walterwhite',0,0.9999,0),(223,'Pinkman','Jesse','jesse.pinkman@muses.eu','4102241231401','walterwhite',0,0.9999,0),(224,'Pinkman','Jesse','jesse.pinkman@muses.eu','242410024210','walterwhite',0,0.9999,0),(225,'Pinkman','Jesse','jesse.pinkman@muses.eu','342211231012','walterwhite',0,0.9999,0),(226,'Pinkman','Jesse','jesse.pinkman@muses.eu','2422123334033','walterwhite',0,0.9999,0),(227,'Pinkman','Jesse','jesse.pinkman@muses.eu','3124123131143','walterwhite',0,0.9999,0),(228,'Pinkman','Jesse','jesse.pinkman@muses.eu','3413223441224','walterwhite',0,0.9999,0),(229,'Pinkman','Jesse','jesse.pinkman@muses.eu','3302103221122','walterwhite',0,0.9999,0),(230,'Pinkman','Jesse','jesse.pinkman@muses.eu','3431221421233','walterwhite',0,0.9999,0),(231,'Pinkman','Jesse','jesse.pinkman@muses.eu','3011203122401','walterwhite',0,0.9999,0),(232,'Pinkman','Jesse','jesse.pinkman@muses.eu','2411434443200','walterwhite',0,0.9999,0),(233,'Pinkman','Jesse','jesse.pinkman@muses.eu','2343110331313','walterwhite',0,0.9999,0),(234,'Pinkman','Jesse','jesse.pinkman@muses.eu','1443043043434','walterwhite',0,0.9999,0),(235,'Pinkman','Jesse','jesse.pinkman@muses.eu','3201330131244','walterwhite',0,0.9999,0),(236,'Pinkman','Jesse','jesse.pinkman@muses.eu','114101302400','walterwhite',0,0.9999,0),(237,'Pinkman','Jesse','jesse.pinkman@muses.eu','420421344230','walterwhite',0,0.9999,0),(238,'Pinkman','Jesse','jesse.pinkman@muses.eu','21111100213','walterwhite',0,0.9999,0),(239,'Pinkman','Jesse','jesse.pinkman@muses.eu','220141404040','walterwhite',0,0.9999,0),(240,'Pinkman','Jesse','jesse.pinkman@muses.eu','400333314220','walterwhite',0,0.9999,0),(241,'Pinkman','Jesse','jesse.pinkman@muses.eu','2032114312002','walterwhite',0,0.9999,0),(242,'Pinkman','Jesse','jesse.pinkman@muses.eu','3204103441312','walterwhite',0,0.9999,0),(243,'Pinkman','Jesse','jesse.pinkman@muses.eu','1342132242101','walterwhite',0,0.9999,0),(244,'Pinkman','Jesse','jesse.pinkman@muses.eu','400022230120','walterwhite',0,0.9999,0),(245,'Pinkman','Jesse','jesse.pinkman@muses.eu','1133221343111','walterwhite',0,0.9999,0),(246,'Pinkman','Jesse','jesse.pinkman@muses.eu','3213134231013','walterwhite',0,0.9999,0),(247,'Pinkman','Jesse','jesse.pinkman@muses.eu','32012010012','walterwhite',0,0.9999,0),(248,'Pinkman','Jesse','jesse.pinkman@muses.eu','2421332301404','walterwhite',0,0.9999,0),(249,'Pinkman','Jesse','jesse.pinkman@muses.eu','431300343132','walterwhite',0,0.9999,0),(250,'Pinkman','Jesse','jesse.pinkman@muses.eu','2034411011221','walterwhite',0,0.9999,0),(251,'Pinkman','Jesse','jesse.pinkman@muses.eu','4134220331440','walterwhite',0,0.9999,0),(252,'Pinkman','Jesse','jesse.pinkman@muses.eu','420443141034','walterwhite',0,0.9999,0),(253,'Pinkman','Jesse','jesse.pinkman@muses.eu','2242203103231','walterwhite',0,0.9999,0),(254,'Pinkman','Jesse','jesse.pinkman@muses.eu','1104110131221','walterwhite',0,0.9999,0),(264,'Pinkman','Jesse','jesse.pinkman@muses.eu','313431320001','walterwhite',0,0.9999,0),(265,'Pinkman','Jesse','jesse.pinkman@muses.eu','2124201232102','walterwhite',0,0.9999,0),(266,'Pinkman','Jesse','jesse.pinkman@muses.eu','3200420421214','walterwhite',0,0.9999,0),(267,'Pinkman','Jesse','jesse.pinkman@muses.eu','3402224212202','walterwhite',0,0.9999,0);
-
+INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',1,200,100),(2,'swe tester 2','swe','swe@swe-con.se','swe-tester-2','swe_test',1,1,0),(3,'swe tester 3','swe','swe@swe-con.se','swe-tester-3','swe_test',1,1,0),(4,'swe tester 4','swe','swe@swe-con.se','swe-tester-4','swe_test',1,1,0),(5,'swe tester 5','swe','swe@swe-con.se','swe-tester-5','swe_test',1,1,0),(6,'swe tester 6','swe','swe@swe-con.se','swe-tester-6','swe_test',1,1,0),(7,'swe tester 7','swe','swe@swe-con.se','swe-tester-7','swe_test',1,1,0),(8,'swe tester 8','swe','swe@swe-con.se','swe-tester-8','swe_test',1,1,0),(9,'swe tester 9','swe','swe@swe-con.se','swe-tester-9','swe_test',1,1,0),(10,'swe tester 10','swe','swe@swe-con.se','swe-tester-10','swe_test',1,1,0),(11,'notfound','notfound','notfound@muses.com','notfound','56836458345673465',0,0,0),(200,'John','Doe','joe@email.com','joe','pass',1,200,100),(201,'Joe','david','david@email.com','david','pass',1,200,101),(206,'Pinkman','Jesse','jesse.pinkman@muses.eu','junior','walterwhite',0,0.9999,0),(207,'Pinkman','Jesse','jesse.pinkman@muses.eu','hank','walterwhite',0,0.9999,0),(209,'Pinkman','Jesse','jesse.pinkman@muses.eu','1032332241110','walterwhite',0,0.9999,0),(210,'Pinkman','Jesse','jesse.pinkman@muses.eu','130341233403','walterwhite',0,0.9999,0),(211,'Pinkman','Jesse','jesse.pinkman@muses.eu','1404023114313','walterwhite',0,0.9999,0),(212,'Pinkman','Jesse','jesse.pinkman@muses.eu','3241113212132','walterwhite',0,0.9999,0),(213,'Pinkman','Jesse','jesse.pinkman@muses.eu','2344114311100','walterwhite',0,0.9999,0),(214,'Pinkman','Jesse','jesse.pinkman@muses.eu','3403203020234','walterwhite',0,0.9999,0),(215,'Pinkman','Jesse','jesse.pinkman@muses.eu','1233411420410','walterwhite',0,0.9999,0),(216,'Pinkman','Jesse','jesse.pinkman@muses.eu','102023032313','walterwhite',0,0.9999,0),(217,'Pinkman','Jesse','jesse.pinkman@muses.eu','1113333143424','walterwhite',0,0.9999,0),(218,'Pinkman','Jesse','jesse.pinkman@muses.eu','212002322402','walterwhite',0,0.9999,0),(219,'Pinkman','Jesse','jesse.pinkman@muses.eu','314432010013','walterwhite',0,0.9999,0),(220,'Pinkman','Jesse','jesse.pinkman@muses.eu','2033310120144','walterwhite',0,0.9999,0),(221,'Pinkman','Jesse','jesse.pinkman@muses.eu','1332143110412','walterwhite',0,0.9999,0),(222,'Pinkman','Jesse','jesse.pinkman@muses.eu','1414442402432','walterwhite',0,0.9999,0),(223,'Pinkman','Jesse','jesse.pinkman@muses.eu','4102241231401','walterwhite',0,0.9999,0),(224,'Pinkman','Jesse','jesse.pinkman@muses.eu','242410024210','walterwhite',0,0.9999,0),(225,'Pinkman','Jesse','jesse.pinkman@muses.eu','342211231012','walterwhite',0,0.9999,0),(226,'Pinkman','Jesse','jesse.pinkman@muses.eu','2422123334033','walterwhite',0,0.9999,0),(227,'Pinkman','Jesse','jesse.pinkman@muses.eu','3124123131143','walterwhite',0,0.9999,0),(228,'Pinkman','Jesse','jesse.pinkman@muses.eu','3413223441224','walterwhite',0,0.9999,0),(229,'Pinkman','Jesse','jesse.pinkman@muses.eu','3302103221122','walterwhite',0,0.9999,0),(230,'Pinkman','Jesse','jesse.pinkman@muses.eu','3431221421233','walterwhite',0,0.9999,0),(231,'Pinkman','Jesse','jesse.pinkman@muses.eu','3011203122401','walterwhite',0,0.9999,0),(232,'Pinkman','Jesse','jesse.pinkman@muses.eu','2411434443200','walterwhite',0,0.9999,0),(233,'Pinkman','Jesse','jesse.pinkman@muses.eu','2343110331313','walterwhite',0,0.9999,0),(234,'Pinkman','Jesse','jesse.pinkman@muses.eu','1443043043434','walterwhite',0,0.9999,0),(235,'Pinkman','Jesse','jesse.pinkman@muses.eu','3201330131244','walterwhite',0,0.9999,0),(236,'Pinkman','Jesse','jesse.pinkman@muses.eu','114101302400','walterwhite',0,0.9999,0),(237,'Pinkman','Jesse','jesse.pinkman@muses.eu','420421344230','walterwhite',0,0.9999,0),(238,'Pinkman','Jesse','jesse.pinkman@muses.eu','21111100213','walterwhite',0,0.9999,0),(239,'Pinkman','Jesse','jesse.pinkman@muses.eu','220141404040','walterwhite',0,0.9999,0),(240,'Pinkman','Jesse','jesse.pinkman@muses.eu','400333314220','walterwhite',0,0.9999,0),(241,'Pinkman','Jesse','jesse.pinkman@muses.eu','2032114312002','walterwhite',0,0.9999,0),(242,'Pinkman','Jesse','jesse.pinkman@muses.eu','3204103441312','walterwhite',0,0.9999,0),(243,'Pinkman','Jesse','jesse.pinkman@muses.eu','1342132242101','walterwhite',0,0.9999,0),(244,'Pinkman','Jesse','jesse.pinkman@muses.eu','400022230120','walterwhite',0,0.9999,0),(245,'Pinkman','Jesse','jesse.pinkman@muses.eu','1133221343111','walterwhite',0,0.9999,0),(246,'Pinkman','Jesse','jesse.pinkman@muses.eu','3213134231013','walterwhite',0,0.9999,0),(247,'Pinkman','Jesse','jesse.pinkman@muses.eu','32012010012','walterwhite',0,0.9999,0),(248,'Pinkman','Jesse','jesse.pinkman@muses.eu','2421332301404','walterwhite',0,0.9999,0),(249,'Pinkman','Jesse','jesse.pinkman@muses.eu','431300343132','walterwhite',0,0.9999,0),(250,'Pinkman','Jesse','jesse.pinkman@muses.eu','2034411011221','walterwhite',0,0.9999,0),(251,'Pinkman','Jesse','jesse.pinkman@muses.eu','4134220331440','walterwhite',0,0.9999,0),(252,'Pinkman','Jesse','jesse.pinkman@muses.eu','420443141034','walterwhite',0,0.9999,0),(253,'Pinkman','Jesse','jesse.pinkman@muses.eu','2242203103231','walterwhite',0,0.9999,0),(254,'Pinkman','Jesse','jesse.pinkman@muses.eu','1104110131221','walterwhite',0,0.9999,0),(264,'Pinkman','Jesse','jesse.pinkman@muses.eu','313431320001','walterwhite',0,0.9999,0),(265,'Pinkman','Jesse','jesse.pinkman@muses.eu','2124201232102','walterwhite',0,0.9999,0),(266,'Pinkman','Jesse','jesse.pinkman@muses.eu','3200420421214','walterwhite',0,0.9999,0),(267,'Pinkman','Jesse','jesse.pinkman@muses.eu','3402224212202','walterwhite',0,0.9999,0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -1103,49 +1155,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-
-DROP TABLE IF EXISTS `sensor_configuration`;
-
-CREATE TABLE sensor_configuration	 (
-	id INTEGER PRIMARY KEY,
-	sensor_type VARCHAR(45) NOT NULL,
-	keyproperty VARCHAR(45) NOT NULL,
-	valueproperty VARCHAR(45) NOT NULL
-)ENGINE=InnoDB AUTO_INCREMENT=278 DEFAULT CHARSET=utf8 COMMENT='This table contains sensor configuration properties';
-
-INSERT INTO `sensor_configuration` VALUES(1,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','avast! Mobile Security');
-INSERT INTO `sensor_configuration` VALUES(2,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Mobile Security & Antivirus');
-INSERT INTO `sensor_configuration` VALUES(3,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Avira Antivirus Security');
-INSERT INTO `sensor_configuration` VALUES(4,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Norton Security & Antivirus');
-INSERT INTO `sensor_configuration` VALUES(5,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','CM Security & Find My Phone');
-INSERT INTO `sensor_configuration` VALUES(6,'CONTEXT_SENSOR_DEVICE_PROTECTION','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(7,'CONTEXT_SENSOR_LOCATION','mindistance','10');
-INSERT INTO `sensor_configuration` VALUES(8,'CONTEXT_SENSOR_LOCATION','mindtime','400');
-INSERT INTO `sensor_configuration` VALUES(9,'CONTEXT_SENSOR_LOCATION','radius','12.0');
-INSERT INTO `sensor_configuration` VALUES(10,'CONTEXT_SENSOR_LOCATION','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(11,'CONTEXT_SENSOR_FILEOBSERVER','path','/SWE/');
-INSERT INTO `sensor_configuration` VALUES(12,'CONTEXT_SENSOR_FILEOBSERVER','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(13,'CONTEXT_SENSOR_APP','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(14,'CONTEXT_SENSOR_CONNECTIVITY','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(15,'CONTEXT_SENSOR_INTERACTION','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(16,'CONTEXT_SENSOR_PACKAGE','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(17,'CONTEXT_SENSOR_SETTINGS','enabled','true');
-INSERT INTO `sensor_configuration` VALUES(18,'CONTEXT_SENSOR_NOTIFICATION','enabled','true');
-
-
-DROP TABLE IF EXISTS `connection_config`;
-
-CREATE TABLE `connection_config` (
-  `config_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `timeout`  int unsigned NOT NULL DEFAULT '5000',
-  `poll_timeout`  int unsigned NOT NULL DEFAULT '10000',
-  `sleep_poll_timeout`  int unsigned NOT NULL DEFAULT '10000',
-  `polling_enabled` tinyint(1) NOT NULL COMMENT 'Specify whether the polling is enabled or not',
-  `login_attempts` int(10) unsigned NOT NULL DEFAULT '5',
-  PRIMARY KEY (`config_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server Connection configuration parameters';
-
-
-INSERT INTO `connection_config` VALUES(1,5000,10000,60000,1,5);
-
--- Dump completed on 2015-01-08 10:44:09
+-- Dump completed on 2015-01-14 14:08:49
