@@ -1157,6 +1157,7 @@ UNLOCK TABLES;
 
 
 
+
 DROP TABLE IF EXISTS `connection_config`;
 
 CREATE TABLE `connection_config` (
@@ -1193,6 +1194,7 @@ CREATE TABLE `security_violation` (
   CONSTRAINT `security_violation-simple_events:event_id` FOREIGN KEY (`event_id`) REFERENCES `simple_events` (`event_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `security_violation-users:user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='Table to store any detected security violation';
+
 
 
 -- Dump completed on 2015-01-14 14:08:49
