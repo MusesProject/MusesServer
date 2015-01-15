@@ -12,7 +12,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
@@ -41,7 +43,8 @@ import eu.musesproject.server.scheduler.ModuleType;
 public class DBManager {
 	
 	ModuleType module;
-	private final SessionFactory sessionFactory  = new Configuration().configure().buildSessionFactory();
+	private static SessionFactory sessionFactory = null;
+	private static ServiceRegistry serviceRegistry;
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static Logger logger = Logger.getLogger(DBManager.class.getName());;
 	public DBManager(ModuleType module) {
@@ -49,6 +52,14 @@ public class DBManager {
 	}
 
 	private SessionFactory getSessionFactory() {
+		if (sessionFactory == null) {
+			Configuration configuration = new Configuration();
+			configuration.configure();
+			serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
+					configuration.getProperties()).build();
+			sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+			
+		}
 		return sessionFactory;
 	}
 	
