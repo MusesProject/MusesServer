@@ -39,6 +39,7 @@
         <mapping class="eu.musesproject.server.entity.Roles"/>
         <mapping class="eu.musesproject.server.entity.SecurityIncident"/>
         <mapping class="eu.musesproject.server.entity.SecurityRules"/>
+        <mapping class="eu.musesproject.server.entity.SecurityViolation"/>
         <mapping class="eu.musesproject.server.entity.Sensitivity"/>
         <mapping class="eu.musesproject.server.entity.SensorConfiguration"/>
         <mapping class="eu.musesproject.server.entity.SimpleEvents"/>

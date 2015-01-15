@@ -106,7 +106,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -127,7 +127,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -214,7 +214,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -239,7 +239,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -261,7 +261,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -283,7 +283,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -304,7 +304,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -327,7 +327,7 @@ public class TestContextDataReceiver extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}

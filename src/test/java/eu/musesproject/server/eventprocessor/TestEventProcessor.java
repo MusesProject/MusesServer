@@ -60,7 +60,7 @@ public class TestEventProcessor extends TestCase {
 		logger.info("Running testStartup");
 		if (EventProcessorImpl.getMusesEngineService()==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 		}else{
 			logger.info("testStartup: The event processor was previously started before the test");
@@ -79,7 +79,7 @@ public class TestEventProcessor extends TestCase {
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			des = EventProcessorImpl.getMusesEngineService();
 		}
 		event.setSessionId(defaultSessionId);

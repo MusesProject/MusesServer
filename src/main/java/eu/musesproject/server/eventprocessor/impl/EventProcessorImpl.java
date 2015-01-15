@@ -21,6 +21,8 @@ package eu.musesproject.server.eventprocessor.impl;
  * #L%
  */
 
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
@@ -160,10 +162,19 @@ public class EventProcessorImpl implements EventProcessor {
 	public IMusesCorrelationEngine startTemporalCorrelation(String relativeRulePath) {
 		
 		logger.info("Starting temporal correlation...");
-		MusesCorrelationEngineImpl engine = new MusesCorrelationEngineImpl();		
-		URL urlRulePath = getClass().getResource(relativeRulePath);
+		MusesCorrelationEngineImpl engine = new MusesCorrelationEngineImpl();
+		URL urlRulePath = getClass().getClassLoader().getResource(relativeRulePath);
+		//URL urlRulePath = getClass().getResource(relativeRulePath);
+		InputStream  is= getClass().getResourceAsStream("/drl");
+		if (is!=null){
+			logger.info("Input stream is NOT null");
+		}else{
+			logger.info("Input stream is NULL");
+		}
+		logger.info("URL rule path:" + urlRulePath.getPath());
 		String drlRulePath = Constants.FILE_PROTOCOL + urlRulePath.getPath();
 		
+		logger.info("DRL absolute rule path:"+drlRulePath);
 		//First,
 		Properties props = new Properties();
 		props.setProperty(Constants.DROOLS_INTERVAL, Constants.DROOLS_INTERVAL_VALUE);

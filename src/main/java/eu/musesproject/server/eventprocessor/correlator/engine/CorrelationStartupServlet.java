@@ -31,7 +31,7 @@ public class CorrelationStartupServlet extends HttpServlet {
 	
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			des = EventProcessorImpl.getMusesEngineService();
 			UserContextEventDataReceiver.storeEvent(EventTypes.RESTART, "muses", "MUSES-Server", "server", "Valencia", "Server restart: correlation startup init");
 		}else{

@@ -111,7 +111,7 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -174,7 +174,7 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -197,7 +197,7 @@ public class TestEventProcessorRt2aeIntegration extends TestCase{
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -231,7 +231,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -266,7 +266,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -302,7 +302,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -336,7 +336,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -374,7 +374,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -441,7 +441,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -480,7 +480,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -516,7 +516,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -551,7 +551,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -586,7 +586,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -623,7 +623,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -662,7 +662,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -700,7 +700,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -737,7 +737,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -774,7 +774,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -812,7 +812,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -883,7 +883,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -964,7 +964,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1020,7 +1020,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1057,7 +1057,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1095,7 +1095,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1127,7 +1127,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1143,7 +1143,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1159,7 +1159,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1175,7 +1175,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1191,7 +1191,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
@@ -1218,13 +1218,31 @@ public final void testPolicyOpenConfAssetInSecure(){
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
 		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testConfigSync);
+
+
+	}
+	
+	public final void testSecurityViolation(){
+		final String testSecurityViolation = "{\"sensor\":{},\"action\":{\"type\":\"ACTION_SEND_MAIL\",\"timestamp\" : \"1389885147\",\"properties\": {\"from\":\"max.mustermann@generic.com\",\"to\":\"the.reiceiver@generic.com, another.direct.receiver@generic.com\",\"cc\":\"other.listener@generic.com, 2other.listener@generic.com\",\"bcc\":\"hidden.reiceiver@generic.com\",\"subject\":\"MUSES sensor status subject\",\"noAttachments\" : 0,\"attachmentInfo\": \"\"}},\"requesttype\":\"online_decision\",\"device_id\":\"36474929437562939\",\"username\":\"muses\",\"id\":1976}";
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLogin);
+		callback.receiveCb(defaultSessionId, testSecurityViolation);
 
 
 	}

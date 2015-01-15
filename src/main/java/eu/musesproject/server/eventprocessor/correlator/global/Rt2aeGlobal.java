@@ -21,6 +21,7 @@ package eu.musesproject.server.eventprocessor.correlator.global;
  * #L%
  */
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -33,6 +34,8 @@ import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
+import eu.musesproject.server.entity.SecurityViolation;
+import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
 import eu.musesproject.server.eventprocessor.composers.AdditionalProtectionComposer;
 import eu.musesproject.server.eventprocessor.composers.ClueComposer;
@@ -373,7 +376,9 @@ public class Rt2aeGlobal {
 		Decision decision = null;
 		Context context = new Context();
 		
+		//Store security violation in db
 		
+		storeComplexEvent(event, message, mode, condition);
 		
 		PolicyCompliance policyCompliance = policyCompliance(composedRequest, message, event, mode, condition);
 		try{
@@ -598,6 +603,28 @@ public class Rt2aeGlobal {
 	
 	public static Rt2aeServerImpl getRt2aeServer(){
 		return rt2aeServer;
+	}
+	
+	public void storeComplexEvent(Event event, String message, String mode, String condition) {
+
+		// Database insertion
+
+		SecurityViolation securityViolation = new SecurityViolation();
+		securityViolation.setConditionText(condition);
+		//securityViolation.setDecisionId(decisionId);
+		securityViolation.setDetection(new Date());
+		
+		securityViolation.setDeviceId(new BigInteger(dbManager.getDeviceByIMEI(event.getDeviceId()).getDeviceId()));
+
+		securityViolation.setEventId(new BigInteger("2"));
+		securityViolation.setMessage(message);
+		securityViolation.setModeText(mode);
+		Users user = dbManager.getUserByUsername(event.getUsername());
+		if (user != null){
+			securityViolation.setUserId(new BigInteger(user.getUserId()));
+		}
+		dbManager.setSecurityViolation(securityViolation);
+
 	}
 	
 	

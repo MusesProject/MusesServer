@@ -438,7 +438,7 @@ CREATE TABLE `event_type` (
 
 LOCK TABLES `event_type` WRITE;
 /*!40000 ALTER TABLE `event_type` DISABLE KEYS */;
-INSERT INTO `event_type` VALUES (1,'LOG_IN','SIMPLE_EVENT'),(2,'LOG_OUT','SIMPLE_EVENT'),(3,'START','SIMPLE_EVENT'),(4,'RESUME','SIMPLE_EVENT'),(5,'STOP','SIMPLE_EVENT'),(6,'RESTART','SIMPLE_EVENT'),(7,'ACTION_REMOTE_FILE_ACCESS','SIMPLE_EVENT'),(8,'CONTEXT_SENSOR_CONNECTIVITY','SIMPLE_EVENT'),(9,'CONTEXT_SENSOR_DEVICE_PROTECTION','SIMPLE_EVENT'),(10,'ACTION_APP_OPEN','SIMPLE_EVENT'),(11,'ACTION_SEND_MAIL','SIMPLE_EVENT'),(12,'VIRUS_FOUND','SIMPLE_EVENT'),(13,'VIRUS_CLEANED','SIMPLE_EVENT'),(14,'SECURITY_PROPERTY_CHANGED','SIMPLE_EVENT'),(15,'SAVE_ASSET','SIMPLE_EVENT'),(16,'CONTEXT_SENSOR_PACKAGE','SIMPLE_EVENT'),(17,'SECURITY_VIOLATION','COMPLEX_EVENT'),(18,'SECURITY_INCIDENT','COMPLEX_EVENT'),(19,'CONFIGURATION_CHANGE','COMPLEX_EVENT'),(20,'DECISION','COMPLEX_EVENT'),(21,'DEVICE_POLICY_SENT','COMPLEX_EVENT'),(22,'CLUE_DETECTED','COMPLEX_EVENT');
+INSERT INTO `event_type` VALUES (1,'LOG_IN','SIMPLE_EVENT'),(2,'LOG_OUT','SIMPLE_EVENT'),(3,'START','SIMPLE_EVENT'),(4,'RESUME','SIMPLE_EVENT'),(5,'STOP','SIMPLE_EVENT'),(6,'RESTART','SIMPLE_EVENT'),(7,'ACTION_REMOTE_FILE_ACCESS','SIMPLE_EVENT'),(8,'CONTEXT_SENSOR_CONNECTIVITY','SIMPLE_EVENT'),(9,'CONTEXT_SENSOR_DEVICE_PROTECTION','SIMPLE_EVENT'),(10,'ACTION_APP_OPEN','SIMPLE_EVENT'),(11,'ACTION_SEND_MAIL','SIMPLE_EVENT'),(12,'VIRUS_FOUND','SIMPLE_EVENT'),(13,'VIRUS_CLEANED','SIMPLE_EVENT'),(14,'SECURITY_PROPERTY_CHANGED','SIMPLE_EVENT'),(15,'SAVE_ASSET','SIMPLE_EVENT'),(16,'CONTEXT_SENSOR_PACKAGE','SIMPLE_EVENT'),(17,'SECURITY_VIOLATION','COMPLEX_EVENT'),(18,'SECURITY_INCIDENT','COMPLEX_EVENT'),(19,'CONFIGURATION_CHANGE','COMPLEX_EVENT'),(20,'DECISION','COMPLEX_EVENT'),(21,'DEVICE_POLICY_SENT','COMPLEX_EVENT'),(22,'CLUE_DETECTED','COMPLEX_EVENT'),(23,'CONTEXT_SENSOR_APP','SIMPLE_EVENT');
 /*!40000 ALTER TABLE `event_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1147,5 +1147,27 @@ CREATE TABLE `connection_config` (
 
 
 INSERT INTO `connection_config` VALUES(1,5000,10000,60000,1,5);
+
+
+DROP TABLE IF EXISTS `security_violation`;
+
+CREATE TABLE `security_violation` (
+  `security_violation_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `message` varchar(1000) NOT NULL COMMENT 'Description of the detected security violation',
+  `conditionText` varchar(1000) NOT NULL COMMENT 'Condition satisfied to detect the current security violation',
+  `modeText` varchar(1000) NOT NULL COMMENT 'Mode associated to the way to provide a decision',
+  `user_id` bigint(20) unsigned NOT NULL,
+  `decision_id` bigint(20) unsigned DEFAULT NULL COMMENT 'Foreign key to the final decision associated to the security violation, once the decision is taken. FK to table DECISIONS(decision_id)',
+  `event_id` bigint(20) unsigned DEFAULT NULL COMMENT 'FK to table EVENTS(event_id)',
+  `device_id` bigint(20) unsigned DEFAULT NULL COMMENT 'FK to table DEVICES(device_id)',
+  `detection` datetime DEFAULT NULL COMMENT 'Time of detection of the security violation',
+  PRIMARY KEY (`security_violation_id`),
+  KEY `security-violation-users:user_id_idx` (`user_id`),
+  KEY `security-violation-decisions:decision_id_idx` (`decision_id`),
+  KEY `security-violation-simple_events:event_id_idx` (`event_id`),
+  CONSTRAINT `security_violation-devices:device_id` FOREIGN KEY (`device_id`) REFERENCES `devices` (`device_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `security_violation-simple_events:event_id` FOREIGN KEY (`event_id`) REFERENCES `simple_events` (`event_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `security_violation-users:user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='Table to store any detected security violation';
 
 -- Dump completed on 2015-01-08 10:44:09

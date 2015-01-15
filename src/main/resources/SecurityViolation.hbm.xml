@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="SecurityViolation" table="security_violation" catalog="muses">
+        <id name="securityViolationId" type="java.lang.Long">
+            <column name="security_violation_id" />
+            <generator class="identity" />
+        </id>
+        <property name="eventId" type="long">
+            <column name="event_id" not-null="true">
+                <comment>FK to table SIMPLE_EVENTS(event_id)</comment>
+            </column>
+        </property>
+        <property name="message" type="string">
+            <column name="message" length="1000" not-null="true">
+                <comment>Description of the detected security violation</comment>
+            </column>
+        </property>
+        <property name="conditionText" type="string">
+            <column name="conditionText" length="1000">
+                <comment>Condition satisfied to detect the current security violation</comment>
+            </column>
+        </property>
+        <property name="modeText" type="string">
+            <column name="modeText" length="1000">
+                <comment>Mode associated to the way to provide a decision</comment>
+            </column>
+        </property>
+        <property name="userId" type="long">
+            <column name="user_id" not-null="true">
+                <comment>FK to table USERS(user_id)</comment>
+            </column>
+        </property>
+        <property name="deviceId" type="long">
+            <column name="device_id">
+                <comment>FK to table DEVICES(device_id)</comment>
+            </column>
+        </property>
+        <property name="decisionId" type="java.lang.Long">
+            <column name="decision_id">
+                <comment>Foreign key to the final decision associated to the security violation, once the decision is taken. FK to table DECISIONS(decision_id)</comment>
+            </column>
+        </property>
+        <property name="detection" type="timestamp">
+            <column name="detection" length="19">
+                <comment>Time of detection of the security violation</comment>
+            </column>
+        </property>
+        
+    </class>
+</hibernate-mapping>

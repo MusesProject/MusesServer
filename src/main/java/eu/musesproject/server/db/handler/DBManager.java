@@ -29,6 +29,7 @@ import eu.musesproject.server.entity.RefinedSecurityRules;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityRules;
+import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Sources;
@@ -836,6 +837,15 @@ public class DBManager {
 		session.close();
 		return connConfig;
 
+	}
+
+	public void setSecurityViolation(SecurityViolation securityViolation) {
+
+		Session session=getSessionFactory().openSession();
+		Transaction trans=session.beginTransaction();
+		session.save(securityViolation);
+		trans.commit();
+		session.close();				
 	}
 
 }

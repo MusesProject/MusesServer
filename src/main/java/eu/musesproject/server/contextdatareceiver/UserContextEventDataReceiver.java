@@ -133,7 +133,7 @@ public class UserContextEventDataReceiver {
 		
 			if (des==null){
 				processor = new EventProcessorImpl();
-				engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("/drl");
+				engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
 				des = EventProcessorImpl.getMusesEngineService();
 			}else{
 				logger.info("DroolsEngine Service already available");
