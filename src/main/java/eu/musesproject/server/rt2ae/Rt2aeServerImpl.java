@@ -49,6 +49,7 @@ import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.RiskTreatment;
 import eu.musesproject.server.risktrust.Rt2ae;
 import eu.musesproject.server.risktrust.SecurityIncident;
+import eu.musesproject.server.risktrust.SolvingRiskTreatment;
 import eu.musesproject.server.risktrust.Threat;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
@@ -324,7 +325,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			riskCommunication.setRiskTreatment(riskTreatments);
 			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-			decision.setSolving_risktreatment(2);
+			decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
 			logger.info("Decision: MAYBE_ACCESS");
 			logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
 			return decision;
@@ -338,7 +339,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			riskTreatments[0] = riskTreatment;	
 			riskCommunication.setRiskTreatment(riskTreatments);
 			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-			decision.setSolving_risktreatment(1);
+			decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_NETWORK);
 			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 			logger.info("Decision: MAYBE_ACCESS");
 			logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
