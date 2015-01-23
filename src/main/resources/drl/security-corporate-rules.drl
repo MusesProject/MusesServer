@@ -164,7 +164,7 @@ rule "AccessRequest Detection open asset type sensitive unsecure wifi"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open a sensitive document, but you are connected with an unsecured WiFi.\nOther people can observe what you transmit. Switch to a secure WiFi first.","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening sensitive document in unsecure network\nYou are connected to an unsecure network and try to open a sensitive document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type sensitive unsecure wifi");
@@ -329,7 +329,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event app****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful.\nWith this, other people can gain control over your device.","DENY","<appname>Gmail</appname>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening harmful application\nYou are trying to open an application which is considered harmful.\nWith this, other people can potentially access your data on your device.","DENY","<appname>Gmail</appname>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Blacklist app 00001");
 		StatusGlobal.log("**********"+id);
@@ -408,7 +408,7 @@ rule "Blacklist app 00001"
 		not AccessRequest(event=="AccessRequest Email with Attachments")
 	then
 		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You have a virus and you want to send an attachment via E-mail.\nWith this, you put the receiver of the E-Mail at risk. Remove the virus first.","DENY", "<noAttachments>1</noAttachments>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Sending e-mail with virus\nYour system is infected with a virus and you want to send an attachment via e-mail.\nThis may cause critical system failure and puts the receiver at risk. Remove the virus first.","DENY", "<noAttachments>1</noAttachments>");
 		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Email with Attachments");
@@ -441,7 +441,7 @@ rule "Blacklist app 00001"
 		not AccessRequest(event=="AccessRequest Change Security Property-password-protected")
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to disable screen lock, which is an important security mechanism.\nWithout screen lock, other people may access your device.","DENY", "<isPasswordProtected>false</isPasswordProtected>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Disabling screen lock\nYou are trying to disable screen lock, which is an important security mechanism.\nWithout screen lock, other people with access to your device can obtain sensible data.","DENY", "<isPasswordProtected>false</isPasswordProtected>");
 		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Change Security Property-password-protected");
@@ -546,7 +546,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to uninstall an application that is important for information security. \nUninstalling the application lowers overall information security.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Uninstalling important application\nYou are trying to uninstall an application that is important for your system's security. \nUninstalling the application makes your system vulnerable.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Required application list");
 		StatusGlobal.log("**********"+id);
@@ -569,7 +569,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event fileobserver****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You want to save a confidential document on your device.\nIf you loose your device, other people may be able to access the document.","ALLOW","<path>"+e.getPath()+"</path>");		
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Saving confidential document\nYou want to save a confidential document on your device.\nIf you lose your device, other people may be able to access the document.","ALLOW","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Detection Save File in a monitored folder");
 		StatusGlobal.log("**********"+id);
@@ -595,7 +595,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event fileobserver****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You want to access a file, but you do not have the permission to do so.\nFor reasons of information security, you cannot access this file.","DENY","<path>"+e.getPath()+"</path>");		
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file without permission\nYou want to access a file, but you do not have the permission to do so.\nThe organization's security policy doesn't allow you to access this file.","DENY","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Detection Open File in a monitored folder");
 		StatusGlobal.log("**********"+id);
