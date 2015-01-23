@@ -21,6 +21,12 @@ public class Decision implements Serializable {
 	@Column(name="decision_id", unique=true, nullable=false)
 	private String decisionId;
 
+	@Lob
+	private String information;
+
+	@Column(name="solving_risktreatment")
+	private int solvingRisktreatment;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable=false)
 	private Date time;
@@ -55,6 +61,22 @@ public class Decision implements Serializable {
 
 	public void setDecisionId(String decisionId) {
 		this.decisionId = decisionId;
+	}
+
+	public String getInformation() {
+		return this.information;
+	}
+
+	public void setInformation(String information) {
+		this.information = information;
+	}
+
+	public int getSolvingRisktreatment() {
+		return this.solvingRisktreatment;
+	}
+
+	public void setSolvingRisktreatment(int solvingRisktreatment) {
+		this.solvingRisktreatment = solvingRisktreatment;
 	}
 
 	public Date getTime() {

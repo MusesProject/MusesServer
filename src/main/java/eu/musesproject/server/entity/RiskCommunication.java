@@ -1,7 +1,9 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.List;
 
 
@@ -11,7 +13,11 @@ import java.util.List;
  */
 @Entity
 @Table(name="risk_communication")
-@NamedQuery(name="RiskCommunication.findAll", query="SELECT r FROM RiskCommunication r")
+@NamedQueries ({@NamedQuery(name ="RiskCommunication.findAll", query="SELECT r FROM RiskCommunication r"),
+@NamedQuery(name="RiskCommunication.findRiskCommunicationById", 
+query="SELECT t FROM RiskCommunication t where t.riskCommunicationId = :risk_communication_id"),
+})
+
 public class RiskCommunication implements Serializable {
 	private static final long serialVersionUID = 1L;
 

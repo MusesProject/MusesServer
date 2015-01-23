@@ -22,8 +22,11 @@ import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
+import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.Outcome;
+import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskPolicy;
+import eu.musesproject.server.entity.RiskTreatment;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.Users;
@@ -139,6 +142,76 @@ public class DBManagerTest {
 		
 	}
 
+	
+	@Test
+	public void testGetDecisions() {
+		List<Decision> List = dbmanager.getDecisions();
+		if (List.size()>0 || List == null){
+			Iterator<Decision> i = List.iterator();
+			while(i.hasNext()){
+				Decision decision = i.next();
+				assertNotNull(decision);
+			}
+		}else{
+			fail("There is not any Decision in the database,please first try to store Decision in the database");
+		}			
+		
+	}
+	
+	@Test
+	public void testSetDecisions() {
+		List<Decision> list = new ArrayList<Decision>();
+		Decision decision = new Decision();
+		String opensensitivedocumentinunsecurenetwork = "You are trying to open a sensitive document, but you are connected with an unsecured WiFi.\n Other people can observe what you transmit. Switch to a secure WiFi first.";	
+
+		
+		decision.setAccessRequest(dbmanager.findAccessRequestById("80").get(0));
+		
+		ArrayList<RiskCommunication> riskcommunications = new ArrayList<RiskCommunication>();
+		
+		RiskCommunication riskcommunication = new RiskCommunication();
+
+		riskcommunication.setDescription("JunitTest");
+		
+		riskcommunications.add(riskcommunication);
+		dbmanager.setRiskCommunications(riskcommunication);
+		
+		//decision.setRiskCommunication(dbmanager.findRiskCommunicationById(900).get(0));
+		
+		decision.setRiskCommunication(riskcommunication);
+		
+		List<RiskTreatment> risktreatments = new ArrayList<RiskTreatment>();
+
+		RiskTreatment risktreatment = new RiskTreatment();
+		risktreatment.setDescription(opensensitivedocumentinunsecurenetwork); 
+		risktreatment.setRiskCommunication(riskcommunication);
+		risktreatments.add(risktreatment);
+		
+		dbmanager.setRiskTreatments(risktreatments);
+
+		//riskcommunication.setRiskTreatments(risktreatments);
+		//decision.setRiskCommunication(riskcommunication);
+		decision.setValue("GRANTED");
+		//decision.setInformation("test");
+		//decision.setSolvingRisktreatment(2);
+		decision.setTime(new Time(new Date().getTime()));
+		//decision.setAccessRequest(accessRequest);
+		
+		
+		list.add(decision);
+		dbmanager.setDecisions(list);	
+		
+		/*List<Asset> listassets = dbmanager.findAssetByTitle(asset.getTitle());
+
+		if(listassets.size()>0)
+			assertTrue(true);
+		else
+			fail("The Asset was not inserted in the database");*/
+		
+	}
+	
+	
+	
 	@Test
 	public void testGetClues() {
 		List<Clue> List = dbmanager.getClues();

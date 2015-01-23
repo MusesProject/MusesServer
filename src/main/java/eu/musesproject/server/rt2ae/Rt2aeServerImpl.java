@@ -22,8 +22,11 @@ package eu.musesproject.server.rt2ae;
  */
 
 
+import java.math.BigInteger;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -32,6 +35,7 @@ import javax.persistence.EntityTransaction;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
@@ -60,10 +64,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 	private final int RISK_TREATMENT_SIZE = 20;
 	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
 	private DBManager dbManager = new DBManager(ModuleType.RT2AE);
-	private RiskPolicy riskPolicy;
-	private String sendingemail = "You have a virus and you want to send an attachment via E-Mail.\n With this, you put the receiver of the E-Mail at risk. Remove the virus first.";
-	private String saveconfidentieldocument = "You want to save a confidential document on your device.\n If you loose your device, other people may be able to access the document.";
-	private String opensensitivedocumentinunsecurenetwork = "You are trying to open a sensitive document, but you are connected with an unsecured WiFi.\n Other people can observe what you transmit. Switch to a secure WiFi first.";
+	private RiskPolicy riskPolicy;//Sending e-mail with virus
+
+	private String sendingemail = "Sending e-mail with virus\nYour system is infected with a virus and you want to\n send an attachment via e-mail.\n This may cause critical system failure and puts the\n receiver at risk. Remove the virus first.";
+	private String saveconfidentieldocument = "Saving confidential document\n You want to save a confidential document on your device.\n If you loose your\n device, other people may be able to\n access the document.";
+	private String opensensitivedocumentinunsecurenetwork = "Opening sensitive document in unsecure network\n You are connected to an unsecure network and try\n to open a sensitive document.\n Information sent over this network is not encrypted\n and might be visible to other people.\n Switch to a secure network.";
 	private String privateloungewifi = "Please go to the private lounge secure Wi-Fi";
 	private String wifisniffing = "Wi-Fi sniffing";
 	private String malwarerisktreatment = "Your device seems to have a Malware,please scan you device with an Antivirus or use another device";
@@ -84,12 +89,48 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		Decision decision = Decision.STRONG_DENY_ACCESS;
 		if(policyCompliance.getResult().equals(policyCompliance.DENY)){
+			
 			decision.setInformation(policyCompliance.getReason());
+			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setUserId(accessRequest.getUserId());
+			
+			
+			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+			accessRequests.add(accessrequest1);
+			
+			dbManager.setAccessRequests(accessRequests);
+			decision1.setAccessRequest(accessrequest1);
+			decision1.setInformation(decision.getInformation());
+			decision1.setValue("STRONGDENY");
+			decision1.setTime(new java.util.Date());
+			
+			dbManager.setDecisions(listDecisions);
+			
 			return decision;
 		} else{
 			
 			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("PUBLIC") ){
 				decision = Decision.GRANTED_ACCESS;
+				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setUserId(accessRequest.getUserId());
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				
+				dbManager.setAccessRequests(accessRequests);
+				decision1.setAccessRequest(accessrequest1);
+				decision1.setValue("GRANTED");
+				decision1.setTime(new java.util.Date());
+				dbManager.setDecisions(listDecisions);
 				return decision;
 			}
 			return decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
@@ -310,9 +351,39 @@ public class Rt2aeServerImpl implements Rt2ae {
 			if (riskTreatments.length > 0){
 				riskTreatments[0] = riskTreatment;	
 			}				
-			riskCommunication.setRiskTreatment(riskTreatments);
-
-			decision.setRiskCommunication(riskCommunication);
+				
+			
+			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setUserId(accessRequest.getUserId());
+			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+			accessRequests.add(accessrequest1);
+			dbManager.setAccessRequests(accessRequests);
+			
+			decision1.setAccessRequest(accessrequest1);
+			decision1.setValue("UPTOYOU");
+			decision1.setTime(new java.util.Date());
+			RiskCommunication riskcommunication1 = new RiskCommunication();
+			riskcommunication1.setDescription("Saving file");
+			dbManager.setRiskCommunications(riskcommunication1);
+			
+			
+			List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+			eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+			risktreatment1.setDescription(saveconfidentieldocument); 
+			risktreatment1.setRiskCommunication(riskcommunication1);
+			risktreatments1.add(risktreatment1);
+			dbManager.setRiskTreatments(risktreatments1);
+			
+			decision1.setRiskCommunication(riskcommunication1);
+			List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+			list.add(decision1);
+			dbManager.setDecisions(list);
+			
+			
 			return decision;
 
 		}
@@ -328,6 +399,39 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
 			logger.info("Decision: MAYBE_ACCESS");
 			logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+			
+			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setUserId(accessRequest.getUserId());
+			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+			accessRequests.add(accessrequest1);
+			dbManager.setAccessRequests(accessRequests);
+			
+			decision1.setAccessRequest(accessrequest1);
+			decision1.setValue("MAYBE");
+			decision1.setTime(new java.util.Date());
+			RiskCommunication riskcommunication1 = new RiskCommunication();
+			riskcommunication1.setDescription("Virus detection");
+			dbManager.setRiskCommunications(riskcommunication1);
+			
+			
+			List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+			eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+			risktreatment1.setDescription(sendingemail); 
+			risktreatment1.setRiskCommunication(riskcommunication1);
+			risktreatments1.add(risktreatment1);
+			dbManager.setRiskTreatments(risktreatments1);
+			
+			decision1.setRiskCommunication(riskcommunication1);
+			List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+			list.add(decision1);
+			dbManager.setDecisions(list);
+			
+			
+			
 			return decision;
 			
 		}
@@ -343,6 +447,38 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 			logger.info("Decision: MAYBE_ACCESS");
 			logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
+			
+			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setUserId(accessRequest.getUserId());
+			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+			accessRequests.add(accessrequest1);
+			dbManager.setAccessRequests(accessRequests);
+			
+			decision1.setAccessRequest(accessrequest1);
+			decision1.setValue("MAYBE");
+			decision1.setTime(new java.util.Date());
+			RiskCommunication riskcommunication1 = new RiskCommunication();
+			riskcommunication1.setDescription("Unsecure network");
+			dbManager.setRiskCommunications(riskcommunication1);
+			
+			
+			List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+			eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+			risktreatment1.setDescription(opensensitivedocumentinunsecurenetwork); 
+			risktreatment1.setRiskCommunication(riskcommunication1);
+			risktreatments1.add(risktreatment1);
+			dbManager.setRiskTreatments(risktreatments1);
+			
+			decision1.setRiskCommunication(riskcommunication1);
+			List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+			list.add(decision1);
+			dbManager.setDecisions(list);
+			
+			
 			return decision;
 			
 		}
@@ -373,6 +509,22 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			decision = Decision.GRANTED_ACCESS; 
 			logger.info("Decision: GRANTED_ACCESS");
+			
+			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setUserId(accessRequest.getUserId());
+			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+			accessRequests.add(accessrequest1);
+			
+			dbManager.setAccessRequests(accessRequests);
+			decision1.setAccessRequest(accessrequest1);
+			decision1.setValue("GRANTED");
+			decision1.setTime(new java.util.Date());
+			dbManager.setDecisions(listDecisions);
 
 			return decision;
 
@@ -389,6 +541,27 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision = Decision.STRONG_DENY_ACCESS; 
 				decision.setInformation(" There is too much risk in your situation to allow you to get access to the Asset");
 				logger.info("Decision: STRONG_DENY_ACCESS_WITH_RISKTREATMENTS");
+				
+				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setUserId(accessRequest.getUserId());
+				
+				
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				
+				dbManager.setAccessRequests(accessRequests);
+				decision1.setAccessRequest(accessrequest1);
+				decision1.setInformation(decision.getInformation());
+				decision1.setValue("STRONGDENY");
+				decision1.setTime(new java.util.Date());
+				
+				dbManager.setDecisions(listDecisions);
+				
 				return Decision.STRONG_DENY_ACCESS;
 			}
 		}

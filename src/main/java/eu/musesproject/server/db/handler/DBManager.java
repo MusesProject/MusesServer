@@ -28,7 +28,9 @@ import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RefinedSecurityRules;
+import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskPolicy;
+import eu.musesproject.server.entity.RiskTreatment;
 import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityRules;
 import eu.musesproject.server.entity.SecurityViolation;
@@ -538,6 +540,24 @@ public class DBManager {
 		}
 	}
 
+	
+	
+	
+	/**
+     * Get Decision list
+     * @return List<Decision>
+     */
+    
+	public List<Decision> getDecisions() {
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("Decision.findAll");
+	    List<Decision> decisions = query.list();
+	    session.close();
+		return decisions;		
+	}
+	
+	
+	
 	/**
      * Save Users list in the DB 
      * @param List<Users> users
@@ -649,6 +669,33 @@ public class DBManager {
 	
 	
 	
+	/**
+     * Get AccessRequest list by id
+     * @param id
+     * @return List<AccessRequest>
+     */
+	public List<AccessRequest> findAccessRequestById(String accessRequestId) {
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("AccessRequest.findById").setString("access_request_id", accessRequestId);
+		List<AccessRequest> accessrequests = query.list();
+		session.close();
+		return accessrequests;		
+	}
+	
+	/**
+     * Get RiskCommunication list by id
+     * @param id
+     * @return List<RiskCommunication>
+     */
+	public List<RiskCommunication> findRiskCommunicationById(int riskCommunicationId) {
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("RiskCommunication.findRiskCommunicationById").setInteger("risk_communication_id", riskCommunicationId);
+		List<RiskCommunication> riskcommunications = query.list();
+		session.close();
+		return riskcommunications;		
+	}
+	
+	
 	 /**
      * Delete Threat by description 
      * @param descritpion
@@ -696,6 +743,73 @@ public class DBManager {
 		List<AccessRequest> accesrequests = query.list();
 		session.close();
 		return accesrequests;
+	}
+	
+	
+	/**
+     * Save RiskCommunication list in the DB 
+     * @param List<RiskCommunication> users
+     */
+	public void setRiskCommunications(RiskCommunication riskCommunication) {
+		
+		
+		    
+			try {
+				
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(riskCommunication);
+				trans.commit();
+				session.close();				
+			} catch (Exception e) {
+				logger.log(Level.ERROR, e.getMessage());
+			} 
+		
+	}
+	
+	/**
+     * Save RiskTreatment list in the DB 
+     * @param List<RiskTreatment> users
+     */
+	public void setRiskTreatments(List<RiskTreatment> riskTreatments) {
+		
+		Iterator<RiskTreatment> i = riskTreatments.iterator();
+		while(i.hasNext()){
+		    
+			try {
+				RiskTreatment riskTreatment = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(riskTreatment);
+				trans.commit();
+				session.close();				
+			} catch (Exception e) {
+				logger.log(Level.ERROR, e.getMessage());
+			} 
+		}
+	}
+	
+	
+
+	/**
+     * Save Decision list in the DB 
+     * @param List<Decision> decisions
+     */
+	public void setDecisions(List<Decision> decisions) {
+		
+		Iterator<Decision> i = decisions.iterator();
+		while(i.hasNext()){
+			try {
+				Decision decision = i.next();
+				Session session=getSessionFactory().openSession();
+				Transaction trans=session.beginTransaction();
+				session.save(decision);
+				trans.commit();
+				session.close();				
+			} catch (Exception e) {
+				logger.log(Level.ERROR, e.getMessage());
+			} 
+		}
 	}
 	
 	
