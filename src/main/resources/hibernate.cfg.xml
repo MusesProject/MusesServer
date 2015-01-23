@@ -3,54 +3,64 @@
 "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-    <session-factory>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/muses</property>
-        <property name="hibernate.connection.username">muses</property>
-        <property name="hibernate.connection.password">muses11</property>
+	<session-factory>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/muses</property>
+		<property name="hibernate.connection.username">muses</property>
+		<property name="hibernate.connection.password">muses11</property>
 		<property name="hibernate.show_sql">true</property>
-        <!-- mapping -->
-        
-        <mapping class="eu.musesproject.server.entity.AccessRequest"/>
-        <mapping class="eu.musesproject.server.entity.AdditionalProtection"/>
-        <mapping class="eu.musesproject.server.entity.Applications"/>
-        <mapping class="eu.musesproject.server.entity.AppType"/>
-        <mapping class="eu.musesproject.server.entity.Assets"/>
-        <mapping class="eu.musesproject.server.entity.Clue"/>
-        <mapping class="eu.musesproject.server.entity.ConnectionConfig"/>
-        <mapping class="eu.musesproject.server.entity.CorporatePolicies"/>
-        <mapping class="eu.musesproject.server.entity.Decision"/>
-        <mapping class="eu.musesproject.server.entity.DeviceConfig"/>
-        <mapping class="eu.musesproject.server.entity.Devices"/>
-        <mapping class="eu.musesproject.server.entity.DeviceSecurityState"/>
-        <mapping class="eu.musesproject.server.entity.DeviceType"/>
-        <mapping class="eu.musesproject.server.entity.Dictionary"/>
-        <mapping class="eu.musesproject.server.entity.Domains"/>
-        <mapping class="eu.musesproject.server.entity.EventType"/>
-        <mapping class="eu.musesproject.server.entity.LegalAspects"/>
-        <mapping class="eu.musesproject.server.entity.MusesConfig"/>
-        <mapping class="eu.musesproject.server.entity.Outcome"/>
-        <mapping class="eu.musesproject.server.entity.RefinedSecurityRules"/>
-        <mapping class="eu.musesproject.server.entity.RiskCommunication"/>
-        <mapping class="eu.musesproject.server.entity.RiskInformation"/>
-        <mapping class="eu.musesproject.server.entity.RiskPolicy"/>
-        <mapping class="eu.musesproject.server.entity.RiskTreatment"/>
-        <mapping class="eu.musesproject.server.entity.Roles"/>
-        <mapping class="eu.musesproject.server.entity.SecurityIncident"/>
-        <mapping class="eu.musesproject.server.entity.SecurityRules"/>
-        <mapping class="eu.musesproject.server.entity.SecurityViolation"/>
-        <mapping class="eu.musesproject.server.entity.Sensitivity"/>
-        <mapping class="eu.musesproject.server.entity.SensorConfiguration"/>
-        <mapping class="eu.musesproject.server.entity.SimpleEvents"/>
-        <mapping class="eu.musesproject.server.entity.Sources"/>
-        <mapping class="eu.musesproject.server.entity.SystemLogKrs"/>
-        <mapping class="eu.musesproject.server.entity.TermValues"/>
-        <mapping class="eu.musesproject.server.entity.Threat"/>
-        <mapping class="eu.musesproject.server.entity.ThreatClue"/>
-        <mapping class="eu.musesproject.server.entity.ThreatType"/>
-        <mapping class="eu.musesproject.server.entity.UserAuthorization"/>
-        <mapping class="eu.musesproject.server.entity.UserBehaviour"/>
-        <mapping class="eu.musesproject.server.entity.Users"/>
-    </session-factory>
+		<property name="hibernate.connection.provider_class"
+			value="org.hibernate.connection.C3P0ConnectionProvider" />
+		<property name="hibernate.c3p0.acquire_increment" value="1" />
+		<property name="hibernate.c3p0.idle_test_period" value="28690" />
+		<property name="hibernate.c3p0.timeout" value="1800" />
+		<property name="hibernate.c3p0.max_size" value="5" />
+		<property name="hibernate.c3p0.min_size" value="3" />
+		<property name="hibernate.c3p0.max_statement" value="50" />
+		<property name="hibernate.c3p0.preferredTestQuery" value="select 1;" />
+
+		<!-- mapping -->
+
+		<mapping class="eu.musesproject.server.entity.AccessRequest" />
+		<mapping class="eu.musesproject.server.entity.AdditionalProtection" />
+		<mapping class="eu.musesproject.server.entity.Applications" />
+		<mapping class="eu.musesproject.server.entity.AppType" />
+		<mapping class="eu.musesproject.server.entity.Assets" />
+		<mapping class="eu.musesproject.server.entity.Clue" />
+		<mapping class="eu.musesproject.server.entity.ConnectionConfig" />
+		<mapping class="eu.musesproject.server.entity.CorporatePolicies" />
+		<mapping class="eu.musesproject.server.entity.Decision" />
+		<mapping class="eu.musesproject.server.entity.DeviceConfig" />
+		<mapping class="eu.musesproject.server.entity.Devices" />
+		<mapping class="eu.musesproject.server.entity.DeviceSecurityState" />
+		<mapping class="eu.musesproject.server.entity.DeviceType" />
+		<mapping class="eu.musesproject.server.entity.Dictionary" />
+		<mapping class="eu.musesproject.server.entity.Domains" />
+		<mapping class="eu.musesproject.server.entity.EventType" />
+		<mapping class="eu.musesproject.server.entity.LegalAspects" />
+		<mapping class="eu.musesproject.server.entity.MusesConfig" />
+		<mapping class="eu.musesproject.server.entity.Outcome" />
+		<mapping class="eu.musesproject.server.entity.RefinedSecurityRules" />
+		<mapping class="eu.musesproject.server.entity.RiskCommunication" />
+		<mapping class="eu.musesproject.server.entity.RiskInformation" />
+		<mapping class="eu.musesproject.server.entity.RiskPolicy" />
+		<mapping class="eu.musesproject.server.entity.RiskTreatment" />
+		<mapping class="eu.musesproject.server.entity.Roles" />
+		<mapping class="eu.musesproject.server.entity.SecurityIncident" />
+		<mapping class="eu.musesproject.server.entity.SecurityRules" />
+		<mapping class="eu.musesproject.server.entity.SecurityViolation" />
+		<mapping class="eu.musesproject.server.entity.Sensitivity" />
+		<mapping class="eu.musesproject.server.entity.SensorConfiguration" />
+		<mapping class="eu.musesproject.server.entity.SimpleEvents" />
+		<mapping class="eu.musesproject.server.entity.Sources" />
+		<mapping class="eu.musesproject.server.entity.SystemLogKrs" />
+		<mapping class="eu.musesproject.server.entity.TermValues" />
+		<mapping class="eu.musesproject.server.entity.Threat" />
+		<mapping class="eu.musesproject.server.entity.ThreatClue" />
+		<mapping class="eu.musesproject.server.entity.ThreatType" />
+		<mapping class="eu.musesproject.server.entity.UserAuthorization" />
+		<mapping class="eu.musesproject.server.entity.UserBehaviour" />
+		<mapping class="eu.musesproject.server.entity.Users" />
+	</session-factory>
 </hibernate-configuration>
