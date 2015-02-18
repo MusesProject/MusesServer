@@ -428,7 +428,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("VIRUS CLEANED   :"+c.getName);
 		retract(v);
 		StatusGlobal.log("REMOVED PREVIOUS VIRUS FOUND!");
-		
+		retract(c);
 	end	
 
 	

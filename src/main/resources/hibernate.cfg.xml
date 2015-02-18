@@ -15,7 +15,7 @@
 		<property name="hibernate.c3p0.acquire_increment">1</property>
 		<property name="hibernate.c3p0.idle_test_period">28690</property>
 		<property name="hibernate.c3p0.timeout">1800</property>
-		<property name="hibernate.c3p0.max_size">5</property>
+		<property name="hibernate.c3p0.max_size">3000</property>
 		<property name="hibernate.c3p0.min_size">3</property>
 		<property name="hibernate.c3p0.max_statement">50</property>
 		<property name="hibernate.c3p0.preferredTestQuery">select 1</property>

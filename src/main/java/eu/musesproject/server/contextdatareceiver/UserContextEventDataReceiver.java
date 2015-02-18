@@ -44,6 +44,7 @@ import eu.musesproject.server.contextdatareceiver.formatting.EventFormatter;
 import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.db.eventcorrelation.StubEventCorrelationData;
 import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
@@ -179,10 +180,19 @@ public class UserContextEventDataReceiver {
 		}
 		
 		event.setData(rawEvent);
+		Logger.getLogger(UserContextEventDataReceiver.class).info("Application name:"+ applicationName);
 		event.setApplication(dbManager.getApplicationByName(applicationName));
 		event.setAsset(dbManager.getAssetByLocation(assetLocation));
 		event.setDate(new Date());
-		event.setDevice(dbManager.getDeviceByIMEI(deviceId));
+		Devices device = dbManager.getDeviceByIMEI(deviceId);
+		if (device == null){
+			device = new Devices();
+			device.setName(username);
+			device.setImei(deviceId);
+			device.setDeviceType(dbManager.getDeviceTypes().get(0));
+			dbManager.setDevice(device);
+		}
+		event.setDevice(device);
 		event.setTime(new Time(new Date().getTime()));
 		event.setSource(dbManager.getSourceByName("EP"));
 		event.setKRS_can_access(1);

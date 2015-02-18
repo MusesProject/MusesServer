@@ -1913,8 +1913,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 	@Override
 	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
 
-		if(dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).size()!=0){
-			eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
+		//if(dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).size()!=0){
+		if(dbManager.findDeviceById(new String(deviceSecurityState.getDevice_id().toByteArray())).size()!=0){
+			//eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
+			eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(new String(deviceSecurityState.getDevice_id().toByteArray())).get(0);
 	
 			int countadditionalprotection = device.getAdditionalProtections().size();
 	

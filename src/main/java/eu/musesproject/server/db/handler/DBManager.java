@@ -22,6 +22,7 @@ import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.Decision;
+import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
 import eu.musesproject.server.entity.EventType;
@@ -973,5 +974,39 @@ public class DBManager {
 		session.close();				
 	}
 
+	public void setDevice(Devices device) {
+
+		Session session=getSessionFactory().openSession();
+		Transaction trans=session.beginTransaction();
+		session.save(device);
+		trans.commit();
+		session.close();				
+	}
+	
+    /**
+     * Get Device list 
+     * @return List<Devices>
+     */
+	public List<Devices> getDevices() {	
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("Devices.findAll");
+		List<Devices> devices = query.list();
+		session.close();
+		return devices;
+	}
+	
+    /**
+     * Get Device type list 
+     * @return List<DeviceType>
+     */
+	public List<DeviceType> getDeviceTypes() {	
+		Session session=getSessionFactory().openSession();
+	    Query query = session.getNamedQuery("DeviceType.findAll");
+		List<DeviceType> types = query.list();
+		session.close();
+		return types;
+	}
+
 }
+	
 	

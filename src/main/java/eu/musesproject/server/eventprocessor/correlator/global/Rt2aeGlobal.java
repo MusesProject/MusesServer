@@ -115,7 +115,10 @@ public class Rt2aeGlobal {
 			device = deviceInstance;
 		}
 		//FIXME no function right now change to current implementation
-		//deviceSecurityState.setDevice_id(device.getDevice_id());//TODO Set device id and manage a different object to manage clues for each device
+		if (event.getDeviceId()!=null){
+			//deviceSecurityState.setDevice_id(Integer.valueOf(event.getDeviceId()));
+			deviceSecurityState.setDevice_id(new BigInteger(event.getDeviceId()));
+		}
 		deviceSecurityState.setClues(deviceSecurityClues);
 		try{
 			rt2aeServer.warnDeviceSecurityStateChange(deviceSecurityState);
