@@ -711,7 +711,7 @@ DROP TABLE IF EXISTS `muses_config`;
 CREATE TABLE IF NOT EXISTS `muses_config` (
   `config_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `config_name` varchar(30) NOT NULL COMMENT 'Name of the configuration',
-  `silent_mode` tinyint(1) NOT NULL COMMENT 'Specify whether all devices should run MUSES application in silent mode (true), or verbose (false)',
+  `silent_mode` tinyint(0) NOT NULL COMMENT 'Specify whether all devices should run MUSES application in silent mode (true), or verbose (false)',
   `access_attempts_before_blocking` int(10) unsigned NOT NULL DEFAULT '5',
   PRIMARY KEY (`config_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='MUSES Server configuration parameters' AUTO_INCREMENT=2 ;
