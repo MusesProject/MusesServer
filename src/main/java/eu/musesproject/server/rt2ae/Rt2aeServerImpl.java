@@ -214,6 +214,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			threatName = threatName + clue.getName();
 
 		}
+		
+		
 
 		eu.musesproject.server.entity.Threat threat = new eu.musesproject.server.entity.Threat();
 		threat.setDescription("Threat" + threatName);
@@ -345,7 +347,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 			logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
 			
-			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 			RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
 			RiskTreatment riskTreatment = new RiskTreatment(saveconfidentieldocument);
 			if (riskTreatments.length > 0){
@@ -755,7 +756,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 				
-			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 			
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
@@ -920,9 +920,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			accessRequest.getDevice().getDevicetrustvalue().setValue(valeur);
 			
 			EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
-				
-			List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
-			
+							
 			List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 			
 			
@@ -1399,12 +1397,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 		
 		Outcome requestPotentialOutcomes = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
-		Probability probabilitys = eventprocessorimpl.computeOutcomeProbability(requestPotentialOutcomes, accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		for (int i = 0; i < threats.size(); i++) {
 			
@@ -1613,7 +1609,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		List<Clue> clues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
 		
@@ -1918,9 +1913,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 			//eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
 			eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(new String(deviceSecurityState.getDevice_id().toByteArray())).get(0);
 	
-			int countadditionalprotection = device.getAdditionalProtections().size();
+			double countadditionalprotection = device.getAdditionalProtections().size();
 	
-			int countclues = deviceSecurityState.getClues().size();
+			double countclues = deviceSecurityState.getClues().size();
 			
 			deviceSecurityState.getDevice_id();
 			List<Clue> listclues = deviceSecurityState.getClues();
@@ -2016,7 +2011,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
 		
-		//System.out.println("Decision: "+decision2.toString());
+		System.out.println("Decision: "+decision2.toString());
 		
    }
 	
