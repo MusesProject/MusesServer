@@ -10,8 +10,18 @@
         <property name="hibernate.connection.username">muses</property>
         <property name="hibernate.connection.password">muses11</property>
 		<property name="hibernate.show_sql">true</property>
-        <!-- mapping -->
+		<property name="hibernate.connection.provider_class"> org.hibernate.connection.C3P0ConnectionProvider</property>
+		<property name="hibernate.c3p0.acquire_increment">1</property>
+		<property name="hibernate.c3p0.idle_test_period">28690</property>
+		<property name="hibernate.c3p0.timeout">1800</property>
+		<property name="hibernate.c3p0.max_size">3000</property>
+		<property name="hibernate.c3p0.min_size">3</property>
+		<property name="hibernate.c3p0.max_statement">50</property>
+		<property name="hibernate.c3p0.preferredTestQuery">select 1</property>
         
+		
+		
+		<!-- mapping -->     
         <mapping class="eu.musesproject.server.entity.AccessRequest"/>
         <mapping class="eu.musesproject.server.entity.AdditionalProtection"/>
         <mapping class="eu.musesproject.server.entity.Applications"/>
