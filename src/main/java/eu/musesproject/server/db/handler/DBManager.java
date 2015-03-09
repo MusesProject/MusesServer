@@ -70,6 +70,7 @@ public class DBManager {
 	public void closeSessionFactory(){
 		if (sessionFactory != null) {
 			sessionFactory.close();
+			sessionFactory = null;
 		}
 	}
 	
