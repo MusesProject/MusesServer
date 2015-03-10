@@ -11,7 +11,7 @@
         <property name="hibernate.connection.password">muses11</property>
         <property name="hibernate.show_sql">false</property>
         <property name="hibernate.c3p0.max_size">250</property>
-        <property name="hibernate.c3p0.timeout">300</property>
+        <property name="hibernate.c3p0.timeout">1800</property>
         <property name="hibernate.c3p0.max_statements">50</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <!-- mapping -->
