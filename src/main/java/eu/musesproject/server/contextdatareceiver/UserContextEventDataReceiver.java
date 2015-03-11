@@ -124,7 +124,6 @@ public class UserContextEventDataReceiver {
 		
 	
 		logger.info("processContextEventList: Processing list of "+list.size()+" elements.");
-		logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> processing events:"+list.size());		
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			ContextEvent event = (ContextEvent) iterator.next();
 			eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(event);
@@ -146,7 +145,6 @@ public class UserContextEventDataReceiver {
 				//if (requestId != 0){
 					formattedEvent.setHashId(requestId);
 				//}
-				logger.log(Level.INFO, MUSES_TAG + "UserContextEventDataReceiver=> Inserting events into WM:"+formattedEvent);
 				logger.info("Inserting event into the WM:"+formattedEvent);
 				try{
 					des.insertFact(formattedEvent);
