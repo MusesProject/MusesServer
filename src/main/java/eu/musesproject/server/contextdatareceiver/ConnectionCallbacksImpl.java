@@ -99,7 +99,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
 		ConnectionCallbacksImpl.receiveData = rData;
 		
-		logger.log(Level.INFO, MUSES_TAG + "Info SS, received callback from CM with data:"+rData);
+		logger.log(Level.INFO, MUSES_TAG + "  Info SS, received callback from CM with data:"+rData);
 		
 		try {
 			// First, get the request type, in order to differentiate between login
@@ -111,7 +111,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				logger.log(Level.INFO, "Login request");
 				// Delegate authentication to AuthenticationManager
 				JSONObject authResponse = AuthenticationManager.getInstance().authenticate(root, sessionId);
-				logger.log(Level.INFO, MUSES_TAG + "Info SS, Login request=>authenticating ..... authentication response is:"+authResponse.toString()	);
+				logger.log(Level.INFO, MUSES_TAG + " Info SS, Login request=> authentication response is:"+authResponse.toString());
 				if (authResponse != null) {
 					try {
 						username = root

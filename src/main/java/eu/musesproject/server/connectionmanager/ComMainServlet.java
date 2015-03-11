@@ -65,7 +65,7 @@ public class ComMainServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		logger.log(Level.INFO, MUSES_TAG + "init");
+		logger.log(Level.INFO, MUSES_TAG + " init");
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
@@ -94,7 +94,7 @@ public class ComMainServlet extends HttpServlet {
 
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
-			logger.log(Level.INFO, MUSES_TAG + " Request type:"+connectionType+" with *ID*: "+currentJSessionID+ "with **dataInRequest**: "+dataAttachedInCurrentReuqest);
+			logger.log(Level.INFO, MUSES_TAG + " Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInRequest**: "+dataAttachedInCurrentReuqest);
 		}
 		
 		// if "send-data" request
@@ -111,7 +111,7 @@ public class ComMainServlet extends HttpServlet {
 				dataToSendBackInResponse = waitForDataIfAvailable(INTERVAL_TO_WAIT, currentJSessionID);
 			}
 			response.addHeader(DATA,dataToSendBackInResponse);
-			logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ "with **dataInResponse**: "+dataToSendBackInResponse);
+			logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
 		}
 				
 		// if "poll" request
@@ -127,7 +127,7 @@ public class ComMainServlet extends HttpServlet {
 					}else {
 						response.addHeader("more-packets", "NO");	
 					}
-					logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ "with **dataInResponse**: "+dataToSendBackInResponse);
+					logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
 					break; // FIXME temporary as multiple same session ids are in the list right now
 				}
 			}
