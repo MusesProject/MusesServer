@@ -51,12 +51,10 @@ public class ComMainServlet extends HttpServlet {
 		this.sessionHandler=sessionHandler;
 		this.helper=helper;
 		this.connectionManager=communicationManager;
-		logger.log(Level.INFO, MUSES_TAG + "ComMainServlet");
 	}
 	
 
 	public ComMainServlet() {
-		logger.log(Level.INFO, MUSES_TAG + "Empty constructor");
 	}
 	
 	/**
@@ -71,7 +69,6 @@ public class ComMainServlet extends HttpServlet {
 		helper = new Helper();
 		connectionManager = ConnectionManager.getInstance();
 		sessionHandler = SessionHandler.getInstance(getServletContext());
-		logger.log(Level.INFO, MUSES_TAG + "Done");
 	}
 	
 	/**
@@ -84,8 +81,6 @@ public class ComMainServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		logger.log(Level.INFO, MUSES_TAG + "doPost");
 		// Retrieve value from request header
 		String connectionType = request.getHeader("connection-type");
 
@@ -96,11 +91,10 @@ public class ComMainServlet extends HttpServlet {
 		
 		// Retrieve data in the request
 		dataAttachedInCurrentReuqest = helper.getRequestData(request);
-		logger.log(Level.INFO, MUSES_TAG + " Info SS*, Request type:"+connectionType+" with data: "+dataAttachedInCurrentReuqest);
 
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
-			logger.log(Level.INFO, "Connect request .. Id: " + currentJSessionID );
+			logger.log(Level.INFO, MUSES_TAG + " Request type:"+connectionType+" with *ID*: "+currentJSessionID+ "with **dataInRequest**: "+dataAttachedInCurrentReuqest);
 		}
 		
 		// if "send-data" request
@@ -117,8 +111,7 @@ public class ComMainServlet extends HttpServlet {
 				dataToSendBackInResponse = waitForDataIfAvailable(INTERVAL_TO_WAIT, currentJSessionID);
 			}
 			response.addHeader(DATA,dataToSendBackInResponse);
-			logger.log(Level.INFO, "Send data request .. Id: " + currentJSessionID );
-			logger.log(Level.INFO, "Data avaialble for the request .. attaching in response header.. data: " + dataToSendBackInResponse);
+			logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ "with **dataInResponse**: "+dataToSendBackInResponse);
 		}
 				
 		// if "poll" request
@@ -134,8 +127,7 @@ public class ComMainServlet extends HttpServlet {
 					}else {
 						response.addHeader("more-packets", "NO");	
 					}
-
-					logger.log(Level.INFO, "Poll request data available.. attaching in response header..");
+					logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ "with **dataInResponse**: "+dataToSendBackInResponse);
 					break; // FIXME temporary as multiple same session ids are in the list right now
 				}
 			}
@@ -143,7 +135,7 @@ public class ComMainServlet extends HttpServlet {
 
 		// if "ack" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.ACK)) {
-			logger.log(Level.INFO, "Ack request ..");
+			logger.log(Level.INFO, "Request type:"+connectionType+" with *ID*: "+currentJSessionID);
 			// Clean up the data handler object from the list 
 			connectionManager.removeDataHandler(connectionManager.getDataHandlerObject(currentJSessionID));
 			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DATA_SENT_SUCCESFULLY);
@@ -154,7 +146,7 @@ public class ComMainServlet extends HttpServlet {
 		// remove it from the session id list
 		// Callback the Functional layer about the disconnect
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT)) {
-			logger.log(Level.INFO, "Connection disconnected with ID: " + currentJSessionID);
+			logger.log(Level.INFO, "Request type:"+connectionType+" with *ID*: "+currentJSessionID);
 			helper.disconnect(request);
 			sessionHandler.removeCookieToList(cookie);
 			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
