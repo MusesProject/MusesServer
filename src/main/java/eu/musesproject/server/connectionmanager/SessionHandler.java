@@ -69,7 +69,6 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 			HttpSession session = request.getSession();
 			if (pollIntervalTimeout != null) {
 				interval = Integer.parseInt(pollIntervalTimeout) * 10;
-				logger.log(Level.INFO, "setMaxInactiveInterval:"+interval);
 				session.setMaxInactiveInterval(interval);
 			}
 			session.setMaxInactiveInterval(15*60); // 15 minutes

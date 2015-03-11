@@ -40,14 +40,13 @@ public class Helper {
 				if (ck.getName().equals("JSESSIONID")) {
 					retreivedCookie = ck;
 					retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
-					logger.log(Level.INFO,"Rereived Cookie: Name " + ck.getName() + "   Value- " + retreivedCookie.getValue());
 				}
 			}
 		} else {
 			retreivedCookie = new Cookie("JSESSIONID", req.getSession().getId());
 			retreivedCookie.setMaxAge(COOKIE_MAX_AGE);
 			retreivedCookie.setPath(req.getContextPath());
-			logger.log(Level.INFO, "Cookie created .. new request ..");	
+			logger.log(Level.INFO, "New Request cookie created");	
 		}
 		/**
 		 * 
