@@ -157,7 +157,9 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					
 					JSONObject response = JSONManager.createConfigUpdateJSON(RequestType.CONFIG_UPDATE, config, sensorConfig, connectionConfig);
 					logger.log(Level.INFO, response.toString());
-					connManager.sendData(sessionId, response.toString());
+					logger.log(Level.INFO, MUSES_TAG +  " Response to send:"+response.toString() );
+					logger.log(Level.INFO, MUSES_TAG +  " sessionID: "+ sessionId);
+					connManager.sendData(sessionId, response.toString()); 
 				} else {//Current sessionId has not been authenticated
 					JSONObject response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, "FAIL", "Data cannot be processed: Failed authentication");
 					logger.log(Level.INFO, response.toString());

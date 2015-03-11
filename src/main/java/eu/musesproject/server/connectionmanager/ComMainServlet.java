@@ -40,6 +40,7 @@ public class ComMainServlet extends HttpServlet {
 	private static final int INTERVAL_TO_WAIT = 5;
 	private static final long SLEEP_INTERVAL = 1000;
 	private static final String MUSES_TAG = "MUSES_TAG";
+	private static final String MUSES_TAG_LEVEL_2 = "MUSES_TAG_LEVEL_2";
 	/**
 	 * 
 	 * @param sessionHandler
@@ -172,9 +173,14 @@ public class ComMainServlet extends HttpServlet {
 		int i=1;
 		while(i<=timeout){
 			Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
+			logger.log(Level.INFO, MUSES_TAG_LEVEL_2 + " Current Data queue size is: " +dQueue.size());
+			logger.log(Level.INFO, MUSES_TAG_LEVEL_2 + " Current JSessionID: " + currentJSessionID);
 			if (dQueue.size()>=1) {
+				logger.log(Level.INFO, MUSES_TAG_LEVEL_2 + " Looping the queue..");
 				for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
+					logger.log(Level.INFO, MUSES_TAG_LEVEL_2+ " SessionId in queue:"+ dataHandler.getSessionId());
 					if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
+						logger.log(Level.INFO, MUSES_TAG_LEVEL_2 + " SessionIds matched, sending redponse back");
 						connectionManager.removeDataHandler(dataHandler);
 						dataToSendBackInResponse = dataHandler.getData();
 						return dataHandler.getData();
