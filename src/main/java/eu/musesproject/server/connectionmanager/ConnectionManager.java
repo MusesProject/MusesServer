@@ -43,6 +43,8 @@ public class ConnectionManager implements IConnectionManager{
 	private SessionHandler sessionCounter;
 	private static ConnectionManager connectionManagerSingleton = null;
 	private static Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
+	private static final String MUSES_TAG = "MUSES_TAG";
+	private static final String MUSES_TAG_LEVEL_2 = "MUSES_TAG_LEVEL_2";
 	/**
 	 * Constructor initialises callback
 	 * @param calBacks
@@ -78,6 +80,7 @@ public class ConnectionManager implements IConnectionManager{
 		if (sessionId != null && dta != null && !dta.equals("")) {
 			dataHandler = new DataHandler(sessionId, dta);	
 			addDataHandler(dataHandler);
+			logger.log(Level.INFO, MUSES_TAG_LEVEL_2 +" Data added in queue with ID:" + sessionId);
 		}
 	}
 
