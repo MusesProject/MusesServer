@@ -115,7 +115,7 @@ public class ComMainServlet extends HttpServlet {
 			PrintWriter writer = response.getWriter();
 			writer.write(dataToSendBackInResponse);
 			
-			response.addHeader(DATA,dataToSendBackInResponse);
+			//response.addHeader(DATA,dataToSendBackInResponse); // Now data is added in the body instead
 			logger.log(Level.INFO, MUSES_TAG + " Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
 		}
 				
