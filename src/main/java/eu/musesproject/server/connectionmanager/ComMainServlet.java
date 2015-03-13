@@ -129,7 +129,7 @@ public class ComMainServlet extends HttpServlet {
 					PrintWriter writer = response.getWriter();
 					writer.write(dataToSendBackInResponse);
 					
-					response.addHeader(DATA,dataToSendBackInResponse);
+					//response.addHeader(DATA,dataToSendBackInResponse); // Now data is added in the body instead
 					connectionManager.removeDataHandler(dataHandler);
 					Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
 					if (dQueue.size() > 1) {
