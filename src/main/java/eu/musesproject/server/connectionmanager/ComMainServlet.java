@@ -112,7 +112,7 @@ public class ComMainServlet extends HttpServlet {
 				dataToSendBackInResponse = waitForDataIfAvailable(INTERVAL_TO_WAIT, currentJSessionID);
 			}
 			response.addHeader(DATA,dataToSendBackInResponse);
-			logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
+			logger.log(Level.INFO, MUSES_TAG + " Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
 		}
 				
 		// if "poll" request
@@ -180,7 +180,7 @@ public class ComMainServlet extends HttpServlet {
 				for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 					logger.log(Level.INFO, MUSES_TAG_LEVEL_2+ " SessionId in queue:"+ dataHandler.getSessionId());
 					if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
-						logger.log(Level.INFO, MUSES_TAG_LEVEL_2 + " SessionIds matched, sending redponse back");
+						logger.log(Level.INFO, MUSES_TAG_LEVEL_2 + " SessionIds matched, sending response back");
 						connectionManager.removeDataHandler(dataHandler);
 						dataToSendBackInResponse = dataHandler.getData();
 						return dataHandler.getData();
