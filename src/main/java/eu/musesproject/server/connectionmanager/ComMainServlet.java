@@ -6,6 +6,7 @@
 package eu.musesproject.server.connectionmanager;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Queue;
 
 import javax.servlet.Servlet;
@@ -17,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import eu.musesproject.server.contextdatareceiver.ConnectionCallbacksImpl;
 	
 	/**
 	 * Class ComMainServlet
@@ -111,6 +110,11 @@ public class ComMainServlet extends HttpServlet {
 			if (dataToSendBackInResponse.equals("")) {
 				dataToSendBackInResponse = waitForDataIfAvailable(INTERVAL_TO_WAIT, currentJSessionID);
 			}
+			
+			response.setHeader("Content-Type", "text/plain");
+			PrintWriter writer = response.getWriter();
+			writer.write(dataToSendBackInResponse);
+			
 			response.addHeader(DATA,dataToSendBackInResponse);
 			logger.log(Level.INFO, MUSES_TAG + " Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
 		}
@@ -120,6 +124,11 @@ public class ComMainServlet extends HttpServlet {
 			for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 				if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 					dataToSendBackInResponse = dataHandler.getData();
+					
+					response.setHeader("Content-Type", "text/plain");
+					PrintWriter writer = response.getWriter();
+					writer.write(dataToSendBackInResponse);
+					
 					response.addHeader(DATA,dataToSendBackInResponse);
 					connectionManager.removeDataHandler(dataHandler);
 					Queue<DataHandler> dQueue = connectionManager.getDataHandlerQueue();
