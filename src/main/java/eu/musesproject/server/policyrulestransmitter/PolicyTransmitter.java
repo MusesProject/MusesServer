@@ -91,7 +91,10 @@ public class PolicyTransmitter {
 		//logger.log(Level.INFO, "[PolicyTransmitter.sendData]");
 		//logger.log(Level.INFO, "		PolicyTransmitter sendData. Data to be sent:"+dataToSend);
 		logger.log(Level.INFO, "		Sending data with sessionId:"+sessionId);
-		connManager.sendData(sessionId, dataToSend);
+		if (dataToSend != null){
+			connManager.sendData(sessionId, dataToSend);
+		}
+		
 	}
 
 }
