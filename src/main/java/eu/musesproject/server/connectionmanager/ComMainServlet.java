@@ -168,9 +168,6 @@ public class ComMainServlet extends HttpServlet {
 		}
 
 		// Setup response to send back
-
-		
-		logger.log(Level.INFO, MUSES_TAG_LEVEL_2 + " Data for response: " + dataToSendBackInResponse + "for id: " + currentJSessionID);
 		response.setContentType("text/html");
 		response.addCookie(cookie);
 	
