@@ -35,11 +35,14 @@ public class ComMainServlet extends HttpServlet {
 	private ConnectionManager connectionManager;
 	private String dataAttachedInCurrentReuqest;
 	private String dataToSendBackInResponse="";
+	private static final String CONNECTION_TYPE = "connection-type";
 	private static final String DATA = "data";
 	private static final int INTERVAL_TO_WAIT = 5;
 	private static final long SLEEP_INTERVAL = 1000;
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static final String MUSES_TAG_LEVEL_2 = "MUSES_TAG_LEVEL_2";
+	private String connectionType = "connect";
+	
 	/**
 	 * 
 	 * @param sessionHandler
@@ -81,8 +84,6 @@ public class ComMainServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Retrieve value from request header
-		String connectionType = request.getHeader("connection-type");
 
 		// create cookie if not in the request
 		helper.setCookie(request);
@@ -90,7 +91,15 @@ public class ComMainServlet extends HttpServlet {
 		String currentJSessionID = cookie.getValue();
 		
 		// Retrieve data in the request
-		dataAttachedInCurrentReuqest = helper.getRequestData(request);
+		if (request.getMethod().equalsIgnoreCase("POST")) {
+			// Retrieve connection-type from request header
+			connectionType = request.getHeader(CONNECTION_TYPE);
+			dataAttachedInCurrentReuqest = helper.getRequestData(request);
+		}else  {
+			// Retrieve connection-type from request parameter
+			connectionType = request.getParameter(CONNECTION_TYPE);
+			dataAttachedInCurrentReuqest = request.getParameter(DATA);
+		} 
 
 		// if "connect" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.CONNECT)) {
@@ -170,8 +179,9 @@ public class ComMainServlet extends HttpServlet {
 		// Setup response to send back
 		response.setContentType("text/html");
 		response.addCookie(cookie);
-	
+		
 	}
+	
 	public String getResponseData(){
 		return dataToSendBackInResponse;
 	}
@@ -218,7 +228,8 @@ public class ComMainServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		doPost(request, response);
 	}
-
+	
 }
 
