@@ -120,8 +120,11 @@ public class ComMainServlet extends HttpServlet {
 				dataToSendBackInResponse = waitForDataIfAvailable(INTERVAL_TO_WAIT, currentJSessionID);
 			}
 			
-			response.setHeader("Content-Type", "text/plain");
-			PrintWriter writer = response.getWriter();
+			response.setContentType("application/json");
+			response.setHeader("Cache-Control", "nocache");
+	        response.setCharacterEncoding("utf-8");
+			
+	        PrintWriter writer = response.getWriter();
 			writer.write(dataToSendBackInResponse);
 			
 			//response.addHeader(DATA,dataToSendBackInResponse); // Now data is added in the body instead
