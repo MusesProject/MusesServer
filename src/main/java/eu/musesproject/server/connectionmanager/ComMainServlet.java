@@ -41,7 +41,7 @@ public class ComMainServlet extends HttpServlet {
 	private static final long SLEEP_INTERVAL = 1000;
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static final String MUSES_TAG_LEVEL_2 = "MUSES_TAG_LEVEL_2";
-	private String connectionType = "connect";
+	private static String connectionType = "connect";
 	
 	/**
 	 * 
@@ -97,7 +97,7 @@ public class ComMainServlet extends HttpServlet {
 			dataAttachedInCurrentReuqest = helper.getRequestData(request);
 		}else  {
 			// Retrieve connection-type from request parameter
-			connectionType = request.getParameter(CONNECTION_TYPE);
+			connectionType = DATA;
 			dataAttachedInCurrentReuqest = request.getParameter(DATA);
 		} 
 

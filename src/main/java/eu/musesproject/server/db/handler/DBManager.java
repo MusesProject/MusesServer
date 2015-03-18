@@ -80,7 +80,7 @@ public class DBManager {
 		        if (trans!=null) trans.rollback();
 		        e.printStackTrace(); 
 		    } finally {
-		       session.close();
+		    	if (session!=null) session.close();
 		    }
 		    logger.log(Level.INFO, MUSES_TAG + ":persist successful");
 		} catch (RuntimeException re) {
@@ -111,7 +111,7 @@ public class DBManager {
 		        if (trans!=null) trans.rollback();
 		        e.printStackTrace(); 
 		    } finally {
-		       session.close();
+		    	if (session!=null) session.close();
 		    }
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
@@ -138,7 +138,7 @@ public class DBManager {
 		} catch (HibernateException e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return null;
 	}
@@ -170,7 +170,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return null;
 	}
@@ -199,7 +199,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return null;
 	}
@@ -229,7 +229,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return null;
 	}
@@ -257,7 +257,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return null;
 	}
@@ -285,7 +285,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return null;
 	}
@@ -313,7 +313,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return null;
 	}
@@ -338,7 +338,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return eventTypeList;
     }
@@ -362,7 +362,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return eventType;
     }
@@ -387,7 +387,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return securityRuleList;
     }
@@ -411,7 +411,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
     	return accessRequest.getDecisions();
     }
@@ -441,7 +441,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return foundList;
     }
@@ -471,7 +471,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return users;
 	}
@@ -493,7 +493,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return users;
 	}
@@ -517,7 +517,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return devices;		
 	}
@@ -540,7 +540,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return assets;		
 	}
@@ -563,7 +563,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return assets;		
 	}
@@ -581,7 +581,7 @@ public class DBManager {
 		} catch (HibernateException e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 	}
       
@@ -603,7 +603,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return clues;		
 	}
@@ -626,6 +626,8 @@ public class DBManager {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
 		}
 		return clues;		
 	}
@@ -642,7 +644,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 	}
 	
@@ -663,7 +665,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return threats;		
 	}
@@ -686,7 +688,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return threats;		
 	}
@@ -709,7 +711,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return threats;		
 	}
@@ -750,7 +752,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			} 
 			
 			//this.setOutcomes(threat.getOutcomes());
@@ -771,7 +773,7 @@ public class DBManager {
 					if (trans!=null) trans.rollback();
 					logger.log(Level.ERROR, e.getMessage());
 				} finally {
-				    session.close();
+					if (session!=null) session.close();
 				} 
 			}
 		}
@@ -798,7 +800,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		} 
 		return decisions;		
 	}
@@ -824,7 +826,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			} 
 		}
 	}
@@ -849,7 +851,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			} 
 		}
 	}
@@ -873,7 +875,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			}  
 		}
 	}
@@ -898,7 +900,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			}   
 		}
 	}
@@ -924,7 +926,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			} 
 		}
 	}
@@ -949,7 +951,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		} 
 		return accessrequests;		
 	}
@@ -972,7 +974,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return riskcommunications;		
 	}
@@ -990,7 +992,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 	}
 	
@@ -1011,7 +1013,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return riskpolicy;				
 	}
@@ -1033,7 +1035,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return outcome;				
 	}
@@ -1058,7 +1060,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return accesrequests;
 	}
@@ -1080,7 +1082,7 @@ public class DBManager {
 			if (trans!=null) trans.rollback();
 			logger.log(Level.ERROR, e.getMessage());
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		} 
 		
 	}
@@ -1104,7 +1106,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			} 
 		}
 	}
@@ -1130,7 +1132,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			} 
 		}
 	}
@@ -1155,7 +1157,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return accessrequests;		
 	}
@@ -1231,7 +1233,7 @@ public class DBManager {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
 			} finally {
-			    session.close();
+				if (session!=null) session.close();
 			} 
 		}
 		
@@ -1250,7 +1252,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return app;
 	}
@@ -1268,7 +1270,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return source;
 	}
@@ -1294,7 +1296,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return musesConfig;
 	}
@@ -1316,7 +1318,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return sensorConfigList;
 	}
@@ -1342,7 +1344,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return connConfig;
 
@@ -1360,7 +1362,7 @@ public class DBManager {
 			if (trans!=null) trans.rollback();
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 	}
 
@@ -1376,7 +1378,7 @@ public class DBManager {
 			if (trans!=null) trans.rollback();
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}				
 	}
 	
@@ -1397,7 +1399,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return devices;
 	}
@@ -1419,7 +1421,7 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		    session.close();
+			if (session!=null) session.close();
 		}
 		return types;
 	}
