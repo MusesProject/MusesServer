@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -36,6 +37,9 @@ public class ComMainServletTest {
 	private IConnectionCallbacks iConnectionCallbacks;
 	@Mock
 	private ConnectionManager connectionManager;
+
+	@Mock
+	private PrintWriter writer;
 	
 	private SessionHandler sessionHandler;
 	private Cookie cookie1,cookie2, cookie3;
@@ -58,6 +62,8 @@ public class ComMainServletTest {
 	@Test
 	public void testdoPostConnect() {
 		try {
+			when(httpServletRequest.getMethod()).thenReturn("POST");
+			when(httpServletResponse.getWriter()).thenReturn(writer);
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -66,6 +72,7 @@ public class ComMainServletTest {
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
 			assertEquals("",comMainServlet.getResponseData());
 	
+			when(httpServletRequest.getMethod()).thenReturn("POST");
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -88,6 +95,8 @@ public class ComMainServletTest {
 	public void testdoPostData() {
 		try {
 			// Connect request before testing data
+			when(httpServletRequest.getMethod()).thenReturn("POST");
+			when(httpServletResponse.getWriter()).thenReturn(writer);
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -95,6 +104,7 @@ public class ComMainServletTest {
 			when(helper.getCookie()).thenReturn(cookie1);
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
 			
+			when(httpServletRequest.getMethod()).thenReturn("POST");
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"data");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("{\"test\":\"test\"}");
@@ -110,6 +120,7 @@ public class ComMainServletTest {
 			// assert that the data is available in the queue and attach
 			assertEquals("{\"auth-message\":\"Successfully authenticated\",\"auth-result\":\"SUCCESS\",\"requesttype\":\"auth-response\"}", comMainServlet.getResponseData());
 			
+			when(httpServletRequest.getMethod()).thenReturn("POST");
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"data");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("Some event from client");
@@ -149,6 +160,8 @@ public class ComMainServletTest {
 		try {
 			
 			// Client 1 connect
+			when(httpServletRequest.getMethod()).thenReturn("POST");
+			when(httpServletResponse.getWriter()).thenReturn(writer);
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -157,6 +170,7 @@ public class ComMainServletTest {
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
 
 			// Client 2 connect
+			when(httpServletRequest.getMethod()).thenReturn("POST");
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"connect");
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -164,7 +178,7 @@ public class ComMainServletTest {
 			when(helper.getCookie()).thenReturn(cookie2);
 			comMainServlet.doPost(httpServletRequest, httpServletResponse);
 			
-			
+			when(httpServletRequest.getMethod()).thenReturn("POST");
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"poll");	
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -175,6 +189,7 @@ public class ComMainServletTest {
 			assertEquals("Some JSON for Client 1 ...", comMainServlet.getResponseData());
 //			assertEquals(2,new SessionHandler().getSessionIds().size());
 			
+			when(httpServletRequest.getMethod()).thenReturn("POST");
 			when(httpServletRequest.getHeader("connection-type")).thenReturn(
 					"poll");	
 			when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -202,6 +217,7 @@ public class ComMainServletTest {
 	@Test
 	public void testdoPostDisconnect() throws Exception {
 		// Client 1 connect
+		when(httpServletRequest.getMethod()).thenReturn("POST");
 		when(httpServletRequest.getHeader("connection-type")).thenReturn(
 				"connect");
 		when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -210,6 +226,7 @@ public class ComMainServletTest {
 		comMainServlet.doPost(httpServletRequest, httpServletResponse);
 
 		// Client 2 connect
+		when(httpServletRequest.getMethod()).thenReturn("POST");
 		when(httpServletRequest.getHeader("connection-type")).thenReturn(
 				"connect");
 		when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -218,6 +235,7 @@ public class ComMainServletTest {
 		comMainServlet.doPost(httpServletRequest, httpServletResponse);
 		
 		// Disconnect should remove cookies from the list
+		when(httpServletRequest.getMethod()).thenReturn("POST");
 		when(httpServletRequest.getHeader("connection-type")).thenReturn(
 				"disconnect");
 		when(helper.getRequestData(httpServletRequest)).thenReturn("");
@@ -232,6 +250,7 @@ public class ComMainServletTest {
 		assertEquals(false, found);
 		assertEquals(1,new SessionHandler().getSessionIds().size());
 		
+		when(httpServletRequest.getMethod()).thenReturn("POST");
 		when(httpServletRequest.getHeader("connection-type")).thenReturn(
 				"disconnect");
 		when(helper.getRequestData(httpServletRequest)).thenReturn("");
