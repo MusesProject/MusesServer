@@ -758,8 +758,8 @@ public class DBManager {
 			//this.setOutcomes(threat.getOutcomes());
 			Iterator<Outcome> o = threat.getOutcomes().iterator();
 			while(o.hasNext()){
-				session=getSessionFactory().openSession();
-				trans=session.beginTransaction();
+				session = getSessionFactory().openSession();
+				trans = session.beginTransaction();
 				Outcome outcome = o.next();
 				try {
 					List<Threat> t = this.findThreatbydescription(threat.getDescription());

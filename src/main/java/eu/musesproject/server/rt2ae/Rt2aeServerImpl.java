@@ -1399,9 +1399,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		
 		List<Threat> threats = new ArrayList<Threat>(); //TODO Change threats by clues
-		
-		Outcome requestPotentialOutcomes = new Outcome(wifisniffing, -accessRequest.getRequestedCorporateAsset().getValue()/2);
-		
+				
 		for (int i = 0; i < threats.size(); i++) {
 			
 			if(threats.get(i).getAssetId() == accessRequest.getRequestedCorporateAsset().getId()){
@@ -1862,7 +1860,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		EventProcessorImpl eventprocessorimpl = new EventProcessorImpl();
 		
-		if(!policyCompliance.equals(policyCompliance.DENY)){
+		if(!policyCompliance.getResult().equals(policyCompliance.DENY)){
 		
 		List<Clue> listclues  = eventprocessorimpl.getCurrentClues(accessRequest, accessRequest.getUser().getUsertrustvalue(), accessRequest.getDevice().getDevicetrustvalue());
 		if (accessRequest.getRequestedCorporateAsset().getConfidential_level()=="PUBLIC"){
@@ -1982,11 +1980,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		
 		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
-
-		rt2ae = new Rt2aeServerImpl();
-		
-
-		
 		AccessRequest accessRequest = new AccessRequest();
 		accessRequest.setId(1);
 		User user = new User();
