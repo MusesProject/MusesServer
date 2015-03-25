@@ -210,6 +210,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				}
 			}
 		} catch (JSONException je) {
+			logger.log(Level.ERROR, MUSES_TAG+ je.getMessage() + je.getCause());
 			je.printStackTrace();
 		}
 
