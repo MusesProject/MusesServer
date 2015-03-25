@@ -326,7 +326,7 @@ public class EventFormatter {
 			cepFileEvent.setMobileConnected(Boolean.valueOf(properties.get("mobileConnected")));
 			cepFileEvent.setWifiConnected(Boolean.valueOf(properties.get("wificonnected")));
 			cepFileEvent.setWifiEnabled(Boolean.valueOf(properties.get("wifienabled")));
-			cepFileEvent.setNetworkId(Integer.valueOf(properties.get("networkid")));
+			cepFileEvent.setNetworkId(properties.get("networkid"));
 			cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifineighbors")));
 			cepFileEvent.setWifiEncryption(properties.get("wifiencryption"));
 			cepFileEvent.setTimestamp(contextEvent.getTimestamp());		

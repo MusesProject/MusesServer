@@ -34,7 +34,7 @@ public class ConnectivityEvent extends Event {
 	private int wifiNeighbors;
 	private boolean hiddenSSID;
 	private String bssid;
-	private int networkId;
+	private String networkId;
 	private String bluetoothConnected;
 	private String wifiEncryption;
 	private boolean airplaneMode;
@@ -93,10 +93,10 @@ public class ConnectivityEvent extends Event {
 	public void setBssid(String bssid) {
 		this.bssid = bssid;
 	}
-	public int getNetworkId() {
+	public String getNetworkId() {
 		return networkId;
 	}
-	public void setNetworkId(int networkId) {
+	public void setNetworkId(String networkId) {
 		this.networkId = networkId;
 	}
 	public String getBluetoothConnected() {
