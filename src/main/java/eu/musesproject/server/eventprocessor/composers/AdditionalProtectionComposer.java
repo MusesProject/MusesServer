@@ -44,8 +44,8 @@ public class AdditionalProtectionComposer {
 		
 		composedProtection.setType(EventTypes.DEVICE_PROTECTION);
 		composedProtection.setPasswordProtected(protectionEvent.getIsPasswordProtected());
-		composedProtection.setPatternProtected(protectionEvent.isPatternProtected());
-		composedProtection.setRooted(protectionEvent.isRooted());
+		composedProtection.setPatternProtected(protectionEvent.getIsPatternProtected());
+		composedProtection.setRooted(protectionEvent.getIsRooted());
 		composedProtection.setTrustedAVInstalled(protectionEvent.isTrustedAntivirusInstalled());
 		
 		return composedProtection;

@@ -57,10 +57,10 @@ public class DeviceProtectionEvent extends Event {
 		this.timestamp = timestamp;
 	}
 
-	public boolean isRooted() {
+	public boolean getIsRooted() {
 		return isRooted;
 	}
-	public void setRooted(boolean isRooted) {
+	public void setIsRooted(boolean isRooted) {
 		this.isRooted = isRooted;
 	}
 	public boolean getIsPasswordProtected() {
@@ -69,10 +69,10 @@ public class DeviceProtectionEvent extends Event {
 	public void setIsPasswordProtected(boolean isPasswordProtected) {
 		this.isPasswordProtected = isPasswordProtected;
 	}
-	public boolean isPatternProtected() {
+	public boolean getIsPatternProtected() {
 		return isPatternProtected;
 	}
-	public void setPatternProtected(boolean isPatternProtected) {
+	public void setIsPatternProtected(boolean isPatternProtected) {
 		this.isPatternProtected = isPatternProtected;
 	}
 	public boolean isTrustedAntivirusInstalled() {

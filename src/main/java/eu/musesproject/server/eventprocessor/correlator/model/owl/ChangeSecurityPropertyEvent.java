@@ -31,11 +31,13 @@ public class ChangeSecurityPropertyEvent extends Event {
 	//private String value;
 
 	private boolean isPasswordProtected;
+	private boolean isPatternProtected;
 	private boolean accessibilityEnabled;
 	private int screenTimeoutInSeconds;
 	private boolean isTrustedAntivirusInstalled;
 	private String ipAddress;
 	private boolean musesDatabaseExists;
+	private boolean isRooted;
 	
 	
 	public int getId() {
@@ -68,6 +70,12 @@ public class ChangeSecurityPropertyEvent extends Event {
 	public void setIsPasswordProtected(boolean isPasswordProtected) {
 		this.isPasswordProtected = isPasswordProtected;
 	}
+	public boolean getIsPatternProtected() {
+		return isPatternProtected;
+	}
+	public void setIsPatternProtected(boolean isPatternProtected) {
+		this.isPatternProtected = isPatternProtected;
+	}	
 	public boolean getAccessibilityEnabled() {
 		return accessibilityEnabled;
 	}
@@ -80,10 +88,10 @@ public class ChangeSecurityPropertyEvent extends Event {
 	public void setScreenTimeoutInSeconds(int screenTimeoutInSeconds) {
 		this.screenTimeoutInSeconds = screenTimeoutInSeconds;
 	}
-	public boolean isTrustedAntivirusInstalled() {
+	public boolean getIsTrustedAntivirusInstalled() {
 		return isTrustedAntivirusInstalled;
 	}
-	public void setTrustedAntivirusInstalled(boolean isTrustedAntivirusInstalled) {
+	public void setIsTrustedAntivirusInstalled(boolean isTrustedAntivirusInstalled) {
 		this.isTrustedAntivirusInstalled = isTrustedAntivirusInstalled;
 	}
 	public String getIpAddress() {
@@ -99,7 +107,12 @@ public class ChangeSecurityPropertyEvent extends Event {
 		this.musesDatabaseExists = musesDatabaseExists;
 	}
 	
-	
+	public boolean getIsRooted() {
+		return isRooted;
+	}
+	public void setIsRooted(boolean isRooted) {
+		this.isRooted = isRooted;
+	}
 
 
 	

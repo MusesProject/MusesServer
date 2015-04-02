@@ -101,9 +101,11 @@ public class EventFormatter {
 		if (cepFileEvent instanceof DeviceProtectionEvent){
 			DeviceProtectionEvent dEvent = (DeviceProtectionEvent) cepFileEvent;
 			Logger.getLogger(EventFormatter.class).info("isPasswordProtected:"+dEvent.getIsPasswordProtected());
+			Logger.getLogger(EventFormatter.class).info("isPatternProtected:"+dEvent.getIsPatternProtected());
 		}else if (cepFileEvent instanceof ChangeSecurityPropertyEvent){
 			ChangeSecurityPropertyEvent dEvent = (ChangeSecurityPropertyEvent) cepFileEvent;
 			Logger.getLogger(EventFormatter.class).info("isPasswordProtected:"+dEvent.getIsPasswordProtected());
+			Logger.getLogger(EventFormatter.class).info("isPatternProtected:"+dEvent.getIsPatternProtected());
 			Logger.getLogger(EventFormatter.class).info("accessibilityEnabled:"+dEvent.getAccessibilityEnabled());
 		}
 		return (Event)cepFileEvent;
@@ -167,10 +169,12 @@ public class EventFormatter {
 		cepFileEvent.setType(EventTypes.CHANGE_SECURITY_PROPERTY);
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setIsPasswordProtected(Boolean.valueOf(properties.get("ispasswordprotected")));
-		cepFileEvent.setTrustedAntivirusInstalled(Boolean.valueOf("istrustedantivirusinstalled"));
+		cepFileEvent.setIsPatternProtected(Boolean.valueOf(properties.get("ispatternprotected")));
+		cepFileEvent.setIsTrustedAntivirusInstalled(Boolean.valueOf(properties.get("istrustedantivirusinstalled")));
 		cepFileEvent.setIpAddress(properties.get("ipaddress"));
 		cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties.get("screentimeoutinseconds")));
 		cepFileEvent.setAccessibilityEnabled(Boolean.valueOf(properties.get("accessibilityenabled")));
+		cepFileEvent.setIsRooted(Boolean.valueOf(properties.get("isrooted")));
 		
 		
 		return cepFileEvent;
@@ -305,9 +309,9 @@ public class EventFormatter {
 		//cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());	
 		cepFileEvent.setIsPasswordProtected(Boolean.valueOf(properties.get("ispasswordprotected")));
-		cepFileEvent.setPatternProtected(Boolean.valueOf(properties.get("patternprotected")));
-		cepFileEvent.setTrustedAntivirusInstalled(Boolean.valueOf("istrustedantivirusinstalled"));
-		cepFileEvent.setRooted(Boolean.valueOf("isrooted"));
+		cepFileEvent.setIsPatternProtected(Boolean.valueOf(properties.get("patternprotected")));
+		cepFileEvent.setTrustedAntivirusInstalled(Boolean.valueOf(properties.get("istrustedantivirusinstalled")));
+		cepFileEvent.setIsRooted(Boolean.valueOf(properties.get("isrooted")));
 		cepFileEvent.setRootPermissionGiven(Boolean.valueOf("isrootpermissiongiven"));
 		cepFileEvent.setIpaddress(properties.get("ipaddress"));
 		cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties.get("screentimeoutinseconds")));
@@ -326,7 +330,7 @@ public class EventFormatter {
 			cepFileEvent.setMobileConnected(Boolean.valueOf(properties.get("mobileConnected")));
 			cepFileEvent.setWifiConnected(Boolean.valueOf(properties.get("wificonnected")));
 			cepFileEvent.setWifiEnabled(Boolean.valueOf(properties.get("wifienabled")));
-			cepFileEvent.setNetworkId(properties.get("networkid"));
+			cepFileEvent.setNetworkId(String.valueOf(properties.get("networkid")));
 			cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifineighbors")));
 			cepFileEvent.setWifiEncryption(properties.get("wifiencryption"));
 			cepFileEvent.setTimestamp(contextEvent.getTimestamp());		

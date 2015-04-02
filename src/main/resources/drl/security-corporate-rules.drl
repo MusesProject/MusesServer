@@ -17,6 +17,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEven
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -101,14 +102,48 @@ declare SensorAppEvent
 	@expires (1m)
 end
 
+
+declare PackageObserverEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+
+
 function boolean requiredApp(String name){
 	boolean result = false;
 	if (name.contains("com.avast.android.mobilesecurity")){
 		result = true;
-	}	
+	}else if (name.contains("com.lotus.sync.traveler")){
+		result = true;
+	}
 
 	return result;
 }
+
+function boolean unsafeStorage(String name){
+	System.out.println("Safe storage input:"+name);
+	boolean result = true;
+	if (name.contains("cryptonite")){
+		result = false;
+	}
+	System.out.println("Safe storage result:"+result);
+
+	return result;
+}
+
+function boolean blacklistedApp(String name){
+	boolean result = false;
+	if (name.contains("orrent")){
+		result = true;
+	}else if (name.contains("vuze")){
+		result = true;
+	}
+
+	return result;
+}
+
 
 function String eventSignature(Event event){
 	String result = null;
@@ -607,4 +642,124 @@ rule "Blacklist app 00001"
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
+	end
+
+
+//New corporate policies
+
+
+	rule "Antivirus not running"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: ChangeSecurityPropertyEvent(isTrustedAntivirusInstalled==false)
+		not AccessRequest(event=="Antivirus not running")
+
+	then
+		
+		StatusGlobal.log("New corporate policy. Id:9 ANTIVIRUS NOT RUNNING");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (recommended corporate antivirus) is not running\nWithout antivirus, integrity of corporate data might be compromised","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (antivirus corporativo recomendado) no esta en ejecucion\nSin antivirus, la integridad de datos corporativos pueden verse comprometidos.","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Antivirus not running");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+	end
+
+
+	rule "Rooted device"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: ChangeSecurityPropertyEvent(isRooted==true)
+		not AccessRequest(event=="Rooted device")
+
+	then
+		
+		StatusGlobal.log("New corporate policy. Id:1 ROOTED DEVICE");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Your device is rooted\nMalware can easily breach your mobile security. Gaining root access also entails circumventing the security restrictions put in place by the Android operating system","DENY", "<isRooted>true</isRooted>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"El dispositivo esta rooteado\nLa seguridad del movil puede ser afectada por malware. Conseguir acceso root permite evitar restricciones de seguridad configuradas por el sistema operativo Android.","DENY", "<isRooted>true</isRooted>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Rooted device");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+	end
+
+
+
+	rule "Blacklist generic open"
+	no-loop true
+	dialect "java"
+	when
+		e: AppObserverEvent(eval(blacklistedApp(name)),event=="open_application")
+		not AccessRequest(event=="Blacklist generic")
+	then
+		StatusGlobal.log("New corporate policy. Id:6 BLACKLISTED APP "+e.getName());
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful.\nOther people can gain control over your device.","DENY","<appname>"+e.getName()+"</appname>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Abriendo aplicacion peligrosa\nEsta intentando ejecutar una aplicacion considerada peligrosa\nOtras personas podrian acceder a la informacion de su dispositivo.","DENY","<appname>"+e.getName()+"</appname>");
+
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Blacklist generic");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+	end
+
+
+	rule "Safe Storage"
+	no-loop true
+	dialect "mvel"
+	when
+		e: AppObserverEvent(eval(unsafeStorage(this.appPackage)))
+		not AccessRequest(event=="Safe Storage")
+	then
+		StatusGlobal.log("Safe storage is not enabled on device. Criptonite application is required");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device\nYou require to install a safe storage application to keep corporate data encrypted \nPlease, install Criptonite from Google Play Store.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Safe Storage");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+
+	end
+
+
+	rule "Install not allowed application"
+	no-loop true
+	dialect "mvel"
+	when
+		e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="install")
+		not AccessRequest(event=="Install not allowed application")
+	then
+		StatusGlobal.log("Application to be installed should not be allowed.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Installing application not allowed\nYou are trying to install an application that is forbidden by your system's security. \nPlease, do not proceed.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Install not allowed application");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
 	end
