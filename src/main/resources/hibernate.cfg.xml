@@ -56,5 +56,6 @@
         <mapping class="eu.musesproject.server.entity.UserAuthorization"/>
         <mapping class="eu.musesproject.server.entity.UserBehaviour"/>
         <mapping class="eu.musesproject.server.entity.Users"/>
+        <mapping class="eu.musesproject.server.entity.Zone"/>
     </session-factory>
 </hibernate-configuration>

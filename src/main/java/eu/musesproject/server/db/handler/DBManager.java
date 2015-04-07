@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -15,6 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
@@ -40,6 +42,7 @@ import eu.musesproject.server.entity.Sources;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
+import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.scheduler.ModuleType;
 
 public class DBManager {
@@ -1424,6 +1427,29 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return types;
+	}
+	
+	
+    /**
+     * Get Zones list 
+     * @return List<Zone>
+     */
+	public List<Zone> getZones() {	
+		Session session = null;
+		Query query = null;
+		List<Zone> zones = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Zone.findAll");
+			if (query!=null) {
+				zones = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return zones;
 	}
 
 }
