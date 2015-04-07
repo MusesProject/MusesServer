@@ -43,6 +43,7 @@ import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
+import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 
 
@@ -378,7 +379,7 @@ public class JSONManager {
 		return root;
 	}
 	
-	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig, ConnectionConfig connConfig) {
+	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig, ConnectionConfig connConfig, List<Zone> zoneConfig) {
 		JSONObject root = new JSONObject();
 		try {
 
@@ -389,6 +390,24 @@ public class JSONManager {
             	configXML += xmlProperty(JSONIdentifiers.CONFIG_NAME, config.getConfigName());
             }
             root.put(JSONIdentifiers.MUSES_CONFIG,XML.toJSONObject(configXML));
+            
+            //Zone configuration
+            String zoneConfigXML = "";
+            if (zoneConfig != null){
+            	for (Iterator iterator = zoneConfig.iterator(); iterator.hasNext();) {
+            	
+            	Zone zone = (Zone) iterator.next();
+				zoneConfigXML += "<"+JSONIdentifiers.ZONE+">";
+				zoneConfigXML += xmlProperty(JSONIdentifiers.ZONE_ID, StringEscapeUtils.escapeXml(String.valueOf(zone.getZoneId())));
+				zoneConfigXML += xmlProperty(JSONIdentifiers.DESCRIPTION, StringEscapeUtils.escapeXml(String.valueOf(zone.getDescription())));
+				zoneConfigXML += xmlProperty(JSONIdentifiers.LONGITUD, StringEscapeUtils.escapeXml(String.valueOf(zone.getLongitud())));
+				zoneConfigXML += xmlProperty(JSONIdentifiers.LATITUDE, StringEscapeUtils.escapeXml(String.valueOf(zone.getLatitude())));
+				zoneConfigXML += xmlProperty(JSONIdentifiers.RADIUS, StringEscapeUtils.escapeXml(String.valueOf(zone.getRadius())));
+				zoneConfigXML += "</"+JSONIdentifiers.ZONE+">";
+            	}		
+            }
+            
+            root.put(JSONIdentifiers.ZONE_CONFIG,XML.toJSONObject(zoneConfigXML));
             
             //Sensor configuration
             String sensorConfigXML = "";
@@ -415,7 +434,7 @@ public class JSONManager {
             
             root.put(JSONIdentifiers.CONNECTION_CONFIG,XML.toJSONObject(connConfigXML));
             
-
+            
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

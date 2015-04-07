@@ -39,6 +39,7 @@ import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
+import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 import eu.musesproject.server.scheduler.ModuleType;
 
@@ -155,7 +156,11 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					//Sensor Configuration
 					List<SensorConfiguration> sensorConfig = dbManager.getSensorConfiguration();
 					
-					JSONObject response = JSONManager.createConfigUpdateJSON(RequestType.CONFIG_UPDATE, config, sensorConfig, connectionConfig);
+					//Retrieve zone info
+					List<Zone> zoneConfig = dbManager.getZones();
+					logger.log(Level.INFO, MUSES_TAG + " Zones information for " + zoneConfig.size() + " zones.");
+					
+					JSONObject response = JSONManager.createConfigUpdateJSON(RequestType.CONFIG_UPDATE, config, sensorConfig, connectionConfig, zoneConfig);
 					logger.log(Level.INFO, response.toString());
 					logger.log(Level.INFO, MUSES_TAG +  " Response to send:"+response.toString() );
 					logger.log(Level.INFO, MUSES_TAG +  " sessionID: "+ sessionId);

@@ -786,6 +786,30 @@ INSERT INTO `security_rules` VALUES (800,'sec','des',NULL,'VALIDATED','0',15,'20
 UNLOCK TABLES;
 
 --
+-- Table structure for table `zone`
+--
+
+DROP TABLE IF EXISTS `zone`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zone` (
+  `zone_id` int(11) NOT NULL,
+  `description` varchar(45) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `long` double DEFAULT NULL,
+  `lat` double DEFAULT NULL,
+  `radius` float DEFAULT NULL COMMENT 'Zone radius in meters',
+  PRIMARY KEY (`zone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='List of zones referring to special security requirements to apply to the company';
+
+
+INSERT INTO `muses`.`zone` (`zone_id`, `description`, `long`, `lat`, `radius`) VALUES ('1', 'Office Valencia', '39.467912', '-0.349593', '500');
+INSERT INTO `muses`.`zone` (`zone_id`, `description`, `long`, `lat`, `radius`) VALUES ('2', 'Office Madrid', '40.443132', '-3.682402', '500');
+
+UPDATE `muses`.`zone` SET `role_id`='0' WHERE `zone_id`='1';
+UPDATE `muses`.`zone` SET `role_id`='0' WHERE `zone_id`='2';
+
+--
 -- Table structure for table `security_violation`
 --
 
