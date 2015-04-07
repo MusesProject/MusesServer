@@ -1,4 +1,4 @@
-package musesdatabase;
+package eu.musesproject.server.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
