@@ -326,7 +326,7 @@ public class JSONManager {
 				}else if (contextEventType.equals(ActionType.OPEN_APPLICATION)){
 					contextEvent.setType(EventTypes.APPOBSERVER);
 					properties.put("event", contextEventType);
-				}else if (contextEventType.equals(ActionType.UNINSTALL)){
+				}else if (contextEventType.equals(ActionType.UNINSTALL)||contextEventType.equals(ActionType.INSTALL)){
 					contextEvent.setType(EventTypes.APPOBSERVER);
 					properties.put("event", contextEventType);
 				}else if (contextEventType.equals(ActionType.SEND_MAIL)){

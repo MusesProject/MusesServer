@@ -18,6 +18,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurity
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -109,6 +110,13 @@ declare PackageObserverEvent
 	@expires (1m)
 end
 
+declare LocationEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+
 
 
 function boolean requiredApp(String name){
@@ -128,7 +136,7 @@ function boolean unsafeStorage(String name){
 	if (name.contains("cryptonite")){
 		result = false;
 	}
-	System.out.println("Safe storage result:"+result);
+	System.out.println("Unsafe storage result:"+result);
 
 	return result;
 }
@@ -722,19 +730,22 @@ rule "Blacklist app 00001"
 	end
 
 
-	rule "Safe Storage"
+	rule "Unsafe Storage"
 	no-loop true
 	dialect "mvel"
 	when
-		e: AppObserverEvent(eval(unsafeStorage(this.appPackage)))
-		not AccessRequest(event=="Safe Storage")
+		//e: AppObserverEvent(eval(unsafeStorage(this.appPackage)))
+		e: PackageObserverEvent(eval(unsafeStorage(this.installedApps)))
+		//e: PackageObserverEvent(installedApps not matches ".*cryptonite.*")
+		not AccessRequest(event=="Unsafe Storage")
 	then
 		StatusGlobal.log("Safe storage is not enabled on device. Criptonite application is required");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device\nYou require to install a safe storage application to keep corporate data encrypted \nPlease, install Criptonite from Google Play Store.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device\nYou require to install a safe storage application to keep corporate data encrypted \nPlease, install Cryptonite from Google Play Store.","DENY","<installedApps>cryptonite</installedApps>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device\nYou require to install a safe storage application to keep corporate data encrypted \nPlease, install Cryptonite from Google Play Store.","DENY","<appPackage>"+e.getAppPackage()+"</appPackage>");
 		AccessRequest request = new AccessRequest();
-		request.setEvent("Safe Storage");
+		request.setEvent("Unsafe Storage");
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
@@ -748,7 +759,8 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
 	when
-		e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="install")
+		//e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="install")
+		e: AppObserverEvent(eval(blacklistedApp(this.appPackage)),event=="install")
 		not AccessRequest(event=="Install not allowed application")
 	then
 		StatusGlobal.log("Application to be installed should not be allowed.");
@@ -757,6 +769,28 @@ rule "Blacklist app 00001"
 		int id = Rt2aeGlobal.composeAccessRequest(e,"Installing application not allowed\nYou are trying to install an application that is forbidden by your system's security. \nPlease, do not proceed.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Install not allowed application");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end
+
+
+
+	rule "Zone 1 application restriction"
+	no-loop true
+	dialect "mvel"
+	when
+		e: LocationEvent(isWithinZone matches ".*1.*")
+		e1: AppObserverEvent(appPackage matches ".*GoogleCamera.*",event=="open_application")
+	then
+		StatusGlobal.log("Zone 1 application restriction");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e1);
+		int id = Rt2aeGlobal.composeAccessRequest(e1,"You are in a restricted area\nYou are trying to use an application that is forbidden in the current zone. \nPlease, do not proceed.","DENY","<packagename>"+e1.getAppPackage()+"</packagename>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Zone 1 application restriction");
 		StatusGlobal.log("**********"+id);
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));

@@ -44,7 +44,8 @@ public class EventTypes {
 	public final static String RESTART = "RESTART";
 	public final static String SECURITY_INCIDENT = "SECURITY_INCIDENT";	
 	public final static String SECURITY_VIOLATION = "SECURITY_VIOLATION";	
-	public final static String CONFIGURATION_CHANGE = "CONFIGURATION_CHANGE";	
+	public final static String CONFIGURATION_CHANGE = "CONFIGURATION_CHANGE";
+	public final static String LOCATION = "CONTEXT_SENSOR_LOCATION";
 	
 	
 	

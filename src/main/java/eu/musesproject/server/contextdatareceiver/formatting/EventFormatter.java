@@ -39,6 +39,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtecti
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
@@ -80,7 +81,9 @@ public class EventFormatter {
 					cepFileEvent = convertToChangeSecurityPropertyEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.SAVE_ASSET)){
 					cepFileEvent = convertToFileObserverSaveEvent(contextEvent);
-				} else {
+				} else if (contextEvent.getType().equals(EventTypes.LOCATION)){
+					cepFileEvent = convertToLocationEvent(contextEvent);
+				}else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 					Logger.getLogger(EventFormatter.class).error("Unsupported sensor:"+contextEvent.getType());
 				}
@@ -112,6 +115,17 @@ public class EventFormatter {
 		
 	}
 	
+	private static Event convertToLocationEvent(ContextEvent contextEvent) {
+		LocationEvent cepFileEvent = new LocationEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setIsWithinZone(properties.get("isWithinZone"));
+		
+		return cepFileEvent;
+	}
+
 	private static Event convertToSensorAppEvent(ContextEvent contextEvent) {
 		SensorAppEvent cepFileEvent = new SensorAppEvent();
 		Map<String,String> properties = contextEvent.getProperties();

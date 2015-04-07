@@ -142,7 +142,7 @@ rule "Clue-identification-00000"
 		StatusGlobal.log(e.getInstalledApps());		
 		StatusGlobal.log("Identifier:"+e.getTimestamp());
 		Rt2aeGlobal.deviceSecurityStateChange(e,"Antivirus is not running", ThreatOntology.MALICIOUS_MISUSE);
-		retract(e);
+		//retract(e);
 	end
 	
 	
