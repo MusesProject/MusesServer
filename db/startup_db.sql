@@ -523,6 +523,56 @@ CREATE TABLE `security_rules` (
 ) ENGINE=InnoDB AUTO_INCREMENT=801 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+--
+-- Table structure for table `zone`
+--
+
+DROP TABLE IF EXISTS `zone`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zone` (
+  `zone_id` int(11) NOT NULL,
+  `description` varchar(45) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `long` double DEFAULT NULL,
+  `lat` double DEFAULT NULL,
+  `radius` float DEFAULT NULL COMMENT 'Zone radius in meters',
+  PRIMARY KEY (`zone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='List of zones referring to special security requirements to apply to the company';
+
+
+INSERT INTO `muses`.`zone` (`zone_id`, `description`, `long`, `lat`, `radius`) VALUES ('1', 'Office Valencia', '39.467912', '-0.349593', '500');
+INSERT INTO `muses`.`zone` (`zone_id`, `description`, `long`, `lat`, `radius`) VALUES ('2', 'Office Madrid', '40.443132', '-3.682402', '500');
+
+UPDATE `muses`.`zone` SET `role_id`='0' WHERE `zone_id`='1';
+UPDATE `muses`.`zone` SET `role_id`='0' WHERE `zone_id`='2';
+
+--
+-- Table structure for table `decision_trustvalues`
+--
+
+DROP TABLE IF EXISTS `decision_trustvalues`;
+CREATE TABLE `decision_trustvalues` (
+  `decision_trustvalue_id` int(11) NOT NULL AUTO_INCREMENT,
+  `decision_id` bigint(20) unsigned NOT NULL,
+  `usertrustvalue` double NOT NULL,
+  `devicetrustvalue` double NOT NULL,
+  PRIMARY KEY (`decision_trustvalue_id`),
+  UNIQUE KEY `decision_id` (`decision_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `decision_trustvalues`
+--
+ALTER TABLE `decision_trustvalues`
+  ADD CONSTRAINT `decision_trustvalues_ibfk_1` FOREIGN KEY (`decision_id`) REFERENCES `decision` (`decision_id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+
 --
 -- Table structure for table `security_violation`
 --
