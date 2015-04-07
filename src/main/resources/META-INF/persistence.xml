@@ -12,6 +12,7 @@
 	<class>eu.musesproject.server.entity.Clue</class>
 	<class>eu.musesproject.server.entity.CorporatePolicies</class>
 	<class>eu.musesproject.server.entity.Decision</class>
+	<class>eu.musesproject.server.entity.DecisionTrustvalue</class>
 	<class>eu.musesproject.server.entity.DeviceConfig</class>
 	<class>eu.musesproject.server.entity.DeviceSecurityState</class>
 	<class>eu.musesproject.server.entity.DeviceType</class>
