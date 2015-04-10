@@ -23,6 +23,7 @@ import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.Decision;
+import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
@@ -701,13 +702,13 @@ public class DBManager {
      * @param id
      * @return List<Threat>
      */
-	public List<Threat> findThreatById(Threat threatId) {
+	public List<Threat> findThreatById(String threatId) {
 		Session session = null;
 		Query query = null;
 		List<Threat> threats = null;
 		try {
 			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("Threat.findThreatById").setString("threat_id", threatId.getThreatId());
+			query = session.getNamedQuery("Threat.findThreatById").setString("threat_id", threatId);
 			if (query!=null) {
 				threats = query.list();
 			}
@@ -717,6 +718,31 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return threats;		
+	}
+	
+	
+	
+	/**
+     * Get Decision list by id
+     * @param id
+     * @return List<Decision>
+     */
+	public List<Decision> findDecisionById(String decisionId) {
+		Session session = null;
+		Query query = null;
+		List<Decision> decisions = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Decision.findDecisionById").setString("decision_id", decisionId);
+			if (query!=null) {
+				decisions = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return decisions;		
 	}
 	
 	/**
@@ -821,9 +847,79 @@ public class DBManager {
 		while(i.hasNext()){
 			try {
 				Users user = i.next();
+				if(findUserByUsername(user.getUsername()).size()== 0){
+
+					session=getSessionFactory().openSession();
+					trans=session.beginTransaction();
+					session.save(user);
+					trans.commit();
+				}else{
+					session=getSessionFactory().openSession();
+					trans=session.beginTransaction();
+					session.merge(user);
+					trans.commit();
+				}
+				
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+		}
+	}
+	
+	
+	
+	/**
+     * Save Device list in the DB 
+     * @param List<Devices> devices
+     */
+	public void setDevices(List<Devices> devices) {
+		Iterator<Devices> i = devices.iterator();
+		Session session = null;
+		Transaction trans = null;
+		while(i.hasNext()){
+			try {
+				Devices device = i.next();
+				if(findDecisionById(device.getDeviceId()).size()== 0){
+
+					session=getSessionFactory().openSession();
+					trans=session.beginTransaction();
+					session.save(device);
+					trans.commit();
+				}else{
+					session=getSessionFactory().openSession();
+					trans=session.beginTransaction();
+					session.merge(device);
+					trans.commit();
+				}
+				
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+		}
+	}
+	
+	
+	
+	/**
+     * Save trust values for each decision 
+     * @param List<DecisionTrustvalues> decisiontrustvalues
+     */
+	public void setDecisionTrustvalues(List<DecisionTrustvalues> decisiontrustvalues) {
+		Iterator<DecisionTrustvalues> i = decisiontrustvalues.iterator();
+		Session session = null;
+		Transaction trans = null;
+		while(i.hasNext()){
+			try {
+				DecisionTrustvalues decisiontrustvalue = i.next();
 				session=getSessionFactory().openSession();
 				trans=session.beginTransaction();
-				session.save(user);
+				session.save(decisiontrustvalue);
 				trans.commit();
 			} catch (Exception e) {
 				if (trans!=null) trans.rollback();
@@ -834,6 +930,30 @@ public class DBManager {
 		}
 	}
 	
+	
+	
+	/**
+     * Get DecisionTrustvalues list
+     * @return List<DecisionTrustvalues>
+     */
+    
+	public List<DecisionTrustvalues> getDecisionTrusvalues() {
+		Session session = null;
+		Query query = null;
+		List<DecisionTrustvalues> decisionTrustvalues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Decision.findAll");
+			if (query!=null) {
+				decisionTrustvalues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		} 
+		return decisionTrustvalues;		
+	}
 	
 	/**
      * Save Assets list in the DB 

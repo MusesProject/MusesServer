@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskPolicy;
+import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.risktrust.AccessRequest;
@@ -64,7 +65,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	private final int RISK_TREATMENT_SIZE = 20;
 	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
 	private DBManager dbManager = new DBManager(ModuleType.RT2AE);
-	private RiskPolicy riskPolicy;//Sending e-mail with virus
+	private RiskPolicy riskPolicy = new RiskPolicy();//Sending e-mail with virus
 
 	private String sendingemail = "Sending e-mail with virus\nYour system is infected with a virus and you want to\n send an attachment via e-mail.\n This may cause critical system failure and puts the\n receiver at risk. Remove the virus first.";
 	private String saveconfidentieldocument = "Saving confidential document\n You want to save a confidential document on your device.\n If you loose your\n device, other people may be able to\n access the document.";
@@ -111,6 +112,18 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			dbManager.setDecisions(listDecisions);
 			
+			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			
+			decisiontrustvalues.add(decisiontrustvalue);
+			
+			dbManager.setDecisionTrustvalues(decisiontrustvalues);
+			
+			
 			return decision;
 		} else{
 			
@@ -131,8 +144,21 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setValue("GRANTED");
 				decision1.setTime(new java.util.Date());
 				dbManager.setDecisions(listDecisions);
+				
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
+				
+				dbManager.setDecisionTrustvalues(decisiontrustvalues);
+				
 				return decision;
 			}
+			riskPolicy.setRiskvalue(0.5);
 			return decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
 		}
 	}  
@@ -183,15 +209,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							.getDevice().getDevicetrustvalue());
 
 			Clue userName = new Clue();
-			userName.setName(accessRequest.getUser().toString()); // TODO
-																	// temporary
-																	// solution,
-																	// users
-																	// must have
-																	// a
-																	// nickname
-																	// or unique
-																	// identifier!!
+			userName.setName(accessRequest.getUser().getSurname()); 
 			clues.add(userName);
 
 			Clue assetName = new Clue();
@@ -384,6 +402,16 @@ public class Rt2aeServerImpl implements Rt2ae {
 			list.add(decision1);
 			dbManager.setDecisions(list);
 			
+			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			
+			decisiontrustvalues.add(decisiontrustvalue);
+			
+			dbManager.setDecisionTrustvalues(decisiontrustvalues);
 			
 			return decision;
 
@@ -431,6 +459,16 @@ public class Rt2aeServerImpl implements Rt2ae {
 			list.add(decision1);
 			dbManager.setDecisions(list);
 			
+			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			
+			decisiontrustvalues.add(decisiontrustvalue);
+			
+			dbManager.setDecisionTrustvalues(decisiontrustvalues);
 			
 			
 			return decision;
@@ -479,6 +517,16 @@ public class Rt2aeServerImpl implements Rt2ae {
 			list.add(decision1);
 			dbManager.setDecisions(list);
 			
+			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			
+			decisiontrustvalues.add(decisiontrustvalue);
+			
+			dbManager.setDecisionTrustvalues(decisiontrustvalues);
 			
 			return decision;
 			
@@ -502,10 +550,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		}*/
 		
-		
-
-		if ((combinedProbabilityThreats + ((Double) 1.0 - accessRequest
-				.getUser().getUsertrustvalue().getValue())) / 2 <= riskPolicy
+		Double trustvalue = (accessRequest
+				.getUser().getUsertrustvalue().getValue()+accessRequest.getDevice().getDevicetrustvalue().getValue())/2;
+		if ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 <= riskPolicy
 				.getRiskvalue()) {
 			
 			decision = Decision.GRANTED_ACCESS; 
@@ -526,6 +573,18 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision1.setValue("GRANTED");
 			decision1.setTime(new java.util.Date());
 			dbManager.setDecisions(listDecisions);
+			
+			
+			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			
+			decisiontrustvalues.add(decisiontrustvalue);
+			
+			dbManager.setDecisionTrustvalues(decisiontrustvalues);
 
 			return decision;
 
@@ -535,6 +594,37 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS; 
 				logger.info("Decision: MAYBE_ACCESS_WITH_RISKTREATMENTS");
 
+				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setUserId(accessRequest.getUserId());
+				
+				
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				
+				dbManager.setAccessRequests(accessRequests);
+				decision1.setAccessRequest(accessrequest1);
+				decision1.setInformation(decision.getInformation());
+				decision1.setValue("MAYBE");
+				decision1.setTime(new java.util.Date());
+				
+				dbManager.setDecisions(listDecisions);
+				
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
+				
+				dbManager.setDecisionTrustvalues(decisiontrustvalues);
+				
 				return decision;
 			}
 			else{
@@ -562,6 +652,18 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setTime(new java.util.Date());
 				
 				dbManager.setDecisions(listDecisions);
+				
+				
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
+				
+				dbManager.setDecisionTrustvalues(decisiontrustvalues);
 				
 				return Decision.STRONG_DENY_ACCESS;
 			}
@@ -1949,30 +2051,30 @@ public class Rt2aeServerImpl implements Rt2ae {
 	public void warnUserSeemsInvolvedInSecurityIncident(User user,Probability probability, SecurityIncident securityIncident) {
 		// TODO Auto-generated method stub
 			
-			Random r = new Random();
-			double assetvalue = 0 + r.nextInt(1000000);
-			/**
-			 * asset.getvalue():securityIncident.getCostBenefit()
-			 */			
-			if(securityIncident.getCostBenefit() == 0){
-				/**
-				 * the security incident has not cost
-				 */	
-				//System.out.println(" securityIncident cost is 0");
+			eu.musesproject.server.entity.Decision decision = dbManager.findDecisionById(String.valueOf(securityIncident.getDecisionid())).get(0);
+			
+			eu.musesproject.server.entity.Threat threat =  dbManager.findThreatById(String.valueOf(decision.getAccessRequest().getThreatId())).get(0);
+			
+			eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(securityIncident.getUser().getSurname());
+			
+			eu.musesproject.server.entity.Devices musesDevice = dbManager.findDeviceById(String.valueOf(securityIncident.getDeviceid())).get(0);
 
-				
-			}else {
-				/**
-				 * security incident has a cost
-				 */	
-				double pourcentage = securityIncident.getCostBenefit()/assetvalue;
-				UserTrustValue u = new UserTrustValue();
-				u.setValue(user.getUsertrustvalue().getValue()-user.getUsertrustvalue().getValue()*pourcentage);
-				user.setUsertrustvalue(u);
-	
-				
-			}
-		
+			List<eu.musesproject.server.entity.Devices> musesDevices = new ArrayList<eu.musesproject.server.entity.Devices>();
+			
+			List<eu.musesproject.server.entity.Users> users = new ArrayList<eu.musesproject.server.entity.Users>();
+
+			musesDevice.setTrustValue(1-threat.getProbability());
+			musesDevices.add(musesDevice);	
+			dbManager.setDevice(musesDevice);
+
+			musesUser.setTrustValue(1-threat.getProbability());
+			users.add(musesUser);
+			dbManager.setUsers(users);
+
+			
+			
+			
+					
 	}
 	
 	
