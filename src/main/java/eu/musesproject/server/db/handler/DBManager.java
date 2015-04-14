@@ -44,6 +44,10 @@ import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
+import eu.musesproject.server.risktrust.Device;
+import eu.musesproject.server.risktrust.DeviceTrustValue;
+import eu.musesproject.server.risktrust.User;
+import eu.musesproject.server.risktrust.UserTrustValue;
 import eu.musesproject.server.scheduler.ModuleType;
 
 public class DBManager {
@@ -1283,6 +1287,36 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return accessrequests;		
+	}
+	
+	public void convertUsertoCommonUser(User user, eu.musesproject.server.entity.Users musesUser){
+		
+		user.setUserId(musesUser.getUserId());
+		user.setEmail(musesUser.getEmail());
+		user.setPassword(musesUser.getPassword());
+		user.setUsername(musesUser.getUsername());
+		UserTrustValue usertrustvalue = new UserTrustValue();
+		usertrustvalue.setValue(musesUser.getTrustValue());
+		user.setUsertrustvalue(usertrustvalue);
+		user.setEnabled(musesUser.getEnabled());
+		user.setRoleId(musesUser.getRoleId());
+	}
+	
+	public void convertDevicetoCommonDevice(Device device, eu.musesproject.server.entity.Devices musesDevice){
+		
+		device.setDeviceId(musesDevice.getDeviceId());
+		device.setCertificate(musesDevice.getCertificate());
+		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
+		devicetrustvalue.setValue(musesDevice.getTrustValue());
+		device.setDevicetrustvalue(devicetrustvalue);
+		device.setName(musesDevice.getName());
+		device.setImei(musesDevice.getImei());
+		device.setMac(musesDevice.getMac());
+		
+		device.setOS_name(musesDevice.getOS_name());
+		device.setOS_version(musesDevice.getOS_version());
+		
+		
 	}
 	
 	/**

@@ -2269,11 +2269,14 @@ public class Rt2aeServerImpl implements Rt2ae {
 		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
 		AccessRequest accessRequest = new AccessRequest();
 		accessRequest.setId(1);
-		User user = new User();
+		DBManager dbManager = new DBManager(ModuleType.RT2AE);
+		User us = new User();
+		eu.musesproject.server.entity.Users user = dbManager.getUserByUsername("test1");
 		UserTrustValue usertrustvalue = new UserTrustValue();  
 		usertrustvalue.setValue(0);
-		user.setUsertrustvalue(usertrustvalue);
-		accessRequest.setUser(user);
+		//us.setEmail(email);
+		us.setUserId(user.getUserId());
+		accessRequest.setUser(us);
 		Device device = new Device();
 		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
 		devicetrustvalue.setValue(0);
@@ -2289,7 +2292,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 		RiskPolicy rPolicy = new RiskPolicy();
 		
 		
-		Decision decision2 = rt2ae.decideBasedOnRiskPolicy_version_6(accessRequest, rPolicy);
+		PolicyCompliance policyCompliance = new PolicyCompliance();
+		policyCompliance.setResult("DENY");
+		policyCompliance.setReason("NOOOOOOOOOOOOO");
+		
+		Decision decision2 = rt2ae.decideBasedOnRiskPolicy(accessRequest, policyCompliance, null);
 		
 		System.out.println("Decision: "+decision2.toString());
 		

@@ -24,6 +24,7 @@ package eu.musesproject.server.eventprocessor.composers;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
@@ -38,10 +39,14 @@ import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
+import eu.musesproject.server.scheduler.ModuleType;
 
 public class AccessRequestComposer {
 	
+
 	private static Logger logger = Logger.getLogger(AccessRequestComposer.class.getName());
+	private static DBManager dbManager = new DBManager(ModuleType.EP);
+
 	public static AccessRequest composeAccessRequest(Event event){
 		
 		AccessRequest composedRequest = new AccessRequest();
@@ -99,9 +104,20 @@ public class AccessRequestComposer {
 			requestedCorporateAsset.setTitle(fileEvent.getAssetTypeId());//TODO Asset information should be completed
 		}
 		
-		User user = testGetUserFromDatabase(event.getUsername());//TODO User information should be retrieved from the database
 
-		Device device = testGetDeviceFromDatabase(event.getDeviceId());//TODO Device information should be retrieved
+		eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(event.getUsername());
+		
+		eu.musesproject.server.entity.Devices musesDevice = dbManager.getDeviceByIMEI(event.getDeviceId());
+
+
+		User user = new User();
+		Device device = new Device();
+		dbManager.convertUsertoCommonUser(user, musesUser);
+				
+		dbManager.convertDevicetoCommonDevice(device, musesDevice);
+		//testGetUserFromDatabase(event.getUsername());//TODO User information should be retrieved from the database
+
+		//Device device = testGetDeviceFromDatabase(event.getDeviceId());//TODO Device information should be retrieved
 
 		composedRequest.setUser(user);
 		composedRequest.setDevice(device);
