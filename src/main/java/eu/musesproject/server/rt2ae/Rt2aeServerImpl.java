@@ -89,6 +89,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		RiskPolicy rPolicy = new RiskPolicy();
 		
 		logger.info("RT2AE computes the Decision...");
+		String decisionId="";
 
 		Decision decision = Decision.STRONG_DENY_ACCESS;
 		if(policyCompliance.getResult().equals(policyCompliance.DENY)){
@@ -120,10 +121,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision1.setTime(new java.util.Date());
 			
 			try {
-				dbManager.setDecisions(listDecisions);
+				decisionId = dbManager.setDecision(decision1);
 
 			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
 			}
 			
 			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
@@ -131,7 +132,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 			
 			decisiontrustvalues.add(decisiontrustvalue);
 			
@@ -170,11 +171,13 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setValue("GRANTED");
 				decision1.setTime(new java.util.Date());
 				
+				
+				
 				try {
-					dbManager.setDecisions(listDecisions);
+					decisionId = dbManager.setDecision(decision1);
 
 				} catch (Exception e) {
-					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
 				}
 				
 				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
@@ -182,7 +185,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-				decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 				
 				decisiontrustvalues.add(decisiontrustvalue);
 				
@@ -229,6 +232,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		
 		Decision decision = Decision.STRONG_DENY_ACCESS;
+		
+		String decisionId="";
+
 
 		riskPolicy = rPolicy;
 		EventProcessorImpl eventProcessorImpl = new EventProcessorImpl();
@@ -470,7 +476,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			list.add(decision1);
 			
 			try {
-				dbManager.setDecisions(list);
+				decisionId = dbManager.setDecision(decision1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -481,7 +487,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 			
 			decisiontrustvalues.add(decisiontrustvalue);
 			
@@ -556,7 +562,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			list.add(decision1);
 			
 			try {
-				dbManager.setDecisions(list);
+				decisionId = dbManager.setDecision(decision1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -567,7 +573,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 			
 			decisiontrustvalues.add(decisiontrustvalue);
 			
@@ -644,7 +650,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			list.add(decision1);
 			
 			try {
-				dbManager.setDecisions(list);
+				decisionId = dbManager.setDecision(decision1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -655,7 +661,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 			
 			decisiontrustvalues.add(decisiontrustvalue);
 			
@@ -717,7 +723,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision1.setTime(new java.util.Date());
 			
 			try {
-				dbManager.setDecisions(listDecisions);
+				decisionId = dbManager.setDecision(decision1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -729,7 +735,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 			
 			decisiontrustvalues.add(decisiontrustvalue);
 			
@@ -772,7 +778,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setTime(new java.util.Date());
 				
 				try {
-					dbManager.setDecisions(listDecisions);
+					decisionId = dbManager.setDecision(decision1);
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -783,7 +789,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-				decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 				
 				decisiontrustvalues.add(decisiontrustvalue);
 				
@@ -827,7 +833,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				
 				try {
-					dbManager.setDecisions(listDecisions);
+					decisionId = dbManager.setDecision(decision1);
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -839,7 +845,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
 				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
 				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-				decisiontrustvalue.setDecisionId(Integer.parseInt(decision1.getDecisionId()));
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 				
 				decisiontrustvalues.add(decisiontrustvalue);
 				
@@ -2265,11 +2271,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 	
 	public static void main (String [] arg){
 		
-		
+		DBManager dbManager = new DBManager(ModuleType.RT2AE);
+
+		/*
 		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
 		AccessRequest accessRequest = new AccessRequest();
 		accessRequest.setId(1);
-		DBManager dbManager = new DBManager(ModuleType.RT2AE);
 		User us = new User();
 		eu.musesproject.server.entity.Users user = dbManager.getUserByUsername("test1");
 		UserTrustValue usertrustvalue = new UserTrustValue();  
@@ -2298,7 +2305,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		Decision decision2 = rt2ae.decideBasedOnRiskPolicy(accessRequest, policyCompliance, null);
 		
-		System.out.println("Decision: "+decision2.toString());
+		*/
+		
+		System.out.println("Decision: "+dbManager.setDecision(dbManager.getDecisions().get(0)));
 		
    }
 	

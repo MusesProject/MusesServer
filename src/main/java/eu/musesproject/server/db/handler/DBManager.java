@@ -910,6 +910,9 @@ public class DBManager {
 	
 	
 	
+	
+	
+	
 	/**
      * Save trust values for each decision 
      * @param List<DecisionTrustvalues> decisiontrustvalues
@@ -958,6 +961,31 @@ public class DBManager {
 		} 
 		return decisionTrustvalues;		
 	}
+	
+	/**
+     * Save Decision object in the DB 
+     * @param Decision decision
+     */
+	public String setDecision(Decision decision) {
+		Session session = null;
+		Transaction trans = null;
+	
+			try {
+				session=getSessionFactory().openSession();
+				trans=session.beginTransaction();
+				session.save(decision);
+				session.flush();
+				trans.commit();
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+			
+			return decision.getDecisionId();
+		}
+	
 	
 	/**
      * Save Assets list in the DB 
