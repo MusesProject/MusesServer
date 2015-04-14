@@ -68,6 +68,10 @@
     <servlet-name>ComMainServlet</servlet-name>
     <url-pattern>/commain</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ComMainServlet</servlet-name>
+    <url-pattern>/secured</url-pattern>
+  </servlet-mapping>
   <listener>
 		<listener-class>eu.musesproject.server.connectionmanager.SessionHandler</listener-class>
   </listener>
