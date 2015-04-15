@@ -45,6 +45,9 @@ public class Users implements Serializable {
 
 	@Column(name="trust_value")
 	private double trustValue;
+	
+	@Column(length=50)
+	private String language;
 
 	@Column(nullable=false, length=50)
 	private String username;
@@ -144,6 +147,14 @@ public class Users implements Serializable {
 		this.username = username;
 	}
 
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 	public List<AdditionalProtection> getAdditionalProtections() {
 		return this.additionalProtections;
 	}

@@ -13,11 +13,17 @@
                 <comment>Policy subject</comment>
             </column>
         </property>
-        <property name="description" type="string">
-            <column name="description" length="2000" not-null="true">
-                <comment>Policy textual description</comment>
+        <property name="description_en" type="string">
+            <column name="description_en" length="2000" not-null="true">
+                <comment>Policy textual description in english</comment>
             </column>
         </property>
+        <property name="description_es" type="string">
+            <column name="description_es" length="2000" not-null="true">
+                <comment>Policy textual description in spanish</comment>
+            </column>
+        </property> 
+        
         <property name="file" type="binary">
             <column name="file" not-null="true">
                 <comment>Policy formalized in standard format (XACML,JSON,...), to make it machine readable</comment>
