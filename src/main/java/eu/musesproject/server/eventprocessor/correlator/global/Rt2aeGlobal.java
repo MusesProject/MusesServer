@@ -392,14 +392,16 @@ public class Rt2aeGlobal {
 			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
 		}		
 		//Control based on policy compliance
-		//TODO Disable when RT2AE is implemented
-		/*if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
-			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-		}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
-			decision = Decision.STRONG_DENY_ACCESS;
-		}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
-			decision = Decision.GRANTED_ACCESS;
-		}*/
+		
+		if (decision == null){
+			if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
+				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
+				decision = Decision.STRONG_DENY_ACCESS;
+			}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
+				decision = Decision.GRANTED_ACCESS;
+			}
+		}
 		decision.setCondition(condition);
 		decisions[0] = decision;
 		

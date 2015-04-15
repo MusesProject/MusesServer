@@ -1,3 +1,4 @@
+
 <beans:beans xmlns="http://www.springframework.org/schema/security"
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -20,7 +21,7 @@
 		<!-- <intercept-url pattern="/pages/secured/**" access="hasRole('supervisor')" requires-channel="https"/> -->
 		<!-- You have to be logged in to access secure folder and all resources under it -->
 		<intercept-url pattern="/secured/**" access="isAuthenticated()" requires-channel="https"/>
-		<intercept-url pattern="/commain/**" access="isAuthenticated()" requires-channel="https"/>
+		<intercept-url pattern="/commain/**" access="permitAll" requires-channel="https"/>
 		<!-- You have to be logged in to access secure folder and all resources under it -->
 		<!-- <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" requires-channel="https"/> -->
  

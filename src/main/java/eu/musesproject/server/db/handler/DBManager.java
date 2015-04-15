@@ -44,6 +44,10 @@ import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
+import eu.musesproject.server.risktrust.Device;
+import eu.musesproject.server.risktrust.DeviceTrustValue;
+import eu.musesproject.server.risktrust.User;
+import eu.musesproject.server.risktrust.UserTrustValue;
 import eu.musesproject.server.scheduler.ModuleType;
 
 public class DBManager {
@@ -906,6 +910,9 @@ public class DBManager {
 	
 	
 	
+	
+	
+	
 	/**
      * Save trust values for each decision 
      * @param List<DecisionTrustvalues> decisiontrustvalues
@@ -954,6 +961,31 @@ public class DBManager {
 		} 
 		return decisionTrustvalues;		
 	}
+	
+	/**
+     * Save Decision object in the DB 
+     * @param Decision decision
+     */
+	public String setDecision(Decision decision) {
+		Session session = null;
+		Transaction trans = null;
+	
+			try {
+				session=getSessionFactory().openSession();
+				trans=session.beginTransaction();
+				session.save(decision);
+				session.flush();
+				trans.commit();
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+			
+			return decision.getDecisionId();
+		}
+	
 	
 	/**
      * Save Assets list in the DB 
@@ -1283,6 +1315,36 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return accessrequests;		
+	}
+	
+	public void convertUsertoCommonUser(User user, eu.musesproject.server.entity.Users musesUser){
+		
+		user.setUserId(musesUser.getUserId());
+		user.setEmail(musesUser.getEmail());
+		user.setPassword(musesUser.getPassword());
+		user.setUsername(musesUser.getUsername());
+		UserTrustValue usertrustvalue = new UserTrustValue();
+		usertrustvalue.setValue(musesUser.getTrustValue());
+		user.setUsertrustvalue(usertrustvalue);
+		user.setEnabled(musesUser.getEnabled());
+		user.setRoleId(musesUser.getRoleId());
+	}
+	
+	public void convertDevicetoCommonDevice(Device device, eu.musesproject.server.entity.Devices musesDevice){
+		
+		device.setDeviceId(musesDevice.getDeviceId());
+		device.setCertificate(musesDevice.getCertificate());
+		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
+		devicetrustvalue.setValue(musesDevice.getTrustValue());
+		device.setDevicetrustvalue(devicetrustvalue);
+		device.setName(musesDevice.getName());
+		device.setImei(musesDevice.getImei());
+		device.setMac(musesDevice.getMac());
+		
+		device.setOS_name(musesDevice.getOS_name());
+		device.setOS_version(musesDevice.getOS_version());
+		
+		
 	}
 	
 	/**
