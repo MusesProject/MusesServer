@@ -102,7 +102,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction("OPEN_APP");
 			//accessrequest1.setAction(accessRequest.getAction());
+
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			
 			
@@ -156,6 +158,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction("OPEN_APP");
+
 				//accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
@@ -175,27 +179,23 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decisionId = dbManager.setDecision(decision1);
+					ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
 
-				} catch (Exception e) {
-					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
-				}
-				
-				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
-				
-				decisiontrustvalues.add(decisiontrustvalue);
-				
-				
-				try {
+					eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+					decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+					decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+					decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+					
+					decisiontrustvalues.add(decisiontrustvalue);
 					dbManager.setDecisionTrustvalues(decisiontrustvalues);
 
+
 				} catch (Exception e) {
-					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision or dbManager.setDecisionTrustvalues"+e.getLocalizedMessage());
 				}
+				
+				
+			
 				
 				return decision;
 			}
@@ -432,6 +432,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction("OPEN_APP");
+
 			//accessrequest1.setAction(accessRequest.getAction());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
@@ -518,6 +520,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction("OPEN_APP");
+
 			//accessrequest1.setAction(accessRequest.getAction());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
@@ -605,6 +609,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction("OPEN_APP");
+
 			//accessrequest1.setAction(accessRequest.getAction());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
@@ -707,6 +713,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction("OPEN_APP");
+
 			//accessrequest1.setAction(accessRequest.getAction());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
@@ -759,6 +767,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction("OPEN_APP");
+
 				//accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 				
@@ -813,6 +823,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction("OPEN_APP");
+
 				//accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 				
