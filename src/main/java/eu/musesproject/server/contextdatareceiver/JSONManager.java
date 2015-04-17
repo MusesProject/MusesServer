@@ -41,6 +41,7 @@ import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.entity.ConnectionConfig;
+import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.entity.Zone;
@@ -142,7 +143,7 @@ public class JSONManager {
 
 	}
 	
-	public static List<ContextEvent> processJSONMessage(String message) {
+	public static List<ContextEvent> processJSONMessage(String message, String type, String sessionId) {
 		// Action action = null;
 		Map<String, String> properties = null;
 		ContextEvent contextEvent = null;
@@ -178,6 +179,7 @@ public class JSONManager {
 						.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
 
 				contextEvent = extractActionContextEvent(actionJson);
+				contextEvent.getProperties().put("sessionId", sessionId);
 				resultList.add(contextEvent);
 
 				// Get the List<ContextEvent> from each sensor
@@ -192,6 +194,7 @@ public class JSONManager {
 					Logger.getLogger(JSONManager.class.getName()).log(
 							Level.INFO, "A new event has been received.");
 					printContextEventInfo(contextEvent);
+					contextEvent.getProperties().put("sessionId", sessionId);
 					resultList.add(contextEvent);
 				}
 
@@ -214,6 +217,7 @@ public class JSONManager {
 						properties.put(key, value);
 					}
 				}
+				properties.put("sessionId", sessionId);
 				contextEvent.setProperties(properties);
 				Logger.getLogger(JSONManager.class.getName()).log(
 						Level.INFO, "A new event has been received.");
@@ -439,6 +443,19 @@ public class JSONManager {
 			e.printStackTrace();
 		}
 
+		return root;
+	}
+	
+	public static JSONObject createWipeDeviceJSON(Devices device) {
+		
+		JSONObject root = new JSONObject();
+		try {
+
+            root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, "wipe-device");
+            root.put(JSONIdentifiers.POLICY_PROPERTY_PATH, "/sdcard/CompanyName/");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		return root;
 	}
 	

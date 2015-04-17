@@ -111,6 +111,12 @@ public class EventFormatter {
 			Logger.getLogger(EventFormatter.class).info("isPatternProtected:"+dEvent.getIsPatternProtected());
 			Logger.getLogger(EventFormatter.class).info("accessibilityEnabled:"+dEvent.getAccessibilityEnabled());
 		}
+		//Set sessionId, if available in the properties
+		Map<String,String> properties = contextEvent.getProperties();
+		String sessionId = properties.get("sessionId");
+		if (sessionId != null){
+			cepFileEvent.setSessionId(sessionId);
+		}
 		return (Event)cepFileEvent;
 		
 	}

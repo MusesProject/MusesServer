@@ -123,7 +123,7 @@ public class TestContextDataReceiver extends TestCase {
 	public final void testJsonParse(){
 		EventProcessor processor = null;
 		MusesCorrelationEngineImpl engine = null;
-		List<ContextEvent> list = JSONManager.processJSONMessage(testJSONOpenFileSecure);
+		List<ContextEvent> list = JSONManager.processJSONMessage(testJSONOpenFileSecure, null, defaultSessionId);
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
@@ -179,7 +179,7 @@ public class TestContextDataReceiver extends TestCase {
 				
 			} else {
 				List<ContextEvent> list = JSONManager
-						.processJSONMessage(testJSONLoginMessage);
+						.processJSONMessage(testJSONLoginMessage, null, defaultSessionId);
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					ContextEvent contextEvent = (ContextEvent) iterator.next();
 					if (contextEvent.getType() == null) {
@@ -235,7 +235,7 @@ public class TestContextDataReceiver extends TestCase {
 		EventProcessor processor = null;
 		MusesCorrelationEngineImpl engine = null;
 		//List<ContextEvent> list = JSONManager.processJSONMessage(testBehavior, "online_decision");
-		List<ContextEvent> list = JSONManager.processJSONMessage(testBehavior);
+		List<ContextEvent> list = JSONManager.processJSONMessage(testBehavior, null, defaultSessionId);
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();
@@ -300,7 +300,7 @@ public class TestContextDataReceiver extends TestCase {
 	public final void testUpdateEvents(){
 		EventProcessor processor = null;
 		MusesCorrelationEngineImpl engine = null;
-		List<ContextEvent> list = JSONManager.processJSONMessage(testUpdateEvents);
+		List<ContextEvent> list = JSONManager.processJSONMessage(testUpdateEvents, null, defaultSessionId);
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 		if (des==null){
 			processor = new EventProcessorImpl();

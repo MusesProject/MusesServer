@@ -17,6 +17,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
@@ -35,6 +36,7 @@ import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.RiskTreatment;
 import eu.musesproject.server.entity.Roles;
+import eu.musesproject.server.entity.SecurityIncident;
 import eu.musesproject.server.entity.SecurityRules;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SensorConfiguration;
@@ -44,6 +46,10 @@ import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
+import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent;
+import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
+import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
 import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.User;
@@ -1632,6 +1638,45 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return zones;
+	}
+	
+	public void setSecurityIncident(SecurityIncident securityIncident) {
+		Session session = null;
+		Transaction trans = null;
+		try {
+			session = getSessionFactory().openSession();
+			trans=session.beginTransaction();
+			session.save(securityIncident);
+			trans.commit();
+			//Insert securityIncident event in the working memory
+			insertSecurityIncidentEvent(securityIncident);
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+	}
+
+	private void insertSecurityIncidentEvent(SecurityIncident securityIncident) {
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		SecurityIncidentEvent secIncidentEvent = new SecurityIncidentEvent();
+		secIncidentEvent.setName(securityIncident.getName());
+		secIncidentEvent.setDeviceId(securityIncident.getDevice().getImei());
+		secIncidentEvent.setUserId(Integer.valueOf(securityIncident.getUser().getUserId()));
+		secIncidentEvent.setTimestamp(new Date().getTime());
+		logger.info("Inserting SECURITY INCIDENT...");
+		des.insertFact(secIncidentEvent);
+		
 	}
 
 }

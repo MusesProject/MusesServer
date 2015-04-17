@@ -29,8 +29,12 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
+import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
+import eu.musesproject.server.connectionmanager.ConnectionManager;
+import eu.musesproject.server.contextdatareceiver.JSONManager;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
@@ -591,11 +595,12 @@ public class Rt2aeGlobal {
 		return composedRequest.getId();
 	}
 	
-	public static void notifySecurityIncident(Probability probability, SecurityIncident securityIncident){
+	public void notifySecurityIncident(Probability probability, SecurityIncident securityIncident){
 		//Pre-requisites: MUSES UI reports a security incident associated to a concrete user
 		
 		//First, look for previous decisions that might be related the the current security incident
 		//Second, get the information about the associated user (userTrustValue)
+		
 		rt2aeServer.warnUserSeemsInvolvedInSecurityIncident(securityIncident.getUser(), probability, securityIncident);
 	}
 	
@@ -632,6 +637,23 @@ public class Rt2aeGlobal {
 
 	}
 	
+	public int wipeDevice(Event event, String sessionId){
+		logger.info("[wipeDevice]");
+		
+		ConnectionManager connManager = ConnectionManager.getInstance();
+		logger.info("		Session id:"+sessionId);
+		PolicySelector policySelector = new PolicySelector();
+		
+		Devices device = dbManager.getDeviceByIMEI(event.getDeviceId());
+
+		
+		JSONObject response = JSONManager.createWipeDeviceJSON(device);
+		logger.log(Level.INFO, response.toString());
+		logger.log(Level.INFO, MUSES_TAG +  " Response to send:"+response.toString() );
+		logger.log(Level.INFO, MUSES_TAG +  " sessionID: "+ sessionId);
+		connManager.sendData(sessionId, response.toString()); 
+		return 1;
+	}
 	
 	
 }

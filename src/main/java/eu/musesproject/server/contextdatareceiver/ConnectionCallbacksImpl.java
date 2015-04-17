@@ -175,7 +175,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
 
 					List<ContextEvent> list = JSONManager
-							.processJSONMessage(ConnectionCallbacksImpl.receiveData);
+							.processJSONMessage(ConnectionCallbacksImpl.receiveData, null, sessionId);
 					logger.log(Level.INFO, "Starting ProcessThread...");
 					
 					

@@ -83,6 +83,7 @@ public class AccessRequestComposer {
 				requestedCorporateAsset.setId(0);
 				requestedCorporateAsset.setLocation("device");
 				requestedCorporateAsset.setValue(400);
+				logger.log(Level.INFO, "ACTION TYPE:"+changeSecurityPropertyEvent.getType());
 				composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
 				composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
 			}else if (event.getType().equals(EventTypes.SAVE_ASSET)){

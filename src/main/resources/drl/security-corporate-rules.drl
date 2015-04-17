@@ -19,6 +19,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtecti
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -116,7 +117,11 @@ declare LocationEvent
 	@expires (1m)
 end
 
-
+declare SecurityIncidentEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
 
 
 function boolean requiredApp(String name){
@@ -176,6 +181,7 @@ rule "Rule firing"
 		StatusGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("Rule firing correctly working!");
 		StatusGlobal.log("User:"+e.getUsername()+" Device:"+e.getDeviceId());
+		StatusGlobal.log("SessionId:"+e.getSessionId());
 		//int id = Rt2aeGlobal.sendDefaultDevicePolicy(e);
 
 	end
@@ -797,3 +803,45 @@ rule "Blacklist app 00001"
 		insert(request);
 
 	end
+
+
+	rule "Open asset in restricted zone 1"
+	no-loop true
+	dialect "java"
+	when
+		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*", username=="muses")
+		e1: LocationEvent(isWithinZone matches ".*1.*")
+		not AccessRequest(event=="Open asset in restricted area")
+	then
+		StatusGlobal.log("Open asset in restricted area");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file in a restricted area\nYou want to access a file, but you do not have the permission to do so within your current location.\nThe organization's security policy doesn't allow you to access this file at this zone.","DENY","<path>"+e.getPath()+"</path>");		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Open asset in restricted area");
+		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+	end
+
+
+	rule "Security Incident"
+	no-loop true
+	dialect "java"
+	when
+		e: SecurityIncidentEvent()
+		e1: ChangeSecurityPropertyEvent(deviceId==e.deviceId)
+
+	then
+		StatusGlobal.log("SECURITY INCIDENT******************************");
+		StatusGlobal.log("WIPE DEVICE: "+e.getDeviceId());
+		StatusGlobal.log("SESSION ID: "+e1.getSessionId()+" TYPE:"+e1.getType());
+		Rt2aeGlobal.wipeDevice(e,e1.getSessionId());
+	end
+
+
