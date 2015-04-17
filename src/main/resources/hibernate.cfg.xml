@@ -14,6 +14,8 @@
         <property name="hibernate.c3p0.timeout">1800</property>
         <property name="hibernate.c3p0.max_statements">50</property>
         <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.enable_lazy_load_no_trans">true</property>
+        
         <!-- mapping -->
 
         <mapping class="eu.musesproject.server.entity.AccessRequest"/>
@@ -27,6 +29,7 @@
         <mapping class="eu.musesproject.server.entity.Decision"/>
         <mapping class="eu.musesproject.server.entity.DeviceConfig"/>
         <mapping class="eu.musesproject.server.entity.Devices"/>
+        <mapping class="eu.musesproject.server.entity.DecisionTrustvalues"/>
         <mapping class="eu.musesproject.server.entity.DeviceSecurityState"/>
         <mapping class="eu.musesproject.server.entity.DeviceType"/>
         <mapping class="eu.musesproject.server.entity.Dictionary"/>

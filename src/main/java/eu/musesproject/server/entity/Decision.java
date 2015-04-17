@@ -47,7 +47,7 @@ public class Decision implements Serializable {
 
 	//bi-directional many-to-one association to RiskCommunication
 	@ManyToOne
-	@JoinColumn(name="risk_communication_id", nullable=false)
+	@JoinColumn(name="risk_communication_id", nullable=true)
 	private RiskCommunication riskCommunication;
 
 	//bi-directional many-to-one association to SecurityIncident

@@ -32,7 +32,7 @@ public class AccessRequest implements Serializable {
 	@Column(name="access_request_id", unique=true, nullable=false)
 	private String accessRequestId;
 
-	@Column(nullable=false, length=1)
+	@Column(nullable=true, length=1)
 	private String action;
 
 	@Column(name="asset_id", nullable=false)

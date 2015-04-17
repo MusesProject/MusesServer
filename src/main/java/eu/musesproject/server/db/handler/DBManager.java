@@ -468,6 +468,7 @@ public class DBManager {
    
     
     
+
     /**
      * Get Users list 
      * @return List<User>
@@ -777,6 +778,8 @@ public class DBManager {
 					listtThreats.get(0).setBadOutcomeCount(threat.getBadOutcomeCount());
 					listtThreats.get(0).setDescription(threat.getDescription());
 				    session.merge(listtThreats.get(0));
+					session.flush();
+
 				    trans.commit();
 				}else{
 					threat1.setDescription(threat.getDescription());
@@ -784,6 +787,8 @@ public class DBManager {
 					threat1.setBadOutcomeCount(threat.getBadOutcomeCount());
 					threat1.setOccurences(threat.getOccurences());
 				    session.save(threat1);
+					session.flush();
+
 				    trans.commit();
 				    
 				}
@@ -819,6 +824,77 @@ public class DBManager {
 	}
 
 	
+	
+	
+	/**
+     * Save Threat  in the DB 
+     * @param Threat
+     */
+	public String setThreat(Threat threat) {
+		
+			Threat threat1 = new Threat();
+			
+			String threatId="";
+			Session session = null;
+			Transaction trans = null;
+			try {
+				session = getSessionFactory().openSession();
+				trans = session.beginTransaction();
+				if (this.findThreatbydescription(threat.getDescription()).size()>0){
+					List<Threat>	listtThreats = this.findThreatbydescription(threat.getDescription());
+					listtThreats.get(0).setOccurences(threat.getOccurences()+1);
+					listtThreats.get(0).setProbability(threat.getProbability());
+					listtThreats.get(0).setBadOutcomeCount(threat.getBadOutcomeCount());
+					listtThreats.get(0).setDescription(threat.getDescription());
+					session.merge(listtThreats.get(0));
+					//threatId = listtThreats.get(0).getThreatId();
+					session.flush();
+					
+				    trans.commit();
+				}else{
+					/*threat1.setDescription(threat.getDescription());
+					threat1.setProbability(threat.getProbability());
+					threat1.setBadOutcomeCount(threat.getBadOutcomeCount());
+					threat1.setOccurences(threat.getOccurences());*/
+				    session.save(threat);
+					session.flush();
+				    trans.commit();
+
+					threatId = threat.getThreatId();
+					
+					Iterator<Outcome> o = threat.getOutcomes().iterator();
+					session = getSessionFactory().openSession();
+					trans = session.beginTransaction();
+					Outcome outcome = o.next();
+					try {
+						
+							outcome.setThreat(threat);
+						
+					    session.save(outcome);
+						session.flush();
+
+					    trans.commit();
+					    
+					} catch (Exception e) {
+						if (trans!=null) trans.rollback();
+						logger.log(Level.ERROR, e.getMessage());
+					} finally {
+						if (session!=null) session.close();
+					} 
+				    //trans.commit();
+				    
+				}
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+			
+			
+			
+			return threatId;
+		}
 	
 	
 	/**
@@ -933,6 +1009,7 @@ public class DBManager {
 				session=getSessionFactory().openSession();
 				trans=session.beginTransaction();
 				session.save(decisiontrustvalue);
+				session.flush();
 				trans.commit();
 			} catch (Exception e) {
 				if (trans!=null) trans.rollback();
@@ -975,13 +1052,16 @@ public class DBManager {
 	public String setDecision(Decision decision) {
 		Session session = null;
 		Transaction trans = null;
-	
 			try {
 				session=getSessionFactory().openSession();
 				trans=session.beginTransaction();
+
 				session.save(decision);
 				session.flush();
+
 				trans.commit();
+				logger.log(Level.INFO, "Storing decision in the database");
+
 			} catch (Exception e) {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
@@ -992,6 +1072,40 @@ public class DBManager {
 			return decision.getDecisionId();
 		}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+     * Save AccessRequest object in the DB 
+     * @param AccessRequest accessrequest
+     */
+	public String setAccessRequest(AccessRequest accessrequest) {
+		Session session = null;
+		Transaction trans = null;
+			try {
+				session=getSessionFactory().openSession();
+				trans=session.beginTransaction();
+
+				session.save(accessrequest);
+				session.flush();
+
+				trans.commit();
+				logger.log(Level.INFO, "Storing AccessRequest in the database ");
+
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+			
+			return accessrequest.getAccessRequestId();
+		}
 	
 	/**
      * Save Assets list in the DB 
@@ -1081,6 +1195,7 @@ public class DBManager {
 				session=getSessionFactory().openSession();
 				trans=session.beginTransaction();
 				session.save(accessrequest);
+				session.flush();
 				trans.commit();
 				session.close();				
 			} catch (Exception e) {

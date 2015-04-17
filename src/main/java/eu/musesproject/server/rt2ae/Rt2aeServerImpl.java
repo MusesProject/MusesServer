@@ -64,7 +64,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 	private final int RISK_TREATMENT_SIZE = 20;
 	private Logger logger = Logger.getLogger(Rt2aeServerImpl.class.getName());
-	private DBManager dbManager = new DBManager(ModuleType.RT2AE);
+	private static DBManager dbManager = new DBManager(ModuleType.RT2AE);
 	private RiskPolicy riskPolicy = new RiskPolicy();//Sending e-mail with virus
 
 	private String sendingemail = "Sending e-mail with virus\nYour system is infected with a virus and you want to\n send an attachment via e-mail.\n This may cause critical system failure and puts the\n receiver at risk. Remove the virus first.";
@@ -90,28 +90,156 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		logger.info("RT2AE computes the Decision...");
 		String decisionId="";
+		String accessrequestId="";
+		String threatId="";
+
+		logger.info("RT2AE: receives DENY policyCompliance from EP");
+		
+		
+		
 
 		Decision decision = Decision.STRONG_DENY_ACCESS;
 		if(policyCompliance.getResult().equals(policyCompliance.DENY)){
 			
-			logger.info("RT2AE: receives DENY policyCompliance from EP");
+			EventProcessorImpl eventProcessorImpl = new EventProcessorImpl();
 
+			List<Asset> requestedAssets = new ArrayList<Asset>(
+					Arrays.asList(accessRequest.getRequestedCorporateAsset()));
+
+			List<Clue> clues = new ArrayList<Clue>();
+
+			// infer clues from the access request
+
+			for (Asset asset : requestedAssets) {
+
+				clues = eventProcessorImpl.getCurrentClues(accessRequest,
+						accessRequest.getUser().getUsertrustvalue(), accessRequest
+								.getDevice().getDevicetrustvalue());
+
+				Clue userName = new Clue();
+				userName.setName(accessRequest.getUser().getSurname()); 
+				clues.add(userName);
+
+				Clue assetName = new Clue();
+				assetName.setName(asset.getTitle());
+				clues.add(assetName);
+
+				for (Clue clue : clues) {
+					logger.info("The clue associated with Asset "
+							+ asset.getTitle() + " is " + clue.getName() + "\n");
+				}
+			}
+
+			List<eu.musesproject.server.entity.Threat> currentThreats = new ArrayList<eu.musesproject.server.entity.Threat>();
+			String threatName = "";
+
+			// combine clues with the asset and the user to generate a single threat
+
+			for (Clue clue : clues) {
+
+				threatName = threatName + clue.getName();
+
+			}
+			
+			
+
+			eu.musesproject.server.entity.Threat threat = new eu.musesproject.server.entity.Threat();
+			threat.setDescription("Threat" + threatName);
+			threat.setProbability(0.5);
+			eu.musesproject.server.entity.Outcome o = new eu.musesproject.server.entity.Outcome();
+			o.setDescription("Compromised Asset");
+			o.setCostbenefit(-requestedAssets.iterator().next().getValue());
+			threat.setOutcomes(new ArrayList<eu.musesproject.server.entity.Outcome>(
+					Arrays.asList(o)));
+
+			// check if the threat already exists in the database
+			boolean exists = false;
+			List<eu.musesproject.server.entity.Threat> dbThreats = dbManager
+					.getThreats();
+			eu.musesproject.server.entity.Threat existingThreat = new eu.musesproject.server.entity.Threat();
+
+			for (eu.musesproject.server.entity.Threat threat2 : dbThreats) {
+				if (threat2.getDescription().equalsIgnoreCase(
+						threat.getDescription())) {
+					exists = true;
+					existingThreat = threat2;
+				}
+			}
+		
+			// if doesn't exist, insert a new one
+
+			if (!exists) {
+
+				int oC = threat.getOccurences() + 1;
+				threat.setOccurences(oC);
+				currentThreats.add(threat);
+				
+				try {
+					threatId = dbManager.setThreat(threat);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
+				}
+
+				logger.info("The newly created Threat from the Clues is: "
+						+ threat.getDescription() + " with probability "
+						+ threat.getProbability()
+						+ " for the following outcome: \""
+						+ threat.getOutcomes().iterator().next().getDescription()
+						+ "\" with the following potential cost (in kEUR): "
+						+ threat.getOutcomes().iterator().next().getCostbenefit()
+						+ "\n");
+
+				// if already exists, update occurrences and update it in the
+				// database
+
+			} else {
+
+				int oC = existingThreat.getOccurences() + 1;
+				existingThreat.setOccurences(oC);
+				currentThreats.add(existingThreat);
+
+				logger.info("Occurences: " + existingThreat.getOccurences()
+						+ " - Bad Count: " + existingThreat.getBadOutcomeCount());
+
+				try {
+					threatId = dbManager.setThreat(existingThreat);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
+				}
+
+
+				logger.info("The inferred Threat from the Clues is: "
+						+ existingThreat.getDescription()
+						+ " with probability "
+						+ existingThreat.getProbability()
+						+ " for the following outcome: \""
+						+ existingThreat.getOutcomes().iterator().next().getDescription()
+						+ "\" with the following potential cost (in kEUR): "
+						+ existingThreat.getOutcomes().iterator().next().getCostbenefit()
+						+ "\n");
+
+			}
+
+			
 			decision.setInformation(policyCompliance.getReason());
 			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
 			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+			accessrequest1.setAssetId(BigInteger.valueOf(1));//TO DO Adding assetId from EP
+			accessrequest1.setModification(new Date());
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 			accessrequest1.setAction("OPEN_APP");
-			//accessrequest1.setAction(accessRequest.getAction());
-
+			accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+			
 			
 			
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 			accessRequests.add(accessrequest1);
 			try {
-				dbManager.setAccessRequests(accessRequests);
+				accessrequestId = dbManager.setAccessRequest(accessrequest1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
@@ -151,22 +279,146 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 			logger.info("RT2AE: receives ALLOW policyCompliance from EP");
 
+
 			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("PUBLIC") ){
+				
+				EventProcessorImpl eventProcessorImpl = new EventProcessorImpl();
+
+				List<Asset> requestedAssets = new ArrayList<Asset>(
+						Arrays.asList(accessRequest.getRequestedCorporateAsset()));
+
+				List<Clue> clues = new ArrayList<Clue>();
+
+				// infer clues from the access request
+
+				for (Asset asset : requestedAssets) {
+
+					clues = eventProcessorImpl.getCurrentClues(accessRequest,
+							accessRequest.getUser().getUsertrustvalue(), accessRequest
+									.getDevice().getDevicetrustvalue());
+
+					Clue userName = new Clue();
+					userName.setName(accessRequest.getUser().getSurname()); 
+					clues.add(userName);
+
+					Clue assetName = new Clue();
+					assetName.setName(asset.getTitle());
+					clues.add(assetName);
+
+					for (Clue clue : clues) {
+						logger.info("The clue associated with Asset "
+								+ asset.getTitle() + " is " + clue.getName() + "\n");
+					}
+				}
+
+				List<eu.musesproject.server.entity.Threat> currentThreats = new ArrayList<eu.musesproject.server.entity.Threat>();
+				String threatName = "";
+
+				// combine clues with the asset and the user to generate a single threat
+
+				for (Clue clue : clues) {
+
+					threatName = threatName + clue.getName();
+
+				}
+				
+				
+
+				eu.musesproject.server.entity.Threat threat = new eu.musesproject.server.entity.Threat();
+				threat.setDescription("Threat" + threatName);
+				threat.setProbability(0.5);
+				eu.musesproject.server.entity.Outcome o = new eu.musesproject.server.entity.Outcome();
+				o.setDescription("Compromised Asset");
+				o.setCostbenefit(-requestedAssets.iterator().next().getValue());
+				threat.setOutcomes(new ArrayList<eu.musesproject.server.entity.Outcome>(
+						Arrays.asList(o)));
+
+				// check if the threat already exists in the database
+				boolean exists = false;
+				List<eu.musesproject.server.entity.Threat> dbThreats = dbManager
+						.getThreats();
+				eu.musesproject.server.entity.Threat existingThreat = new eu.musesproject.server.entity.Threat();
+
+				for (eu.musesproject.server.entity.Threat threat2 : dbThreats) {
+					if (threat2.getDescription().equalsIgnoreCase(
+							threat.getDescription())) {
+						exists = true;
+						existingThreat = threat2;
+					}
+				}
+			
+				// if doesn't exist, insert a new one
+
+				if (!exists) {
+
+					int oC = threat.getOccurences() + 1;
+					threat.setOccurences(oC);
+					currentThreats.add(threat);
+					
+					try {
+						threatId = dbManager.setThreat(threat);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
+					}
+
+					logger.info("The newly created Threat from the Clues is: "
+							+ threat.getDescription() + " with probability "
+							+ threat.getProbability()
+							+ " for the following outcome: \""
+							+ threat.getOutcomes().iterator().next().getDescription()
+							+ "\" with the following potential cost (in kEUR): "
+							+ threat.getOutcomes().iterator().next().getCostbenefit()
+							+ "\n");
+
+					// if already exists, update occurrences and update it in the
+					// database
+
+				} else {
+
+					int oC = existingThreat.getOccurences() + 1;
+					existingThreat.setOccurences(oC);
+					currentThreats.add(existingThreat);
+
+					logger.info("Occurences: " + existingThreat.getOccurences()
+							+ " - Bad Count: " + existingThreat.getBadOutcomeCount());
+
+					try {
+						threatId = dbManager.setThreat(existingThreat);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
+					}
+
+
+					logger.info("The inferred Threat from the Clues is: "
+							+ existingThreat.getDescription()
+							+ " with probability "
+							+ existingThreat.getProbability()
+							+ " for the following outcome: \""
+							+ existingThreat.getOutcomes().iterator().next().getDescription()
+							+ "\" with the following potential cost (in kEUR): "
+							+ existingThreat.getOutcomes().iterator().next().getCostbenefit()
+							+ "\n");
+
+				}
+
+				
 				decision = Decision.GRANTED_ACCESS;
 				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
 				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setAssetId(BigInteger.valueOf(1));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 				accessrequest1.setAction("OPEN_APP");
-
-				//accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setModification(new Date());
+				accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 				accessRequests.add(accessrequest1);
 				
 				try {
-					dbManager.setAccessRequests(accessRequests);
+					accessrequestId = dbManager.setAccessRequest(accessrequest1);
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
@@ -179,23 +431,27 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decisionId = dbManager.setDecision(decision1);
-					ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-					eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-					decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-					decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-					decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
-					
-					decisiontrustvalues.add(decisiontrustvalue);
-					dbManager.setDecisionTrustvalues(decisiontrustvalues);
-
 
 				} catch (Exception e) {
-					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision or dbManager.setDecisionTrustvalues"+e.getLocalizedMessage());
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
 				}
 				
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 				
-			
+				decisiontrustvalues.add(decisiontrustvalue);
+				
+				
+				try {
+					dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+				}
 				
 				return decision;
 			}
@@ -311,10 +567,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 			currentThreats.add(threat);
 			
 			try {
-				dbManager.setThreats(currentThreats);
+				dbManager.setThreat(threat);
 
 			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreats:"+e.getLocalizedMessage());
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
 			}
 
 			logger.info("The newly created Threat from the Clues is: "
@@ -324,6 +580,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					+ threat.getOutcomes().iterator().next().getDescription()
 					+ "\" with the following potential cost (in kEUR): "
 					+ threat.getOutcomes().iterator().next().getCostbenefit()
+					
 					+ "\n");
 
 			// if already exists, update occurrences and update it in the
@@ -339,10 +596,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 					+ " - Bad Count: " + existingThreat.getBadOutcomeCount());
 
 			try {
-				dbManager.setThreats(currentThreats);
+				dbManager.setThreat(existingThreat);
 
 			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreats:"+e.getLocalizedMessage());
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
 			}
 
 
@@ -351,11 +608,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					+ " with probability "
 					+ existingThreat.getProbability()
 					+ " for the following outcome: \""
-					+ existingThreat.getOutcomes().iterator().next()
-							.getDescription()
-					+ "\" with the following potential cost (in kEUR): "
-					+ existingThreat.getOutcomes().iterator().next()
-							.getCostbenefit() + "\n");
+					 + "\n");
 
 		}
 		
@@ -432,9 +685,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction("OPEN_APP");
-
-			//accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setModification(new Date());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 			accessRequests.add(accessrequest1);
@@ -520,9 +772,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction("OPEN_APP");
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setModification(new Date());
 
-			//accessrequest1.setAction(accessRequest.getAction());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 			accessRequests.add(accessrequest1);
@@ -609,9 +861,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction("OPEN_APP");
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setModification(new Date());
 
-			//accessrequest1.setAction(accessRequest.getAction());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 			accessRequests.add(accessrequest1);
@@ -713,9 +965,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction("OPEN_APP");
+			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setModification(new Date());
 
-			//accessrequest1.setAction(accessRequest.getAction());
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 			accessRequests.add(accessrequest1);
@@ -767,9 +1019,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-				accessrequest1.setAction("OPEN_APP");
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setModification(new Date());
 
-				//accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 				
 				
@@ -823,9 +1075,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-				accessrequest1.setAction("OPEN_APP");
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setModification(new Date());
 
-				//accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 				
 				
