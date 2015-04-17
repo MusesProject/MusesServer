@@ -1759,4 +1759,22 @@ public final void testPolicyOpenConfAssetInSecure(){
 		
 		
 	}
+	
+	public final void testConfigSyncWithOS(){
+		final String testConfigSync = "{\"device_id\":\"358648051980583\",\"username\":\"muses\",\"operating-system-version\":\"5.0.2\",\"operating-system\":\"Android\",\"requesttype\":\"config_sync\"}";
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLogin);
+		callback.receiveCb(defaultSessionId, testConfigSync);
+
+
+	}
 }

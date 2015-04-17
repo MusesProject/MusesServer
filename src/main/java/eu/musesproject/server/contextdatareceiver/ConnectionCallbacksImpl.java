@@ -95,6 +95,8 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		String requestType = null;
 		String username = null;
 		String deviceId = null;
+		String os = null;
+		String osVersion = null;
 		int requestId = 0;
 
 		ConnectionCallbacksImpl.lastSessionId = sessionId;
@@ -145,30 +147,63 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					return authResponse.toString();
 				
 			}else if (requestType.equals(RequestType.CONFIG_SYNC)) {
-				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
-					logger.log(Level.INFO, MUSES_TAG + "Config sync requested");
-					//MUSES Configuration
-					MusesConfig config = dbManager.getMusesConfig();
-					logger.log(Level.INFO, MUSES_TAG + config.getConfigName() + " silent mode:"+config.getSilentMode());
-					//Connection Configuration
-					ConnectionConfig connectionConfig = dbManager.getConnectionConfig();
-					logger.log(Level.INFO, MUSES_TAG + " Connection config id:" + connectionConfig.getConfigId());
-					//Sensor Configuration
-					List<SensorConfiguration> sensorConfig = dbManager.getSensorConfiguration();
-					
-					//Retrieve zone info
-					List<Zone> zoneConfig = dbManager.getZones();
-					logger.log(Level.INFO, MUSES_TAG + " Zones information for " + zoneConfig.size() + " zones.");
-					
-					JSONObject response = JSONManager.createConfigUpdateJSON(RequestType.CONFIG_UPDATE, config, sensorConfig, connectionConfig, zoneConfig);
-					logger.log(Level.INFO, response.toString());
-					logger.log(Level.INFO, MUSES_TAG +  " Response to send:"+response.toString() );
-					logger.log(Level.INFO, MUSES_TAG +  " sessionID: "+ sessionId);
-					connManager.sendData(sessionId, response.toString()); 
-				} else {//Current sessionId has not been authenticated
-					JSONObject response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, "FAIL", "Data cannot be processed: Failed authentication");
-					logger.log(Level.INFO, response.toString());
-					connManager.sendData(sessionId, response.toString());
+				try{
+					os = root.getString(JSONIdentifiers.OPERATING_SYSTEM);
+					osVersion = root.getString(JSONIdentifiers.OPERATING_SYSTEM_VERSION);
+				} catch (JSONException je) {
+					logger.log(Level.ERROR, MUSES_TAG+ je.getMessage() + je.getCause());					
+				}
+				logger.log(Level.INFO, MUSES_TAG + " Sending config sync for operating system:" + os);
+				if ((os == null) || (os.contains(eu.musesproject.server.eventprocessor.util.Constants.OS_ANDROID))) {//Android by default, if no operating system specified					
+					if (AuthenticationManager.getInstance().isAuthenticated(
+							sessionId)) {
+						logger.log(Level.INFO, MUSES_TAG
+								+ "Config sync requested");
+						// MUSES Configuration
+						MusesConfig config = dbManager.getMusesConfig();
+						logger.log(
+								Level.INFO,
+								MUSES_TAG + config.getConfigName()
+										+ " silent mode:"
+										+ config.getSilentMode());
+						// Connection Configuration
+						ConnectionConfig connectionConfig = dbManager
+								.getConnectionConfig();
+						logger.log(Level.INFO,
+								MUSES_TAG + " Connection config id:"
+										+ connectionConfig.getConfigId());
+						// Sensor Configuration
+						List<SensorConfiguration> sensorConfig = dbManager
+								.getSensorConfiguration();
+
+						// Retrieve zone info
+						List<Zone> zoneConfig = dbManager.getZones();
+						logger.log(Level.INFO, MUSES_TAG
+								+ " Zones information for " + zoneConfig.size()
+								+ " zones.");
+
+						JSONObject response = JSONManager
+								.createConfigUpdateJSON(
+										RequestType.CONFIG_UPDATE, config,
+										sensorConfig, connectionConfig,
+										zoneConfig);
+						logger.log(Level.INFO, response.toString());
+						logger.log(Level.INFO, MUSES_TAG + " Response to send:"
+								+ response.toString());
+						logger.log(Level.INFO, MUSES_TAG + " sessionID: "
+								+ sessionId);
+						connManager.sendData(sessionId, response.toString());
+					} else {// Current sessionId has not been authenticated
+						JSONObject response = JSONManager
+								.createJSON(JSONIdentifiers.AUTH_RESPONSE,
+										"FAIL",
+										"Data cannot be processed: Failed authentication");
+						logger.log(Level.INFO, response.toString());
+						connManager.sendData(sessionId, response.toString());
+					}
+				}else if ((os != null) && (os.contains(eu.musesproject.server.eventprocessor.util.Constants.OS_WINDOWS))) {
+					//TODO Windows config-sync to be done
+					logger.log(Level.INFO, "Windows config-sync to be done");
 				}
 			}else {
 				//Data exchange: We should check if sessionId is correctly authenticated

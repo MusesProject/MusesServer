@@ -32,4 +32,7 @@ public class Constants {
 	public final static String CONFIDENTIAL = "confidential";
 	public final static String SUCCESS = "SUCCESS";
 	public final static String FAIL = "FAIL";
+	public final static String OS_ANDROID = "Android";
+	public final static String OS_WINDOWS = "Windows";
+	
 }
