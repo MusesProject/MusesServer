@@ -127,7 +127,7 @@ public class ComMainServlet extends HttpServlet {
 			writer.write(dataToSendBackInResponse);
 			
 			//response.addHeader(DATA,dataToSendBackInResponse); // Now data is added in the body instead
-			logger.log(Level.INFO, MUSES_TAG + " Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse.substring(0, 40));
+			logger.log(Level.INFO, MUSES_TAG + " Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
 		}
 				
 		// if "poll" request
@@ -148,7 +148,7 @@ public class ComMainServlet extends HttpServlet {
 					}else {
 						response.addHeader("more-packets", "NO");	
 					}
-					logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse.substring(0, 40));
+					logger.log(Level.INFO, "Data avaialble Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInResponse**: "+dataToSendBackInResponse);
 					break; // FIXME temporary as multiple same session ids are in the list right now
 				}
 			}
