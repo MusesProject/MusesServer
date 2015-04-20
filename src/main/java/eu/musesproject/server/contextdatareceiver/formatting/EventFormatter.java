@@ -181,21 +181,26 @@ public class EventFormatter {
 				properties.put(key, value);
 			}
 
+			cepFileEvent.setType(EventTypes.CHANGE_SECURITY_PROPERTY);
+			cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+			cepFileEvent.setIsPasswordProtected(Boolean.valueOf(properties
+					.get("ispasswordprotected")));
+			cepFileEvent.setIsPatternProtected(Boolean.valueOf(properties
+					.get("ispatternprotected")));
+			cepFileEvent.setIsTrustedAntivirusInstalled(Boolean
+					.valueOf(properties.get("istrustedantivirusinstalled")));
+			cepFileEvent.setIpAddress(properties.get("ipaddress"));
+			cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties
+					.get("screentimeoutinseconds")));
+			cepFileEvent.setAccessibilityEnabled(Boolean.valueOf(properties
+					.get("accessibilityenabled")));
+			cepFileEvent
+					.setIsRooted(Boolean.valueOf(properties.get("isrooted")));
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		cepFileEvent.setType(EventTypes.CHANGE_SECURITY_PROPERTY);
-		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
-		cepFileEvent.setIsPasswordProtected(Boolean.valueOf(properties.get("ispasswordprotected")));
-		cepFileEvent.setIsPatternProtected(Boolean.valueOf(properties.get("ispatternprotected")));
-		cepFileEvent.setIsTrustedAntivirusInstalled(Boolean.valueOf(properties.get("istrustedantivirusinstalled")));
-		cepFileEvent.setIpAddress(properties.get("ipaddress"));
-		cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties.get("screentimeoutinseconds")));
-		cepFileEvent.setAccessibilityEnabled(Boolean.valueOf(properties.get("accessibilityenabled")));
-		cepFileEvent.setIsRooted(Boolean.valueOf(properties.get("isrooted")));
-		
 		
 		return cepFileEvent;
 	}
@@ -207,25 +212,25 @@ public class EventFormatter {
 		JSONObject propJSON;
 		try {
 			propJSON = new JSONObject(prop.get("properties"));
-		
-			properties = new HashMap<String,String>();
+
+			properties = new HashMap<String, String>();
 			for (Iterator iterator = propJSON.keys(); iterator.hasNext();) {
 				String key = (String) iterator.next();
 				String value = propJSON.getString(key);
 				properties.put(key, value);
 			}
-		
+
+			cepFileEvent.setType(EventTypes.VIRUS_FOUND);
+			cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+			cepFileEvent.setPath(properties.get("path"));
+			cepFileEvent.setName(properties.get("name"));
+			cepFileEvent.setSeverity(properties.get("severity"));
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		cepFileEvent.setType(EventTypes.VIRUS_FOUND);
-		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
-		cepFileEvent.setPath(properties.get("path"));
-		cepFileEvent.setName(properties.get("name"));
-		cepFileEvent.setSeverity(properties.get("severity"));
-				
+
 		return cepFileEvent;
 	}
 	
@@ -236,25 +241,25 @@ public class EventFormatter {
 		JSONObject propJSON;
 		try {
 			propJSON = new JSONObject(prop.get("properties"));
-		
-			properties = new HashMap<String,String>();
+
+			properties = new HashMap<String, String>();
 			for (Iterator iterator = propJSON.keys(); iterator.hasNext();) {
 				String key = (String) iterator.next();
 				String value = propJSON.getString(key);
 				properties.put(key, value);
 			}
-		
+
+			cepFileEvent.setType(EventTypes.VIRUS_CLEANED);
+			cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+			cepFileEvent.setPath(properties.get("path"));
+			cepFileEvent.setName(properties.get("name"));
+			cepFileEvent.setSeverity(properties.get("severity"));
+			cepFileEvent.setCleanType(properties.get("clean_type"));
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		cepFileEvent.setType(EventTypes.VIRUS_CLEANED);
-		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
-		cepFileEvent.setPath(properties.get("path"));
-		cepFileEvent.setName(properties.get("name"));
-		cepFileEvent.setSeverity(properties.get("severity"));
-		cepFileEvent.setCleanType(properties.get("clean_type"));
 				
 		return cepFileEvent;
 	}
@@ -266,41 +271,49 @@ public class EventFormatter {
 		JSONObject propJSON;
 		try {
 			propJSON = new JSONObject(prop.get("properties"));
-		
-			properties = new HashMap<String,String>();
+
+			properties = new HashMap<String, String>();
 			for (Iterator iterator = propJSON.keys(); iterator.hasNext();) {
 				String key = (String) iterator.next();
 				String value = propJSON.getString(key);
 				properties.put(key, value);
 			}
-		
+			cepFileEvent.setType(EventTypes.SEND_MAIL);
+			cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+			cepFileEvent.setFrom(properties.get("from"));
+			cepFileEvent.setTo(properties.get("to"));
+			cepFileEvent.setCc(properties.get("cc"));
+			cepFileEvent.setBcc(properties.get("bcc"));
+			cepFileEvent.setSubject(properties.get("subject"));
+			cepFileEvent.setNumberAttachments(Integer.valueOf(properties
+					.get("noAttachments")));
+			String attachmentInfo = properties.get("attachmentInfo");
+			StringTokenizer tokenizer = new StringTokenizer(attachmentInfo, ";");
+			while (tokenizer.hasMoreTokens()) {
+				String attachment = tokenizer.nextToken();
+				StringTokenizer tokenAttach = new StringTokenizer(attachment,
+						",");
+				String firstToken = tokenAttach.nextToken();
+				if (tokenAttach.hasMoreTokens()) {
+					cepFileEvent.setAttachmentName(firstToken); // FIXME We have
+																// to provide a
+																// mechanism to
+																// store info
+																// associated to
+																// more than one
+																// attachment
+					cepFileEvent.setAttachmentType(tokenAttach.nextToken());
+					cepFileEvent.setAttachmentSize(tokenAttach.nextToken());
+				} else {
+					cepFileEvent.setAttachmentType(firstToken);
+				}
+			}
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		cepFileEvent.setType(EventTypes.SEND_MAIL);
-		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
-		cepFileEvent.setFrom(properties.get("from"));
-		cepFileEvent.setTo(properties.get("to"));
-		cepFileEvent.setCc(properties.get("cc"));
-		cepFileEvent.setBcc(properties.get("bcc"));
-		cepFileEvent.setSubject(properties.get("subject"));
-		cepFileEvent.setNumberAttachments(Integer.valueOf(properties.get("noAttachments")));
-		String attachmentInfo = properties.get("attachmentInfo");
-		StringTokenizer tokenizer = new StringTokenizer(attachmentInfo, ";");
-		while (tokenizer.hasMoreTokens()){
-			String attachment = tokenizer.nextToken();
-			StringTokenizer tokenAttach = new StringTokenizer(attachment,",");
-			String firstToken = tokenAttach.nextToken();
-			if (tokenAttach.hasMoreTokens()){
-				cepFileEvent.setAttachmentName(firstToken); //FIXME We have to provide a mechanism to store info associated to more than one attachment
-				cepFileEvent.setAttachmentType(tokenAttach.nextToken());
-				cepFileEvent.setAttachmentSize(tokenAttach.nextToken());
-			}else{
-				cepFileEvent.setAttachmentType(firstToken);
-			}
-		}		
 		return cepFileEvent;
 	}
 	private static Event convertToUserBehaviorEvent(ContextEvent contextEvent) {
