@@ -606,9 +606,12 @@ public class Rt2aeGlobal {
 	
 	public void notifyUserBehavior(Event event){
 		logger.info("[notifyUserBehavior] Event");
-		UserBehaviorEvent userEvent = (UserBehaviorEvent)event;
+		if (event instanceof UserBehaviorEvent){
+			UserBehaviorEvent userEvent = (UserBehaviorEvent)event;
+			logger.info("		" + "UserBehavior sent to RT2AE:"+userEvent.getAction());
+		}	
 		//rt2aeServer.warn		
-		logger.info("		" + "UserBehavior sent to RT2AE:"+userEvent.getAction());
+		
 	}
 	
 	public static Rt2aeServerImpl getRt2aeServer(){
