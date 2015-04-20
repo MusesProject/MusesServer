@@ -26,13 +26,12 @@ public class CorrelationStartupServlet extends HttpServlet {
 	public void init() throws ServletException{
 		logger.log(Level.INFO, MUSES_TAG + "CorrelationStartupServlet");
 		EventProcessor processor = null;
-		MusesCorrelationEngineImpl engine = null;
 		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
 	
 		if (des==null){
 			processor = new EventProcessorImpl();
-			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
-			des = EventProcessorImpl.getMusesEngineService();
+			processor.startTemporalCorrelation("drl");
+			EventProcessorImpl.getMusesEngineService();
 			UserContextEventDataReceiver.storeEvent(EventTypes.RESTART, "muses", "MUSES-Server", "server", "Valencia", "Server restart: correlation startup init");
 		}else{
 			logger.info("DroolsEngine Service already available");

@@ -149,7 +149,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 			}else if (requestType.equals(RequestType.CONFIG_SYNC)) {
 				try{
 					os = root.getString(JSONIdentifiers.OPERATING_SYSTEM);
-					osVersion = root.getString(JSONIdentifiers.OPERATING_SYSTEM_VERSION);
+					//osVersion = root.getString(JSONIdentifiers.OPERATING_SYSTEM_VERSION);
 				} catch (JSONException je) {
 					logger.log(Level.ERROR, MUSES_TAG+ je.getMessage() + je.getCause());					
 				}
