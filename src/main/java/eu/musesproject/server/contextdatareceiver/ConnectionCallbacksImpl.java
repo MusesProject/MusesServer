@@ -227,6 +227,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 						// TODO Auto-generated catch block
 						//e.printStackTrace();
 						logger.log(Level.INFO, "JSON identifier not found:"+e.getMessage());
+						logger.log(Level.INFO, "Original JSON message:" + receiveData);
 					}
 					
 					Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId, requestId));
