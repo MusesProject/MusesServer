@@ -28,11 +28,8 @@ public class CorporatePolicies implements Serializable {
 	private Date date;
 
 	@Column(nullable=false, length=2000)
-	private String description_en;
+	private String description;
 
-	@Column(nullable=false, length=2000)
-	private String description_es;
-	
 	@Lob
 	@Column(nullable=false)
 	private byte[] file;
@@ -60,19 +57,11 @@ public class CorporatePolicies implements Serializable {
 	}
 
 	public String getDescriptionEn() {
-		return this.description_en;
+		return this.description;
 	}
 
-	public void setDescriptionEn(String description_en) {
-		this.description_en = description_en;
-	}
-
-	public String getDescriptionEs() {
-		return this.description_es;
-	}
-
-	public void setDescriptionEs(String description_es) {
-		this.description_es = description_es;
+	public void setDescriptionEn(String description) {
+		this.description = description;
 	}
 
 	public byte[] getFile() {
