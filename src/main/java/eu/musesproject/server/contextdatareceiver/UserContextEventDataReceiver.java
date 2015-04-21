@@ -170,6 +170,9 @@ public class UserContextEventDataReceiver {
 		List<SimpleEvents> list = new ArrayList<SimpleEvents>();
 		SimpleEvents event = new SimpleEvents();
 		event.setEventType(dbManager.getEventTypeByKey(eventType));
+		if (event.getEventType() == null){
+			Logger.getLogger(UserContextEventDataReceiver.class).error("Event type not found in database, associate to key:"+ eventType);
+		}
 		Users user = dbManager.getUserByUsername(username);
 		if (user != null){
 			event.setUser(user);
