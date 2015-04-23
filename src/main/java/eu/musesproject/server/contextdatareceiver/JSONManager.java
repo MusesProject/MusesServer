@@ -41,6 +41,7 @@ import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.entity.ConnectionConfig;
+import eu.musesproject.server.entity.DefaultPolicies;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
@@ -463,6 +464,33 @@ public class JSONManager {
 	
 	private static String xmlProperty(String tag, int value){
 		return "<"+tag+">"+value+"</"+tag+">";
+	}
+
+	public static JSONObject createDefaultPoliciesJSON(
+			List<DefaultPolicies> defaultPolicies) {
+		
+		JSONObject root = new JSONObject();
+		try {
+
+            root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, "default-policies");
+            
+          //Default Policies
+            String defaultPoliciesXML = "";
+            for (Iterator iterator = defaultPolicies.iterator(); iterator
+					.hasNext();) {
+				DefaultPolicies policy = (DefaultPolicies) iterator.next();
+				defaultPoliciesXML += "<"+JSONIdentifiers.DEVICE_POLICY+">";
+				defaultPoliciesXML += xmlProperty(JSONIdentifiers.ACTION_TYPE, StringEscapeUtils.escapeXml(String.valueOf(policy.getDescriptionEn())));
+				defaultPoliciesXML += xmlProperty(JSONIdentifiers.CONFIG_NAME, StringEscapeUtils.escapeXml(String.valueOf(policy.getName())));
+				defaultPoliciesXML += "</"+JSONIdentifiers.DEVICE_POLICY+">";
+			}
+
+            root.put("policy", XML.toJSONObject(defaultPoliciesXML));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return root;
 	}
 
 }

@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -22,7 +23,10 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name="default_policies")
-@NamedQuery(name="DefaultPolicies.findAll", query="SELECT c FROM DefaultPolicies c")
+@NamedQueries({
+	@NamedQuery(name="DefaultPolicies.findAll", 
+				query="SELECT d FROM DefaultPolicies d")
+})
 public class DefaultPolicies implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -25,6 +25,7 @@ import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.DecisionTrustvalues;
+import eu.musesproject.server.entity.DefaultPolicies;
 import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
@@ -1792,6 +1793,24 @@ public class DBManager {
 		logger.info("Inserting SECURITY INCIDENT...");
 		des.insertFact(secIncidentEvent);
 		
+	}
+
+	public List<DefaultPolicies> getDefaultPolicies(String language) {
+		Session session = null;
+		Query query = null;
+		List<DefaultPolicies> policies = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("DefaultPolicies.findAll");
+			if (query!=null) {
+				policies = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return policies;
 	}
 
 }
