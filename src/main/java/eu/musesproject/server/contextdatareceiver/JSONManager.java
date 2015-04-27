@@ -41,6 +41,7 @@ import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.ActionType;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.entity.ConnectionConfig;
+import eu.musesproject.server.entity.DefaultPolicies;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
@@ -143,7 +144,8 @@ public class JSONManager {
 
 	}
 	
-	public static List<ContextEvent> processJSONMessage(String message, String type, String sessionId) {
+	public static List<ContextEvent> processJSONMessage(String message,
+			String type, String sessionId) {
 		// Action action = null;
 		Map<String, String> properties = null;
 		ContextEvent contextEvent = null;
@@ -151,29 +153,29 @@ public class JSONManager {
 		String deviceId = null;
 		String requestType = null;
 		JSONObject root = null;
+		List<ContextEvent> resultList = null;
 
-		try{
+		try {
 			// Process the root JSON object
 			root = new JSONObject(message);
-			requestType = root.getString(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER);
-		
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		List<ContextEvent> resultList = new ArrayList<ContextEvent>();
-		if (requestType.equals(RequestType.UPDATE_CONTEXT_EVENTS)) {
-			Logger.getLogger(JSONManager.class)
-					.log(Level.INFO,
-							"Update context events JSONMessage received: Processing message...");
-		} else if ((requestType.equals(RequestType.ONLINE_DECISION)||(requestType.equals(RequestType.LOCAL_DECISION)))) {// TODO Remove LOCAL_DECISION when sensors are updated conveniently
-			Logger.getLogger(JSONManager.class)
-					.log(Level.INFO,
-							"Online decision JSONMessage received: Processing message...");
+			requestType = root
+					.getString(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER);
 
-			try {
-				
+			resultList = new ArrayList<ContextEvent>();
+			if (requestType.equals(RequestType.UPDATE_CONTEXT_EVENTS)) {
+				Logger.getLogger(JSONManager.class)
+						.log(Level.INFO,
+								"Update context events JSONMessage received: Processing message...");
+			} else if ((requestType.equals(RequestType.ONLINE_DECISION) || (requestType
+					.equals(RequestType.LOCAL_DECISION)))) {// TODO Remove
+															// LOCAL_DECISION
+															// when sensors are
+															// updated
+															// conveniently
+				Logger.getLogger(JSONManager.class)
+						.log(Level.INFO,
+								"Online decision JSONMessage received: Processing message...");
+
 				// Get the action part
 				JSONObject actionJson = root
 						.getJSONObject(JSONIdentifiers.ACTION_IDENTIFIER);
@@ -198,37 +200,34 @@ public class JSONManager {
 					resultList.add(contextEvent);
 				}
 
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		} else if (requestType.equals(RequestType.USER_ACTION)) {
-			
-			try {
+			} else if (requestType.equals(RequestType.USER_ACTION)) {
+
 				// TODO Get the behavior part
 				JSONObject behaviorJson = root
 						.getJSONObject(JSONIdentifiers.USER_BEHAVIOR);
 				contextEvent = new ContextEvent();
 				contextEvent.setType(EventTypes.USERBEHAVIOR);
-				properties = new HashMap<String,String>();
-				for (Iterator iterator = behaviorJson.keys(); iterator.hasNext();) {
+				properties = new HashMap<String, String>();
+				for (Iterator iterator = behaviorJson.keys(); iterator
+						.hasNext();) {
 					String key = (String) iterator.next();
-					if ((!key.equals(ContextEvent.KEY_TYPE))&&(!key.equals(ContextEvent.KEY_TIMESTAMP))){
+					if ((!key.equals(ContextEvent.KEY_TYPE))
+							&& (!key.equals(ContextEvent.KEY_TIMESTAMP))) {
 						String value = behaviorJson.getString(key);
 						properties.put(key, value);
 					}
 				}
 				properties.put("sessionId", sessionId);
 				contextEvent.setProperties(properties);
-				Logger.getLogger(JSONManager.class.getName()).log(
-						Level.INFO, "A new event has been received.");
+				Logger.getLogger(JSONManager.class.getName()).log(Level.INFO,
+						"A new event has been received.");
 				printContextEventInfo(contextEvent);
 				resultList.add(contextEvent);
-				
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
 			}
-			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return resultList;
 
@@ -465,6 +464,33 @@ public class JSONManager {
 	
 	private static String xmlProperty(String tag, int value){
 		return "<"+tag+">"+value+"</"+tag+">";
+	}
+
+	public static JSONObject createDefaultPoliciesJSON(
+			List<DefaultPolicies> defaultPolicies) {
+		
+		JSONObject root = new JSONObject();
+		try {
+
+            root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, "default-policies");
+            
+          //Default Policies
+            String defaultPoliciesXML = "";
+            for (Iterator iterator = defaultPolicies.iterator(); iterator
+					.hasNext();) {
+				DefaultPolicies policy = (DefaultPolicies) iterator.next();
+				defaultPoliciesXML += "<"+JSONIdentifiers.DEVICE_POLICY+">";
+				defaultPoliciesXML += xmlProperty(JSONIdentifiers.ACTION_TYPE, StringEscapeUtils.escapeXml(String.valueOf(policy.getDescriptionEn())));
+				defaultPoliciesXML += xmlProperty(JSONIdentifiers.CONFIG_NAME, StringEscapeUtils.escapeXml(String.valueOf(policy.getName())));
+				defaultPoliciesXML += "</"+JSONIdentifiers.DEVICE_POLICY+">";
+			}
+
+            root.put("policy", XML.toJSONObject(defaultPoliciesXML));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return root;
 	}
 
 }

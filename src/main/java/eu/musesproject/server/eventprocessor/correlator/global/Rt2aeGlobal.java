@@ -115,9 +115,9 @@ public class Rt2aeGlobal {
 			deviceType.setDeviceTypeId(1222);//TODO manage device type conveniently
 			device.setDeviceType(deviceType);
 			dbManager.persist(device);
-		}else{
+		}/*else{
 			device = deviceInstance;
-		}
+		}*/
 		//FIXME no function right now change to current implementation
 		if (event.getDeviceId()!=null){
 			//deviceSecurityState.setDevice_id(Integer.valueOf(event.getDeviceId()));
@@ -255,7 +255,7 @@ public class Rt2aeGlobal {
 		composedRequest.setId(requests.size()+1);
 		requests.add(composedRequest);
 		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
-		Context context = new Context();//TODO This context should be extracted from the event
+		//Context context = new Context();//TODO This context should be extracted from the event
 		//Simulate response from RT2AE, for demo purposes
 		Decision decision = testDecideBasedOnRisk(composedRequest, connEvent);
 		decisions[0] = decision;
@@ -499,7 +499,7 @@ public class Rt2aeGlobal {
 			}
 		}else if (mode.equals("DENY")){
 			if (event instanceof AppObserverEvent){
-				AppObserverEvent appEvent = (AppObserverEvent)event;
+				//AppObserverEvent appEvent = (AppObserverEvent)event;
 				//compliance.setReason("Action not allowed. Blacklisted application");
 				compliance.setReason(message);
 			}else{
@@ -606,9 +606,12 @@ public class Rt2aeGlobal {
 	
 	public void notifyUserBehavior(Event event){
 		logger.info("[notifyUserBehavior] Event");
-		UserBehaviorEvent userEvent = (UserBehaviorEvent)event;
+		if (event instanceof UserBehaviorEvent){
+			UserBehaviorEvent userEvent = (UserBehaviorEvent)event;
+			logger.info("		" + "UserBehavior sent to RT2AE:"+userEvent.getAction());
+		}	
 		//rt2aeServer.warn		
-		logger.info("		" + "UserBehavior sent to RT2AE:"+userEvent.getAction());
+		
 	}
 	
 	public static Rt2aeServerImpl getRt2aeServer(){
@@ -642,7 +645,7 @@ public class Rt2aeGlobal {
 		
 		ConnectionManager connManager = ConnectionManager.getInstance();
 		logger.info("		Session id:"+sessionId);
-		PolicySelector policySelector = new PolicySelector();
+		//PolicySelector policySelector = new PolicySelector();
 		
 		Devices device = dbManager.getDeviceByIMEI(event.getDeviceId());
 

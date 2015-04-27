@@ -40,13 +40,15 @@ public class AdditionalProtectionComposer {
 		AccessRequest accessRequest = Rt2aeGlobal.getRequestById(requestId);
 		composedProtection.setAssetId(accessRequest.getRequestedCorporateAsset().getId());
 		
-		DeviceProtectionEvent protectionEvent = (DeviceProtectionEvent)event;
+		if (event instanceof DeviceProtectionEvent){
+			DeviceProtectionEvent protectionEvent = (DeviceProtectionEvent)event;
 		
-		composedProtection.setType(EventTypes.DEVICE_PROTECTION);
-		composedProtection.setPasswordProtected(protectionEvent.getIsPasswordProtected());
-		composedProtection.setPatternProtected(protectionEvent.getIsPatternProtected());
-		composedProtection.setRooted(protectionEvent.getIsRooted());
-		composedProtection.setTrustedAVInstalled(protectionEvent.isTrustedAntivirusInstalled());
+			composedProtection.setType(EventTypes.DEVICE_PROTECTION);
+			composedProtection.setPasswordProtected(protectionEvent.getIsPasswordProtected());
+			composedProtection.setPatternProtected(protectionEvent.getIsPatternProtected());
+			composedProtection.setRooted(protectionEvent.getIsRooted());
+			composedProtection.setTrustedAVInstalled(protectionEvent.isTrustedAntivirusInstalled());
+		}	
 		
 		return composedProtection;
 	}

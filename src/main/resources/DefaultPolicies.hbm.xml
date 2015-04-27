@@ -3,8 +3,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 27-Nov-2014 11:36:48 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="CorporatePolicies" table="corporate_policies" catalog="muses">
-        <id name="corporatePolicyId" type="java.lang.Integer">
+    <class name="DefaultPolicies" table="default_policies" catalog="muses">
+        <id name="defaultPolicyId" type="java.lang.Integer">
             <column name="corporate_policy_id" />
             <generator class="identity" />
         </id>

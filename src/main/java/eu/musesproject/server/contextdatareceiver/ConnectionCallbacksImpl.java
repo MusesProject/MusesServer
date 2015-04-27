@@ -37,8 +37,10 @@ import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.ConnectionConfig;
+import eu.musesproject.server.entity.DefaultPolicies;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
+import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 import eu.musesproject.server.scheduler.ModuleType;
@@ -149,7 +151,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 			}else if (requestType.equals(RequestType.CONFIG_SYNC)) {
 				try{
 					os = root.getString(JSONIdentifiers.OPERATING_SYSTEM);
-					osVersion = root.getString(JSONIdentifiers.OPERATING_SYSTEM_VERSION);
+					//osVersion = root.getString(JSONIdentifiers.OPERATING_SYSTEM_VERSION);
 				} catch (JSONException je) {
 					logger.log(Level.ERROR, MUSES_TAG+ je.getMessage() + je.getCause());					
 				}
@@ -193,6 +195,28 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 						logger.log(Level.INFO, MUSES_TAG + " sessionID: "
 								+ sessionId);
 						connManager.sendData(sessionId, response.toString());
+						//Send default policies
+						
+						username = root
+								.getString(JSONIdentifiers.AUTH_USERNAME);
+						Users user = dbManager.getUserByUsername(username);
+						if (user != null) {
+
+							String language = user.getLanguage();
+							List<DefaultPolicies> defaultPolicies = dbManager
+									.getDefaultPolicies(language);
+
+							if ((defaultPolicies != null)
+									&& (defaultPolicies.size() > 0)) {
+								JSONObject defaultPoliciesJSON = JSONManager
+										.createDefaultPoliciesJSON(defaultPolicies);
+								logger.log(Level.INFO,
+										defaultPoliciesJSON.toString());
+								connManager.sendData(sessionId,
+										defaultPoliciesJSON.toString());
+							}
+						}
+						
 					} else {// Current sessionId has not been authenticated
 						JSONObject response = JSONManager
 								.createJSON(JSONIdentifiers.AUTH_RESPONSE,
@@ -227,6 +251,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 						// TODO Auto-generated catch block
 						//e.printStackTrace();
 						logger.log(Level.INFO, "JSON identifier not found:"+e.getMessage());
+						logger.log(Level.INFO, "Original JSON message:" + receiveData);
 					}
 					
 					Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId, requestId));

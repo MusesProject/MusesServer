@@ -1,11 +1,20 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-
-import javax.persistence.*;
-
 import java.util.Arrays;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -13,15 +22,18 @@ import java.util.Date;
  * 
  */
 @Entity
-@Table(name="corporate_policies")
-@NamedQuery(name="CorporatePolicies.findAll", query="SELECT c FROM CorporatePolicies c")
-public class CorporatePolicies implements Serializable {
+@Table(name="default_policies")
+@NamedQueries({
+	@NamedQuery(name="DefaultPolicies.findAll", 
+				query="SELECT d FROM DefaultPolicies d")
+})
+public class DefaultPolicies implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="corporate_policy_id", unique=true, nullable=false)
-	private int corporatePolicyId;
+	@Column(name="default_policy_id", unique=true, nullable=false)
+	private int defaultPolicyId;
 
 	@Temporal(TemporalType.DATE)
 	@Column(nullable=false)
@@ -37,15 +49,15 @@ public class CorporatePolicies implements Serializable {
 	@Column(nullable=false, length=2000)
 	private String name;
 
-	public CorporatePolicies() {
+	public DefaultPolicies() {
 	}
 
 	public int getCorporatePolicyId() {
-		return this.corporatePolicyId;
+		return this.defaultPolicyId;
 	}
 
-	public void setCorporatePolicyId(int corporatePolicyId) {
-		this.corporatePolicyId = corporatePolicyId;
+	public void setCorporatePolicyId(int defaultPolicyId) {
+		this.defaultPolicyId = defaultPolicyId;
 	}
 
 	public Date getDate() {
