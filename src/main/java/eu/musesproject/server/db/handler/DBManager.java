@@ -42,6 +42,7 @@ import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Sources;
+import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
@@ -1791,6 +1792,27 @@ public class DBManager {
 		secIncidentEvent.setTimestamp(new Date().getTime());
 		logger.info("Inserting SECURITY INCIDENT...");
 		des.insertFact(secIncidentEvent);
+		
+	}
+	
+	public void setSystemLogKRS(List<SystemLogKrs> logs) {
+		Session session = null;
+		Transaction trans = null;
+		Iterator<SystemLogKrs> i = logs.iterator();
+		while(i.hasNext()){
+			try {
+				SystemLogKrs log = i.next();
+				session = getSessionFactory().openSession();
+				trans = session.beginTransaction();
+				session.save(log);
+				trans.commit();
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+		}
 		
 	}
 

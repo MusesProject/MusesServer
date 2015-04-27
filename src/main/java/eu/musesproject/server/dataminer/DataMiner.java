@@ -66,20 +66,18 @@ public class DataMiner {
 	/**
 	 * Info DB
 	 * 
-	 *   Interaction with the database, retrieving events in bulk, looking for new patterns to be mined. 
-	 *   These patterns are the basis for change adaptation, since the system is meant to detect uncoded/unpredicted situations 
-	 *   that the system is yet not prepared for. This method calls retrievePendingEventsInDB from EventCorrelationData. Once the
-	 *   method retrieves the Events, the pattern mining process starts (minePatterns), looking for new patterns.
+	 *   Interaction with the database, retrieving events in bulk, and fills the system_log_krs table in the server database. This table helps the CSO having an overview of the status of the system.
 	 * 
 	 * 
-	 * @param device
+	 * @param events Complete list of simple events, stored in the simple_events table of the database.
 	 * 
-	 * @param user
 	 * 
 	 * @return void
 	 */
 	
-	public void retrievePendingEvents( Device device, User user){
+	public void retrievePendingEvents(List<SimpleEvents> events){
+		
+		
 		
 	}
 	

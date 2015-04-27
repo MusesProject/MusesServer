@@ -28,6 +28,7 @@ import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.RiskTreatment;
 import eu.musesproject.server.entity.SimpleEvents;
+import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
@@ -368,6 +369,26 @@ public class DBManagerTest {
 		list.add(event);
 		dbmanager.setSimpleEvents(list);
 
+	}
+	
+	@Test
+	public void testSetSystemLogKRS() {
+		List<SystemLogKrs> list = new ArrayList<SystemLogKrs>();
+		SystemLogKrs logEntry = new SystemLogKrs();
+		SecureRandom random = new SecureRandom();
+		logEntry.setPreviousEventId(new BigInteger(30, random));
+		logEntry.setCurrentEventId(new BigInteger(30, random));
+		logEntry.setDecisionId(new BigInteger(30, random));
+		logEntry.setUserBehaviourId(new BigInteger(30, random));
+		logEntry.setSecurityIncidentId(new BigInteger(30, random));
+		logEntry.setDeviceSecurityState(new BigInteger(30, random));
+		logEntry.setRiskTreatment(3);
+		logEntry.setStartTime(new Date());
+		logEntry.setFinishTime(new Date());
+		
+		list.add(logEntry);
+		dbmanager.setSystemLogKRS(list);
+		
 	}
 
 }
