@@ -390,5 +390,17 @@ public class DBManagerTest {
 		dbmanager.setSystemLogKRS(list);
 		
 	}
+	
+	@Test
+	public void testFindAccessRequestByEventId() {
+		String eventID = "2";
+		List<AccessRequest> accessRequests = dbmanager.findAccessRequestByEventId(eventID);
+		if(accessRequests.size()>0)
+			assertTrue(true);
+		else
+			fail("There is not any Access Request corresponding to that event_id.");
+
+
+	}
 
 }

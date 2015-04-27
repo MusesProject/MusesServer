@@ -21,7 +21,9 @@ import java.util.List;
 				@NamedQuery(name="AccessRequest.findAccessrequestbyTimestampandThreat", 
 				query="SELECT a FROM AccessRequest a where a.modification =:modification and a.threatId =:threat"),
 	@NamedQuery(name="AccessRequest.findById", 
-				query="SELECT a FROM AccessRequest a where a.accessRequestId = :access_request_id")
+				query="SELECT a FROM AccessRequest a where a.accessRequestId = :access_request_id"),
+	@NamedQuery(name="AccessRequest.findByEventId", 
+				query="SELECT a FROM AccessRequest a where a.eventId = :event_id")
 
 })
 public class AccessRequest implements Serializable {

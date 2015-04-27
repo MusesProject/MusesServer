@@ -1834,6 +1834,29 @@ public class DBManager {
 		}
 		return policies;
 	}
+	
+	/**
+     * Get AccessRequest list by event_id
+     * @param id
+     * @return List<AccessRequest>
+     */
+	public List<AccessRequest> findAccessRequestByEventId(String accessRequestEventId) {
+		Session session = null;
+		Query query = null;
+		List<AccessRequest> accessrequests = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("AccessRequest.findByEventId").setString("event_id", accessRequestEventId);
+			if (query!=null) {
+				accessrequests = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		} 
+		return accessrequests;		
+	}
 
 }
 	

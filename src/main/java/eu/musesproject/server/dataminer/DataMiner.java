@@ -26,8 +26,10 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.math.BigInteger;
 
 import eu.musesproject.server.continuousrealtimeeventprocessor.model.*;
 import eu.musesproject.server.knowledgerefinementsystem.model.*;
@@ -39,7 +41,9 @@ import org.apache.log4j.Logger;
 
 import eu.musesproject.server.scheduler.ModuleType;
 import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.SimpleEvents;
+import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Users;
 
 /**
@@ -77,7 +81,46 @@ public class DataMiner {
 	
 	public void retrievePendingEvents(List<SimpleEvents> events){
 		
+		//List<SimpleEvents> Events = dbManager.getEvent();
 		
+		/* Fields in system_log_krs:
+		 * previous_event_id, current_event_id, decision_id, user_behaviour_id,
+		 * security_incident_id, device_security_state, risk_treatment, start_time,
+		 * finish_time.
+		 */
+		
+		List<SystemLogKrs> list = new ArrayList<SystemLogKrs>();
+		
+		if (events.size() > 0) {
+			Iterator<SimpleEvents> i = events.iterator();
+			
+			while (i.hasNext()) {
+				
+				SystemLogKrs logEntry = new SystemLogKrs();
+				SimpleEvents event = i.next();
+				BigInteger eventID = new BigInteger(event.getEventId());
+				logEntry.setCurrentEventId(eventID);
+				
+				String user = event.getUser().getUserId();
+				/*Code for retrieving previous event*/
+				
+				/* Looking for decision_id in table access_request */
+				BigInteger decisionID = BigInteger.ZERO;
+				List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID.toString());
+				if (accessRequests.size() == 1) {
+					decisionID = accessRequests.get(0).getDecisionId();
+					logEntry.setDecisionId(decisionID);
+				} else {
+					logger.warn("Decision Id not found, assigning 0...");
+					logEntry.setDecisionId(decisionID);
+				}
+				
+				
+				
+			}
+		}else{
+			logger.error("There are not simple events in the database, system_log_krs cannot be filled.");
+		}
 		
 	}
 	
