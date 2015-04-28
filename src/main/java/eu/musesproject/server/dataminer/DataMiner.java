@@ -115,6 +115,7 @@ public class DataMiner {
 					logEntry.setDecisionId(decisionID);
 				}
 				
+				/* User behaviour as next event_id */
 				
 				
 			}

@@ -402,5 +402,17 @@ public class DBManagerTest {
 
 
 	}
+	
+	@Test
+	public void testFindEventsByUserId() {
+		String userID = "1";
+		List<SimpleEvents> events = dbmanager.findEventsByUserId(userID);
+		if(events.size()>0)
+			assertTrue(true);
+		else
+			fail("There is not any Simple Events corresponding to that user_id.");
+
+
+	}
 
 }

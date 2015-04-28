@@ -1857,6 +1857,29 @@ public class DBManager {
 		} 
 		return accessrequests;		
 	}
+	
+	/**
+     * Get SimpleEvents list by user_id
+     * @param id
+     * @return List<SimpleEvents>
+     */
+	public List<SimpleEvents> findEventsByUserId(String simpleEventUserId) {
+		Session session = null;
+		Query query = null;
+		List<SimpleEvents> events = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("SimpleEvents.findByUserId").setString("user_id", simpleEventUserId);
+			if (query!=null) {
+				events = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		} 
+		return events;		
+	}
 
 }
 	

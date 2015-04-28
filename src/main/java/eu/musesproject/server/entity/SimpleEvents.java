@@ -1,7 +1,9 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +15,13 @@ import java.util.List;
  */
 @Entity
 @Table(name="simple_events")
-@NamedQuery(name="SimpleEvents.findAll", query="SELECT s FROM SimpleEvents s")
+@NamedQueries({
+	@NamedQuery(name="SimpleEvents.findAll",
+				query="SELECT s FROM SimpleEvents s"),
+	@NamedQuery(name="SimpleEvents.findByUserId", 
+    			query="SELECT s FROM SimpleEvents s where s.user = :user_id"),
+})
+
 public class SimpleEvents implements Serializable {
 	private static final long serialVersionUID = 1L;
 
