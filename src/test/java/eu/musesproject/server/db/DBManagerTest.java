@@ -27,6 +27,7 @@ import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.RiskTreatment;
+import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Threat;
@@ -399,20 +400,31 @@ public class DBManagerTest {
 			assertTrue(true);
 		else
 			fail("There is not any Access Request corresponding to that event_id.");
-
-
 	}
 	
 	@Test
 	public void testFindEventsByUserId() {
 		String userID = "1";
-		List<SimpleEvents> events = dbmanager.findEventsByUserId(userID);
+		String day = "2015-01-09";
+		String time = "17:00:00";
+		/* To test if it looks for last events */
+		List<SimpleEvents> events = dbmanager.findEventsByUserId(userID, day, time, Boolean.TRUE);
+		/* To test if it looks for next event */
+		//List<SimpleEvents> events = dbmanager.findEventsByUserId(userID, day, time, Boolean.FALSE);
 		if(events.size()>0)
 			assertTrue(true);
 		else
-			fail("There is not any Simple Events corresponding to that user_id.");
-
-
+			fail("There is not any Simple Events corresponding to that user_id, in those dates.");
+	}
+	
+	@Test
+	public void testFindSecurityViolationByEventId() {
+		String eventID = "2";
+		List<SecurityViolation> accessRequests = dbmanager.findSecurityViolationByEventId(eventID);
+		if(accessRequests.size()>0)
+			assertTrue(true);
+		else
+			fail("There is not any Security Violation corresponding to that event_id.");
 	}
 
 }

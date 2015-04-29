@@ -27,6 +27,7 @@ package eu.musesproject.server.dataminer;
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.math.BigInteger;
@@ -42,6 +43,7 @@ import org.apache.log4j.Logger;
 import eu.musesproject.server.scheduler.ModuleType;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
+import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Users;
@@ -101,8 +103,13 @@ public class DataMiner {
 				BigInteger eventID = new BigInteger(event.getEventId());
 				logEntry.setCurrentEventId(eventID);
 				
+				/* Previous event is the last event the user made */
 				String user = event.getUser().getUserId();
-				/*Code for retrieving previous event*/
+				Date day = event.getDate();
+				String time = event.getTime().toString();
+				List<SimpleEvents> userLastEvents = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.TRUE);
+				BigInteger lastEvent = new BigInteger(userLastEvents.get(userLastEvents.size() - 1).getEventId());
+				logEntry.setPreviousEventId(lastEvent);
 				
 				/* Looking for decision_id in table access_request */
 				BigInteger decisionID = BigInteger.ZERO;
@@ -116,6 +123,22 @@ public class DataMiner {
 				}
 				
 				/* User behaviour as next event_id */
+				List<SimpleEvents> userNextEvent = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.FALSE);
+				BigInteger nextEvent = new BigInteger(userNextEvent.get(0).getEventId());
+				logEntry.setUserBehaviourId(nextEvent);
+				
+				/* Looking if that event caused a security violation */
+				List<SecurityViolation> securityViolations = dbManager.findSecurityViolationByEventId(event.getEventId());
+				BigInteger securityIncident = new BigInteger(securityViolations.get(0).getSecurityViolationId());
+				logEntry.setSecurityIncidentId(securityIncident);
+				
+				/* Checking the device security state of the device */
+				
+				/* Looking for the risk treatment in case the event caused a security violation */
+				
+				/* Time when the event was detected in the device */
+				
+				/* Time when was received and processed in the server */
 				
 				
 			}

@@ -18,8 +18,10 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="SimpleEvents.findAll",
 				query="SELECT s FROM SimpleEvents s"),
-	@NamedQuery(name="SimpleEvents.findByUserId", 
-    			query="SELECT s FROM SimpleEvents s where s.user = :user_id"),
+	@NamedQuery(name="SimpleEvents.findLastByUserId", 
+    			query="SELECT s FROM SimpleEvents s where s.user = :user_id and (s.date = :day and s.time < :time) or s.date < :day"),
+	@NamedQuery(name="SimpleEvents.findNextByUserId", 
+    			query="SELECT s FROM SimpleEvents s where s.user = :user_id and (s.date = :day and s.time > :time) or s.date > :day")
 })
 
 public class SimpleEvents implements Serializable {

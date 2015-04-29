@@ -1796,6 +1796,11 @@ public class DBManager {
 		
 	}
 	
+	/**
+     * Fills system_log_krs table in database
+     * @param logs
+     * @return void
+     */
 	public void setSystemLogKRS(List<SystemLogKrs> logs) {
 		Session session = null;
 		Transaction trans = null;
@@ -1837,7 +1842,7 @@ public class DBManager {
 	
 	/**
      * Get AccessRequest list by event_id
-     * @param id
+     * @param accessRequestEventId
      * @return List<AccessRequest>
      */
 	public List<AccessRequest> findAccessRequestByEventId(String accessRequestEventId) {
@@ -1859,17 +1864,32 @@ public class DBManager {
 	}
 	
 	/**
-     * Get SimpleEvents list by user_id
-     * @param id
+     * Get SimpleEvents list by user_id, either the last events the user made or the next one (user behaviour)
+     * @param simpleEventUserId
+     * @param day
+     * @param time
+     * @param backwards
      * @return List<SimpleEvents>
      */
-	public List<SimpleEvents> findEventsByUserId(String simpleEventUserId) {
+	public List<SimpleEvents> findEventsByUserId(String simpleEventUserId, String day, String time, Boolean backwards) {
 		Session session = null;
 		Query query = null;
 		List<SimpleEvents> events = null;
 		try {
-			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("SimpleEvents.findByUserId").setString("user_id", simpleEventUserId);
+			if (backwards) {
+				session = getSessionFactory().openSession();
+				query = session.getNamedQuery("SimpleEvents.findLastByUserId").
+						setString("user_id", simpleEventUserId).
+						setString("day", day).
+						setString("time", time);
+			} else {
+				session = getSessionFactory().openSession();
+				query = session.getNamedQuery("SimpleEvents.findNextByUserId").
+						setString("user_id", simpleEventUserId).
+						setString("day", day).
+						setString("time", time);
+				query.setMaxResults(1);
+			}
 			if (query!=null) {
 				events = query.list();
 			}
@@ -1879,6 +1899,29 @@ public class DBManager {
 			if (session!=null) session.close();
 		} 
 		return events;		
+	}
+	
+	/**
+     * Get SecurityViolations list by event_id
+     * @param securityViolationEventId
+     * @return List<SecurityViolation>
+     */
+	public List<SecurityViolation> findSecurityViolationByEventId(String securityViolationEventId) {
+		Session session = null;
+		Query query = null;
+		List<SecurityViolation> securityViolations = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("SecurityViolation.findByEventId").setString("event_id", securityViolationEventId);
+			if (query!=null) {
+				securityViolations = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		} 
+		return securityViolations;		
 	}
 
 }

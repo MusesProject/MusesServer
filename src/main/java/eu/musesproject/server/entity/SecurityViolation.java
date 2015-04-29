@@ -17,7 +17,9 @@ import java.util.List;
 @Table(name="security_violation")
 @NamedQueries ({
 	@NamedQuery(name="SecurityViolation.findAll", 
-				query="SELECT s FROM SecurityViolation s")
+				query="SELECT s FROM SecurityViolation s"),
+	@NamedQuery(name="SecurityViolation.findByEventId", 
+    			query="SELECT s FROM SecurityViolation s where s.eventId = :event_id")
 
 })
 public class SecurityViolation implements Serializable {
