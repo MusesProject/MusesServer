@@ -25,6 +25,7 @@ import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.RiskCommunication;
+import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.RiskTreatment;
 import eu.musesproject.server.entity.SecurityViolation;
@@ -425,6 +426,16 @@ public class DBManagerTest {
 			assertTrue(true);
 		else
 			fail("There is not any Security Violation corresponding to that event_id.");
+	}
+	
+	@Test
+	public void testFindRiskInformationByEventId() {
+		String eventID = "2";
+		List<RiskInformation> riskInformation = dbmanager.findRiskInformationByEventId(eventID);
+		if(riskInformation.size()>0)
+			assertTrue(true);
+		else
+			fail("There is not any Risk Information corresponding to that event_id.");
 	}
 
 }

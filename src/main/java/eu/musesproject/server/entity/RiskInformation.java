@@ -1,6 +1,7 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
 
 
@@ -10,7 +11,13 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="risk_information")
-@NamedQuery(name="RiskInformation.findAll", query="SELECT r FROM RiskInformation r")
+@NamedQueries ({
+	@NamedQuery(name="RiskInformation.findAll", 
+				query="SELECT r FROM RiskInformation r"),
+	@NamedQuery(name="RiskInformation.findByEventId", 
+    			query="SELECT r FROM RiskInformation r where r.simpleEvent = :event_id")
+
+})
 public class RiskInformation implements Serializable {
 	private static final long serialVersionUID = 1L;
 
