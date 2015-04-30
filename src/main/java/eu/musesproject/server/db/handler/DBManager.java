@@ -834,7 +834,6 @@ public class DBManager {
      */
 	public String setThreat(Threat threat) {
 		
-			Threat threat1 = new Threat();
 			
 			String threatId="";
 			Session session = null;

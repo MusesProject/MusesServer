@@ -90,7 +90,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		logger.info("RT2AE computes the Decision...");
 		String decisionId="";
-		String accessrequestId="";
+		//String accessrequestId="";
 		String threatId="";
 
 		logger.info("RT2AE: receives DENY policyCompliance from EP");
@@ -239,7 +239,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 			accessRequests.add(accessrequest1);
 			try {
-				accessrequestId = dbManager.setAccessRequest(accessrequest1);
+				dbManager.setAccessRequest(accessrequest1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
@@ -271,6 +271,59 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Virus")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Insufficient screen Look timeout")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Screen Lock Disabled")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Antivirus is not running")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Bluetooth enabled might turn into data leakage problems")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+
+			}if(clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Virus")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Insufficient screen Look timeout")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Screen Lock Disabled")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Antivirus is not running")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Bluetooth enabled might turn into data leakage problems")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+
 			}
 			
 			
@@ -418,7 +471,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				accessRequests.add(accessrequest1);
 				
 				try {
-					accessrequestId = dbManager.setAccessRequest(accessrequest1);
+					 dbManager.setAccessRequest(accessrequest1);
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
@@ -453,6 +506,33 @@ public class Rt2aeServerImpl implements Rt2ae {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
 				}
 				
+				if(clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Virus")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Insufficient screen Look timeout")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Screen Lock Disabled")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Antivirus is not running")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Bluetooth enabled might turn into data leakage problems")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+
+				}
 				return decision;
 			}
 			riskPolicy.setRiskvalue(0.5);
@@ -752,11 +832,38 @@ public class Rt2aeServerImpl implements Rt2ae {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
 			}
 			
+			if(clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Virus")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Insufficient screen Look timeout")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Screen Lock Disabled")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Antivirus is not running")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Bluetooth enabled might turn into data leakage problems")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+
+			}
 			return decision;
 
 		}
 		
-		if (clues.get(0).getName().contains("VIRUS")){
+		if (clues.get(0).getName().contains("Virus")){
 			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 			RiskTreatment [] riskTreatments = new RiskTreatment[1];
 			RiskTreatment riskTreatment = new RiskTreatment(sendingemail);
@@ -845,7 +952,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 		}
 		
-		if (clues.get(0).getName().contains("UnsecureWifi") && (accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("CONFIDENTIAL")||accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("STRICTLYCONFIDENTIAL"))){
+		if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && (accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("CONFIDENTIAL")||accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("STRICTLYCONFIDENTIAL"))){
 			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 			RiskTreatment [] riskTreatments = new RiskTreatment[1];
 			RiskTreatment riskTreatment = new RiskTreatment(opensensitivedocumentinunsecurenetwork);
@@ -1005,6 +1112,34 @@ public class Rt2aeServerImpl implements Rt2ae {
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
 			}
+			
+			if(clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Virus")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Insufficient screen Look timeout")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Screen Lock Disabled")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Antivirus is not running")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2);
+
+			}
+			if(clues.get(0).getName().equalsIgnoreCase("Bluetooth enabled might turn into data leakage problems")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+
+			}
 
 			return decision;
 
@@ -1060,6 +1195,33 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Virus")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Insufficient screen Look timeout")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Screen Lock Disabled")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.INSUFFICIENT_SCREEN_LOOK_TIMEOUT);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Antivirus is not running")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2);
+
+				}
+				if(clues.get(0).getName().equalsIgnoreCase("Bluetooth enabled might turn into data leakage problems")){
+					decision.setSolving_risktreatment(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER);
+
 				}
 				
 				return decision;
