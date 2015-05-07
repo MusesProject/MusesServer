@@ -1952,20 +1952,23 @@ public class DBManager {
 		EventType type = getEventTypeByKey(eventType);
 		
 		SimpleEvents event = findLastEventByEventType(type.getEventTypeId());
-		Assets asset = findAssetById(assetId);
-		event.setAsset(asset);
-		try {
-			session = getSessionFactory().openSession();
-			trans = session.beginTransaction();
-			session.update(event);
-			trans.commit();
-		} catch (Exception e) {
-			if (trans!=null) trans.rollback();
-			logger.log(Level.ERROR, e.getMessage());
-		} finally {
-			if (session!=null) session.close();
-		} 
-		
+		if (event != null) {
+			Assets asset = findAssetById(assetId);
+			event.setAsset(asset);
+			try {
+				session = getSessionFactory().openSession();
+				trans = session.beginTransaction();
+				session.update(event);
+				trans.commit();
+			} catch (Exception e) {
+				if (trans != null)
+					trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session != null)
+					session.close();
+			}
+		}
 		return event;
 		
 	}
@@ -1988,8 +1991,12 @@ public class DBManager {
 		} finally {
 			if (session!=null) session.close();
 		} 
-		
-		return list.get(list.size() - 1);		
+		if (list.size()>0){
+			event = list.get(list.size() - 1);
+		}else{
+			logger.info("Error: Query returned empty list");
+		}
+		return event;		
 	}
 	
     /**

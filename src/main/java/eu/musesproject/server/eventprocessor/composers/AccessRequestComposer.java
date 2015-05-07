@@ -134,11 +134,11 @@ public class AccessRequestComposer {
 			if (requestedCorporateAsset.getConfidential_level().equals(Constants.PUBLIC)){
 				requestedCorporateAsset.setValue(0);
 			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.INTERNAL)){
-				requestedCorporateAsset.setValue(10000);
+				requestedCorporateAsset.setValue(100);
 			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.CONFIDENTIAL)){
-				requestedCorporateAsset.setValue(1000000);
+				requestedCorporateAsset.setValue(10000);
 			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.STRICTLY_CONFIDENTIAL)){
-				requestedCorporateAsset.setValue(10000000);
+				requestedCorporateAsset.setValue(1000000);
 			}
 		}else{
 			requestedCorporateAsset.setValue(0);
@@ -156,11 +156,11 @@ public class AccessRequestComposer {
 		//SimpleEvents simpleEvent = dbManager.findLastEventByEventType(type.getEventTypeId());
 		//entityAsset.setEvent(simpleEvent);
 
-		dbManager.setAsset(entityAsset);
+		String assetId = dbManager.setAsset(entityAsset);
 		
 		//Assign correct asset to simple event
 		
-		//dbManager.updateSimpleEvent(event.getType(), assetId );
+		dbManager.updateSimpleEvent(event.getType(), assetId );
 		
 		
 		
