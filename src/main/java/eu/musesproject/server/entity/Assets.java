@@ -1,8 +1,19 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 
 /**
@@ -18,6 +29,8 @@ import java.util.List;
 	 			query="SELECT a FROM Assets a where a.location = :location"),
 	@NamedQuery(name="Assets.findByTitle", 
 				query="SELECT a FROM Assets a where a.title = :title"),
+	@NamedQuery(name="Assets.findById", 
+				query="SELECT a FROM Assets a where a.assetId = :assetId"),			
 	@NamedQuery(name="Assets.deleteAssetByTitle", 
 				query="delete FROM Assets a where a.title = :title")
 })
@@ -172,5 +185,6 @@ public class Assets implements Serializable {
 
 		return threatClue;
 	}
+
 
 }

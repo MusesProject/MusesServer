@@ -49,6 +49,7 @@ import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
@@ -1136,6 +1137,27 @@ public class DBManager {
      * Save Assets list in the DB 
      * @param List<Assets> users
      */
+	public String setAsset(Assets asset) {
+		Session session = null;
+		Transaction trans = null;
+		try {
+			session=getSessionFactory().openSession();
+			trans=session.beginTransaction();
+			session.save(asset);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			logger.log(Level.ERROR, e.getMessage());
+		} finally {
+			if (session!=null) session.close();
+		}
+		return asset.getAssetId();
+	}
+	
+	/**
+     * Save Assets list in the DB 
+     * @param List<Assets> users
+     */
 	public void setClues(List<Clue> clues) {
 		Session session = null;
 		Transaction trans = null;
@@ -1921,6 +1943,76 @@ public class DBManager {
 			if (session!=null) session.close();
 		} 
 		return securityViolations;		
+	}
+
+	public SimpleEvents updateSimpleEvent(String eventType, String assetId) {
+		Session session = null;
+		Transaction trans = null;
+		
+		EventType type = getEventTypeByKey(eventType);
+		
+		SimpleEvents event = findLastEventByEventType(type.getEventTypeId());
+		Assets asset = findAssetById(assetId);
+		event.setAsset(asset);
+		try {
+			session = getSessionFactory().openSession();
+			trans = session.beginTransaction();
+			session.update(event);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			logger.log(Level.ERROR, e.getMessage());
+		} finally {
+			if (session!=null) session.close();
+		} 
+		
+		return event;
+		
+	}
+	
+	public SimpleEvents findLastEventByEventType(int eventTypeId) {
+		Session session = null;
+		Query query = null;
+		SimpleEvents event = null;
+		List<SimpleEvents> list = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("SimpleEvents.findLastEventByEventType").
+						setInteger("event_type_id", eventTypeId);
+			
+			if (query!=null) {
+				list = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		} 
+		
+		return list.get(list.size() - 1);		
+	}
+	
+    /**
+     * Get Asset by id
+     * @param id
+     * @return Assets
+     */
+    public Assets findAssetById(String id) {
+    	Session session = null;
+		Query query = null;
+		List<Assets> assets = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Assets.findById").setString("assetId", id);
+			if (query!=null) {
+				assets = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return assets.get(assets.size() - 1);		
 	}
 
 }

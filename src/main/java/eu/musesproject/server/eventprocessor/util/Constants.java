@@ -29,10 +29,14 @@ public class Constants {
 	public final static String STARTED = "Started";
 	public final static String ACCESS_REQUEST = "AccessRequest";
 	public final static String COMPANY_NAME = "Acme";
-	public final static String CONFIDENTIAL = "confidential";
-	public final static String SUCCESS = "SUCCESS";
+		public final static String SUCCESS = "SUCCESS";
 	public final static String FAIL = "FAIL";
 	public final static String OS_ANDROID = "Android";
 	public final static String OS_WINDOWS = "Windows";
+	public final static String NONE = "NONE";
+	public final static String PUBLIC = "PUBLIC";
+	public final static String CONFIDENTIAL = "CONFIDENTIAL";
+	public final static String STRICTLY_CONFIDENTIAL = "STRICTLY_CONFIDENTIAL";
+	public final static String INTERNAL = "INTERNAL";
 	
 }

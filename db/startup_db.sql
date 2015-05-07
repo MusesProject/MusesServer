@@ -118,7 +118,7 @@ CREATE TABLE `assets` (
   `title` varchar(30) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
   `value` double NOT NULL COMMENT 'represents the real value of the asset',
-  `confidential_level` enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLYCONFIDENTIAL') NOT NULL,
+  `confidential_level` enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLY_CONFIDENTIAL','NONE') NOT NULL,
   `location` varchar(100) NOT NULL COMMENT 'Location of the asset in the hard drive',
   PRIMARY KEY (`asset_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1694 DEFAULT CHARSET=utf8 COMMENT='This one will store all Assets data. All fields are defined in the table.';
@@ -860,5 +860,9 @@ CREATE TABLE `zone` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+ALTER TABLE `assets` CHANGE `confidential_level` `confidential_level` 
+enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLY_CONFIDENTIAL','NONE') NOT NULL;
+
 
 -- Dump completed on 2015-04-24 18:40:37
