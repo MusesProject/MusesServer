@@ -160,10 +160,11 @@ public class AccessRequestComposer {
 		
 		//Assign correct asset to simple event
 		
-		dbManager.updateSimpleEvent(event.getType(), assetId );
+		SimpleEvents associatedEvent = dbManager.updateSimpleEvent(event.getType(), assetId );
 		
-		
-		
+		if (associatedEvent!=null){
+			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
+		}
 		
 		
 		eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(event.getUsername());

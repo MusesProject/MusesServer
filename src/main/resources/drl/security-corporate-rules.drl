@@ -813,8 +813,8 @@ rule "Blacklist app 00001"
 	then
 		
 		StatusGlobal.log("New corporate policy. Id:1 ROOTED DEVICE");
-		//int id = Rt2aeGlobal.composeAccessRequest(e,"Your device is rooted\nMalware can easily breach your mobile security. Gaining root access also entails circumventing the security restrictions put in place by the Android operating system","DENY", "<isRooted>true</isRooted>");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"El dispositivo esta rooteado\nLa seguridad del movil puede ser afectada por malware. Conseguir acceso root permite evitar restricciones de seguridad configuradas por el sistema operativo Android.","DENY", "<isRooted>true</isRooted>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Your device is rooted\nMalware can easily breach your mobile security. Gaining root access also entails circumventing the security restrictions put in place by the Android operating system","DENY", "<isRooted>true</isRooted>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"El dispositivo esta rooteado\nLa seguridad del movil puede ser afectada por malware. Conseguir acceso root permite evitar restricciones de seguridad configuradas por el sistema operativo Android.","DENY", "<isRooted>true</isRooted>");
 		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Rooted device");
