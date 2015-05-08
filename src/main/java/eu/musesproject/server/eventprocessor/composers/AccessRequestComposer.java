@@ -21,12 +21,13 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
+import java.util.Date;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Assets;
-import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
@@ -155,7 +156,7 @@ public class AccessRequestComposer {
 		//EventType type = dbManager.getEventTypeByKey(event.getType());
 		//SimpleEvents simpleEvent = dbManager.findLastEventByEventType(type.getEventTypeId());
 		//entityAsset.setEvent(simpleEvent);
-
+		entityAsset.setAvailable(new Date());
 		String assetId = dbManager.setAsset(entityAsset);
 		
 		//Assign correct asset to simple event
