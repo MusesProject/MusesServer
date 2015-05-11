@@ -43,6 +43,7 @@ import org.apache.log4j.Logger;
 import eu.musesproject.server.scheduler.ModuleType;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
+import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.SystemLogKrs;
@@ -129,13 +130,21 @@ public class DataMiner {
 				
 				/* Looking if that event caused a security violation */
 				List<SecurityViolation> securityViolations = dbManager.findSecurityViolationByEventId(event.getEventId());
-				BigInteger securityIncident = new BigInteger(securityViolations.get(0).getSecurityViolationId());
-				logEntry.setSecurityIncidentId(securityIncident);
+				if (securityViolations.size() > 0) {
+					BigInteger securityIncident = new BigInteger(securityViolations.get(0).getSecurityViolationId());
+					logEntry.setSecurityIncidentId(securityIncident);
+				} else {
+					logEntry.setSecurityIncidentId(BigInteger.ZERO);
+				}
 				
 				/* Checking the device security state of the device */
+				logEntry.setDeviceSecurityState(BigInteger.ZERO);
 				
 				/* Looking for the risk treatment in case the event caused a security violation */
-				
+				List<RiskInformation> riskTreatment = dbManager.findRiskInformationByEventId(event.getEventId());
+				BigInteger treatment = new BigInteger(riskTreatment.get(0).getRiskInformationId());
+				logEntry.setRiskTreatment(treatment.intValue());
+								
 				/* Time when the event was detected in the device */
 				
 				/* Time when was received and processed in the server */
