@@ -385,7 +385,7 @@ public class Rt2aeGlobal {
 		
 		//Store security violation in db
 		
-		storeComplexEvent(event, message, mode, condition);
+		storeComplexEvent(event, message, mode, condition, composedRequest.getEventId());
 		
 		PolicyCompliance policyCompliance = policyCompliance(composedRequest, message, event, mode, condition);
 		try{
@@ -630,6 +630,27 @@ public class Rt2aeGlobal {
 		securityViolation.setDeviceId(new BigInteger(dbManager.getDeviceByIMEI(event.getDeviceId()).getDeviceId()));
 
 		securityViolation.setEventId(new BigInteger("2"));
+		securityViolation.setMessage(message);
+		securityViolation.setModeText(mode);
+		Users user = dbManager.getUserByUsername(event.getUsername());
+		if (user != null){
+			securityViolation.setUserId(new BigInteger(user.getUserId()));
+		}
+		dbManager.setSecurityViolation(securityViolation);
+
+	}
+	
+	public void storeComplexEvent(Event event, String message, String mode, String condition, Long eventId) {
+
+		// Database insertion
+
+		SecurityViolation securityViolation = new SecurityViolation();
+		securityViolation.setConditionText(condition);
+		securityViolation.setDetection(new Date());
+		
+		securityViolation.setDeviceId(new BigInteger(dbManager.getDeviceByIMEI(event.getDeviceId()).getDeviceId()));
+
+		securityViolation.setEventId(BigInteger.valueOf(eventId));
 		securityViolation.setMessage(message);
 		securityViolation.setModeText(mode);
 		Users user = dbManager.getUserByUsername(event.getUsername());

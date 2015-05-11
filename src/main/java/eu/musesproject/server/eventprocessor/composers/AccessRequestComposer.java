@@ -21,17 +21,21 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
+import java.util.Date;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.server.db.handler.DBManager;
-import eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal;
+import eu.musesproject.server.entity.Assets;
+import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent;
+import eu.musesproject.server.eventprocessor.util.Constants;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.Asset;
@@ -51,6 +55,7 @@ public class AccessRequestComposer {
 		
 		AccessRequest composedRequest = new AccessRequest();
 		Asset requestedCorporateAsset = new Asset();
+		Assets entityAsset = null;
 		
 		if (event.getType()!=null){
 			if (event.getType().equals(EventTypes.FILEOBSERVER)){
@@ -59,14 +64,23 @@ public class AccessRequestComposer {
 					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
 					requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
 				
-					if ((fileEvent.getResourceType()!=null)&&(fileEvent.getResourceType().equals("sensitive"))){
-						requestedCorporateAsset.setConfidential_level("CONFIDENTIAL");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+//					if ((fileEvent.getResourceType()!=null)&&(fileEvent.getResourceType().equals("sensitive"))){
+//						requestedCorporateAsset.setConfidential_level("CONFIDENTIAL");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+//					}else{
+//						requestedCorporateAsset.setConfidential_level("PUBLIC");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+//					}
+					if (fileEvent.getResourceType()!=null){
+						requestedCorporateAsset.setConfidential_level(fileEvent.getResourceType());
 					}else{
-						requestedCorporateAsset.setConfidential_level("PUBLIC");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+						requestedCorporateAsset.setConfidential_level(Constants.PUBLIC);
 					}
-				
 					composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
+					
+					//Store asset
+					requestedCorporateAsset.setDescription(EventTypes.FILEOBSERVER);
+					entityAsset = convertAsset(requestedCorporateAsset);
+					dbManager.setAsset(entityAsset);
 				}
 			}else if (event.getType().equals(EventTypes.APPOBSERVER)){
 				if (event instanceof AppObserverEvent){
@@ -75,6 +89,8 @@ public class AccessRequestComposer {
 					requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
 					composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
 					composedRequest.setEventId(appEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.APPOBSERVER);
+					
 				}
 			}else if (event.getType().equals(EventTypes.SEND_MAIL)){
 				if (event instanceof EmailEvent) {
@@ -83,6 +99,7 @@ public class AccessRequestComposer {
 							.getAttachmentName());
 					composedRequest.setAction(emailEvent.getType());// Get the action over the asset
 					composedRequest.setEventId(emailEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.SEND_MAIL);
 				}
 			}else if (event.getType().equals(EventTypes.CHANGE_SECURITY_PROPERTY)){
 				if (event instanceof ChangeSecurityPropertyEvent) {
@@ -90,10 +107,11 @@ public class AccessRequestComposer {
 					requestedCorporateAsset = new Asset();//TODO It is not clear what is the asset when a device setting is changed
 					requestedCorporateAsset.setId(0);
 					requestedCorporateAsset.setLocation("device");
-					requestedCorporateAsset.setValue(400);
+					//requestedCorporateAsset.setValue(400);
 					logger.log(Level.INFO, "ACTION TYPE:"+changeSecurityPropertyEvent.getType());
 					composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.CHANGE_SECURITY_PROPERTY);
 				}
 			}else if (event.getType().equals(EventTypes.SAVE_ASSET)){
 				if (event instanceof FileObserverEvent) {
@@ -102,21 +120,54 @@ public class AccessRequestComposer {
 					requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
 					composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.SAVE_ASSET);
 				}
 			}else {
 				logger.log(Level.INFO, "Unsupported Event type:"+event.getType());
+				requestedCorporateAsset.setDescription(event.getType());
 			}
 		}else{
 			logger.log(Level.INFO, "Null type for event instantiated as:" + event.getClass().getName());
 		}
 		
-		requestedCorporateAsset.setValue(0);
+		//Set value according to sensitivity level
+		if (requestedCorporateAsset.getConfidential_level()!=null){
+			if (requestedCorporateAsset.getConfidential_level().equals(Constants.PUBLIC)){
+				requestedCorporateAsset.setValue(0);
+			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.INTERNAL)){
+				requestedCorporateAsset.setValue(100);
+			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.CONFIDENTIAL)){
+				requestedCorporateAsset.setValue(10000);
+			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.STRICTLY_CONFIDENTIAL)){
+				requestedCorporateAsset.setValue(1000000);
+			}
+		}else{
+			requestedCorporateAsset.setValue(0);
+		}
+		
 		if (event instanceof OpenFileEvent){
 			OpenFileEvent fileEvent = (OpenFileEvent)event;
 			requestedCorporateAsset.setTitle(fileEvent.getAssetTypeId());//TODO Asset information should be completed
 		}
 		
-
+		//Store asset
+		entityAsset = convertAsset(requestedCorporateAsset);
+		//Associate event_id in the asset table
+		//EventType type = dbManager.getEventTypeByKey(event.getType());
+		//SimpleEvents simpleEvent = dbManager.findLastEventByEventType(type.getEventTypeId());
+		//entityAsset.setEvent(simpleEvent);
+		entityAsset.setAvailable(new Date());
+		String assetId = dbManager.setAsset(entityAsset);
+		
+		//Assign correct asset to simple event
+		
+		SimpleEvents associatedEvent = dbManager.updateSimpleEvent(event.getType(), assetId );
+		
+		if (associatedEvent!=null){
+			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
+		}
+		
+		
 		eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(event.getUsername());
 		
 		eu.musesproject.server.entity.Devices musesDevice = dbManager.getDeviceByIMEI(event.getDeviceId());
@@ -163,6 +214,32 @@ public class AccessRequestComposer {
 		userTrustValue.setValue(2000);
 		user.setUsertrustvalue(userTrustValue);
 		return user;
+	}
+	
+	private static Assets convertAsset(Asset asset){
+		Assets assets = new Assets();
+		if (asset.getConfidential_level()==null){
+			assets.setConfidentialLevel(Constants.PUBLIC);
+		}else{
+			assets.setConfidentialLevel(asset.getConfidential_level());
+		}	
+		if (asset.getLocation()==null){
+			assets.setLocation("");
+		}else{
+			assets.setLocation(asset.getLocation());
+		}
+		if (asset.getTitle()==null){
+			assets.setTitle("");
+		}else{
+			assets.setTitle(asset.getTitle());
+		}
+		if (asset.getDescription()==null){
+			assets.setDescription("");
+		}else{
+			assets.setDescription(asset.getDescription());
+		}
+		assets.setValue(asset.getValue());
+		return assets;
 	}
 	
 	

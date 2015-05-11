@@ -50,6 +50,7 @@ import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
@@ -835,7 +836,6 @@ public class DBManager {
      */
 	public String setThreat(Threat threat) {
 		
-			Threat threat1 = new Threat();
 			
 			String threatId="";
 			Session session = null;
@@ -1132,6 +1132,27 @@ public class DBManager {
 				if (session!=null) session.close();
 			} 
 		}
+	}
+	
+	/**
+     * Save Assets list in the DB 
+     * @param List<Assets> users
+     */
+	public String setAsset(Assets asset) {
+		Session session = null;
+		Transaction trans = null;
+		try {
+			session=getSessionFactory().openSession();
+			trans=session.beginTransaction();
+			session.save(asset);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			logger.log(Level.ERROR, e.getMessage());
+		} finally {
+			if (session!=null) session.close();
+		}
+		return asset.getAssetId();
 	}
 	
 	/**
@@ -1946,6 +1967,83 @@ public class DBManager {
 			if (session!=null) session.close();
 		} 
 		return riskInformation;		
+	}
+
+	public SimpleEvents updateSimpleEvent(String eventType, String assetId) {
+		Session session = null;
+		Transaction trans = null;
+		
+		EventType type = getEventTypeByKey(eventType);
+		
+		SimpleEvents event = findLastEventByEventType(type.getEventTypeId());
+		if (event != null) {
+			Assets asset = findAssetById(assetId);
+			event.setAsset(asset);
+			try {
+				session = getSessionFactory().openSession();
+				trans = session.beginTransaction();
+				session.update(event);
+				trans.commit();
+			} catch (Exception e) {
+				if (trans != null)
+					trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session != null)
+					session.close();
+			}
+		}
+		return event;
+		
+	}
+	
+	public SimpleEvents findLastEventByEventType(int eventTypeId) {
+		Session session = null;
+		Query query = null;
+		SimpleEvents event = null;
+		List<SimpleEvents> list = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("SimpleEvents.findLastEventByEventType").
+						setInteger("event_type_id", eventTypeId);
+			
+			if (query!=null) {
+				list = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		} 
+		if (list.size()>0){
+			event = list.get(list.size() - 1);
+		}else{
+			logger.info("Error: Query returned empty list");
+		}
+		return event;		
+	}
+	
+    /**
+     * Get Asset by id
+     * @param id
+     * @return Assets
+     */
+    public Assets findAssetById(String id) {
+    	Session session = null;
+		Query query = null;
+		List<Assets> assets = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Assets.findById").setString("assetId", id);
+			if (query!=null) {
+				assets = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return assets.get(assets.size() - 1);		
 	}
 
 }

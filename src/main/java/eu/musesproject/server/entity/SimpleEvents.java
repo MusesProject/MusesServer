@@ -21,7 +21,9 @@ import java.util.List;
 	@NamedQuery(name="SimpleEvents.findLastByUserId", 
     			query="SELECT s FROM SimpleEvents s where s.user = :user_id and (s.date = :day and s.time < :time) or s.date < :day"),
 	@NamedQuery(name="SimpleEvents.findNextByUserId", 
-    			query="SELECT s FROM SimpleEvents s where s.user = :user_id and (s.date = :day and s.time > :time) or s.date > :day")
+    			query="SELECT s FROM SimpleEvents s where s.user = :user_id and (s.date = :day and s.time > :time) or s.date > :day"),
+    @NamedQuery(name="SimpleEvents.findLastEventByEventType", 
+    			query="SELECT s FROM SimpleEvents s where s.eventType = :event_type_id")
 })
 
 public class SimpleEvents implements Serializable {

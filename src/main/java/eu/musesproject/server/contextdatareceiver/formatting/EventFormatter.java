@@ -110,6 +110,10 @@ public class EventFormatter {
 			Logger.getLogger(EventFormatter.class).info("isPasswordProtected:"+dEvent.getIsPasswordProtected());
 			Logger.getLogger(EventFormatter.class).info("isPatternProtected:"+dEvent.getIsPatternProtected());
 			Logger.getLogger(EventFormatter.class).info("accessibilityEnabled:"+dEvent.getAccessibilityEnabled());
+		}else if (cepFileEvent instanceof FileObserverEvent){
+			FileObserverEvent dEvent = (FileObserverEvent) cepFileEvent;
+			Logger.getLogger(EventFormatter.class).info("resourceType:"+dEvent.getResourceType());
+			Logger.getLogger(EventFormatter.class).info("event:"+dEvent.getEvent());
 		}
 		//Set sessionId, if available in the properties
 		Map<String,String> properties = contextEvent.getProperties();

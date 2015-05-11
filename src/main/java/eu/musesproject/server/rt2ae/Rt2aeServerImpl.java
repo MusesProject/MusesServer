@@ -69,9 +69,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 	private String sendingemail = "Sending e-mail with virus\nYour system is infected with a virus and you want to\n send an attachment via e-mail.\n This may cause critical system failure and puts the\n receiver at risk. Remove the virus first.";
 	private String saveconfidentieldocument = "Saving confidential document\n You want to save a confidential document on your device.\n If you loose your\n device, other people may be able to\n access the document.";
+	private String antivirusnotrunning = "Your Antivirus is not running on your device\nPlease launch your Antivirus\n In order to protect your device";
 	private String opensensitivedocumentinunsecurenetwork = "Opening sensitive document in unsecure network\n You are connected to an unsecure network and try\n to open a sensitive document.\n Information sent over this network is not encrypted\n and might be visible to other people.\n Switch to a secure network.";
 	private String privateloungewifi = "Please go to the private lounge secure Wi-Fi";
 	private String wifisniffing = "Wi-Fi sniffing";
+	private String strongdenythreat = "There is too much risk in your context situation, the probability of a threat leading to a security incident is too high ";
 	private String malwarerisktreatment = "Your device seems to have a Malware,please scan you device with an Antivirus or use another device";
 
 	/**
@@ -90,7 +92,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		logger.info("RT2AE computes the Decision...");
 		String decisionId="";
-		String accessrequestId="";
+		//String accessrequestId="";
 		String threatId="";
 
 		logger.info("RT2AE: receives DENY policyCompliance from EP");
@@ -130,6 +132,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				}
 			}
 
+			
+			
 			List<eu.musesproject.server.entity.Threat> currentThreats = new ArrayList<eu.musesproject.server.entity.Threat>();
 			String threatName = "";
 
@@ -222,56 +226,60 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			}
 
-			
 			decision.setInformation(policyCompliance.getReason());
 			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
 			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-			accessrequest1.setAssetId(BigInteger.valueOf(1));//TO DO Adding assetId from EP
-			accessrequest1.setModification(new Date());
-			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction("OPEN_APP");
-			accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
-			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-			
-			
-			
-			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
-			accessRequests.add(accessrequest1);
+
 			try {
-				accessrequestId = dbManager.setAccessRequest(accessrequest1);
+			
+				accessrequest1.setAssetId(BigInteger.valueOf(1));//TO DO Adding assetId from EP
+				accessrequest1.setModification(new Date());
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction("OPEN_APP");
+				accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+				
+				
+				
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				dbManager.setAccessRequest(accessrequest1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
 			}
 			
-			decision1.setAccessRequest(accessrequest1);
-			decision1.setInformation(decision.getInformation());
-			decision1.setValue("STRONGDENY");
-			decision1.setTime(new java.util.Date());
+			
 			
 			try {
+				decision1.setAccessRequest(accessrequest1);
+				decision1.setInformation(decision.getInformation());
+				decision1.setValue("STRONGDENY");
+				decision1.setTime(new java.util.Date());
 				decisionId = dbManager.setDecision(decision1);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
 			}
 			
-			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 			
-			decisiontrustvalues.add(decisiontrustvalue);
 			
 			try {
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
 				dbManager.setDecisionTrustvalues(decisiontrustvalues);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
 			}
+			
 			
 			
 			return decision;
@@ -280,7 +288,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			logger.info("RT2AE: receives ALLOW policyCompliance from EP");
 
 
-			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("PUBLIC") ){
+			if(accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("PUBLIC")){
 				
 				EventProcessorImpl eventProcessorImpl = new EventProcessorImpl();
 
@@ -290,7 +298,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				List<Clue> clues = new ArrayList<Clue>();
 
 				// infer clues from the access request
-
+				
 				for (Asset asset : requestedAssets) {
 
 					clues = eventProcessorImpl.getCurrentClues(accessRequest,
@@ -404,54 +412,59 @@ public class Rt2aeServerImpl implements Rt2ae {
 				}
 
 				
-				decision = Decision.GRANTED_ACCESS;
+				
 				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
 				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-				accessrequest1.setAssetId(BigInteger.valueOf(1));
-				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-				accessrequest1.setAction("OPEN_APP");
-				accessrequest1.setModification(new Date());
-				accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
-				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
-				accessRequests.add(accessrequest1);
 				
 				try {
-					accessrequestId = dbManager.setAccessRequest(accessrequest1);
+					decision = Decision.GRANTED_ACCESS;
+					accessrequest1.setAssetId(BigInteger.valueOf(1));
+					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setAction("OPEN_APP");
+					accessrequest1.setModification(new Date());
+					accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+					accessRequests.add(accessrequest1);
+					 dbManager.setAccessRequest(accessrequest1);
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
 				}
-				decision1.setAccessRequest(accessrequest1);
-				decision1.setValue("GRANTED");
-				decision1.setTime(new java.util.Date());
+			
 				
 				
 				
 				try {
+					decision1.setAccessRequest(accessrequest1);
+					decision1.setValue("GRANTED");
+					decision1.setTime(new java.util.Date());
 					decisionId = dbManager.setDecision(decision1);
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
 				}
 				
-				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
 				
-				decisiontrustvalues.add(decisiontrustvalue);
 				
 				
 				try {
+					
+					ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+					eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+					decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+					decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+					decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+					
+					decisiontrustvalues.add(decisiontrustvalue);
 					dbManager.setDecisionTrustvalues(decisiontrustvalues);
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
 				}
+				
 				
 				return decision;
 			}
@@ -670,351 +683,29 @@ public class Rt2aeServerImpl implements Rt2ae {
 		// compute the decision based on the risk policy, the threat
 		// probabilities, the user trust level and the cost benefit
 		
-		if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")) {
-			decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
-			logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
-			
-			RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-			RiskTreatment riskTreatment = new RiskTreatment(saveconfidentieldocument);
-			if (riskTreatments.length > 0){
-				riskTreatments[0] = riskTreatment;	
-			}				
-				
-			
-			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
-			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
-			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction(accessRequest.getAction());
-			accessrequest1.setModification(new Date());
-			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
-			accessRequests.add(accessrequest1);
-			
-			try {
-				dbManager.setAccessRequests(accessRequests);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
-			}
-			
-			decision1.setAccessRequest(accessrequest1);
-			decision1.setValue("UPTOYOU");
-			decision1.setTime(new java.util.Date());
-			RiskCommunication riskcommunication1 = new RiskCommunication();
-			riskcommunication1.setDescription("Saving file");
-			
-			try {
-				dbManager.setRiskCommunications(riskcommunication1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
-			}
-			
-			
-			List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
-			eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-			risktreatment1.setDescription(saveconfidentieldocument); 
-			risktreatment1.setRiskCommunication(riskcommunication1);
-			risktreatments1.add(risktreatment1);
-			
-			try {
-				dbManager.setRiskTreatments(risktreatments1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
-			}
-			
-			decision1.setRiskCommunication(riskcommunication1);
-			List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
-			list.add(decision1);
-			
-			try {
-				decisionId = dbManager.setDecision(decision1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
-			}
-			
-			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
-			
-			decisiontrustvalues.add(decisiontrustvalue);
-			
-			try {
-				dbManager.setDecisionTrustvalues(decisiontrustvalues);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
-			}
-			
-			return decision;
-
-		}
 		
-		if (clues.get(0).getName().contains("VIRUS")){
-			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
-			RiskTreatment [] riskTreatments = new RiskTreatment[1];
-			RiskTreatment riskTreatment = new RiskTreatment(sendingemail);
-			riskTreatments[0] = riskTreatment;	
-			riskCommunication.setRiskTreatment(riskTreatments);
-			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-			decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
-			logger.info("Decision: MAYBE_ACCESS");
-			logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
-			
-			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
-			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
-			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction(accessRequest.getAction());
-			accessrequest1.setModification(new Date());
-
-			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
-			accessRequests.add(accessrequest1);
-			
-			try {
-				dbManager.setAccessRequests(accessRequests);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
-			}
-			
-			decision1.setAccessRequest(accessrequest1);
-			decision1.setValue("MAYBE");
-			decision1.setTime(new java.util.Date());
-			RiskCommunication riskcommunication1 = new RiskCommunication();
-			riskcommunication1.setDescription("Virus detection");
-			
-			try {
-				dbManager.setRiskCommunications(riskcommunication1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
-			}
-			
-			
-			List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
-			eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-			risktreatment1.setDescription(sendingemail); 
-			risktreatment1.setRiskCommunication(riskcommunication1);
-			risktreatments1.add(risktreatment1);
-			
-			try {
-				dbManager.setRiskTreatments(risktreatments1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
-			}
-			
-			decision1.setRiskCommunication(riskcommunication1);
-			List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
-			list.add(decision1);
-			
-			try {
-				decisionId = dbManager.setDecision(decision1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
-			}
-			
-			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
-			
-			decisiontrustvalues.add(decisiontrustvalue);
-			
-			try {
-				dbManager.setDecisionTrustvalues(decisiontrustvalues);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
-			}
-			
-			
-			return decision;
-			
-		}
 		
-		if (clues.get(0).getName().contains("UnsecureWifi") && (accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("CONFIDENTIAL")||accessRequest.getRequestedCorporateAsset().getConfidential_level().equalsIgnoreCase("STRICTLYCONFIDENTIAL"))){
-			eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
-			RiskTreatment [] riskTreatments = new RiskTreatment[1];
-			RiskTreatment riskTreatment = new RiskTreatment(opensensitivedocumentinunsecurenetwork);
-			riskTreatments[0] = riskTreatment;	
-			riskCommunication.setRiskTreatment(riskTreatments);
-			decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-			decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_NETWORK);
-			decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-			logger.info("Decision: MAYBE_ACCESS");
-			logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
-			
-			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
-			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
-			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction(accessRequest.getAction());
-			accessrequest1.setModification(new Date());
-
-			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
-			accessRequests.add(accessrequest1);
-			
-			try {
-				dbManager.setAccessRequests(accessRequests);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
-			}
-			
-			decision1.setAccessRequest(accessrequest1);
-			decision1.setValue("MAYBE");
-			decision1.setTime(new java.util.Date());
-			RiskCommunication riskcommunication1 = new RiskCommunication();
-			riskcommunication1.setDescription("Unsecure network");
-			
-			try {
-				dbManager.setRiskCommunications(riskcommunication1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
-			}
-			
-			
-			List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
-			eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-			risktreatment1.setDescription(opensensitivedocumentinunsecurenetwork); 
-			risktreatment1.setRiskCommunication(riskcommunication1);
-			risktreatments1.add(risktreatment1);
-			
-			
-			try {
-				dbManager.setRiskTreatments(risktreatments1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
-			}
-			
-			decision1.setRiskCommunication(riskcommunication1);
-			List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
-			list.add(decision1);
-			
-			try {
-				decisionId = dbManager.setDecision(decision1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
-			}
-			
-			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
-			
-			decisiontrustvalues.add(decisiontrustvalue);
-			
-			try {
-				dbManager.setDecisionTrustvalues(decisiontrustvalues);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
-			}
-			
-			return decision;
-			
-		}
-
-		/*if (riskPolicy.getRiskvalue() == 0.0) {
-			
-			decision = Decision.GRANTED_ACCESS; 
-			logger.info("Decision: GRANTED_ACCESS");
-
-			return decision;
-
-		}
-
-		if (riskPolicy.getRiskvalue() == 1.0) {
-			decision = Decision.STRONG_DENY_ACCESS; 
-			logger.info("Decision: STRONG_DENY_ACCESS");
-			
-
-			return decision;
-
-		}*/
+	
 		
 		Double trustvalue = (accessRequest
 				.getUser().getUsertrustvalue().getValue()+accessRequest.getDevice().getDevicetrustvalue().getValue())/2;
-		if ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 <= riskPolicy
-				.getRiskvalue()) {
+		
+		if(((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 > riskPolicy
+				.getRiskvalue()) && ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 < 0.7) ){
+		
 			
-			decision = Decision.GRANTED_ACCESS; 
-			logger.info("Decision: GRANTED_ACCESS");
-			
-			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
-			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
-			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
-			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-			accessrequest1.setAction(accessRequest.getAction());
-			accessrequest1.setModification(new Date());
-
-			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
-			accessRequests.add(accessrequest1);
-			
-			try {
-				dbManager.setAccessRequests(accessRequests);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
-			}
-			decision1.setAccessRequest(accessrequest1);
-			decision1.setValue("GRANTED");
-			decision1.setTime(new java.util.Date());
-			
-			try {
-				decisionId = dbManager.setDecision(decision1);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
-			}
-			
-			
-			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
-
-			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
-			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
-			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
-			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
-			
-			decisiontrustvalues.add(decisiontrustvalue);
-			
-			try {
-				dbManager.setDecisionTrustvalues(decisiontrustvalues);
-
-			} catch (Exception e) {
-				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
-			}
-
-			return decision;
-
-		} else {
-
-			if (costOpportunity > 0){
-				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS; 
-				logger.info("Decision: MAYBE_ACCESS_WITH_RISKTREATMENTS");
-
-				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+			if (clues.get(0).getName().contains("Virus")){
+				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+				RiskTreatment [] riskTreatments = new RiskTreatment[1];
+				RiskTreatment riskTreatment = new RiskTreatment(sendingemail);
+				riskTreatments[0] = riskTreatment;	
+				riskCommunication.setRiskTreatment(riskTreatments);
+				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+				logger.info("Decision: MAYBE_ACCESS");
+				logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+				
 				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
@@ -1023,8 +714,6 @@ public class Rt2aeServerImpl implements Rt2ae {
 				accessrequest1.setModification(new Date());
 
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-				
-				
 				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 				accessRequests.add(accessrequest1);
 				
@@ -1034,10 +723,216 @@ public class Rt2aeServerImpl implements Rt2ae {
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
 				}
+				
 				decision1.setAccessRequest(accessrequest1);
-				decision1.setInformation(decision.getInformation());
 				decision1.setValue("MAYBE");
 				decision1.setTime(new java.util.Date());
+				RiskCommunication riskcommunication1 = new RiskCommunication();
+				riskcommunication1.setDescription("Virus detection");
+				
+				try {
+					dbManager.setRiskCommunications(riskcommunication1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+				}
+				
+				
+				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+				risktreatment1.setDescription(sendingemail); 
+				risktreatment1.setRiskCommunication(riskcommunication1);
+				risktreatments1.add(risktreatment1);
+				
+				try {
+					dbManager.setRiskTreatments(risktreatments1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+				}
+				
+				decision1.setRiskCommunication(riskcommunication1);
+				List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+				list.add(decision1);
+				
+				try {
+					decisionId = dbManager.setDecision(decision1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+				}
+				
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
+				
+				try {
+					dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+				}
+				
+				
+				return decision;
+				
+			}
+			
+			if (clues.get(0).getName().contains("Antivirus is not running")){
+				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+				RiskTreatment [] riskTreatments = new RiskTreatment[1];
+				RiskTreatment riskTreatment = new RiskTreatment(antivirusnotrunning);
+				riskTreatments[0] = riskTreatment;	
+				riskCommunication.setRiskTreatment(riskTreatments);
+				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+				logger.info("Decision: MAYBE_ACCESS");
+				logger.info("RISKTREATMENTS:Your Antivirus is not running on your device,please launch your Antivirus in order to protect your device");
+				
+				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setModification(new Date());
+
+				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				
+				try {
+					dbManager.setAccessRequests(accessRequests);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+				}
+				
+				decision1.setAccessRequest(accessrequest1);
+				decision1.setValue("MAYBE");
+				decision1.setTime(new java.util.Date());
+				RiskCommunication riskcommunication1 = new RiskCommunication();
+				riskcommunication1.setDescription("Virus detection");
+				
+				try {
+					dbManager.setRiskCommunications(riskcommunication1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+				}
+				
+				
+				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+				risktreatment1.setDescription(sendingemail); 
+				risktreatment1.setRiskCommunication(riskcommunication1);
+				risktreatments1.add(risktreatment1);
+				
+				try {
+					dbManager.setRiskTreatments(risktreatments1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+				}
+				
+				decision1.setRiskCommunication(riskcommunication1);
+				List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+				list.add(decision1);
+				
+				try {
+					decisionId = dbManager.setDecision(decision1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+				}
+				
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
+				
+				try {
+					dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+				}
+				
+				
+				return decision;
+				
+			}
+			
+			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+				RiskTreatment [] riskTreatments = new RiskTreatment[1];
+				RiskTreatment riskTreatment = new RiskTreatment(opensensitivedocumentinunsecurenetwork);
+				riskTreatments[0] = riskTreatment;	
+				riskCommunication.setRiskTreatment(riskTreatments);
+				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_NETWORK);
+				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
+				logger.info("Decision: MAYBE_ACCESS");
+				logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
+				
+				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setModification(new Date());
+
+				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				
+				try {
+					dbManager.setAccessRequests(accessRequests);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+				}
+				
+				decision1.setAccessRequest(accessrequest1);
+				decision1.setValue("MAYBE");
+				decision1.setTime(new java.util.Date());
+				RiskCommunication riskcommunication1 = new RiskCommunication();
+				riskcommunication1.setDescription("Unsecure network");
+				
+				try {
+					dbManager.setRiskCommunications(riskcommunication1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+				}
+				
+				
+				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+				risktreatment1.setDescription(opensensitivedocumentinunsecurenetwork); 
+				risktreatment1.setRiskCommunication(riskcommunication1);
+				risktreatments1.add(risktreatment1);
+				
+				
+				try {
+					dbManager.setRiskTreatments(risktreatments1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+				}
+				
+				decision1.setRiskCommunication(riskcommunication1);
+				List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+				list.add(decision1);
 				
 				try {
 					decisionId = dbManager.setDecision(decision1);
@@ -1063,24 +958,27 @@ public class Rt2aeServerImpl implements Rt2ae {
 				}
 				
 				return decision;
-			}
-			else{
-
-				decision = Decision.STRONG_DENY_ACCESS; 
-				decision.setInformation(" There is too much risk in your situation to allow you to get access to the Asset");
-				logger.info("Decision: STRONG_DENY_ACCESS_WITH_RISKTREATMENTS");
 				
-				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+			}
+			
+			if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")) {
+				decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
+				logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
+				
+				RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
+				RiskTreatment riskTreatment = new RiskTreatment(saveconfidentieldocument);
+				if (riskTreatments.length > 0){
+					riskTreatments[0] = riskTreatment;	
+				}				
+					
+				
 				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 				accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setModification(new Date());
-
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-				
-				
 				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 				accessRequests.add(accessrequest1);
 				
@@ -1090,13 +988,510 @@ public class Rt2aeServerImpl implements Rt2ae {
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
 				}
+				
 				decision1.setAccessRequest(accessrequest1);
-				decision1.setInformation(decision.getInformation());
-				decision1.setValue("STRONGDENY");
+				decision1.setValue("UPTOYOU");
 				decision1.setTime(new java.util.Date());
+				RiskCommunication riskcommunication1 = new RiskCommunication();
+				riskcommunication1.setDescription("Saving file");
+				
+				try {
+					dbManager.setRiskCommunications(riskcommunication1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+				}
+				
+				
+				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+				risktreatment1.setDescription(saveconfidentieldocument); 
+				risktreatment1.setRiskCommunication(riskcommunication1);
+				risktreatments1.add(risktreatment1);
+				
+				try {
+					dbManager.setRiskTreatments(risktreatments1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+				}
+				
+				decision1.setRiskCommunication(riskcommunication1);
+				List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+				list.add(decision1);
+				
+				try {
+					decisionId = dbManager.setDecision(decision1);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+				}
+				
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
+				
+				try {
+					dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+				}
+				
+				
+				return decision;
+
+			}
+			
+			decision = Decision.GRANTED_ACCESS; 
+			logger.info("Decision: GRANTED_ACCESS");
+			
+			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+			
+			
+			try {
+				
+				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction(accessRequest.getAction());
+				accessrequest1.setModification(new Date());
+
+				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				dbManager.setAccessRequests(accessRequests);
+
+			} catch (Exception e) {
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+			}
+			
+			
+			try {
+				decision1.setAccessRequest(accessrequest1);
+				decision1.setValue("GRANTED");
+				decision1.setTime(new java.util.Date());
+				decisionId = dbManager.setDecision(decision1);
+
+			} catch (Exception e) {
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+			}
+			
+			
+			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+			
+			decisiontrustvalues.add(decisiontrustvalue);
+			
+			try {
+				dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+			} catch (Exception e) {
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+			}
+			
+
+			return decision;
+
+		} else {
+			
+			if ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 <= riskPolicy
+					.getRiskvalue()) {
+				
+				
+				if (clues.get(0).getName().contains("Virus")){
+					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+					RiskTreatment [] riskTreatments = new RiskTreatment[1];
+					RiskTreatment riskTreatment = new RiskTreatment(sendingemail);
+					riskTreatments[0] = riskTreatment;	
+					riskCommunication.setRiskTreatment(riskTreatments);
+					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
+					decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication);
+					decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+					logger.info("Decision: UPTOYOU");
+					logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
+					
+					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setAction(accessRequest.getAction());
+					accessrequest1.setModification(new Date());
+
+					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+					accessRequests.add(accessrequest1);
+					
+					try {
+						dbManager.setAccessRequests(accessRequests);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setAccessRequest(accessrequest1);
+					decision1.setValue("UPTOYOU");
+					decision1.setTime(new java.util.Date());
+					RiskCommunication riskcommunication1 = new RiskCommunication();
+					riskcommunication1.setDescription("Virus detection");
+					
+					try {
+						dbManager.setRiskCommunications(riskcommunication1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+					}
+					
+					
+					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+					risktreatment1.setDescription(sendingemail); 
+					risktreatment1.setRiskCommunication(riskcommunication1);
+					risktreatments1.add(risktreatment1);
+					
+					try {
+						dbManager.setRiskTreatments(risktreatments1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setRiskCommunication(riskcommunication1);
+					List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+					list.add(decision1);
+					
+					try {
+						decisionId = dbManager.setDecision(decision1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+					}
+					
+					ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+					eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+					decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+					decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+					decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+					
+					decisiontrustvalues.add(decisiontrustvalue);
+					
+					try {
+						dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+					}
+					
+					
+					return decision;
+					
+				}
+				
+				if (clues.get(0).getName().contains("Antivirus is not running")){
+					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+					RiskTreatment [] riskTreatments = new RiskTreatment[1];
+					RiskTreatment riskTreatment = new RiskTreatment(antivirusnotrunning);
+					riskTreatments[0] = riskTreatment;	
+					riskCommunication.setRiskTreatment(riskTreatments);
+					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
+					decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication);
+					decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+					logger.info("Decision: UPTOYOU");
+					logger.info("RISKTREATMENTS:Your Antivirus is not running on your device,please launch your Antivirus in order to protect your device");
+					
+					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setAction(accessRequest.getAction());
+					accessrequest1.setModification(new Date());
+
+					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+					accessRequests.add(accessrequest1);
+					
+					try {
+						dbManager.setAccessRequests(accessRequests);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setAccessRequest(accessrequest1);
+					decision1.setValue("UPTOYOU");
+					decision1.setTime(new java.util.Date());
+					RiskCommunication riskcommunication1 = new RiskCommunication();
+					riskcommunication1.setDescription("Antivirus not running");
+					
+					try {
+						dbManager.setRiskCommunications(riskcommunication1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+					}
+					
+					
+					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+					risktreatment1.setDescription(sendingemail); 
+					risktreatment1.setRiskCommunication(riskcommunication1);
+					risktreatments1.add(risktreatment1);
+					
+					try {
+						dbManager.setRiskTreatments(risktreatments1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setRiskCommunication(riskcommunication1);
+					List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+					list.add(decision1);
+					
+					try {
+						decisionId = dbManager.setDecision(decision1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+					}
+					
+					ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+					eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+					decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+					decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+					decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+					
+					decisiontrustvalues.add(decisiontrustvalue);
+					
+					try {
+						dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+					}
+					
+					
+					return decision;
+					
+				}
+				
+				if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
+					RiskTreatment [] riskTreatments = new RiskTreatment[1];
+					RiskTreatment riskTreatment = new RiskTreatment(opensensitivedocumentinunsecurenetwork);
+					riskTreatments[0] = riskTreatment;	
+					riskCommunication.setRiskTreatment(riskTreatments);
+					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
+					decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_NETWORK);
+					decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication);
+					logger.info("Decision: UPTOYOU");
+					logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
+					
+					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setAction(accessRequest.getAction());
+					accessrequest1.setModification(new Date());
+
+					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+					accessRequests.add(accessrequest1);
+					
+					try {
+						dbManager.setAccessRequests(accessRequests);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setAccessRequest(accessrequest1);
+					decision1.setValue("UPTOYOU");
+					decision1.setTime(new java.util.Date());
+					RiskCommunication riskcommunication1 = new RiskCommunication();
+					riskcommunication1.setDescription("Unsecure network");
+					
+					try {
+						dbManager.setRiskCommunications(riskcommunication1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+					}
+					
+					
+					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+					risktreatment1.setDescription(opensensitivedocumentinunsecurenetwork); 
+					risktreatment1.setRiskCommunication(riskcommunication1);
+					risktreatments1.add(risktreatment1);
+					
+					
+					try {
+						dbManager.setRiskTreatments(risktreatments1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setRiskCommunication(riskcommunication1);
+					List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+					list.add(decision1);
+					
+					try {
+						decisionId = dbManager.setDecision(decision1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+					}
+					
+					ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+					eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+					decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+					decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+					decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+					
+					decisiontrustvalues.add(decisiontrustvalue);
+					
+					try {
+						dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+					}
+					
+					return decision;
+					
+				}
+				
+				if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")) {
+					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
+					logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
+					
+					RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
+					RiskTreatment riskTreatment = new RiskTreatment(saveconfidentieldocument);
+					if (riskTreatments.length > 0){
+						riskTreatments[0] = riskTreatment;	
+					}				
+						
+					
+					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setAction(accessRequest.getAction());
+					accessrequest1.setModification(new Date());
+					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+					accessRequests.add(accessrequest1);
+					
+					try {
+						dbManager.setAccessRequests(accessRequests);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setAccessRequest(accessrequest1);
+					decision1.setValue("UPTOYOU");
+					decision1.setTime(new java.util.Date());
+					RiskCommunication riskcommunication1 = new RiskCommunication();
+					riskcommunication1.setDescription("Saving file");
+					
+					try {
+						dbManager.setRiskCommunications(riskcommunication1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskCommunications:"+e.getLocalizedMessage());
+					}
+					
+					
+					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
+					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
+					risktreatment1.setDescription(saveconfidentieldocument); 
+					risktreatment1.setRiskCommunication(riskcommunication1);
+					risktreatments1.add(risktreatment1);
+					
+					try {
+						dbManager.setRiskTreatments(risktreatments1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setRiskTreatments:"+e.getLocalizedMessage());
+					}
+					
+					decision1.setRiskCommunication(riskcommunication1);
+					List<eu.musesproject.server.entity.Decision> list = new ArrayList<eu.musesproject.server.entity.Decision>();
+					list.add(decision1);
+					
+					try {
+						decisionId = dbManager.setDecision(decision1);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
+					}
+					
+					ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+					eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+					decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+					decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+					decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+					
+					decisiontrustvalues.add(decisiontrustvalue);
+					
+					try {
+						dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+					} catch (Exception e) {
+						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+					}
+					
+					
+					return decision;
+
+				}
+				
+				decision = Decision.GRANTED_ACCESS; 
+				logger.info("Decision: GRANTED_ACCESS");
+				
+				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				
 				
 				try {
+					
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setAction(accessRequest.getAction());
+					accessrequest1.setModification(new Date());
+
+					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+					accessRequests.add(accessrequest1);
+					dbManager.setAccessRequests(accessRequests);
+
+				} catch (Exception e) {
+					logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+				}
+				
+				
+				try {
+					decision1.setAccessRequest(accessrequest1);
+					decision1.setValue("GRANTED");
+					decision1.setTime(new java.util.Date());
 					decisionId = dbManager.setDecision(decision1);
 
 				} catch (Exception e) {
@@ -1120,10 +1515,132 @@ public class Rt2aeServerImpl implements Rt2ae {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
 				}
 				
-				return Decision.STRONG_DENY_ACCESS;
+
+				return decision;
+				
+				
+				
 			}
+
+			
 		}
 		
+		if ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 > 0.7) {
+			
+
+			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+
+			try {
+			
+				accessrequest1.setAssetId(BigInteger.valueOf(1));//TO DO Adding assetId from EP
+				accessrequest1.setModification(new Date());
+				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setAction("OPEN_APP");
+				accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+				
+				
+				
+				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+				accessRequests.add(accessrequest1);
+				dbManager.setAccessRequest(accessrequest1);
+
+			} catch (Exception e) {
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+			}
+			
+			
+			
+			try {
+				decision1.setAccessRequest(accessrequest1);
+				decision = Decision.STRONG_DENY_ACCESS;
+				decision.setInformation(strongdenythreat);
+				decision1.setInformation(decision.getInformation());
+				decision1.setValue("STRONGDENY");
+				decision1.setTime(new java.util.Date());
+				decisionId = dbManager.setDecision(decision1);
+
+			} catch (Exception e) {
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
+			}
+			
+			
+			
+			try {
+				ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+				eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+				decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+				decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+				decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+				
+				decisiontrustvalues.add(decisiontrustvalue);
+				dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+			} catch (Exception e) {
+				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+			}
+			
+			
+			return decision;
+		}
+		
+		ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
+		eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
+		eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+		
+		try {
+			decision = Decision.GRANTED_ACCESS;
+			accessrequest1.setAssetId(BigInteger.valueOf(1));
+			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+			accessrequest1.setAction("OPEN_APP");
+			accessrequest1.setModification(new Date());
+			accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+			ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+			accessRequests.add(accessrequest1);
+			 dbManager.setAccessRequest(accessrequest1);
+
+		} catch (Exception e) {
+			logger.error("Please, check database persistence:An error has produced while calling dbManager.setAccessRequests:"+e.getLocalizedMessage());
+		}
+	
+		
+		
+		
+		try {
+			decision1.setAccessRequest(accessrequest1);
+			decision1.setValue("GRANTED");
+			decision1.setTime(new java.util.Date());
+			decisionId = dbManager.setDecision(decision1);
+
+		} catch (Exception e) {
+			logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
+		}
+		
+		
+		
+		
+		try {
+			
+			ArrayList<eu.musesproject.server.entity.DecisionTrustvalues> decisiontrustvalues = new ArrayList<eu.musesproject.server.entity.DecisionTrustvalues>();
+
+			eu.musesproject.server.entity.DecisionTrustvalues decisiontrustvalue = new eu.musesproject.server.entity.DecisionTrustvalues();
+			decisiontrustvalue.setDevicetrustvalue(accessRequest.getDevice().getDevicetrustvalue().getValue());
+			decisiontrustvalue.setUsertrustvalue(accessRequest.getUser().getUsertrustvalue().getValue());
+			decisiontrustvalue.setDecisionId(Integer.parseInt(decisionId));
+			
+			decisiontrustvalues.add(decisiontrustvalue);
+			dbManager.setDecisionTrustvalues(decisiontrustvalues);
+
+		} catch (Exception e) {
+			logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisionTrustvalues:"+e.getLocalizedMessage());
+		}
+		
+		
+		return decision;
 
 	}
       
@@ -2509,6 +3026,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.Decision decision = dbManager.findDecisionById(String.valueOf(securityIncident.getDecisionid())).get(0);
 			
 			eu.musesproject.server.entity.Threat threat =  dbManager.findThreatById(String.valueOf(decision.getAccessRequest().getThreatId())).get(0);
+			
+			threat.setBadOutcomeCount(threat.getBadOutcomeCount()+1);
+			
+			
+			threat.setProbability(threat.getBadOutcomeCount()/threat.getOccurences());
+			dbManager.setThreat(threat);
 			
 			eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(securityIncident.getUser().getSurname());
 			

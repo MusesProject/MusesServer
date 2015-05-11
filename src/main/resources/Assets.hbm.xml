@@ -27,6 +27,11 @@
                 <comment>Location of the asset in the hard drive</comment>
             </column>
         </property>
+        <property name="available" type="datetime">
+            <column name="available" length="19">
+                <comment>Time where an asset would be available if MUSES was not there</comment>
+            </column>
+        </property>
         <set name="threatClues" table="threat_clue" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="asset_id">
