@@ -32,6 +32,7 @@ import eu.musesproject.server.entity.Domains;
 import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.Outcome;
+import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RefinedSecurityRules;
 import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskInformation;
@@ -2044,6 +2045,55 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return assets.get(assets.size() - 1);		
+	}
+    
+    /**
+     * Obtains the patterns obtained by the KRS through the Data Mining process
+     * @param void
+     * @return patterns List of the patterns stored in patterns_krs
+     */
+    public List<PatternsKrs> getPatternsKRS() {
+		Session session = null;
+		Query query = null;
+		List<PatternsKrs> patterns = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findAll");
+			if (query!=null) {
+				patterns = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return patterns;
+	}
+    
+    /**
+     * Fills system_log_krs table in database
+     * @param logs
+     * @return void
+     */
+	public void setPatternsKRS(List<PatternsKrs> patterns) {
+		Session session = null;
+		Transaction trans = null;
+		Iterator<PatternsKrs> i = patterns.iterator();
+		while(i.hasNext()){
+			try {
+				PatternsKrs log = i.next();
+				session = getSessionFactory().openSession();
+				trans = session.beginTransaction();
+				session.save(log);
+				trans.commit();
+			} catch (Exception e) {
+				if (trans!=null) trans.rollback();
+				logger.log(Level.ERROR, e.getMessage());
+			} finally {
+				if (session!=null) session.close();
+			} 
+		}
+		
 	}
 
 }

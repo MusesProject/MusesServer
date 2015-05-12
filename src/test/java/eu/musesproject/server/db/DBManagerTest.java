@@ -24,6 +24,7 @@ import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.Outcome;
+import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.RiskPolicy;
@@ -436,6 +437,62 @@ public class DBManagerTest {
 			assertTrue(true);
 		else
 			fail("There is not any Risk Information corresponding to that event_id.");
+	}
+	
+	@Test
+	public void testGetPatternsKRS() {
+		List<PatternsKrs> List = dbmanager.getPatternsKRS();
+		if (List.size()>0){
+			Iterator<PatternsKrs> i = List.iterator();
+			while(i.hasNext()){
+				PatternsKrs pattern = i.next();
+				assertNotNull(pattern);
+			}
+		}else{
+			fail("There is not any pattern in the database, please start Data Mining process.");
+		}			
+		
+	}
+	
+	@Test
+	public void testSetPatternsKRS() {
+		List<PatternsKrs> list = new ArrayList<PatternsKrs>();
+		PatternsKrs logEntry = new PatternsKrs();
+		logEntry.setActivatedAccount(0);
+		logEntry.setAppMUSESAware(0);
+		logEntry.setAppName(null);
+		logEntry.setAppVendor(null);
+		logEntry.setAssetConfidentialLevel(null);
+		logEntry.setAssetLocation(null);
+		logEntry.setAssetName(null);
+		logEntry.setAssetValue(0);
+		logEntry.setDecisionCause(null);
+		logEntry.setDeviceHasAccessibility(0);
+		logEntry.setDeviceHasAntivirus(0);
+		logEntry.setDeviceHasCertificate(0);
+		logEntry.setDeviceHasPassword(0);
+		logEntry.setDeviceIsRooted(0);
+		logEntry.setDeviceOS(null);
+		logEntry.setDeviceOwnedBy(null);
+		logEntry.setDeviceScreenTimeout(null);
+		logEntry.setDeviceSecurityLevel(0);
+		logEntry.setDeviceTrustValue(0);
+		logEntry.setDeviceType(null);
+		logEntry.setEventLevel(null);
+		logEntry.setEventTime(null);
+		logEntry.setEventType(null);
+		logEntry.setLabel(null);
+		logEntry.setMailContainsBCC(0);
+		logEntry.setMailContainsCC(0);
+		logEntry.setMailHasAttachment(0);
+		logEntry.setMailRecipientAllowed(0);
+		logEntry.setUsername(null);
+		logEntry.setUserRole(null);
+		logEntry.setUserTrustValue(0);
+		
+		list.add(logEntry);
+		dbmanager.setPatternsKRS(list);
+		
 	}
 
 }
