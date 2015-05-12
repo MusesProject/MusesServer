@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 12-may-2015 16:32:00 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="eu.musesproject.server.entity.PatternKrs" table="PATTERNKRS">
+        <id name="logEntryId" type="java.math.BigInteger">
+            <column name="LOGENTRYID" />
+            <generator class="assigned" />
+        </id>
+        <property name="label" type="java.lang.String">
+            <column name="LABEL" />
+        </property>
+        <property name="decisionCause" type="java.lang.String">
+            <column name="DECISIONCAUSE" />
+        </property>
+        <property name="eventType" type="java.lang.String">
+            <column name="EVENTTYPE" />
+        </property>
+        <property name="eventLevel" type="java.lang.String">
+            <column name="EVENTLEVEL" />
+        </property>
+        <property name="username" type="java.lang.String">
+            <column name="USERNAME" />
+        </property>
+        <property name="userTrustValue" type="double">
+            <column name="USERTRUSTVALUE" />
+        </property>
+        <property name="activatedAccount" type="int">
+            <column name="ACTIVATEDACCOUNT" />
+        </property>
+        <property name="userRole" type="java.lang.String">
+            <column name="USERROLE" />
+        </property>
+        <property name="eventTime" type="java.sql.Timestamp">
+            <column name="EVENTTIME" />
+        </property>
+        <property name="deviceType" type="java.lang.String">
+            <column name="DEVICETYPE" />
+        </property>
+        <property name="deviceOS" type="java.lang.String">
+            <column name="DEVICEOS" />
+        </property>
+        <property name="deviceHasAntivirus" type="int">
+            <column name="DEVICEHASANTIVIRUS" />
+        </property>
+        <property name="deviceHasCertificate" type="int">
+            <column name="DEVICEHASCERTIFICATE" />
+        </property>
+        <property name="deviceTrustValue" type="double">
+            <column name="DEVICETRUSTVALUE" />
+        </property>
+        <property name="deviceSecurityLevel" type="int">
+            <column name="DEVICESECURITYLEVEL" />
+        </property>
+        <property name="deviceOwnedBy" type="java.lang.String">
+            <column name="DEVICEOWNEDBY" />
+        </property>
+        <property name="deviceHasPassword" type="int">
+            <column name="DEVICEHASPASSWORD" />
+        </property>
+        <property name="deviceScreenTimeout" type="java.math.BigInteger">
+            <column name="DEVICESCREENTIMEOUT" />
+        </property>
+        <property name="deviceHasAccessibility" type="int">
+            <column name="DEVICEHASACCESSIBILITY" />
+        </property>
+        <property name="deviceIsRooted" type="int">
+            <column name="DEVICEISROOTED" />
+        </property>
+        <property name="appName" type="java.lang.String">
+            <column name="APPNAME" />
+        </property>
+        <property name="appVendor" type="java.lang.String">
+            <column name="APPVENDOR" />
+        </property>
+        <property name="appMUSESAware" type="int">
+            <column name="APPMUSESAWARE" />
+        </property>
+        <property name="assetName" type="java.lang.String">
+            <column name="ASSETNAME" />
+        </property>
+        <property name="assetValue" type="double">
+            <column name="ASSETVALUE" />
+        </property>
+        <property name="assetConfidentialLevel" type="java.lang.String">
+            <column name="ASSETCONFIDENTIALLEVEL" />
+        </property>
+        <property name="assetLocation" type="java.lang.String">
+            <column name="ASSETLOCATION" />
+        </property>
+        <property name="mailRecipientAllowed" type="java.lang.String">
+            <column name="MAILRECIPIENTALLOWED" />
+        </property>
+        <property name="mailContainsCC" type="java.lang.String">
+            <column name="MAILCONTAINSCC" />
+        </property>
+        <property name="mailContainsBCC" type="java.lang.String">
+            <column name="MAILCONTAINSBCC" />
+        </property>
+        <property name="mailHasAttachment" type="int">
+            <column name="MAILHASATTACHMENT" />
+        </property>
+    </class>
+</hibernate-mapping>

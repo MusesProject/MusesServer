@@ -28,7 +28,7 @@ package eu.musesproject.server.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.*;
 
@@ -37,12 +37,12 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="pattern_krs")
+@Table(name="patterns_krs")
 @NamedQueries ({
-	@NamedQuery(name="PatternKrs.findAll",
-			query="SELECT p FROM PatternKrs p")
+	@NamedQuery(name="PatternsKrs.findAll",
+			query="SELECT p FROM PatternsKrs p")
 })
-public class PatternKrs implements Serializable {
+public class PatternsKrs implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -76,7 +76,7 @@ public class PatternKrs implements Serializable {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="event_detection", nullable=false)
-	private Timestamp eventTime;
+	private Date eventTime;
 	
 	@Column(name="device_type", nullable=false)
 	private String deviceType;
@@ -144,7 +144,7 @@ public class PatternKrs implements Serializable {
 	@Column(name="mail_has_attachment", nullable=false)
 	private int mailHasAttachment;
 
-	public PatternKrs() {
+	public PatternsKrs() {
 	}
 
 	public BigInteger getLogEntryId() {
@@ -219,11 +219,11 @@ public class PatternKrs implements Serializable {
 		this.userRole = userRole;
 	}
 
-	public Timestamp getEventTime() {
+	public Date getEventTime() {
 		return eventTime;
 	}
 
-	public void setEventTime(Timestamp eventTime) {
+	public void setEventTime(Date eventTime) {
 		this.eventTime = eventTime;
 	}
 

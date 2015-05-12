@@ -433,7 +433,7 @@ CREATE TABLE `patterns_krs` (
   `device_is_rooted` int(11) NOT NULL COMMENT 'Specify whether the user''s device is (1) or is not (0) rooted',
   `app_name` varchar(50) NOT NULL COMMENT 'Name and version of the application from which the event was thrown',
   `app_vendor` varchar(30) DEFAULT NULL COMMENT 'Vendor of the application',
-  `app_is_MUSES_aware` int(11) DEFAULT '0' COMMENT 'If TRUE (1), the application can be monitored easily (it interacts with the system through the API)',
+  `app_is_MUSES_aware` int(11) NOT NULL COMMENT 'If TRUE (1), the application can be monitored easily (it interacts with the system through the API)',
   `asset_name` varchar(30) COMMENT 'Title of the asset that is being accessed in the event',
   `asset_value` double COMMENT 'Represents the real value of the asset',
   `asset_confidential_level` enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLY_CONFIDENTIAL','NONE') COMMENT 'The confidentiality level of the asset',
