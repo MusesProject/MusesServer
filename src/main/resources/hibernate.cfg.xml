@@ -39,6 +39,7 @@
         <mapping class="eu.musesproject.server.entity.LegalAspects"/>
         <mapping class="eu.musesproject.server.entity.MusesConfig"/>
         <mapping class="eu.musesproject.server.entity.Outcome"/>
+        <mapping class="eu.musesproject.server.entity.PatternKrs"/>
         <mapping class="eu.musesproject.server.entity.RefinedSecurityRules"/>
         <mapping class="eu.musesproject.server.entity.RiskCommunication"/>
         <mapping class="eu.musesproject.server.entity.RiskInformation"/>
