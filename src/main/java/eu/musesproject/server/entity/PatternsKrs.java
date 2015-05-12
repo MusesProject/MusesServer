@@ -133,13 +133,13 @@ public class PatternsKrs implements Serializable {
 	private String assetLocation;
 	
 	@Column(name="mail_recipient_allowed", nullable=false)
-	private int mailRecipientAllowed;
+	private String mailRecipientAllowed;
 	
 	@Column(name="mail_contains_cc", nullable=false)
-	private int mailContainsCC;
+	private String mailContainsCC;
 	
 	@Column(name="mail_contains_bcc", nullable=false)
-	private int mailContainsBCC;
+	private String mailContainsBCC;
 	
 	@Column(name="mail_has_attachment", nullable=false)
 	private int mailHasAttachment;
@@ -371,27 +371,27 @@ public class PatternsKrs implements Serializable {
 		this.assetLocation = assetLocation;
 	}
 
-	public int getMailRecipientAllowed() {
+	public String getMailRecipientAllowed() {
 		return mailRecipientAllowed;
 	}
 
-	public void setMailRecipientAllowed(int mailRecipientAllowed) {
+	public void setMailRecipientAllowed(String mailRecipientAllowed) {
 		this.mailRecipientAllowed = mailRecipientAllowed;
 	}
 
-	public int getMailContainsCC() {
+	public String getMailContainsCC() {
 		return mailContainsCC;
 	}
 
-	public void setMailContainsCC(int mailContainsCC) {
+	public void setMailContainsCC(String mailContainsCC) {
 		this.mailContainsCC = mailContainsCC;
 	}
 
-	public int getMailContainsBCC() {
+	public String getMailContainsBCC() {
 		return mailContainsBCC;
 	}
 
-	public void setMailContainsBCC(int mailContainsBCC) {
+	public void setMailContainsBCC(String mailContainsBCC) {
 		this.mailContainsBCC = mailContainsBCC;
 	}
 

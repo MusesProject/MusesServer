@@ -17,10 +17,7 @@ import java.util.List;
 @NamedQueries ({
 	@NamedQuery(name="Decision.findDecisionById", 
 	    	query="SELECT d FROM Decision d where d.decisionId = :decision_id"),
-	@NamedQuery(name="Decision.findAll",
-			query="SELECT d FROM Decision d"),
-	@NamedQuery(name="Decision.findDecisionByARId",
-			query="SELECT d FROM Decision d where d.accessRequest = :access_request_id")
+	    	@NamedQuery(name="Decision.findAll", query="SELECT d FROM Decision d"),
 })
 public class Decision implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -762,29 +762,6 @@ public class DBManager {
 	}
 	
 	/**
-     * Get Decision list by Access Request id
-     * @param accessRequestId
-     * @return List<Decision>
-     */
-	public List<Decision> findDecisionByARId(String accessRequestId) {
-		Session session = null;
-		Query query = null;
-		List<Decision> decisions = null;
-		try {
-			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("Decision.findDecisionByARId").setString("access_request_id", accessRequestId);
-			if (query!=null) {
-				decisions = query.list();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (session!=null) session.close();
-		}
-		return decisions;		
-	}
-	
-	/**
      * Save Threat list in the DB 
      * @param Threat
      */

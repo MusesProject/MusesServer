@@ -213,16 +213,6 @@ public class DBManagerTest {
 			fail("The Asset was not inserted in the database");*/
 		
 	}
-
-	@Test
-	public void testFindDecisionByARId() {
-		String accessRequestID = "80";
-		List<Decision> decisions = dbmanager.findDecisionByARId(accessRequestID);
-		if(decisions.size()>0)
-			assertTrue(true);
-		else
-			fail("There is not any Decision corresponding to that Access Request ID.");
-	}
 	
 	
 	
