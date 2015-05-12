@@ -410,30 +410,6 @@ public class DBManager {
 		}
 		return securityRuleList;
     }
-
-    /**
-     * Get Decision by access request Id of AccessRequest object  
-     * @param accessRequestId
-     * @return List<Decision>
-     */
-
-    public List<Decision> getDecisionByAccessRequestId(String accessRequestId) {
-    	Session session = null;
-		Query query = null;
-		AccessRequest accessRequest = null;
-		try {
-			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("AccessRequest.findById").setString("access_request_id", accessRequestId);
-			if (query!=null) {
-				accessRequest = (AccessRequest) query.uniqueResult();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (session!=null) session.close();
-		}
-    	return accessRequest.getDecisions();
-    }
     
     /**
      * Get RefinedSecurityRule list by status

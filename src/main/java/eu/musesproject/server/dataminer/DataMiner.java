@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.math.BigInteger;
 
 import eu.musesproject.server.continuousrealtimeeventprocessor.model.*;
@@ -43,6 +45,8 @@ import org.apache.log4j.Logger;
 import eu.musesproject.server.scheduler.ModuleType;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
+import eu.musesproject.server.entity.Decision;
+import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
@@ -104,13 +108,21 @@ public class DataMiner {
 				BigInteger eventID = new BigInteger(event.getEventId());
 				logEntry.setCurrentEventId(eventID);
 				
+				logger.info(eventID);
+				
 				/* Previous event is the last event the user made */
 				String user = event.getUser().getUserId();
 				Date day = event.getDate();
 				String time = event.getTime().toString();
 				List<SimpleEvents> userLastEvents = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.TRUE);
-				BigInteger lastEvent = new BigInteger(userLastEvents.get(userLastEvents.size() - 1).getEventId());
-				logEntry.setPreviousEventId(lastEvent);
+				if (userLastEvents.size() > 0) {
+					BigInteger lastEvent = new BigInteger(userLastEvents.get(userLastEvents.size() - 1).getEventId());
+					logEntry.setPreviousEventId(lastEvent);
+				} else {
+					//logger.warn("No previous events by this user, assigning 0...");
+					logEntry.setPreviousEventId(BigInteger.ZERO);
+				}
+				
 				
 				/* Looking for decision_id in table access_request */
 				BigInteger decisionID = BigInteger.ZERO;
@@ -119,7 +131,7 @@ public class DataMiner {
 					decisionID = accessRequests.get(0).getDecisionId();
 					logEntry.setDecisionId(decisionID);
 				} else {
-					logger.warn("Decision Id not found, assigning 0...");
+					//logger.warn("Decision Id not found, assigning 0...");
 					logEntry.setDecisionId(decisionID);
 				}
 				
@@ -134,6 +146,7 @@ public class DataMiner {
 					BigInteger securityIncident = new BigInteger(securityViolations.get(0).getSecurityViolationId());
 					logEntry.setSecurityIncidentId(securityIncident);
 				} else {
+					//logger.warn("Security violation not found, or this event did not cause a security violation, assigning 0...");
 					logEntry.setSecurityIncidentId(BigInteger.ZERO);
 				}
 				
@@ -142,23 +155,87 @@ public class DataMiner {
 				
 				/* Looking for the risk treatment in case the event caused a security violation */
 				List<RiskInformation> riskTreatment = dbManager.findRiskInformationByEventId(event.getEventId());
-				BigInteger treatment = new BigInteger(riskTreatment.get(0).getRiskInformationId());
-				logEntry.setRiskTreatment(treatment.intValue());
+				if (riskTreatment.size() > 0){
+					BigInteger treatment = new BigInteger(riskTreatment.get(0).getRiskInformationId());
+					logEntry.setRiskTreatment(treatment.intValue());
+				} else {
+					//logger.warn("Risk Treatment not found, or this event did not cause a security violation, assigning 0...");
+					logEntry.setRiskTreatment(0);					
+				}
 								
 				/* Time when the event was detected in the device */
+				Date eventDate = event.getDate();
+				logEntry.setStartTime(eventDate);
 				
 				/* Time when was received and processed in the server */
+				logEntry.setFinishTime(eventDate);
 				
+				list.add(logEntry);
 				
 			}
 		}else{
 			logger.error("There are not simple events in the database, system_log_krs cannot be filled.");
 		}
 		
+		dbManager.setSystemLogKRS(list);
+		
 	}
 	
+	/**
+	  * minePatterns - Method for filling the patterns_krs table in the database. Each row of this table consists of all interesting information related to an event.
+	  *
+	  * @param none 
+	  * 
+	  */
 	@SuppressWarnings("unused")
-	private void minePatterns(Event[] events, Device device, User user){
+	private void minePatterns(SimpleEvents event){
+		
+		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
+		PatternsKrs pattern = new PatternsKrs();
+		
+		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
+		String eventID = event.getEventId();
+		String label;
+		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
+		if (accessRequests.size() > 0) {
+			String decisionID = accessRequests.get(0).getDecisionId().toString();
+			List<Decision> decisions = dbManager.findDecisionById(decisionID);
+			if (decisions.size() > 0) {
+				label = decisions.get(0).getValue();
+				pattern.setLabel(label);
+			} else {
+				//pattern.setLabel(null);
+				/* Secret solution while not having data */
+				if (dbManager.findSecurityViolationByEventId(eventID) != null){
+					pattern.setLabel("STRONGDENY");
+				} else {
+					pattern.setLabel("GRANTED");
+				}
+			}
+		} else {
+			/* Secret solution while not having data */
+			if (dbManager.findSecurityViolationByEventId(eventID) != null){
+				pattern.setLabel("STRONGDENY");
+			} else {
+				pattern.setLabel("GRANTED");
+			}
+		}
+		
+		/* Obtaining decision cause */
+		if (pattern.getLabel().contentEquals("STRONGDENY")){
+			List<SecurityViolation> secViolations = dbManager.findSecurityViolationByEventId(eventID);
+			if (secViolations.size() > 0) {
+				Pattern p = Pattern.compile("<(.+?)>(.+?)</(.+?)>");
+				Matcher matcher = p.matcher(secViolations.get(0).getConditionText());
+				matcher.find();
+				String decisionCause = matcher.group(1);
+				pattern.setDecisionCause(decisionCause);
+			} else {
+				pattern.setDecisionCause("unknown");
+			}
+		} else {
+			pattern.setDecisionCause(null);
+		}
 		
 	}
 	

@@ -17,6 +17,7 @@ import eu.musesproject.server.dataminer.DataMiner;
 import eu.musesproject.server.entity.AdditionalProtection;
 import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.SecurityIncident;
+import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.ThreatClue;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Users;
@@ -141,8 +142,15 @@ public class TestDataMiner {
 	  * 
 	  */
 	@Test
-	public final void testRetrieveUnprocessed() {
-		assertTrue(true);
+	public final void testRetrievePendingEvents() {
+		
+		List<SimpleEvents> eventList = dm.getSimpleEvents();
+		
+		if (eventList.size()>0){
+			dm.retrievePendingEvents(eventList);
+		}else{
+			fail("There are not simple events in the database, please create some events first.");
+		}
 	}
 
 	/**

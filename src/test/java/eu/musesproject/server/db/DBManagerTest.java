@@ -212,9 +212,7 @@ public class DBManagerTest {
 		else
 			fail("The Asset was not inserted in the database");*/
 		
-	}
-	
-	
+	}	
 	
 	@Test
 	public void testGetClues() {
