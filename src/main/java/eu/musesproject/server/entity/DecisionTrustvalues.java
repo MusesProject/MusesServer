@@ -1,6 +1,7 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
 
 
@@ -10,7 +11,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="decision_trustvalues")
-@NamedQuery(name="DecisionTrustvalues.findAll", query="SELECT d FROM DecisionTrustvalues d")
+@NamedQueries ({
+	@NamedQuery(name="DecisionTrustvalues.findAll",
+			query="SELECT d FROM DecisionTrustvalues d"),
+	@NamedQuery(name="DecisionTrustvalues.findByDecisionId",
+			query="SELECT d FROM DecisionTrustvalues d where d.decisionId = :decision_id")
+})
 public class DecisionTrustvalues implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -23,6 +23,7 @@ import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Decision;
+import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskCommunication;
@@ -489,8 +490,17 @@ public class DBManagerTest {
 		logEntry.setUserTrustValue(0);
 		
 		list.add(logEntry);
-		dbmanager.setPatternsKRS(list);
-		
+		dbmanager.setPatternsKRS(list);		
+	}
+	
+	@Test
+	public void testFindDecisionTrustValuesByDecisionId() {
+		String decisionID = "2";
+		List<DecisionTrustvalues> trustValues = dbmanager.findDecisionTrustValuesByDecisionId(decisionID);
+		if(trustValues.size()>0)
+			assertTrue(true);
+		else
+			fail("There is not any Decision TrustValue corresponding to that decision_id.");
 	}
 
 }
