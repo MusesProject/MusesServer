@@ -23,6 +23,7 @@
 	<class>eu.musesproject.server.entity.LegalAspects</class>
 	<class>eu.musesproject.server.entity.MusesConfig</class>
 	<class>eu.musesproject.server.entity.Outcome</class>
+	<class>eu.musesproject.server.entity.PatternsKrs</class>
 	<class>eu.musesproject.server.entity.RefinedSecurityRules</class>
 	<class>eu.musesproject.server.entity.RiskCommunication</class>
 	<class>eu.musesproject.server.entity.RiskInformation</class>

@@ -14,7 +14,9 @@ import javax.persistence.*;
 	@NamedQuery(name="Roles.findAll", 
 				query="SELECT r FROM Roles r"),
 	@NamedQuery(name="Roles.findByName", 
-				query="SELECT r FROM Roles r where r.name = :name")
+				query="SELECT r FROM Roles r where r.name = :name"),
+	@NamedQuery(name="Roles.findById", 
+				query="SELECT r FROM Roles r where r.roleId = :role_id")
 })
 public class Roles implements Serializable {
 	private static final long serialVersionUID = 1L;

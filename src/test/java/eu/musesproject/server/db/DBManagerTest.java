@@ -30,6 +30,7 @@ import eu.musesproject.server.entity.RiskCommunication;
 import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.RiskTreatment;
+import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.SystemLogKrs;
@@ -439,6 +440,46 @@ public class DBManagerTest {
 	}
 	
 	@Test
+	public void testSetPatternsKRS() {
+		List<PatternsKrs> list = new ArrayList<PatternsKrs>();
+		PatternsKrs logEntry = new PatternsKrs();
+		logEntry.setActivatedAccount(0);
+		logEntry.setAppMUSESAware(0);
+		logEntry.setAppName("");
+		logEntry.setAppVendor("");
+		logEntry.setAssetConfidentialLevel("NONE");
+		logEntry.setAssetLocation("");
+		logEntry.setAssetName("");
+		logEntry.setAssetValue(0);
+		logEntry.setDecisionCause("");
+		logEntry.setDeviceHasAccessibility(0);
+		logEntry.setDeviceHasAntivirus(0);
+		logEntry.setDeviceHasCertificate(0);
+		logEntry.setDeviceHasPassword(0);
+		logEntry.setDeviceIsRooted(0);
+		logEntry.setDeviceOS("");
+		logEntry.setDeviceOwnedBy("");
+		logEntry.setDeviceScreenTimeout(BigInteger.ZERO);
+		logEntry.setDeviceSecurityLevel(0);
+		logEntry.setDeviceTrustValue(0);
+		logEntry.setDeviceType("");
+		logEntry.setEventLevel("");
+		logEntry.setEventTime(new Date());
+		logEntry.setEventType("");
+		logEntry.setLabel("GRANTED");
+		logEntry.setMailContainsBCC(0);
+		logEntry.setMailContainsCC(0);
+		logEntry.setMailHasAttachment(0);
+		logEntry.setMailRecipientAllowed(0);
+		logEntry.setUsername("");
+		logEntry.setUserRole("");
+		logEntry.setUserTrustValue(0);
+		
+		list.add(logEntry);
+		dbmanager.setPatternsKRS(list);		
+	}
+	
+	@Test
 	public void testGetPatternsKRS() {
 		List<PatternsKrs> List = dbmanager.getPatternsKRS();
 		if (List.size()>0){
@@ -454,46 +495,6 @@ public class DBManagerTest {
 	}
 	
 	@Test
-	public void testSetPatternsKRS() {
-		List<PatternsKrs> list = new ArrayList<PatternsKrs>();
-		PatternsKrs logEntry = new PatternsKrs();
-		logEntry.setActivatedAccount(0);
-		logEntry.setAppMUSESAware(0);
-		logEntry.setAppName(null);
-		logEntry.setAppVendor(null);
-		logEntry.setAssetConfidentialLevel(null);
-		logEntry.setAssetLocation(null);
-		logEntry.setAssetName(null);
-		logEntry.setAssetValue(0);
-		logEntry.setDecisionCause(null);
-		logEntry.setDeviceHasAccessibility(0);
-		logEntry.setDeviceHasAntivirus(0);
-		logEntry.setDeviceHasCertificate(0);
-		logEntry.setDeviceHasPassword(0);
-		logEntry.setDeviceIsRooted(0);
-		logEntry.setDeviceOS(null);
-		logEntry.setDeviceOwnedBy(null);
-		logEntry.setDeviceScreenTimeout(null);
-		logEntry.setDeviceSecurityLevel(0);
-		logEntry.setDeviceTrustValue(0);
-		logEntry.setDeviceType(null);
-		logEntry.setEventLevel(null);
-		logEntry.setEventTime(null);
-		logEntry.setEventType(null);
-		logEntry.setLabel(null);
-		logEntry.setMailContainsBCC(0);
-		logEntry.setMailContainsCC(0);
-		logEntry.setMailHasAttachment(0);
-		logEntry.setMailRecipientAllowed(0);
-		logEntry.setUsername(null);
-		logEntry.setUserRole(null);
-		logEntry.setUserTrustValue(0);
-		
-		list.add(logEntry);
-		dbmanager.setPatternsKRS(list);		
-	}
-	
-	@Test
 	public void testFindDecisionTrustValuesByDecisionId() {
 		String decisionID = "2";
 		List<DecisionTrustvalues> trustValues = dbmanager.findDecisionTrustValuesByDecisionId(decisionID);
@@ -501,6 +502,16 @@ public class DBManagerTest {
 			assertTrue(true);
 		else
 			fail("There is not any Decision TrustValue corresponding to that decision_id.");
+	}
+	
+	@Test
+	public void testGetRoleById() {
+		int roleID = 145;
+		Roles role = dbmanager.getRoleById(roleID);
+		if(role != null)
+			assertTrue(true);
+		else
+			fail("There is not any Role corresponding to that role_id.");
 	}
 
 }
