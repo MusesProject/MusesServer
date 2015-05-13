@@ -18,8 +18,10 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurity
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -123,6 +125,18 @@ declare SecurityIncidentEvent
 	@expires (1m)
 end
 
+declare PasswordEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare USBDeviceConnectedEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
 
 function boolean requiredApp(String name){
 	boolean result = false;
@@ -211,7 +225,7 @@ rule "AccessRequest Detection open asset type confidential unsecure wifi"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document in unsecure network:"+e.getPath()+"\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type confidential unsecure wifi");
@@ -238,7 +252,7 @@ rule "AccessRequest Detection open asset type internal unsecure wifi"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening internal document in unsecure network\nYou are connected to an unsecure network and try to open a internal document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening internal document in unsecure network:"+e.getPath()+"\nYou are connected to an unsecure network and try to open a internal document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type internal unsecure wifi");
@@ -266,7 +280,7 @@ rule "AccessRequest Detection open asset type strictly confidential unsecure wif
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening strictly confidential document in unsecure network\nYou are connected to an unsecure network and try to open a strictly confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening strictly confidential document in unsecure network:"+e.getPath()+"\nYou are connected to an unsecure network and try to open a strictly confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type strictly confidential unsecure wifi");
@@ -495,7 +509,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event app****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening harmful application\nYou are trying to open an application which is considered harmful.\nWith this, other people can potentially access your data on your device.","DENY","<appname>Gmail</appname>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening harmful application:"+e.getName()+"\nYou are trying to open an application which is considered harmful.\nWith this, other people can potentially access your data on your device.","DENY","<appname>Gmail</appname>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Blacklist app 00001");
 		StatusGlobal.log("**********"+id);
@@ -523,7 +537,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event app****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful.\nOther people can gain control over your device.","DENY","<appname>Wifi Analyzer</appname>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful:"+e.getName()+"\nOther people can gain control over your device.","DENY","<appname>Wifi Analyzer</appname>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Blacklist app 00002");
 		StatusGlobal.log("**********"+id);
@@ -623,13 +637,13 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: ChangeSecurityPropertyEvent()
-		d: DeviceProtectionEvent(screenTimeoutInSeconds<60)
+		d: DeviceProtectionEvent(screenTimeoutInSeconds>10)
 		not AccessRequest(event=="AccessRequest Change Security Property-screen-timeout")
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
 		StatusGlobal.log("****Event change device protection****:"+d);
 		if((d!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Insufficient screen lock timeout\nTime set for screen lock timeout is not sufficient, while it is an important security mechanism.\nWithout screen lock, other people with access to your device might access to restricted corporate information.","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Insufficient screen lock timeout:"+e.getScreenTimeoutInSeconds()+" seconds\nTime set for screen lock timeout is not sufficient (it should be lower than 10 seconds), while it is an important security mechanism.\nWithout screen lock, other people with access to your device might access to restricted corporate information.","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
 		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Change Security Property-screen-timeout");
@@ -712,7 +726,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Uninstalling important application\nYou are trying to uninstall an application that is important for your system's security. \nUninstalling the application makes your system vulnerable.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Uninstalling important application:"+e.getName()+"\nYou are trying to uninstall an application that is important for your system's security. \nUninstalling the application makes your system vulnerable.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Required application list");
 		StatusGlobal.log("**********"+id);
@@ -735,7 +749,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event fileobserver****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Saving confidential document\nYou want to save a confidential document on your device.\nIf you lose your device, other people may be able to access the document.","ALLOW","<path>"+e.getPath()+"</path>");		
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Saving confidential document:"+e.getPath()+"\nYou want to save a confidential document on your device.\nIf you lose your device, other people may be able to access the document.","ALLOW","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Detection Save File in a monitored folder");
 		StatusGlobal.log("**********"+id);
@@ -761,7 +775,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event fileobserver****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file without permission\nYou want to access a file, but you do not have the permission to do so.\nThe organization's security policy doesn't allow you to access this file.","DENY","<path>"+e.getPath()+"</path>");		
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file without permission:"+e.getPath()+"\nYou want to access a file, but you do not have the permission to do so.\nThe organization's security policy doesn't allow you to access this file.","DENY","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Detection Open File in a monitored folder");
 		StatusGlobal.log("**********"+id);
@@ -837,7 +851,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event app****:"+e);
 		if(e!=null){
-		//int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful.\nOther people can gain control over your device.","DENY","<appname>"+e.getName()+"</appname>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful: "+e.getName()+".\nOther people can gain control over your device.","DENY","<appname>"+e.getName()+"</appname>");
 		int id = Rt2aeGlobal.composeAccessRequest(e,"Abriendo aplicacion peligrosa\nEsta intentando ejecutar una aplicacion considerada peligrosa\nOtras personas podrian acceder a la informacion de su dispositivo.","DENY","<appname>"+e.getName()+"</appname>");
 
 		AccessRequest request = new AccessRequest();
@@ -889,7 +903,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("Application to be installed should not be allowed.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Installing application not allowed\nYou are trying to install an application that is forbidden by your system's security. \nPlease, do not proceed.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Installing application not allowed: "+e.getName()+"\nYou are trying to install an application that is forbidden by your system's security. \nPlease, do not proceed.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Install not allowed application");
 		StatusGlobal.log("**********"+id);
@@ -962,3 +976,30 @@ rule "Blacklist app 00001"
 	end
 
 
+
+	rule "User entered password"
+	no-loop true
+	dialect "java"
+	when
+		e: PasswordEvent()
+
+
+	then
+		StatusGlobal.log("PASSWORD EVENT******************************");
+
+	end
+
+
+	rule "USB device connected"
+	no-loop true
+	dialect "java"
+	when
+		e: USBDeviceConnectedEvent()
+
+
+	then
+		StatusGlobal.log("USB DEVICE CONNECTED EVENT******************************");
+
+	end
+
+	
