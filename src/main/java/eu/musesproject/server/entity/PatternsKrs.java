@@ -65,6 +65,18 @@ public class PatternsKrs implements Serializable {
 	@Column(name="username", nullable=false)
 	private String username;
 	
+	@Column(name="password_length", nullable=false)
+	private int passwordLength;
+	
+	@Column(name="letters_in_password", nullable=false)
+	private int lettersInPassword;
+	
+	@Column(name="numbers_in_password", nullable=false)
+	private int numbersInPassword;
+	
+	@Column(name="passwd_has_capital_letters", nullable=false)
+	private int passwdHasCapitalLetters;
+	
 	@Column(name="user_trust_value", nullable=false)
 	private double userTrustValue;
 	
@@ -94,7 +106,7 @@ public class PatternsKrs implements Serializable {
 	private double deviceTrustValue;
 	
 	@Column(name="device_security_level", nullable=false)
-	private int deviceSecurityLevel;
+	private short deviceSecurityLevel;
 	
 	@Column(name="device_owned_by", nullable=false)
 	private String deviceOwnedBy;
@@ -133,13 +145,13 @@ public class PatternsKrs implements Serializable {
 	private String assetLocation;
 	
 	@Column(name="mail_recipient_allowed", nullable=false)
-	private String mailRecipientAllowed;
+	private int mailRecipientAllowed;
 	
 	@Column(name="mail_contains_cc", nullable=false)
-	private String mailContainsCC;
+	private int mailContainsCC;
 	
 	@Column(name="mail_contains_bcc", nullable=false)
-	private String mailContainsBCC;
+	private int mailContainsBCC;
 	
 	@Column(name="mail_has_attachment", nullable=false)
 	private int mailHasAttachment;
@@ -193,6 +205,38 @@ public class PatternsKrs implements Serializable {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public int getPasswordLength() {
+		return passwordLength;
+	}
+
+	public void setPasswordLength(int passwordLength) {
+		this.passwordLength = passwordLength;
+	}
+
+	public int getLettersInPassword() {
+		return lettersInPassword;
+	}
+
+	public void setLettersInPassword(int lettersInPassword) {
+		this.lettersInPassword = lettersInPassword;
+	}
+
+	public int getNumbersInPassword() {
+		return numbersInPassword;
+	}
+
+	public void setNumbersInPassword(int numbersInPassword) {
+		this.numbersInPassword = numbersInPassword;
+	}
+
+	public int getPasswdHasCapitalLetters() {
+		return passwdHasCapitalLetters;
+	}
+
+	public void setPasswdHasCapitalLetters(int passwdHasCapitalLetters) {
+		this.passwdHasCapitalLetters = passwdHasCapitalLetters;
 	}
 
 	public double getUserTrustValue() {
@@ -267,11 +311,11 @@ public class PatternsKrs implements Serializable {
 		this.deviceTrustValue = deviceTrustValue;
 	}
 
-	public int getDeviceSecurityLevel() {
+	public short getDeviceSecurityLevel() {
 		return deviceSecurityLevel;
 	}
 
-	public void setDeviceSecurityLevel(int deviceSecurityLevel) {
+	public void setDeviceSecurityLevel(short deviceSecurityLevel) {
 		this.deviceSecurityLevel = deviceSecurityLevel;
 	}
 
@@ -371,27 +415,27 @@ public class PatternsKrs implements Serializable {
 		this.assetLocation = assetLocation;
 	}
 
-	public String getMailRecipientAllowed() {
+	public int getMailRecipientAllowed() {
 		return mailRecipientAllowed;
 	}
 
-	public void setMailRecipientAllowed(String mailRecipientAllowed) {
+	public void setMailRecipientAllowed(int mailRecipientAllowed) {
 		this.mailRecipientAllowed = mailRecipientAllowed;
 	}
 
-	public String getMailContainsCC() {
+	public int getMailContainsCC() {
 		return mailContainsCC;
 	}
 
-	public void setMailContainsCC(String mailContainsCC) {
+	public void setMailContainsCC(int mailContainsCC) {
 		this.mailContainsCC = mailContainsCC;
 	}
 
-	public String getMailContainsBCC() {
+	public int getMailContainsBCC() {
 		return mailContainsBCC;
 	}
 
-	public void setMailContainsBCC(String mailContainsBCC) {
+	public void setMailContainsBCC(int mailContainsBCC) {
 		this.mailContainsBCC = mailContainsBCC;
 	}
 

@@ -23,6 +23,18 @@
         <property name="username" type="java.lang.String">
             <column name="USERNAME" />
         </property>
+         <property name="passwordLength" type="int">
+            <column name="PASSWORDLENGTH" />
+        </property>
+         <property name="lettersInPassword" type="int">
+            <column name="LETTERSINPASSWORD" />
+        </property>
+         <property name="numbersInPassword" type="int">
+            <column name="NUMBERSINPASSWORD" />
+        </property>
+         <property name="passwdHasCapitalLetters" type="int">
+            <column name="PASSWDHASCAPITALLETTERS" />
+        </property>
         <property name="userTrustValue" type="double">
             <column name="USERTRUSTVALUE" />
         </property>
