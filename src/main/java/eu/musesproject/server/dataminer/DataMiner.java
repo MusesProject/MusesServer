@@ -28,6 +28,7 @@ package eu.musesproject.server.dataminer;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.sql.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -45,9 +46,16 @@ import org.apache.log4j.Logger;
 import eu.musesproject.server.scheduler.ModuleType;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
+import eu.musesproject.server.entity.Applications;
+import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Decision;
+import eu.musesproject.server.entity.DecisionTrustvalues;
+import eu.musesproject.server.entity.DeviceType;
+import eu.musesproject.server.entity.Devices;
+import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskInformation;
+import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.SystemLogKrs;
@@ -195,10 +203,11 @@ public class DataMiner {
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
+		String decisionID = null;
 		String label;
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
 		if (accessRequests.size() > 0) {
-			String decisionID = accessRequests.get(0).getDecisionId().toString();
+			decisionID = accessRequests.get(0).getDecisionId().toString();
 			List<Decision> decisions = dbManager.findDecisionById(decisionID);
 			if (decisions.size() > 0) {
 				label = decisions.get(0).getValue();
@@ -231,11 +240,195 @@ public class DataMiner {
 				String decisionCause = matcher.group(1);
 				pattern.setDecisionCause(decisionCause);
 			} else {
-				pattern.setDecisionCause("unknown");
+				pattern.setDecisionCause("");
 			}
 		} else {
-			pattern.setDecisionCause(null);
+			pattern.setDecisionCause("");
 		}
+		
+		/* Finding the type of the event */
+		EventType eventTypeId = event.getEventType();
+		String eventType = eventTypeId.getEventTypeKey();
+		if (eventType != null) {
+			pattern.setEventType(eventType);
+		} else {
+			pattern.setEventType("");
+		}
+		
+		/* Is the event a simple event or a complex event? */
+		String eventLevel = eventTypeId.getEventLevel();
+		if (eventLevel != null) {
+			pattern.setEventLevel(eventLevel);
+		} else {
+			pattern.setEventLevel("");
+		}
+		
+		/* Storing only the username */
+		Users user = event.getUser();
+		String username = user.getUsername();
+		if (username != null) {
+			pattern.setUsername(username);
+		} else {
+			pattern.setUsername("");
+		}
+		
+		/* Extracting information from the password */
+		String userPassword = user.getPassword();
+		// Characters in the password
+		int passwordLength = userPassword.length();
+		pattern.setPasswordLength(passwordLength);
+		// Lexical information about the password
+		String digits = "\\d";
+		String letters = "[a-zA-Z]";
+		String capLetters = "[A-Z]";
+		Pattern digitPattern = Pattern.compile(digits);
+		Pattern letterPattern = Pattern.compile(letters);
+		Pattern capLetterPattern = Pattern.compile(capLetters);
+		Matcher digitsMatcher = capLetterPattern.matcher(userPassword);
+		Matcher lettersMatcher = letterPattern.matcher(userPassword);
+		Matcher capLettersMatcher = capLetterPattern.matcher(userPassword);
+		
+		int digitsCount = 0;
+		int lettersCount = 0;
+		int capLettersCount = 0;
+		
+		while (digitsMatcher.find()) {
+			digitsCount++;
+		}
+		while (lettersMatcher.find()) {
+			lettersCount++;
+		}
+		while (capLettersMatcher.find()) {
+			capLettersCount++;
+		}
+		
+		pattern.setNumbersInPassword(digitsCount);
+		pattern.setLettersInPassword(lettersCount);
+		pattern.setPasswdHasCapitalLetters(capLettersCount);
+		
+		/* Obtaining the user and device trust values at the time the event was thrown */
+		List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionID);
+		double userTrustValue, deviceTrustValue;
+		if (trustValues.size() > 0) {
+			userTrustValue = trustValues.get(0).getUsertrustvalue();
+			deviceTrustValue = trustValues.get(0).getDevicetrustvalue();
+			pattern.setUserTrustValue(userTrustValue);
+			pattern.setDeviceTrustValue(deviceTrustValue);
+		} else {
+			pattern.setUserTrustValue(0);
+			pattern.setDeviceTrustValue(0);
+		}
+		
+		/* Checking if the user account is activated */
+		int activatedAccount = user.getEnabled();
+		pattern.setActivatedAccount(activatedAccount);
+		
+		/* Obtaining the role of the user inside the company */
+		int userRoleId = user.getRoleId();
+		Roles userRole = dbManager.getRoleById(userRoleId);
+		String userRoleName = userRole.getName();
+		if (userRoleName != null) {
+			pattern.setUserRole(userRoleName);
+		} else {
+			pattern.setUserRole("");
+		}
+		
+		/* Detection time of the event */
+		Date eventDate = event.getDate();
+		Time eventTime = event.getTime();
+		Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
+		if (eventDetection.toString() != null) {
+			pattern.setEventTime(eventDetection);
+		} else {
+			pattern.setEventTime(new Date());
+		}
+		
+		/* Obtaining the type of device */
+		Devices userDeviceId = event.getDevice();
+		DeviceType deviceType = userDeviceId.getDeviceType();
+		String userDeviceType = deviceType.getType();
+		if (userDeviceType != null) {
+			pattern.setDeviceType(userDeviceType);
+		} else {
+			pattern.setDeviceType("");
+		}
+		
+		/* Device characteristics */
+		// OS
+		String userDeviceOS = userDeviceId.getOS_name().concat(userDeviceId.getOS_version());
+		if (userDeviceOS != null) {
+			pattern.setDeviceOS(userDeviceOS);
+		} else {
+			pattern.setDeviceOS("");
+		}
+		// Certificate of device
+		byte[] deviceCertificate = userDeviceId.getCertificate();
+		if (deviceCertificate.length > 0) {
+			pattern.setDeviceHasCertificate(1);
+		} else {
+			pattern.setDeviceHasCertificate(0);
+		}
+		// Parameters inside the JSON
+		
+		// Device security level
+		short deviceSecLevel = userDeviceId.getSecurityLevel();
+		pattern.setDeviceSecurityLevel(deviceSecLevel);
+		// Device company owned or employee owned
+		String deviceOwner = userDeviceId.getOwnerType();
+		if (deviceOwner != null) {
+			pattern.setDeviceOwnedBy(deviceOwner);
+		} else {
+			pattern.setDeviceOwnedBy("EMPLOYEE");
+		}
+		
+		/* Characteristics of the application which the user was using at the time of the event */
+		Applications eventApp = event.getApplication();
+		// App name and version
+		String appName = eventApp.getName().concat(eventApp.getVersion());
+		if (appName != null) {
+			pattern.setAppName(appName);
+		} else {
+			pattern.setAppName("");
+		}
+		// Vendor of the app
+		String appVendor = eventApp.getVendor();
+		if (appVendor != null) {
+			pattern.setAppVendor(appVendor);
+		} else {
+			pattern.setAppVendor("");
+		}
+		// Is the application MUSES Aware?
+		int appMusesAware = eventApp.getIs_MUSES_aware();
+		pattern.setAppMUSESAware(appMusesAware);
+		
+		/* Asset that the event is trying to access to */
+		Assets eventAsset = event.getAsset();
+		// Name of the asset
+		String assetName = eventAsset.getTitle();
+		if (assetName != null) {
+			pattern.setAssetName(assetName);
+		} else {
+			pattern.setAssetName("");
+		}
+		// Asset value
+		double assetValue = eventAsset.getValue();
+		pattern.setAssetValue(assetValue);
+		// Confidentiality level of the asset
+		String assetConfidentialLevel = eventAsset.getConfidentialLevel();
+		if (assetConfidentialLevel != null) {
+			pattern.setAssetConfidentialLevel(assetConfidentialLevel);
+		} else {
+			pattern.setAssetConfidentialLevel(assetConfidentialLevel);
+		}
+		// Where is the asset located
+		String assetLocation = eventAsset.getLocation();
+		if (assetLocation != null) {
+			pattern.setAssetLocation(assetLocation);
+		} else {
+			pattern.setAssetLocation("");
+		}
+		
+		/* If the user is sending an email */
 		
 	}
 	
