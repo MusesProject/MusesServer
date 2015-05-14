@@ -501,7 +501,7 @@ public class DBManagerTest {
 	
 	@Test
 	public void testFindDecisionTrustValuesByDecisionId() {
-		String decisionID = "2";
+		String decisionID = "545";
 		List<DecisionTrustvalues> trustValues = dbmanager.findDecisionTrustValuesByDecisionId(decisionID);
 		if(trustValues.size()>0)
 			assertTrue(true);

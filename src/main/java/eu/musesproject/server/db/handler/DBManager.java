@@ -2068,8 +2068,58 @@ public class DBManager {
 			} finally {
 				if (session!=null) session.close();
 			} 
+		}		
+	}
+	
+	/**
+     * Get DecisionTrustvalues list by Decision id
+     * @param decisionId
+     * @return List<DecisionTrustvalues>
+     */
+	public List<DecisionTrustvalues> findDecisionTrustValuesByDecisionId(String decisionId) {
+		Session session = null;
+		Query query = null;
+		List<DecisionTrustvalues> trustValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("DecisionTrustvalues.findByDecisionId").setString("decision_id", decisionId);
+			if (query!=null) {
+				trustValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return trustValues;		
+	}
+	
+	/**
+	 * Get role object by id
+	 * @param roleId
+	 * @return Role
+	 */
+	
+	public Roles getRoleById(int roleId){
+		Session session = null;
+		Query query = null;
+		Roles role = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Roles.findById").setInteger("role_id", roleId);
+			if (query!=null) {
+				List<Roles> roleList = query.list();
+				if (roleList.size() > 0) {
+					role = roleList.get(0);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
 		}
 		
+		return role;
 	}
 
 }

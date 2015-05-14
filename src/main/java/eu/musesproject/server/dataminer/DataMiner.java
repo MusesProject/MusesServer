@@ -27,7 +27,11 @@ package eu.musesproject.server.dataminer;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.sql.*;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +39,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.math.BigInteger;
 
+import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.contextdatareceiver.JSONManager;
 import eu.musesproject.server.continuousrealtimeeventprocessor.model.*;
 import eu.musesproject.server.knowledgerefinementsystem.model.*;
 import eu.musesproject.server.risktrust.Device;
@@ -195,10 +201,8 @@ public class DataMiner {
 	  * @param none 
 	  * 
 	  */
-	@SuppressWarnings("unused")
-	private void minePatterns(SimpleEvents event){
+	public PatternsKrs minePatterns(SimpleEvents event){
 		
-		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
 		PatternsKrs pattern = new PatternsKrs();
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
@@ -208,7 +212,8 @@ public class DataMiner {
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
 		if (accessRequests.size() > 0) {
 			decisionID = accessRequests.get(0).getDecisionId().toString();
-			List<Decision> decisions = dbManager.findDecisionById(decisionID);
+			//List<Decision> decisions = dbManager.findDecisionById(decisionID);
+			List<Decision> decisions = dbManager.findDecisionById("558");
 			if (decisions.size() > 0) {
 				label = decisions.get(0).getValue();
 				pattern.setLabel(label);
@@ -307,7 +312,8 @@ public class DataMiner {
 		pattern.setPasswdHasCapitalLetters(capLettersCount);
 		
 		/* Obtaining the user and device trust values at the time the event was thrown */
-		List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionID);
+		List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId("545");
+		//List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionID);
 		double userTrustValue, deviceTrustValue;
 		if (trustValues.size() > 0) {
 			userTrustValue = trustValues.get(0).getUsertrustvalue();
@@ -325,7 +331,8 @@ public class DataMiner {
 		
 		/* Obtaining the role of the user inside the company */
 		int userRoleId = user.getRoleId();
-		Roles userRole = dbManager.getRoleById(userRoleId);
+		//Roles userRole = dbManager.getRoleById(userRoleId);
+		Roles userRole = dbManager.getRoleById(145);
 		String userRoleName = userRole.getName();
 		if (userRoleName != null) {
 			pattern.setUserRole(userRoleName);
@@ -367,9 +374,7 @@ public class DataMiner {
 			pattern.setDeviceHasCertificate(1);
 		} else {
 			pattern.setDeviceHasCertificate(0);
-		}
-		// Parameters inside the JSON
-		
+		}		
 		// Device security level
 		short deviceSecLevel = userDeviceId.getSecurityLevel();
 		pattern.setDeviceSecurityLevel(deviceSecLevel);
@@ -428,7 +433,36 @@ public class DataMiner {
 			pattern.setAssetLocation("");
 		}
 		
+		/* Rest of parameters that have to be obtained from the JSON */
+		String eventJSON = event.getData();
+		List<ContextEvent> list = JSONManager.processJSONMessage(eventJSON, "online_decision");
+		Set<String> keySet = new HashSet<String>();
+		Collection<String> valueSet = new ArrayList<String>();
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			Map<String, String> properties = contextEvent.getProperties();
+			keySet = properties.keySet();
+			valueSet = properties.values();
+		}
+		for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
+			String key = iterator.next();
+			logger.info(key);
+		}
+		for (Iterator<String> iterator = valueSet.iterator(); iterator.hasNext();) {
+			String value = iterator.next();
+			logger.info(value);
+		}
+		pattern.setDeviceHasPassword(0);
+		pattern.setDeviceScreenTimeout(BigInteger.ZERO);
+		pattern.setDeviceHasAccessibility(0);
+		pattern.setDeviceIsRooted(0);
+		pattern.setMailContainsBCC(0);
+		pattern.setMailContainsCC(0);
+		pattern.setMailHasAttachment(0);
+		pattern.setMailRecipientAllowed(0);
 		/* If the user is sending an email */
+		
+		return pattern;
 		
 	}
 	

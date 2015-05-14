@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import eu.musesproject.server.dataminer.DataMiner;
 import eu.musesproject.server.entity.AdditionalProtection;
+import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.SecurityIncident;
 import eu.musesproject.server.entity.SystemLogKrs;
@@ -141,7 +142,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testRetrievePendingEvents() {
 		
 		List<SimpleEvents> eventList = dm.getSimpleEvents();
@@ -151,7 +152,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}
+	}*/
 
 	/**
 	  * testDataMining - JUnit test case whose aim is to test execution of current data mining algorithms over retrieved data
@@ -161,7 +162,17 @@ public class TestDataMiner {
 	  */
 	@Test
 	public final void testDataMining() {
-		assertTrue(true);
+		List<SimpleEvents> List = dm.getSimpleEvents();
+		if (List.size()>0){
+			Iterator<SimpleEvents> i = List.iterator();
+			while(i.hasNext()){
+				SimpleEvents event = i.next();
+				PatternsKrs pattern = dm.minePatterns(event);
+				assertNotNull(pattern);
+			}
+		}else{
+			fail("There are not simple events in the database, please create some events first.");
+		}
 	}
 
 }
