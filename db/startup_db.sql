@@ -172,6 +172,8 @@ CREATE TABLE `connection_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server Connection configuration parameters';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+INSERT INTO `connection_config` VALUES (1,5000,10000,60000,1,5);
 --
 -- Table structure for table `corporate_policies`
 --
@@ -414,6 +416,8 @@ CREATE TABLE `muses_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server configuration parameters';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+INSERT INTO `muses_config` VALUES (1,'VERBOSE',0,3);
 --
 -- Table structure for table `outcome`
 --
@@ -694,6 +698,7 @@ CREATE TABLE `sensor_configuration` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='This table contains sensor configuration properties';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+INSERT INTO `sensor_configuration` VALUES (1,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','avast! Mobile Security'),(2,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Mobile Security & Antivirus'),(3,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Avira Antivirus Security'),(4,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Norton Security & Antivirus'),(5,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','CM Security & Find My Phone'),(6,'CONTEXT_SENSOR_DEVICE_PROTECTION','enabled','true'),(7,'CONTEXT_SENSOR_LOCATION','mindistance','10'),(8,'CONTEXT_SENSOR_LOCATION','mindtime','400'),(9,'CONTEXT_SENSOR_LOCATION','radius','12.0'),(10,'CONTEXT_SENSOR_LOCATION','enabled','true'),(11,'CONTEXT_SENSOR_FILEOBSERVER','path','/SWE/'),(12,'CONTEXT_SENSOR_FILEOBSERVER','enabled','true'),(13,'CONTEXT_SENSOR_APP','enabled','true'),(14,'CONTEXT_SENSOR_CONNECTIVITY','enabled','true'),(15,'CONTEXT_SENSOR_INTERACTION','enabled','true'),(16,'CONTEXT_SENSOR_PACKAGE','enabled','true'),(17,'CONTEXT_SENSOR_SETTINGS','enabled','true'),(18,'CONTEXT_SENSOR_NOTIFICATION','enabled','true');
 --
 -- Table structure for table `simple_events`
 --
