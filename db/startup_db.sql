@@ -957,4 +957,5 @@ enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLY_CONFIDENTIAL','NONE') NOT NULL
 
 ALTER TABLE `assets` ADD COLUMN `available` datetime COMMENT 'Time where an asset would be available if MUSES was not there';
 
+INSERT INTO `assets` VALUES (1,'Patent','Asset_Unige',0,'PUBLIC','Geneva',now());
 -- Dump completed on 2015-04-24 18:40:37
