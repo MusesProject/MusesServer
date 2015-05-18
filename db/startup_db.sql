@@ -275,6 +275,13 @@ CREATE TABLE `device_type` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1224 DEFAULT CHARSET=utf8 COMMENT='This table is directly related to the previous one, as it contains the information about the type of devices that can be registered in the system.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+LOCK TABLES `device_type` WRITE;
+/*!40000 ALTER TABLE `device_type` DISABLE KEYS */;
+INSERT INTO `device_type` VALUES (1222,'1222','device'),(1223,'1223','device');
+/*!40000 ALTER TABLE `device_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 --
 -- Table structure for table `devices`
 --
