@@ -637,13 +637,13 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: ChangeSecurityPropertyEvent()
-		d: DeviceProtectionEvent(screenTimeoutInSeconds>10)
+		d: DeviceProtectionEvent(screenTimeoutInSeconds>30)
 		not AccessRequest(event=="AccessRequest Change Security Property-screen-timeout")
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
 		StatusGlobal.log("****Event change device protection****:"+d);
 		if((d!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Insufficient screen lock timeout:"+e.getScreenTimeoutInSeconds()+" seconds\nTime set for screen lock timeout is not sufficient (it should be lower than 10 seconds), while it is an important security mechanism.\nWithout screen lock, other people with access to your device might access to restricted corporate information.","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Insufficient screen lock timeout:"+e.getScreenTimeoutInSeconds()+" seconds\nTime set for screen lock timeout is not sufficient (it should be lower than 30 seconds), while it is an important security mechanism.\nWithout screen lock, other people with access to your device might access to restricted corporate information.","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
 		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Change Security Property-screen-timeout");
