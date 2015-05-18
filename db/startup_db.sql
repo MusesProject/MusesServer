@@ -84,6 +84,16 @@ CREATE TABLE `app_type` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1176 DEFAULT CHARSET=utf8 COMMENT='Table that simply describes the types of available applications.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+-- Dumping data for table `app_type`
+--
+
+LOCK TABLES `app_type` WRITE;
+/*!40000 ALTER TABLE `app_type` DISABLE KEYS */;
+INSERT INTO `app_type` VALUES (1174,'1174','desc'),(1175,'1175','desc');
+/*!40000 ALTER TABLE `app_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `applications`
 --
@@ -106,6 +116,12 @@ CREATE TABLE `applications` (
 ) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8 COMMENT='As MUSES will have both black and white lists, a description of the different applications installed on a device can be found in this table.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+LOCK TABLES `applications` WRITE;
+/*!40000 ALTER TABLE `applications` DISABLE KEYS */;
+INSERT INTO `applications` VALUES (117,1174,'musesawaew','desc','89','2014-08-15 00:00:00','android',0),(118,1175,'musesawarew','desc','89','2014-08-15 00:00:00','android',0);
+/*!40000 ALTER TABLE `applications` ENABLE KEYS */;
+UNLOCK TABLES;
 --
 -- Table structure for table `assets`
 --
@@ -156,6 +172,8 @@ CREATE TABLE `connection_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server Connection configuration parameters';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+INSERT INTO `connection_config` VALUES (1,5000,10000,60000,1,5);
 --
 -- Table structure for table `corporate_policies`
 --
@@ -275,6 +293,13 @@ CREATE TABLE `device_type` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1224 DEFAULT CHARSET=utf8 COMMENT='This table is directly related to the previous one, as it contains the information about the type of devices that can be registered in the system.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+LOCK TABLES `device_type` WRITE;
+/*!40000 ALTER TABLE `device_type` DISABLE KEYS */;
+INSERT INTO `device_type` VALUES (1222,'1222','device'),(1223,'1223','device');
+/*!40000 ALTER TABLE `device_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 --
 -- Table structure for table `devices`
 --
@@ -351,6 +376,13 @@ CREATE TABLE `event_type` (
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='Table which describes the possible types of events';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+LOCK TABLES `event_type` WRITE;
+/*!40000 ALTER TABLE `event_type` DISABLE KEYS */;
+INSERT INTO `event_type` VALUES (1,'LOG_IN','SIMPLE_EVENT'),(2,'LOG_OUT','SIMPLE_EVENT'),(3,'START','SIMPLE_EVENT'),(4,'RESUME','SIMPLE_EVENT'),(5,'STOP','SIMPLE_EVENT'),(6,'RESTART','SIMPLE_EVENT'),(7,'ACTION_REMOTE_FILE_ACCESS','SIMPLE_EVENT'),(8,'CONTEXT_SENSOR_CONNECTIVITY','SIMPLE_EVENT'),(9,'CONTEXT_SENSOR_DEVICE_PROTECTION','SIMPLE_EVENT'),(10,'ACTION_APP_OPEN','SIMPLE_EVENT'),(11,'ACTION_SEND_MAIL','SIMPLE_EVENT'),(12,'VIRUS_FOUND','SIMPLE_EVENT'),(13,'VIRUS_CLEANED','SIMPLE_EVENT'),(14,'SECURITY_PROPERTY_CHANGED','SIMPLE_EVENT'),(15,'SAVE_ASSET','SIMPLE_EVENT'),(16,'CONTEXT_SENSOR_PACKAGE','SIMPLE_EVENT'),(17,'SECURITY_VIOLATION','COMPLEX_EVENT'),(18,'SECURITY_INCIDENT','COMPLEX_EVENT'),(19,'CONFIGURATION_CHANGE','COMPLEX_EVENT'),(20,'DECISION','COMPLEX_EVENT'),(21,'DEVICE_POLICY_SENT','COMPLEX_EVENT'),(22,'CLUE_DETECTED','COMPLEX_EVENT'),(23,'CONTEXT_SENSOR_APP','SIMPLE_EVENT'),(24,'user_entered_password_field','SIMPLE_EVENT');
+/*!40000 ALTER TABLE `event_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `legal_aspects`
 --
@@ -384,6 +416,8 @@ CREATE TABLE `muses_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server configuration parameters';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+INSERT INTO `muses_config` VALUES (1,'VERBOSE',0,3);
 --
 -- Table structure for table `outcome`
 --
@@ -664,6 +698,7 @@ CREATE TABLE `sensor_configuration` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='This table contains sensor configuration properties';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+INSERT INTO `sensor_configuration` VALUES (1,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','avast! Mobile Security'),(2,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Mobile Security & Antivirus'),(3,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Avira Antivirus Security'),(4,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Norton Security & Antivirus'),(5,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','CM Security & Find My Phone'),(6,'CONTEXT_SENSOR_DEVICE_PROTECTION','enabled','true'),(7,'CONTEXT_SENSOR_LOCATION','mindistance','10'),(8,'CONTEXT_SENSOR_LOCATION','mindtime','400'),(9,'CONTEXT_SENSOR_LOCATION','radius','12.0'),(10,'CONTEXT_SENSOR_LOCATION','enabled','true'),(11,'CONTEXT_SENSOR_FILEOBSERVER','path','/SWE/'),(12,'CONTEXT_SENSOR_FILEOBSERVER','enabled','true'),(13,'CONTEXT_SENSOR_APP','enabled','true'),(14,'CONTEXT_SENSOR_CONNECTIVITY','enabled','true'),(15,'CONTEXT_SENSOR_INTERACTION','enabled','true'),(16,'CONTEXT_SENSOR_PACKAGE','enabled','true'),(17,'CONTEXT_SENSOR_SETTINGS','enabled','true'),(18,'CONTEXT_SENSOR_NOTIFICATION','enabled','true');
 --
 -- Table structure for table `simple_events`
 --
@@ -882,6 +917,13 @@ CREATE TABLE `users` (
   KEY `role_id_idx` (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=307 DEFAULT CHARSET=utf8 COMMENT='This table contains user information, similar to a profile. It has personal data (name, email) as well as company data (user''s role inside the company). Additionally, a trust value has been included for RT2AE calculation processes.';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',1,200,100,'en');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 --
 -- Table structure for table `zone`
