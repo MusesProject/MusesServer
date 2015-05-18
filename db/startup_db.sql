@@ -84,6 +84,16 @@ CREATE TABLE `app_type` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1176 DEFAULT CHARSET=utf8 COMMENT='Table that simply describes the types of available applications.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+-- Dumping data for table `app_type`
+--
+
+LOCK TABLES `app_type` WRITE;
+/*!40000 ALTER TABLE `app_type` DISABLE KEYS */;
+INSERT INTO `app_type` VALUES (1174,'1174','desc'),(1175,'1175','desc');
+/*!40000 ALTER TABLE `app_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `applications`
 --
