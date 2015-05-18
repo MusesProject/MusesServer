@@ -920,7 +920,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',1,200,100,'en');
+INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',1,0.5,100,'en');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
