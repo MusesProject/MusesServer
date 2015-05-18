@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.apache.log4j.Logger;
 
 import eu.musesproject.server.dataminer.DataMiner;
+import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AdditionalProtection;
 import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskInformation;
@@ -22,10 +23,12 @@ import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.ThreatClue;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Users;
+import eu.musesproject.server.scheduler.ModuleType;
 
 public class TestDataMiner {
 	
 	static DataMiner dm = new DataMiner();
+	private static DBManager dbManager = new DBManager(ModuleType.KRS);
 	private Logger logger = Logger.getLogger(TestDataMiner.class);
 	
 	@BeforeClass
@@ -161,15 +164,18 @@ public class TestDataMiner {
 	  * 
 	  */
 	@Test
-	public final void testDataMining() {
-		List<SimpleEvents> List = dm.getSimpleEvents();
-		if (List.size()>0){
-			Iterator<SimpleEvents> i = List.iterator();
+	public final void testDataMining() {		
+		List<SimpleEvents> list = dm.getSimpleEvents();
+		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
+		if (list.size()>0){
+			Iterator<SimpleEvents> i = list.iterator();
 			while(i.hasNext()){
 				SimpleEvents event = i.next();
 				PatternsKrs pattern = dm.minePatterns(event);
+				patternList.add(pattern);
 				assertNotNull(pattern);
 			}
+			dbManager.setPatternsKRS(patternList);
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
