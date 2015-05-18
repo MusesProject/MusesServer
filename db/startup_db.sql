@@ -106,6 +106,12 @@ CREATE TABLE `applications` (
 ) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8 COMMENT='As MUSES will have both black and white lists, a description of the different applications installed on a device can be found in this table.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+LOCK TABLES `applications` WRITE;
+/*!40000 ALTER TABLE `applications` DISABLE KEYS */;
+INSERT INTO `applications` VALUES (117,1174,'musesawaew','desc','89','2014-08-15 00:00:00','android',0),(118,1175,'musesawarew','desc','89','2014-08-15 00:00:00','android',0);
+/*!40000 ALTER TABLE `applications` ENABLE KEYS */;
+UNLOCK TABLES;
 --
 -- Table structure for table `assets`
 --
