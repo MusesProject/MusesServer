@@ -9,4 +9,8 @@ This package is released under the Affero GPL license, although you can use part
 
 ## Documentation
 
-There is a [separate repo](https://github.com/MusesProject/Muses-Developer-Guide) for the developer guide. You can download a PDF from the [releases section](https://github.com/MusesProject/Muses-Developer-Guide/releases) or build your own. 
+There is a [separate repo](https://github.com/MusesProject/Muses-Developer-Guide) for the developer guide. You can download a PDF from the [releases section](https://github.com/MusesProject/Muses-Developer-Guide/releases) or build your own.
+
+## Build
+
+You will have to build [Muses common](https://github.com/MusesProject/MusesCommon) module first. 
