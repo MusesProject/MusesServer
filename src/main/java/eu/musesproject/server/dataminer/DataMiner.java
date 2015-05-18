@@ -37,6 +37,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.math.BigInteger;
 
 import eu.musesproject.contextmodel.ContextEvent;
@@ -204,6 +207,7 @@ public class DataMiner {
 	public PatternsKrs minePatterns(SimpleEvents event){
 		
 		PatternsKrs pattern = new PatternsKrs();
+		logger.info(event.getEventId());
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
@@ -289,7 +293,7 @@ public class DataMiner {
 		Pattern digitPattern = Pattern.compile(digits);
 		Pattern letterPattern = Pattern.compile(letters);
 		Pattern capLetterPattern = Pattern.compile(capLetters);
-		Matcher digitsMatcher = capLetterPattern.matcher(userPassword);
+		Matcher digitsMatcher = digitPattern.matcher(userPassword);
 		Matcher lettersMatcher = letterPattern.matcher(userPassword);
 		Matcher capLettersMatcher = capLetterPattern.matcher(userPassword);
 		
@@ -434,33 +438,72 @@ public class DataMiner {
 		}
 		
 		/* Rest of parameters that have to be obtained from the JSON */
-		String eventJSON = event.getData();
-		List<ContextEvent> list = JSONManager.processJSONMessage(eventJSON, "online_decision");
-		Set<String> keySet = new HashSet<String>();
-		Collection<String> valueSet = new ArrayList<String>();
-		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
-			ContextEvent contextEvent = (ContextEvent) iterator.next();
-			Map<String, String> properties = contextEvent.getProperties();
-			keySet = properties.keySet();
-			valueSet = properties.values();
-		}
-		for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
-			String key = iterator.next();
-			logger.info(key);
-		}
-		for (Iterator<String> iterator = valueSet.iterator(); iterator.hasNext();) {
-			String value = iterator.next();
-			logger.info(value);
-		}
-		pattern.setDeviceHasPassword(0);
-		pattern.setDeviceScreenTimeout(BigInteger.ZERO);
-		pattern.setDeviceHasAccessibility(0);
-		pattern.setDeviceIsRooted(0);
-		pattern.setMailContainsBCC(0);
-		pattern.setMailContainsCC(0);
-		pattern.setMailHasAttachment(0);
-		pattern.setMailRecipientAllowed(0);
+		// This solution of reading from the csv is strictly strictly processing the data from trials #1
+		File configFile = null;
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {		
+			configFile = new File ("/home/paloma/MUSES/Trials/devicesconfiguration.csv");
+			fr = new FileReader (configFile);
+			br = new BufferedReader(fr);
+			String line;
+	        while((line=br.readLine())!=null) {
+	        	String[] content = line.split(",");
+	        	/* content[1] = "ispasswordprotected"
+	        	 * content[2] = "isrooted"
+	        	 * content[3] = "screentimeoutinseconds"
+	        	 * content[4] = "istrustedantivirusinstalled"
+	        	 * content[5] = "accessibilityenabled"
+	        	 * */
+	        	if (content[0].equals(userDeviceId.getDeviceId())) {
+	        		pattern.setDeviceHasPassword(Integer.parseInt(content[1]));
+	        		BigInteger time = BigInteger.valueOf(Integer.parseInt(content[3]));
+	        		pattern.setDeviceScreenTimeout(time);
+	        		pattern.setDeviceHasAccessibility(Integer.parseInt(content[5]));
+	        		pattern.setDeviceIsRooted(Integer.parseInt(content[2]));
+	        	}
+	        }
+		} catch(Exception e) {
+			e.printStackTrace();
+	    }
+		try{                   
+            if( null != fr ){  
+               fr.close();    
+            }                 
+         }catch (Exception e2){
+            e2.printStackTrace();
+         }
+        
 		/* If the user is sending an email */
+		/* Data in event_type_if = 11
+		 * {event=ACTION_SEND_MAIL, properties={"to":"the.reiceiver@generic.com,
+		 * another.direct.receiver@generic.com","noAttachments":"1",
+		 * "subject":"MUSES sensor status subject","bcc":"hidden.reiceiver@generic.com",
+		 * "from":"max.mustermann@generic.com","attachmentInfo":"pdf",
+		 * "cc":"other.listener@generic.com, 2other.listener@generic.com"}}
+		*/
+		
+		if (eventTypeId.getEventTypeId() == 11) {
+			String mailJSON =  	"\\\"to\\\"\\:\\\"(.*)\\\",\\\"noAttachments\\\"\\:\\\"(.*)\\\",\\\"subject\\\"\\:\\\"(.*)\\\",\\\"bcc\\\"\\:\\\"(.*)\\\",\\\"attachmentInfo\\\"\\:\\\"(.*)\\\",\\\"from\\\"\\:\\\"(.*)\\\",\\\"cc\\\"\\:\\\"(.*)\\\"";
+			Pattern mailPattern = Pattern.compile(mailJSON);
+			Matcher matcherMail = mailPattern.matcher(event.getData());
+			if (matcherMail.find()) {
+				if (matcherMail.group(4).equals("none")) {
+					pattern.setMailContainsBCC(0);
+				} else {
+					pattern.setMailContainsBCC(1);
+				}
+
+				if (matcherMail.group(7).equals("none")) {
+					pattern.setMailContainsCC(0);
+				} else {
+					pattern.setMailContainsCC(1);
+				}				
+				pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
+				pattern.setMailRecipientAllowed(0);
+			}
+			
+		}
 		
 		return pattern;
 		
