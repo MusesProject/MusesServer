@@ -30,6 +30,7 @@ import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
 import eu.musesproject.server.entity.EventType;
+import eu.musesproject.server.entity.ListOfpossibleRisktreatment;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.PatternsKrs;
@@ -1316,6 +1317,29 @@ public class DBManager {
 		}
 		return outcome;				
 	}
+	
+	
+	/**
+     * Get all possible risktreatment 
+     * @return List<String> risktreatments
+     */
+	public ListOfpossibleRisktreatment getRisktreatments(int id) {
+		Session session = null;
+		Query query = null;
+		List<ListOfpossibleRisktreatment> list = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("ListOfpossibleRisktreatment.findbyId").setInteger("risktreatment_id", id);
+			if (query!=null) {
+				list = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return list.get(list.size() - 1);			
+	}
 
 
 	
@@ -2120,6 +2144,11 @@ public class DBManager {
 		}
 		
 		return role;
+	}
+	public static void main (String [] arg){
+		
+		DBManager dbManager = new DBManager(ModuleType.RT2AE);
+		System.out.println("test: "+dbManager.getRisktreatments(1).getDescription());
 	}
 
 }

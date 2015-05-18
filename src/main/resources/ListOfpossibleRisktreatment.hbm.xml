@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 18 mai 2015 15:33:58 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="ListOfpossibleRisktreatment" table="list_ofpossible_risktreatments" catalog="muses">
+        <id name="listofpossiblerisktreatmentId" type="java.lang.Integer">
+            <column name="listofpossiblerisktreatment_id" />
+            <generator class="assigned" />
+        </id>
+        <property name="description" type="java.lang.String">
+            <column name="description" />
+        </property>
+        <property name="french" type="java.lang.String">
+            <column name="french" />
+        </property>
+        <property name="german" type="java.lang.String">
+            <column name="german" />
+        </property>
+        <property name="spanish" type="java.lang.String">
+            <column name="spanish" />
+        </property>          
+    </class>
+</hibernate-mapping>

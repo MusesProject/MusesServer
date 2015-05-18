@@ -21,6 +21,7 @@
 	<class>eu.musesproject.server.entity.Domains</class>
 	<class>eu.musesproject.server.entity.EventType</class>
 	<class>eu.musesproject.server.entity.LegalAspects</class>
+	<class>eu.musesproject.server.entity.ListOfpossibleRisktreatment</class>
 	<class>eu.musesproject.server.entity.MusesConfig</class>
 	<class>eu.musesproject.server.entity.Outcome</class>
 	<class>eu.musesproject.server.entity.PatternsKrs</class>

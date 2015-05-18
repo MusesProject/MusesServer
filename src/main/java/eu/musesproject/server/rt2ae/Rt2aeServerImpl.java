@@ -67,9 +67,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 	private static DBManager dbManager = new DBManager(ModuleType.RT2AE);
 	private RiskPolicy riskPolicy = new RiskPolicy();//Sending e-mail with virus
 
-	private String sendingemail = "Sending e-mail with virus\nYour system is infected with a virus and you want to\n send an attachment via e-mail.\n This may cause critical system failure and puts the\n receiver at risk. Remove the virus first.";
+
+	/*private String sendingemail = "Sending e-mail with virus\nYour system is infected with a virus and you want to\n send an attachment via e-mail.\n This may cause critical system failure and puts the\n receiver at risk. Remove the virus first.";
 	private String saveconfidentieldocument = "Saving confidential document\n You want to save a confidential document on your device.\n If you loose your\n device, other people may be able to\n access the document.";
-	private String antivirusnotrunning = "Your Antivirus is not running on your device\nPlease launch your Antivirus\n In order to protect your device";
+	private String antivirusnotrunning = "Your Antivirus is not running on your device\nPlease launch your Antivirus\n In order to protect your device";*/
 	private String opensensitivedocumentinunsecurenetwork = "Opening sensitive document in unsecure network\n You are connected to an unsecure network and try\n to open a sensitive document.\n Information sent over this network is not encrypted\n and might be visible to other people.\n Switch to a secure network.";
 	private String privateloungewifi = "Please go to the private lounge secure Wi-Fi";
 	private String wifisniffing = "Wi-Fi sniffing";
@@ -697,8 +698,27 @@ public class Rt2aeServerImpl implements Rt2ae {
 			if (clues.get(0).getName().contains("Virus")){
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
-				RiskTreatment riskTreatment = new RiskTreatment(sendingemail);
-				riskTreatments[0] = riskTreatment;	
+				
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
+					riskTreatments[0] = riskTreatment;	
+
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getSpanish());
+					riskTreatments[0] = riskTreatment;	
+
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getGerman());
+					riskTreatments[0] = riskTreatment;	
+
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getFrench());
+					riskTreatments[0] = riskTreatment;	
+
+				}
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
@@ -740,7 +760,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(sendingemail); 
+				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
+ 
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
@@ -786,12 +807,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 			if (clues.get(0).getName().contains("Antivirus is not running")){
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
-				RiskTreatment riskTreatment = new RiskTreatment(antivirusnotrunning);
+				RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription());
 				riskTreatments[0] = riskTreatment;	
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS:Your Antivirus is not running on your device,please launch your Antivirus in order to protect your device");
 				
@@ -829,7 +850,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(sendingemail); 
+				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription()); 
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
@@ -875,7 +896,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
-				RiskTreatment riskTreatment = new RiskTreatment(opensensitivedocumentinunsecurenetwork);
+				RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription());
 				riskTreatments[0] = riskTreatment;	
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
@@ -918,7 +939,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(opensensitivedocumentinunsecurenetwork); 
+				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription()); 
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
@@ -966,7 +987,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
 				
 				RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-				RiskTreatment riskTreatment = new RiskTreatment(saveconfidentieldocument);
+				RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription());
 				if (riskTreatments.length > 0){
 					riskTreatments[0] = riskTreatment;	
 				}				
@@ -1005,7 +1026,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(saveconfidentieldocument); 
+				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription()); 
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
@@ -1112,7 +1133,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				if (clues.get(0).getName().contains("Virus")){
 					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 					RiskTreatment [] riskTreatments = new RiskTreatment[1];
-					RiskTreatment riskTreatment = new RiskTreatment(sendingemail);
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
 					riskTreatments[0] = riskTreatment;	
 					riskCommunication.setRiskTreatment(riskTreatments);
 					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
@@ -1155,7 +1176,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(sendingemail); 
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription()); 
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
@@ -1201,7 +1222,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				if (clues.get(0).getName().contains("Antivirus is not running")){
 					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 					RiskTreatment [] riskTreatments = new RiskTreatment[1];
-					RiskTreatment riskTreatment = new RiskTreatment(antivirusnotrunning);
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription());
 					riskTreatments[0] = riskTreatment;	
 					riskCommunication.setRiskTreatment(riskTreatments);
 					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
@@ -1244,7 +1265,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(sendingemail); 
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription()); 
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
@@ -1290,7 +1311,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
 					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 					RiskTreatment [] riskTreatments = new RiskTreatment[1];
-					RiskTreatment riskTreatment = new RiskTreatment(opensensitivedocumentinunsecurenetwork);
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription());
 					riskTreatments[0] = riskTreatment;	
 					riskCommunication.setRiskTreatment(riskTreatments);
 					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
@@ -1333,7 +1354,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(opensensitivedocumentinunsecurenetwork); 
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription()); 
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
@@ -1381,7 +1402,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
 					
 					RiskTreatment [] riskTreatments = new RiskTreatment[RISK_TREATMENT_SIZE];
-					RiskTreatment riskTreatment = new RiskTreatment(saveconfidentieldocument);
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription());
 					if (riskTreatments.length > 0){
 						riskTreatments[0] = riskTreatment;	
 					}				
@@ -1420,7 +1441,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(saveconfidentieldocument); 
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription()); 
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
