@@ -26,7 +26,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `event_type` WRITE;
 /*!40000 ALTER TABLE `event_type` DISABLE KEYS */;
-INSERT INTO `event_type` VALUES (1,'LOG_IN','SIMPLE_EVENT'),(2,'LOG_OUT','SIMPLE_EVENT'),(3,'START','SIMPLE_EVENT'),(4,'RESUME','SIMPLE_EVENT'),(5,'STOP','SIMPLE_EVENT'),(6,'RESTART','SIMPLE_EVENT'),(7,'ACTION_REMOTE_FILE_ACCESS','SIMPLE_EVENT'),(8,'CONTEXT_SENSOR_CONNECTIVITY','SIMPLE_EVENT'),(9,'CONTEXT_SENSOR_DEVICE_PROTECTION','SIMPLE_EVENT'),(10,'ACTION_APP_OPEN','SIMPLE_EVENT'),(11,'ACTION_SEND_MAIL','SIMPLE_EVENT'),(12,'VIRUS_FOUND','SIMPLE_EVENT'),(13,'VIRUS_CLEANED','SIMPLE_EVENT'),(14,'SECURITY_PROPERTY_CHANGED','SIMPLE_EVENT'),(15,'SAVE_ASSET','SIMPLE_EVENT'),(16,'CONTEXT_SENSOR_PACKAGE','SIMPLE_EVENT'),(17,'SECURITY_VIOLATION','COMPLEX_EVENT'),(18,'SECURITY_INCIDENT','COMPLEX_EVENT'),(19,'CONFIGURATION_CHANGE','COMPLEX_EVENT'),(20,'DECISION','COMPLEX_EVENT'),(21,'DEVICE_POLICY_SENT','COMPLEX_EVENT'),(22,'CLUE_DETECTED','COMPLEX_EVENT'),(23,'CONTEXT_SENSOR_APP','SIMPLE_EVENT'),(24,'user_entered_password_field','SIMPLE_EVENT');
+INSERT INTO `event_type` VALUES (1,'LOG_IN','SIMPLE_EVENT'),(2,'LOG_OUT','SIMPLE_EVENT'),(3,'START','SIMPLE_EVENT'),(4,'RESUME','SIMPLE_EVENT'),(5,'STOP','SIMPLE_EVENT'),(6,'RESTART','SIMPLE_EVENT'),(7,'ACTION_REMOTE_FILE_ACCESS','SIMPLE_EVENT'),(8,'CONTEXT_SENSOR_CONNECTIVITY','SIMPLE_EVENT'),(9,'CONTEXT_SENSOR_DEVICE_PROTECTION','SIMPLE_EVENT'),(10,'ACTION_APP_OPEN','SIMPLE_EVENT'),(11,'ACTION_SEND_MAIL','SIMPLE_EVENT'),(12,'VIRUS_FOUND','SIMPLE_EVENT'),(13,'VIRUS_CLEANED','SIMPLE_EVENT'),(14,'SECURITY_PROPERTY_CHANGED','SIMPLE_EVENT'),(15,'SAVE_ASSET','SIMPLE_EVENT'),(16,'CONTEXT_SENSOR_PACKAGE','SIMPLE_EVENT'),(17,'SECURITY_VIOLATION','COMPLEX_EVENT'),(18,'SECURITY_INCIDENT','COMPLEX_EVENT'),(19,'CONFIGURATION_CHANGE','COMPLEX_EVENT'),(20,'DECISION','COMPLEX_EVENT'),(21,'DEVICE_POLICY_SENT','COMPLEX_EVENT'),(22,'CLUE_DETECTED','COMPLEX_EVENT'),(23,'CONTEXT_SENSOR_APP','SIMPLE_EVENT'),(24,'user_entered_password_field','SIMPLE_EVENT'),(25,'usb_device_connected','SIMPLE_EVENT');
 /*!40000 ALTER TABLE `event_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,3 +62,31 @@ INSERT INTO `assets` VALUES (1,'Patent','Asset_Unige',0,'PUBLIC','Geneva',now())
 (1695, 'S2Patent', 'The patent describe how to prevent any threat in wireless network', 200000, 'STRICTLY_CONFIDENTIAL', 's2/patent/list/S2Patent', NULL),
 (1696, 'SWEDENPatent', 'The patent is about the RFID technology', 10000, 'INTERNAL', 'sweden/patent/list/SWEDENPatent', NULL);
 
+
+INSERT INTO `muses`.`devices` VALUES (1,'server',1222,'MUSES Server','server','0','a','0',0,0,NULL,NULL),(2,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,NULL,0,0,NULL,NULL);
+
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('1', '1', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('2', '2', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('3', '3', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('4', '4', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('5', '5', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('6', '6', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('7', '7', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('8', '8', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('9', '9', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('10', '10', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('11', '11', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('12', '12', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('13', '13', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('14', '14', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('15', '15', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('16', '16', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('17', '17', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('18', '18', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('19', '19', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('20', '20', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('21', '21', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('22', '22', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('23', '23', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('24', '24', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('25', '25', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
