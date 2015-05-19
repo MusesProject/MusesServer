@@ -1367,6 +1367,31 @@ public class DBManager {
 	}
 	
 	
+	
+	/**
+     * Save UserBehaviour  
+     * @param UserBehaviour userbehaviour
+     */
+	public void setUserBehaviour(eu.musesproject.server.entity.UserBehaviour userbehaviour) {
+		Session session = null;
+		Transaction trans = null;
+		try {
+			session=getSessionFactory().openSession();
+			trans=session.beginTransaction();
+			session.save(userbehaviour);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			logger.log(Level.ERROR, e.getMessage());
+		} finally {
+			if (session!=null) session.close();
+		} 
+		
+	}
+	
+	
+	
+	
 	/**
      * Save RiskCommunication list in the DB 
      * @param List<RiskCommunication> users

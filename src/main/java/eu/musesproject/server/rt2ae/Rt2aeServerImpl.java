@@ -3075,49 +3075,29 @@ public class Rt2aeServerImpl implements Rt2ae {
 			
 					
 	}
+
+	public void storingUserBehavior(eu.musesproject.server.entity.UserBehaviour userbehaviour) {
+		
+		if(userbehaviour!=null){
+			logger.info("RT2AE receives the user behaviour....");
+			try {
+				logger.info("RT2AE storing the user behaviour....");
+
+				dbManager.setUserBehaviour(userbehaviour);
+				
+
+			} catch (Exception e) {
+				logger.error("Something happens storing the user behaviour");
+			}
+		}else{
+			logger.info("The user behaviour is null, make sure that the user behaviour is not null");
+
+			}
+		
+		
+	}
 	
 	
-	public static void main (String [] arg){
-		
-		DBManager dbManager = new DBManager(ModuleType.RT2AE);
-
-		/*
-		Rt2aeServerImpl rt2ae = new Rt2aeServerImpl();
-		AccessRequest accessRequest = new AccessRequest();
-		accessRequest.setId(1);
-		User us = new User();
-		eu.musesproject.server.entity.Users user = dbManager.getUserByUsername("test1");
-		UserTrustValue usertrustvalue = new UserTrustValue();  
-		usertrustvalue.setValue(0);
-		//us.setEmail(email);
-		us.setUserId(user.getUserId());
-		accessRequest.setUser(us);
-		Device device = new Device();
-		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
-		devicetrustvalue.setValue(0);
-		device.setDevicetrustvalue(devicetrustvalue);    
-		accessRequest.setDevice(device);
-		      
-		Asset requestedCorporateAsset = new Asset();  
-		requestedCorporateAsset.setValue(1000000);
-		requestedCorporateAsset.setConfidential_level("confidential");
-
-		accessRequest.setRequestedCorporateAsset(requestedCorporateAsset);
-		
-		RiskPolicy rPolicy = new RiskPolicy();
-		
-		
-		PolicyCompliance policyCompliance = new PolicyCompliance();
-		policyCompliance.setResult("DENY");
-		policyCompliance.setReason("NOOOOOOOOOOOOO");
-		
-		Decision decision2 = rt2ae.decideBasedOnRiskPolicy(accessRequest, policyCompliance, null);
-		
-		*/
-		
-		System.out.println("Decision: "+dbManager.setDecision(dbManager.getDecisions().get(0)));
-		
-   }
 	
 	
 
