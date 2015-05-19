@@ -40,7 +40,6 @@
 	<class>eu.musesproject.server.entity.Threat</class>
 	<class>eu.musesproject.server.entity.ThreatClue</class>
 	<class>eu.musesproject.server.entity.ThreatType</class>
-	<class>eu.musesproject.server.entity.UserAuthorization</class>
 	<class>eu.musesproject.server.entity.UserBehaviour</class>
 	<class>eu.musesproject.server.entity.Users</class>
 		<properties>

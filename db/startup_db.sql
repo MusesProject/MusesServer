@@ -741,21 +741,6 @@ CREATE TABLE `threat_type` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `user_authorization`
---
-
-DROP TABLE IF EXISTS `user_authorization`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_authorization` (
-  `user_authorization_id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table USERS(user_id)',
-  `role_id` int(10) unsigned NOT NULL COMMENT 'FK to table ROLES(role_id)',
-  PRIMARY KEY (`user_authorization_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `user_behaviour`
 --
 
