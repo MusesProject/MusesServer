@@ -48,7 +48,6 @@ import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Sources;
 import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Threat;
-import eu.musesproject.server.entity.UserAuthorization;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
@@ -310,35 +309,7 @@ public class DBManager {
 		return null;
 	}
 	
-	/**
-	 * Get UserAuthorization object by userId of User object
-	 * @param userId
-	 * @return UserAuthorization
-	 */
-	
-	public UserAuthorization getUserAuthByUserId(BigInteger userId) {
-		Session session = null;
-		Query query = null;
-		try {
-			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("UserAuthorization.findByUserId").setBigInteger("user_id", userId);
-			if (query!=null) {
-				List<UserAuthorization> userAuthorizationsList = query.list();
-				for (UserAuthorization u : userAuthorizationsList) {
-					if (u.getUserId() == userId) {
-						return u;
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (session!=null) session.close();
-		}
-		return null;
-	}
-
-    
+	    
     /**
      * Get EventType object by key 
      * @param key
