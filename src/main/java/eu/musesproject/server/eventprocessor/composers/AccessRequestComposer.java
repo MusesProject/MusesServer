@@ -165,6 +165,9 @@ public class AccessRequestComposer {
 		
 		if (associatedEvent!=null){
 			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
+		}else{
+			associatedEvent = dbManager.findLastEventByEventType(Integer.valueOf(event.getType()));
+			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
 		}
 		
 		
