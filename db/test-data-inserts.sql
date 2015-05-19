@@ -108,6 +108,8 @@ INSERT INTO `sensor_configuration` VALUES (1,'CONTEXT_SENSOR_DEVICE_PROTECTION',
 
 --
 
+INSERT INTO `decision_trustvalues` (`decision_trustvalue_id`, `decision_id`, `usertrustvalue`, `devicetrustvalue`) VALUES
+(1, 545, 0.5, 0.5);
 
 --
 
