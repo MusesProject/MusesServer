@@ -1,3 +1,5 @@
+USE `muses`;
+
 -- Dumping data for table `app_type`
 --
 
