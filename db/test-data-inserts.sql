@@ -62,7 +62,11 @@ INSERT INTO `patterns_krs` VALUES (1,'GRANTED','','','','',0,0,0,0,0,0,'','2015-
 
 --
 
-INSERT INTO `refined_security_rules` VALUES (1,800,'name',NULL,'VALIDATED',0,NULL,'2014-05-15 00:00:00');
+INSERT INTO `security_rules` VALUES (800,'sec','des',NULL,'VALIDATED','0',15,'2014-11-15 00:00:00');
+
+--
+
+INSERT INTO `refined_security_rules` VALUES (1,800,'name',NULL,'VALIDATED','2014-05-15 00:00:00');
 
 --
 
@@ -89,7 +93,6 @@ INSERT INTO `security_incident` VALUES (1,'Test Security Incident',NULL,NULL,203
 
 --
 
-INSERT INTO `security_rules` VALUES (800,'sec','des',NULL,'VALIDATED','0',15,'2014-11-15 00:00:00');
 
 --
 
