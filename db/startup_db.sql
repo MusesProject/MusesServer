@@ -451,29 +451,6 @@ CREATE TABLE `risk_communication` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `risk_information`
---
-
-DROP TABLE IF EXISTS `risk_information`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `risk_information` (
-  `risk_information_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `threat_type` int(11) unsigned NOT NULL COMMENT 'FK to table THREAT_TYPE(threat_type_id)',
-  `asset_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table ASSET(asset_id)',
-  `probability` double unsigned NOT NULL COMMENT 'Probability of the threat',
-  `event_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table EVENTS(event_id)',
-  PRIMARY KEY (`risk_information_id`),
-  KEY `threat_type_id_idx` (`threat_type`),
-  KEY `risk_information-simple_events_idx` (`event_id`),
-  KEY `risk_information-assets_idx` (`asset_id`),
-  CONSTRAINT `risk_information-assets` FOREIGN KEY (`asset_id`) REFERENCES `assets` (`asset_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `risk_information-simple_events` FOREIGN KEY (`event_id`) REFERENCES `simple_events` (`event_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `risk_information-threat_type:threat_type_id` FOREIGN KEY (`threat_type`) REFERENCES `threat_type` (`threat_type_id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='It will store all data about risk meaning about threat. All fields are defined in the table.';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `risk_policy`
 --
 
