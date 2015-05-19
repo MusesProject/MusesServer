@@ -31,7 +31,6 @@
         <mapping class="eu.musesproject.server.entity.DeviceConfig"/>
         <mapping class="eu.musesproject.server.entity.Devices"/>
         <mapping class="eu.musesproject.server.entity.DecisionTrustvalues"/>
-        <mapping class="eu.musesproject.server.entity.DeviceSecurityState"/>
         <mapping class="eu.musesproject.server.entity.DeviceType"/>
         <mapping class="eu.musesproject.server.entity.Dictionary"/>
         <mapping class="eu.musesproject.server.entity.Domains"/>
