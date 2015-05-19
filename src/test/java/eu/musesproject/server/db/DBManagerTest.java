@@ -135,7 +135,7 @@ public class DBManagerTest {
 		asset.setConfidentialLevel("PUBLIC");
 		asset.setTitle("Patent");
 		asset.setValue(0);
-		asset.setLocation("Geneva");
+		asset.setLocation("unige/patent/list/UNIGEPatent");
 		list.add(asset);
 		dbmanager.setAssets(list);	
 		
@@ -189,7 +189,7 @@ public class DBManagerTest {
 		List<RiskTreatment> risktreatments = new ArrayList<RiskTreatment>();
 
 		RiskTreatment risktreatment = new RiskTreatment();
-		risktreatment.setDescription(opensensitivedocumentinunsecurenetwork); 
+		risktreatment.setDescription("Testing RiskTreatment with JunitTest"); 
 		risktreatment.setRiskCommunication(riskcommunication);
 		risktreatments.add(risktreatment);
 		
@@ -197,7 +197,7 @@ public class DBManagerTest {
 
 		//riskcommunication.setRiskTreatments(risktreatments);
 		//decision.setRiskCommunication(riskcommunication);
-		decision.setValue("GRANTED");
+		decision.setValue("MAYBE");
 		//decision.setInformation("test");
 		//decision.setSolvingRisktreatment(2);
 		decision.setTime(new Time(new Date().getTime()));
@@ -216,7 +216,9 @@ public class DBManagerTest {
 		
 	}	
 	
-	@Test
+	// Removing this function because the clues are storing in threat table
+	
+	/*@Test
 	public void testGetClues() {
 		List<Clue> List = dbmanager.getClues();
 		if (List.size()>0){
@@ -241,15 +243,9 @@ public class DBManagerTest {
 		list.add(clue);
 		//dbmanager.setClues(list); FIXME	
 		
-		/*List<Clue> listclues = dbmanager.findClueByValue(clue.getValue());
 		
-
-		if(listclues.size()>0)
-			assertTrue(true);
-		else
-			fail("The Asset was not inserted in the database");*/
 		
-	}
+	}*/
 	
 	@Test
 	public void testGetOutcomes() {
