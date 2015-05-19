@@ -52,7 +52,6 @@
         <mapping class="eu.musesproject.server.entity.SimpleEvents"/>
         <mapping class="eu.musesproject.server.entity.Sources"/>
         <mapping class="eu.musesproject.server.entity.SystemLogKrs"/>
-        <mapping class="eu.musesproject.server.entity.TermValues"/>
         <mapping class="eu.musesproject.server.entity.Threat"/>
         <mapping class="eu.musesproject.server.entity.ThreatClue"/>
         <mapping class="eu.musesproject.server.entity.ThreatType"/>
