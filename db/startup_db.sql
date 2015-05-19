@@ -282,9 +282,7 @@ CREATE TABLE `domains` (
   `name` varchar(50) NOT NULL COMMENT 'Name of the domain (e.g. Offers)',
   `description` varchar(100) DEFAULT NULL COMMENT 'Domain description (e.g. Company domain used to store commercial offers to be presented to concrete customers. This kind of information is strictly confidential.)',
   `sensitivity_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Associated sensitivity level (strictly confidential, protected, public,...) FK to sensitivity table',
-  PRIMARY KEY (`domain_id`),
-  KEY `sensitivity_id_idx` (`sensitivity_id`),
-  CONSTRAINT `domains-sensitivity:sensitivity_id` FOREIGN KEY (`sensitivity_id`) REFERENCES `sensitivity` (`sensitivity_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  PRIMARY KEY (`domain_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='Table which describes the different domains that might apply for different company resources. Depending on this domain, it will have a different sensitivity level.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
