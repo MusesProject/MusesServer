@@ -55,6 +55,9 @@ public class PatternsKrs implements Serializable {
 
 	@Column(name="decision_cause", nullable=false)
 	private String decisionCause;
+	
+	@Column(name="silent_mode", nullable=false)
+	private int silentMode;
 
 	@Column(name="event_type", nullable=false)
 	private String eventType;
@@ -147,10 +150,10 @@ public class PatternsKrs implements Serializable {
 	@Column(name="mail_recipient_allowed", nullable=false)
 	private int mailRecipientAllowed;
 	
-	@Column(name="mail_contains_cc", nullable=false)
+	@Column(name="mail_contains_cc_allowed", nullable=false)
 	private int mailContainsCC;
 	
-	@Column(name="mail_contains_bcc", nullable=false)
+	@Column(name="mail_contains_bcc_allowed", nullable=false)
 	private int mailContainsBCC;
 	
 	@Column(name="mail_has_attachment", nullable=false)
@@ -181,6 +184,14 @@ public class PatternsKrs implements Serializable {
 
 	public void setDecisionCause(String decisionCause) {
 		this.decisionCause = decisionCause;
+	}
+
+	public int getSilentMode() {
+		return silentMode;
+	}
+
+	public void setSilentMode(int silentMode) {
+		this.silentMode = silentMode;
 	}
 
 	public String getEventType() {

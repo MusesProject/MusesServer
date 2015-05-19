@@ -1943,29 +1943,6 @@ public class DBManager {
 		return securityViolations;		
 	}
 	
-	/**
-     * Get RiskInformation list by event_id
-     * @param riskInformationEventId
-     * @return List<RiskInformation>
-     */
-	public List<RiskInformation> findRiskInformationByEventId(String riskInformationEventId) {
-		Session session = null;
-		Query query = null;
-		List<RiskInformation> riskInformation = null;
-		try {
-			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("RiskInformation.findByEventId").setString("event_id", riskInformationEventId);
-			if (query!=null) {
-				riskInformation = query.list();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (session!=null) session.close();
-		} 
-		return riskInformation;		
-	}
-
 	public SimpleEvents updateSimpleEvent(String eventType, String assetId) {
 		Session session = null;
 		Transaction trans = null;

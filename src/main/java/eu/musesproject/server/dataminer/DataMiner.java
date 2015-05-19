@@ -253,7 +253,7 @@ public class DataMiner {
 		} else {
 			pattern.setDecisionCause("");
 		}
-		
+				
 		/* Finding the type of the event */
 		EventType eventTypeId = event.getEventType();
 		String eventType = eventTypeId.getEventTypeKey();
@@ -351,6 +351,13 @@ public class DataMiner {
 			pattern.setEventTime(eventDetection);
 		} else {
 			pattern.setEventTime(new Date());
+		}
+		
+		/* Was MUSES in silent or verbose mode? */
+		if (eventDate.getDay() < 16 && eventDate.getMonth() <= 3) {
+			pattern.setSilentMode(1);
+		} else {
+			pattern.setSilentMode(0);
 		}
 		
 		/* Obtaining the type of device */
@@ -457,7 +464,6 @@ public class DataMiner {
 	        	if (content[0].equals(userDeviceId.getDeviceId())) {
 	        		pattern.setDeviceHasPassword(Integer.parseInt(content[1]));
 	        		BigInteger time = BigInteger.valueOf(Integer.parseInt(content[3]));
-	        		if(time == null) { logger.info(time);}
 	        		pattern.setDeviceScreenTimeout(time);
 	        		pattern.setDeviceHasAccessibility(Integer.parseInt(content[5]));
 	        		pattern.setDeviceIsRooted(Integer.parseInt(content[2]));
@@ -500,7 +506,7 @@ public class DataMiner {
 					pattern.setMailContainsCC(1);
 				}				
 				pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
-				pattern.setMailRecipientAllowed(0);
+				pattern.setMailRecipientAllowed(1);
 			}
 			
 		}

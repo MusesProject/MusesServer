@@ -420,26 +420,6 @@ public class DBManagerTest {
 	}
 	
 	@Test
-	public void testFindSecurityViolationByEventId() {
-		String eventID = "2";
-		List<SecurityViolation> accessRequests = dbmanager.findSecurityViolationByEventId(eventID);
-		if(accessRequests.size()>0)
-			assertTrue(true);
-		else
-			fail("There is not any Security Violation corresponding to that event_id.");
-	}
-	
-	@Test
-	public void testFindRiskInformationByEventId() {
-		String eventID = "2";
-		List<RiskInformation> riskInformation = dbmanager.findRiskInformationByEventId(eventID);
-		if(riskInformation.size()>0)
-			assertTrue(true);
-		else
-			fail("There is not any Risk Information corresponding to that event_id.");
-	}
-	
-	@Test
 	public void testSetPatternsKRS() {
 		List<PatternsKrs> list = new ArrayList<PatternsKrs>();
 		PatternsKrs logEntry = new PatternsKrs();

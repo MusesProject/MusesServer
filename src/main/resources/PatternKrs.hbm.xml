@@ -14,6 +14,9 @@
         <property name="decisionCause" type="java.lang.String">
             <column name="DECISIONCAUSE" />
         </property>
+         <property name="silentMode" type="int">
+            <column name="SILENTMODE" />
+        </property>
         <property name="eventType" type="java.lang.String">
             <column name="EVENTTYPE" />
         </property>
