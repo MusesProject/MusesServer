@@ -207,7 +207,6 @@ public class DataMiner {
 	public PatternsKrs minePatterns(SimpleEvents event){
 		
 		PatternsKrs pattern = new PatternsKrs();
-		logger.info(event.getEventId());
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
@@ -458,6 +457,7 @@ public class DataMiner {
 	        	if (content[0].equals(userDeviceId.getDeviceId())) {
 	        		pattern.setDeviceHasPassword(Integer.parseInt(content[1]));
 	        		BigInteger time = BigInteger.valueOf(Integer.parseInt(content[3]));
+	        		if(time == null) { logger.info(time);}
 	        		pattern.setDeviceScreenTimeout(time);
 	        		pattern.setDeviceHasAccessibility(Integer.parseInt(content[5]));
 	        		pattern.setDeviceIsRooted(Integer.parseInt(content[2]));

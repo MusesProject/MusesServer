@@ -34,7 +34,6 @@
 	<class>eu.musesproject.server.entity.SimpleEvents</class>
 	<class>eu.musesproject.server.entity.Sources</class>
 	<class>eu.musesproject.server.entity.SystemLogKrs</class>
-	<class>eu.musesproject.server.entity.TermValues</class>
 	<class>eu.musesproject.server.entity.Threat</class>
 	<class>eu.musesproject.server.entity.ThreatClue</class>
 	<class>eu.musesproject.server.entity.ThreatType</class>

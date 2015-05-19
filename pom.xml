@@ -27,9 +27,10 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<testFailureIgnore>true</testFailureIgnore>
-						<!--<includes>
+						<includes>
 							<include>**/DBManagerTest.java</include>
-						</includes>-->
+							<include>**/TestDataMiner.java</include>
+						</includes>
 					</configuration>
 				</plugin>
 				<plugin>
