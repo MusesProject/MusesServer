@@ -189,8 +189,7 @@ CREATE TABLE `decision` (
   PRIMARY KEY (`decision_id`),
   KEY `decision-access_request:access_request_id_idx` (`access_request_id`),
   KEY `decision-risk_communication:risk_communication_id_idx` (`risk_communication_id`),
-  CONSTRAINT `decision-access_request:access_request_id` FOREIGN KEY (`access_request_id`) REFERENCES `access_request` (`access_request_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `decision-risk_communication:risk_communication_id` FOREIGN KEY (`risk_communication_id`) REFERENCES `risk_communication` (`risk_communication_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  CONSTRAINT `decision-access_request:access_request_id` FOREIGN KEY (`access_request_id`) REFERENCES `access_request` (`access_request_id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=569 DEFAULT CHARSET=utf8 COMMENT='Table which stores all decision computed by the RT2AE. All fields are defined in the table.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
