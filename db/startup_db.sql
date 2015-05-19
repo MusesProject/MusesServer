@@ -230,22 +230,6 @@ CREATE TABLE `default_policies` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `device_config`
---
-
-DROP TABLE IF EXISTS `device_config`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `device_config` (
-  `device_config_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `device_config_name` varchar(30) NOT NULL COMMENT 'Name of the configuration',
-  `min_event_cache_size` int(10) unsigned NOT NULL DEFAULT '100' COMMENT 'Minimum number of events to be stored in the local cache',
-  `max_request_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Maximum amount of milliseconds waiting for an answer from the server side',
-  PRIMARY KEY (`device_config_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Device configuration parameters';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `device_type`
 --
 
