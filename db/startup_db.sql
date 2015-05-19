@@ -300,23 +300,6 @@ CREATE TABLE `devices` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `dictionary`
---
-
-DROP TABLE IF EXISTS `dictionary`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dictionary` (
-  `term_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `term_name` varchar(50) NOT NULL COMMENT 'Name of the term in the dictionary',
-  `description` varchar(100) NOT NULL COMMENT 'Description of the term',
-  `position` enum('ANTECEDENT','CONSEQUENT') NOT NULL COMMENT 'Position of the term in a rule',
-  `type` varchar(30) NOT NULL COMMENT 'Type of the term',
-  PRIMARY KEY (`term_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table which will store all the possible terms (and values) as potential antecedents and consequents for rules. Some of these terms will be automatically extracted from other tables, such as the TYPES_OF_APPS, APPLICATIONS names, USERS names, LOCATIONS, and so on.';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `domains`
 --
 
@@ -744,24 +727,6 @@ CREATE TABLE `system_log_krs` (
   `finish_time` datetime NOT NULL COMMENT 'When the sequence finished',
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table containing the useful information in the form of a log of the system working, in order to further being able to simulate that system workflow in an evaluation process for new (inferred or refined) rules.';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `term_values`
---
-
-DROP TABLE IF EXISTS `term_values`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `term_values` (
-  `value_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `term_id` bigint(20) unsigned NOT NULL COMMENT 'FK to the term which takes this value: table DICTIONARY(term_id)',
-  `value` varchar(50) NOT NULL COMMENT 'Value of the term',
-  `description` varchar(100) DEFAULT NULL COMMENT 'Description of the value',
-  PRIMARY KEY (`value_id`),
-  KEY `term_values-dictionary:term_id_idx` (`term_id`),
-  CONSTRAINT `term_values-dictionary:term_id` FOREIGN KEY (`term_id`) REFERENCES `dictionary` (`term_id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table containing all the possible values for every term. These values will be extracted from other tables as in the DICTIONARY';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
