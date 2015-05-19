@@ -246,19 +246,6 @@ CREATE TABLE `device_config` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `device_security_state`
---
-
-DROP TABLE IF EXISTS `device_security_state`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `device_security_state` (
-  `device_security_state_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`device_security_state_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='This table will store the list of clue about the security state of the device. This table has been modified about the DeviceSecurityState';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `device_type`
 --
 
