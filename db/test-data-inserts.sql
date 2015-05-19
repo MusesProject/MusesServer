@@ -146,3 +146,31 @@ INSERT INTO `list_ofpossible_risktreatments` (`listofpossiblerisktreatment_id`, 
 (5, 'The user is connected to unsecure network, he has to switch to secure network with wpa2 encryption', 'es', 'de', 'fr'),
 (6, 'There is too much risk in your context situation, the probability of a threat leading to a security incident is too high ', 'es', 'de', 'fr');
 
+--
+INSERT INTO `muses`.`devices` VALUES (1,'server',1222,'MUSES Server','server','0','a','0',0,0,NULL,NULL),(2,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,NULL,0,0,NULL,NULL);
+
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('1', '1', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('2', '2', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('3', '3', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('4', '4', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('5', '5', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('6', '6', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('7', '7', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('8', '8', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('9', '9', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('10', '10', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('11', '11', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('12', '12', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('13', '13', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('14', '14', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('15', '15', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('16', '16', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('17', '17', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('18', '18', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('19', '19', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('20', '20', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('21', '21', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('22', '22', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('23', '23', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('24', '24', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('25', '25', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
