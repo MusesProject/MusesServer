@@ -90,9 +90,7 @@ CREATE TABLE IF NOT EXISTS `applications` (
 -- Contenu de la table `applications`
 --
 
-INSERT INTO `applications` (`app_id`, `type`, `name`, `description`, `version`, `last_update`, `vendor`, `is_MUSES_aware`) VALUES
-(117, 1174, 'musesawaew', 'desc', '89', '2014-08-15 00:00:00', 'android', 0),
-(118, 1175, 'musesawarew', 'desc', '89', '2014-08-15 00:00:00', 'android', 0);
+INSERT INTO `applications` VALUES (117,1174,'musesawaew','desc','89','2014-08-15 00:00:00','android',0),(118,1175,'musesawarew','desc','89','2014-08-15 00:00:00','android',0),(119,1175,'MUSES-Server','desc','89','2014-08-15 00:00:00','java',0);
 
 -- --------------------------------------------------------
 
