@@ -181,7 +181,7 @@ DROP TABLE IF EXISTS `decision`;
 CREATE TABLE `decision` (
   `decision_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `access_request_id` bigint(20) unsigned NOT NULL,
-  `risk_communication_id` int(10) unsigned NOT NULL,
+  `risk_communication_id` int(10) DEFAULT NULL,
   `value` enum('GRANTED','STRONGDENY','MAYBE','UPTOYOU') NOT NULL,
   `information` text,
   `solving_risktreatment` int(11) DEFAULT NULL,
