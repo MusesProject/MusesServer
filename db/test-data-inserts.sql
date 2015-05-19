@@ -62,7 +62,11 @@ INSERT INTO `patterns_krs` VALUES (1,'GRANTED','','','','',0,0,0,0,0,0,'','2015-
 
 --
 
-INSERT INTO `security_rules` VALUES (800,'sec','des',NULL,'VALIDATED','0',15,'2014-11-15 00:00:00');
+INSERT INTO `sources` VALUES (1,'EP'),(2,'RT2AE'),(3,'KRS');
+
+--
+
+INSERT INTO `security_rules` VALUES (800,'sec','des',NULL,'VALIDATED','0',3,'2014-11-15 00:00:00');
 
 --
 
@@ -110,7 +114,6 @@ INSERT INTO `sensor_configuration` VALUES (1,'CONTEXT_SENSOR_DEVICE_PROTECTION',
 
 --
 
-INSERT INTO `sources` VALUES (1,'EP'),(2,'RT2AE'),(3,'KRS');
 
 --
 
