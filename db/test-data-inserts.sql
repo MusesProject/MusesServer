@@ -36,7 +36,7 @@ INSERT INTO `device_type` VALUES (1222,'1222','device'),(1223,'1223','device');
 
 --
 
-INSERT INTO `devices` VALUES (1,'server',1222,'MUSES Server','server','0','a','0',0,0,NULL,NULL),(201,'f',1222,'device','545','0','a','0',0,0,NULL,NULL),(202,'f',1223,'device','0454','0','a','0',0,0,NULL,NULL),(203,'e3da52dbe610b684',1222,NULL,'e3da52dbe610b684',NULL,NULL,NULL,0,0,NULL,NULL),(204,'9aa326e4fd9ccf61',1222,NULL,'9aa326e4fd9ccf61',NULL,NULL,NULL,0,0,NULL,NULL),(205,'36474929437562939',1222,NULL,'36474929437562939',NULL,NULL,NULL,0,0,NULL,NULL),(206,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,NULL,0,0,NULL,NULL),(207,'f1fa4ef09df1d163',1222,NULL,'f1fa4ef09df1d163',NULL,NULL,NULL,0,0,NULL,NULL),(208,'afc398f33cad4e9e',1222,NULL,'afc398f33cad4e9e',NULL,NULL,NULL,0,0,NULL,NULL);
+INSERT INTO `devices` VALUES (1,'server',1222,'MUSES Server','server','0','a','0',0,0,NULL,NULL),(2,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,NULL,0,0,NULL,NULL),(201,'f',1222,'device','545','0','a','0',0,0,NULL,NULL),(202,'f',1223,'device','0454','0','a','0',0,0,NULL,NULL),(203,'e3da52dbe610b684',1222,NULL,'e3da52dbe610b684',NULL,NULL,NULL,0,0,NULL,NULL),(204,'9aa326e4fd9ccf61',1222,NULL,'9aa326e4fd9ccf61',NULL,NULL,NULL,0,0,NULL,NULL),(205,'36474929437562939',1222,NULL,'36474929437562939',NULL,NULL,NULL,0,0,NULL,NULL),(206,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,NULL,0,0,NULL,NULL),(207,'f1fa4ef09df1d163',1222,NULL,'f1fa4ef09df1d163',NULL,NULL,NULL,0,0,NULL,NULL),(208,'afc398f33cad4e9e',1222,NULL,'afc398f33cad4e9e',NULL,NULL,NULL,0,0,NULL,NULL);
 --
 
 INSERT INTO `domains` VALUES (7,'domain','desc',25);
@@ -147,7 +147,10 @@ INSERT INTO `list_ofpossible_risktreatments` (`listofpossiblerisktreatment_id`, 
 (6, 'There is too much risk in your context situation, the probability of a threat leading to a security incident is too high ', 'es', 'de', 'fr');
 
 --
-INSERT INTO `muses`.`devices` VALUES (1,'server',1222,'MUSES Server','server','0','a','0',0,0,NULL,NULL),(2,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,NULL,0,0,NULL,NULL);
+
+
+
+
 
 INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('1', '1', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
 INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('2', '2', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
