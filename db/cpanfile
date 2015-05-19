@@ -1,0 +1,3 @@
+requires "SQL::Statement";
+requires "SQL::Parser";
+requires "SQL::SplitStatement";
