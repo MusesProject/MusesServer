@@ -27,6 +27,9 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<testFailureIgnore>true</testFailureIgnore>
+						<excludes>
+							<exclude>**/TestDataMiner.java</exclude>
+						</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
