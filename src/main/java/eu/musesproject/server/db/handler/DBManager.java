@@ -2069,8 +2069,19 @@ public class DBManager {
 		} finally {
 			if (session!=null) session.close();
 		}
-		return assets.get(assets.size() - 1);		
+		if (assets.size()!=0){
+			return assets.get(assets.size() - 1);
+		}else{
+			return getNoAsset();
+		}
+				
 	}
+    
+	public Assets getNoAsset() {
+		return getAssetByLocation("Nowhere");
+	}
+    
+		
     
     /**
      * Obtains the patterns obtained by the KRS through the Data Mining process

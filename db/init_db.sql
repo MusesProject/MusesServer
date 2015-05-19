@@ -57,7 +57,7 @@ INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',
 UNLOCK TABLES;
 
 
-INSERT INTO `assets` VALUES (1,'Patent','Asset_Unige',0,'PUBLIC','Geneva',now()),
+INSERT INTO `assets` VALUES (1,'Patent','Asset_Unige',0,'PUBLIC','Geneva',now()),(2,'Not an asset','Not an asset',0,'PUBLIC','Nowhere',now()),
 (1694, 'UNIGEPatent', 'The patent describe how to select the best Wi-Fi network', 100000, 'CONFIDENTIAL', 'unige/patent/list/UNIGEPatent', NULL),
 (1695, 'S2Patent', 'The patent describe how to prevent any threat in wireless network', 200000, 'STRICTLY_CONFIDENTIAL', 's2/patent/list/S2Patent', NULL),
 (1696, 'SWEDENPatent', 'The patent is about the RFID technology', 10000, 'INTERNAL', 'sweden/patent/list/SWEDENPatent', NULL);

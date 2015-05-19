@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Assets;
+import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
@@ -166,7 +167,13 @@ public class AccessRequestComposer {
 		if (associatedEvent!=null){
 			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
 		}else{
-			associatedEvent = dbManager.findLastEventByEventType(Integer.valueOf(event.getType()));
+			if (isInteger(event.getType(),10)){
+				associatedEvent = dbManager.findLastEventByEventType(Integer.valueOf(event.getType()));
+			}else{
+				EventType eventType = dbManager.getEventTypeByKey(event.getType());
+				int eventTypeIndex = eventType.getEventTypeId();
+				associatedEvent = dbManager.findLastEventByEventType(eventTypeIndex);
+			}
 			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
 		}
 		
@@ -192,6 +199,18 @@ public class AccessRequestComposer {
 		logger.log(Level.INFO, "AccessRequest event id:"+composedRequest.getEventId());
 		
 		return composedRequest;
+	}
+	
+	public static boolean isInteger(String s, int radix) {
+	    if(s.isEmpty()) return false;
+	    for(int i = 0; i < s.length(); i++) {
+	        if(i == 0 && s.charAt(i) == '-') {
+	            if(s.length() == 1) return false;
+	            else continue;
+	        }
+	        if(Character.digit(s.charAt(i),radix) < 0) return false;
+	    }
+	    return true;
 	}
 
 	private static Asset testGetRequestedAsset(String attachmentName) {//TODO This method will be replaced by the info in the database
