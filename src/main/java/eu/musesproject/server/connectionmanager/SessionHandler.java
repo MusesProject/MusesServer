@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -24,8 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import eu.musesproject.server.db.handler.DBManager;
 
 /**
  * This class handles all http session, called every time a 
@@ -92,20 +96,9 @@ public class SessionHandler implements ServletContextListener , HttpSessionListe
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		 Enumeration<java.sql.Driver> drivers = DriverManager.getDrivers();     
-
-	        java.sql.Driver driver = null;
-
-	        // clear drivers
-	        while(drivers.hasMoreElements()) {
-	            try {
-	                driver = drivers.nextElement();
-	                DriverManager.deregisterDriver(driver);
-
-	            } catch (SQLException ex) {
-	                // deregistration failed, might want to do something, log at the very least
-	            }
-	        }
+		if (DBManager.sessionFactory != null) {
+			DBManager.sessionFactory.close();
+		}
 	}
 
 	@Override

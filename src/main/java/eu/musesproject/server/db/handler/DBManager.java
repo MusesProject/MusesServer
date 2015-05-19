@@ -65,7 +65,7 @@ import eu.musesproject.server.scheduler.ModuleType;
 public class DBManager {
 	
 	ModuleType module;
-	private static SessionFactory sessionFactory = null;
+	public static SessionFactory sessionFactory = null;
 	private static ServiceRegistry serviceRegistry;
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static Logger logger = Logger.getLogger(DBManager.class.getName());;
