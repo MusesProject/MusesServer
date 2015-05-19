@@ -28,11 +28,9 @@
         <mapping class="eu.musesproject.server.entity.CorporatePolicies"/>
         <mapping class="eu.musesproject.server.entity.Decision"/>
         <mapping class="eu.musesproject.server.entity.DefaultPolicies"/>
-        <mapping class="eu.musesproject.server.entity.DeviceConfig"/>
         <mapping class="eu.musesproject.server.entity.Devices"/>
         <mapping class="eu.musesproject.server.entity.DecisionTrustvalues"/>
         <mapping class="eu.musesproject.server.entity.DeviceType"/>
-        <mapping class="eu.musesproject.server.entity.Dictionary"/>
         <mapping class="eu.musesproject.server.entity.Domains"/>
         <mapping class="eu.musesproject.server.entity.EventType"/>
         <mapping class="eu.musesproject.server.entity.LegalAspects"/>

@@ -15,7 +15,6 @@
 	<class>eu.musesproject.server.entity.DecisionTrustvalue</class>
 	<class>eu.musesproject.server.entity.DeviceType</class>
 	<class>eu.musesproject.server.entity.Devices</class>
-	<class>eu.musesproject.server.entity.Dictionary</class>
 	<class>eu.musesproject.server.entity.Domains</class>
 	<class>eu.musesproject.server.entity.EventType</class>
 	<class>eu.musesproject.server.entity.LegalAspects</class>
