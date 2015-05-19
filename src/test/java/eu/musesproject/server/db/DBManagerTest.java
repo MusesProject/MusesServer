@@ -452,6 +452,7 @@ public class DBManagerTest {
 		logEntry.setNumbersInPassword(0);
 		logEntry.setPasswdHasCapitalLetters(0);
 		logEntry.setPasswordLength(0);
+		logEntry.setSilentMode(0);
 		logEntry.setUsername("");
 		logEntry.setUserRole("");
 		logEntry.setUserTrustValue(0);
