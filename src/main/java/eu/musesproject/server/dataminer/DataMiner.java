@@ -52,6 +52,9 @@ import eu.musesproject.server.scheduler.ModuleType;
 
 import org.apache.log4j.Logger;
 
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instances;
 import eu.musesproject.server.scheduler.ModuleType;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
@@ -384,10 +387,7 @@ public class DataMiner {
 			pattern.setDeviceHasCertificate(1);
 		} else {
 			pattern.setDeviceHasCertificate(0);
-		}		
-		// Device security level
-		short deviceSecLevel = userDeviceId.getSecurityLevel();
-		pattern.setDeviceSecurityLevel(deviceSecLevel);
+		}
 		// Device company owned or employee owned
 		String deviceOwner = userDeviceId.getOwnerType();
 		if (deviceOwner != null) {
@@ -515,6 +515,61 @@ public class DataMiner {
 		
 	}
 	
+	public Instances buildInstancesFromPatterns (List<PatternsKrs> dbPatterns) {
+		
+		Instances data = null;
+		ArrayList<Attribute> atts = new ArrayList<Attribute>();
+		atts.add(new Attribute("decision_cause"));
+		atts.add(new Attribute("silent_mode"));
+		atts.add(new Attribute("event_type"));
+		atts.add(new Attribute("event_level"));
+		atts.add(new Attribute("username"));
+		atts.add(new Attribute("password_length"));
+		atts.add(new Attribute("letters_in_password"));
+		atts.add(new Attribute("numbers_in_password"));
+		atts.add(new Attribute("passwd_has_capital_letters"));
+		atts.add(new Attribute("user_trust_value"));
+		atts.add(new Attribute("activated_account"));
+		atts.add(new Attribute("user_role"));
+		atts.add(new Attribute("event_detection"));
+		atts.add(new Attribute("device_type"));
+		atts.add(new Attribute("device_OS"));
+		atts.add(new Attribute("device_has_antivirus"));
+		atts.add(new Attribute("device_has_certificate"));
+		atts.add(new Attribute("device_trust_value"));
+		atts.add(new Attribute("device_owned_by"));
+		atts.add(new Attribute("device_has_password"));
+		atts.add(new Attribute("device_screen_timeout"));
+		atts.add(new Attribute("device_has_accessibility"));
+		atts.add(new Attribute("device_is_rooted"));
+		atts.add(new Attribute("app_name"));
+		atts.add(new Attribute("app_vendor"));
+		atts.add(new Attribute("app_is_MUSES_aware"));
+		atts.add(new Attribute("asset_name"));
+		atts.add(new Attribute("asset_value"));
+		atts.add(new Attribute("asset_confidential_level"));
+		atts.add(new Attribute("asset_location"));
+		atts.add(new Attribute("mail_recipient_allowed"));
+		atts.add(new Attribute("mail_contains_cc_allowed"));
+		atts.add(new Attribute("mail_contains_bcc_allowed"));
+		atts.add(new Attribute("mail_has_attachment"));
+		atts.add(new Attribute("id", (ArrayList<String>) null));
+		atts.add(new Attribute("label"));
+		data = new Instances("yourData", atts, 0);
+
+		Iterator<PatternsKrs> i = dbPatterns.iterator();
+		while(i.hasNext()){
+			PatternsKrs pattern = i.next();
+			double[] vals = new double[data.numAttributes()];
+			vals[0] = pattern.getAssetValue();
+			vals[1] = pattern.getAssetValue();
+			vals[2] = data.attribute(2).addStringValue(pattern.getLogEntryId().toString());
+			data.add(new DenseInstance(1.0, vals));
+		}
+		
+		return data;
+	}
+	
 	
 	/**
 	 * Info DM
@@ -530,7 +585,7 @@ public class DataMiner {
 	 * @return void
 	 */
 	
-	public void updateCluePatterns(Pattern[] patterns){
+	public void featureSelection(Instances data){
 		
 	}
 
