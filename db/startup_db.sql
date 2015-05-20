@@ -393,7 +393,6 @@ CREATE TABLE `patterns_krs` (
   `device_has_antivirus` int(11) NOT NULL COMMENT 'Specify whether the user''s device has (1) or has not (0) a trusted antivirus installed',
   `device_has_certificate` int(11) NOT NULL COMMENT 'Specify whether the user''s device has (1) or has not (0) a valid certificate installed',
   `device_trust_value` double NOT NULL COMMENT 'Trust value that the device had when the event was thrown',
-  `device_security_level` smallint(6) DEFAULT NULL COMMENT 'The security level of the device is based on the device security state',
   `device_owned_by` varchar(20) NOT NULL COMMENT 'Owner of the device. Possible values are: {COMPANY, EMPLOYEE}',
   `device_has_password` int(11) NOT NULL COMMENT 'Specify whether the user''s device has (1) or has not (0) the screen protected by password',
   `device_screen_timeout` int(11) NOT NULL COMMENT 'Time to lock the screen in the device, in seconds',

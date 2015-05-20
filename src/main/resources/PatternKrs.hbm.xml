@@ -65,9 +65,6 @@
         <property name="deviceTrustValue" type="double">
             <column name="DEVICETRUSTVALUE" />
         </property>
-        <property name="deviceSecurityLevel" type="int">
-            <column name="DEVICESECURITYLEVEL" />
-        </property>
         <property name="deviceOwnedBy" type="java.lang.String">
             <column name="DEVICEOWNEDBY" />
         </property>

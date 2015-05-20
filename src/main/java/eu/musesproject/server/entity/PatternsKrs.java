@@ -108,9 +108,6 @@ public class PatternsKrs implements Serializable {
 	@Column(name="device_trust_value", nullable=false)
 	private double deviceTrustValue;
 	
-	@Column(name="device_security_level", nullable=false)
-	private short deviceSecurityLevel;
-	
 	@Column(name="device_owned_by", nullable=false)
 	private String deviceOwnedBy;
 	
@@ -320,14 +317,6 @@ public class PatternsKrs implements Serializable {
 
 	public void setDeviceTrustValue(double deviceTrustValue) {
 		this.deviceTrustValue = deviceTrustValue;
-	}
-
-	public short getDeviceSecurityLevel() {
-		return deviceSecurityLevel;
-	}
-
-	public void setDeviceSecurityLevel(short deviceSecurityLevel) {
-		this.deviceSecurityLevel = deviceSecurityLevel;
 	}
 
 	public String getDeviceOwnedBy() {
