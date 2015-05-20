@@ -120,7 +120,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 								.getDevice().getDevicetrustvalue());
 
 				Clue userName = new Clue();
-				userName.setName(accessRequest.getUser().getSurname()); 
+				userName.setName(accessRequest.getUser().getUsername()); 
 				clues.add(userName);
 
 				Clue assetName = new Clue();
@@ -307,7 +307,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 									.getDevice().getDevicetrustvalue());
 
 					Clue userName = new Clue();
-					userName.setName(accessRequest.getUser().getSurname()); 
+					userName.setName(accessRequest.getUser().getUsername()); 
 					clues.add(userName);
 
 					Clue assetName = new Clue();
@@ -523,7 +523,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 							.getDevice().getDevicetrustvalue());
 
 			Clue userName = new Clue();
-			userName.setName(accessRequest.getUser().getSurname()); 
+			userName.setName(accessRequest.getUser().getUsername()); 
 			clues.add(userName);
 
 			Clue assetName = new Clue();
@@ -666,16 +666,16 @@ public class Rt2aeServerImpl implements Rt2ae {
 		// log some useful info
 
 		logger.info("Decission data is: ");
-		logger.info("- Risk Policy threshold: " + riskPolicy.getRiskvalue());
+		//logger.info("- Risk Policy threshold: " + riskPolicy.getRiskvalue());
 		logger.info("- Cost Oportunity: " + costOpportunity);
 		logger.info("- Combined Probability of the all possible Threats happening together: "
 				+ combinedProbabilityThreats);
-		logger.info("- Combined Probability of the all the possible Opportunities happening together: "
-				+ combinedProbabilityOpportunities);
+		//logger.info("- Combined Probability of the all the possible Opportunities happening together: "
+			//	+ combinedProbabilityOpportunities);
 		logger.info("- Combined Probability of only one of the possible Threats happening: "
 				+ singleThreatProbabibility);
-		logger.info("- Combined Probability of only one of the possible Opportunities happening: "
-				+ singleOpportunityProbability);
+		//logger.info("- Combined Probability of only one of the possible Opportunities happening: "
+			//	+ singleOpportunityProbability);
 		logger.info("Making a decision...");
 		logger.info(".");
 		logger.info("..");
@@ -3005,9 +3005,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 		logger.info("RT2AE.......: "+deviceSecurityState.getDevice_id());
 
-		if(dbManager.findDeviceById(new String(deviceSecurityState.getDevice_id().toByteArray())).size()!=0){
+		if(dbManager.getDeviceByIMEI(new String(deviceSecurityState.getDevice_id().toByteArray()))!=null){
 			//eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
-			eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(new String(deviceSecurityState.getDevice_id().toByteArray())).get(0);
+			eu.musesproject.server.entity.Devices device = dbManager.getDeviceByIMEI(new String(deviceSecurityState.getDevice_id().toByteArray()));
 	
 			double countadditionalprotection = device.getAdditionalProtections().size();
 	
