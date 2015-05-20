@@ -52,7 +52,7 @@ INSERT INTO `sensor_configuration` VALUES (1,'CONTEXT_SENSOR_DEVICE_PROTECTION',
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',1,0.5,100,'en'),(3,'notfound','notfound','notfound@muses.com','notfound','56836458345673465',0,0,0);
+INSERT INTO `users` VALUES (1,'admin','admin','admin@muses.com','muses','muses',1,0.5,100,'en'),(2,'notfound','notfound','notfound@muses.com','notfound','56836458345673465',0,0,0,'en');
 
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
