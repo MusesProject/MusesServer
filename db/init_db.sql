@@ -18,11 +18,7 @@ UNLOCK TABLES;
 
 INSERT INTO `connection_config` VALUES (1,5000,10000,60000,1,5);
 
-LOCK TABLES `device_type` WRITE;
-/*!40000 ALTER TABLE `device_type` DISABLE KEYS */;
-INSERT INTO `device_type` VALUES (1222,'1222','device'),(1223,'1223','device');
-/*!40000 ALTER TABLE `device_type` ENABLE KEYS */;
-UNLOCK TABLES;
+
 
 LOCK TABLES `event_type` WRITE;
 /*!40000 ALTER TABLE `event_type` DISABLE KEYS */;
