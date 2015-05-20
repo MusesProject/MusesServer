@@ -213,6 +213,22 @@ rule "Sensor app"
 
 	end
 
+	
+rule "ResourceType set"
+	no-loop true
+	dialect "mvel"
+	salience 65500
+	when
+		e: FileObserverEvent(resourceType=="null",path matches ".*SWE.*")
+	then
+		StatusGlobal.log("----------------------------File sensor with no resourceType---------------------------------------------");
+		StatusGlobal.setStatus(Constants.STARTED);
+		e.setResourceType("CONFIDENTIAL");
+		update(e);
+
+
+	end	
+
 rule "AccessRequest Detection open asset type confidential unsecure wifi"
 	no-loop true
 	dialect "java"
