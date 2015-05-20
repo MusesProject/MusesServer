@@ -171,7 +171,7 @@ public class Devices implements Serializable {
 		return this.deviceModel;
 	}
 
-	public void setDeviceType(String deviceModel) {
+	public void setDeviceModel(String deviceModel) {
 		this.deviceModel = deviceModel;
 	}
 

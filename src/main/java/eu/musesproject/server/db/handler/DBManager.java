@@ -26,7 +26,6 @@ import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.DefaultPolicies;
-import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
 import eu.musesproject.server.entity.EventType;
@@ -1481,7 +1480,6 @@ public class DBManager {
 		device.setDevicetrustvalue(devicetrustvalue);
 		device.setName(musesDevice.getName());
 		device.setImei(musesDevice.getImei());
-		device.setMac(musesDevice.getMac());
 		
 		device.setOS_name(musesDevice.getOS_name());
 		device.setOS_version(musesDevice.getOS_version());
@@ -1729,30 +1727,7 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return devices;
-	}
-	
-    /**
-     * Get Device type list 
-     * @return List<DeviceType>
-     */
-	public List<DeviceType> getDeviceTypes() {	
-		Session session = null;
-		Query query = null;
-		List<DeviceType> types = null;
-		try {
-			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("DeviceType.findAll");
-			if (query!=null) {
-				types = query.list();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (session!=null) session.close();
-		}
-		return types;
-	}
-	
+	}	
 	
     /**
      * Get Zones list 

@@ -36,7 +36,6 @@ import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.contextdatareceiver.JSONManager;
 import eu.musesproject.server.db.handler.DBManager;
-import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.Users;
@@ -111,9 +110,8 @@ public class Rt2aeGlobal {
 			device = new Devices();
 			device.setImei(event.getDeviceId());
 			device.setName(event.getDeviceId());
-			DeviceType deviceType = new DeviceType();
-			deviceType.setDeviceTypeId(1222);//TODO manage device type conveniently
-			device.setDeviceType(deviceType);
+			String deviceModel = "somemodel"; //TODO manage device model conveniently
+			device.setDeviceModel(deviceModel);
 			dbManager.persist(device);
 		}/*else{
 			device = deviceInstance;

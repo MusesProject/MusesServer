@@ -62,7 +62,6 @@ import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.DecisionTrustvalues;
-import eu.musesproject.server.entity.DeviceType;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.PatternsKrs;
