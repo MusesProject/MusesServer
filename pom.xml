@@ -27,6 +27,9 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<testFailureIgnore>true</testFailureIgnore>
+						<excludes>
+							<exclude>**/TestDataMiner.java</exclude>
+						</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -382,11 +385,7 @@
 			<artifactId>commons-pool</artifactId>
 			<version>20030825.183949</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2.2</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>

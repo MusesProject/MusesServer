@@ -108,6 +108,7 @@ public class ComMainServlet extends HttpServlet {
 		// if "send-data" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
 			// Callback the FL to receive data from the client and get the response data back into string
+			logger.log(Level.INFO, MUSES_TAG + " Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInRequest**: "+dataAttachedInCurrentReuqest);
 			dataToSendBackInResponse="";
 			if (dataAttachedInCurrentReuqest != null){
 				dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
