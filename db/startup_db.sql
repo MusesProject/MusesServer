@@ -228,20 +228,6 @@ CREATE TABLE `default_policies` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table which contains the default security policies, both containing textual descriptions and formalization files.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `device_type`
---
-
-DROP TABLE IF EXISTS `device_type`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `device_type` (
-  `device_type_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(30) NOT NULL COMMENT 'Types of devices, such as DESKTOP_PC, LAPTOP, TABLET, SMARTPHONE, PALM, PDA',
-  `description` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`device_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1224 DEFAULT CHARSET=utf8 COMMENT='This table is directly related to the previous one, as it contains the information about the type of devices that can be registered in the system.';
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `devices`

@@ -13,7 +13,6 @@
 	<class>eu.musesproject.server.entity.CorporatePolicies</class>
 	<class>eu.musesproject.server.entity.Decision</class>
 	<class>eu.musesproject.server.entity.DecisionTrustvalue</class>
-	<class>eu.musesproject.server.entity.DeviceType</class>
 	<class>eu.musesproject.server.entity.Devices</class>
 	<class>eu.musesproject.server.entity.Domains</class>
 	<class>eu.musesproject.server.entity.EventType</class>

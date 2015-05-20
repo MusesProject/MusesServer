@@ -363,12 +363,11 @@ public class DataMiner {
 			pattern.setSilentMode(0);
 		}
 		
-		/* Obtaining the type of device */
+		/* Obtaining the model of device */
 		Devices userDeviceId = event.getDevice();
-		DeviceType deviceType = userDeviceId.getDeviceType();
-		String userDeviceType = deviceType.getType();
-		if (userDeviceType != null) {
-			pattern.setDeviceType(userDeviceType);
+		String deviceModel = userDeviceId.getDeviceModel();
+		if (deviceModel != null) {
+			pattern.setDeviceType(deviceModel);
 		} else {
 			pattern.setDeviceType("");
 		}
@@ -521,18 +520,18 @@ public class DataMiner {
 		ArrayList<Attribute> atts = new ArrayList<Attribute>();
 		atts.add(new Attribute("decision_cause"));
 		atts.add(new Attribute("silent_mode"));
-		atts.add(new Attribute("event_type"));
-		atts.add(new Attribute("event_level"));
-		atts.add(new Attribute("username"));
+		atts.add(new Attribute("event_type", dbManager.getDistinctEventTypes()));
+		atts.add(new Attribute("event_level", dbManager.getDistinctEventLevels()));
+		atts.add(new Attribute("username", dbManager.getDistinctUsernames()));
 		atts.add(new Attribute("password_length"));
 		atts.add(new Attribute("letters_in_password"));
 		atts.add(new Attribute("numbers_in_password"));
 		atts.add(new Attribute("passwd_has_capital_letters"));
 		atts.add(new Attribute("user_trust_value"));
 		atts.add(new Attribute("activated_account"));
-		atts.add(new Attribute("user_role"));
-		atts.add(new Attribute("event_detection"));
-		atts.add(new Attribute("device_type"));
+		atts.add(new Attribute("user_role", dbManager.getDistinctUserRoles()));
+		atts.add(new Attribute("event_detection", "yyyy-MM-dd'T'HH:mm:ss"));
+		atts.add(new Attribute("device_type", dbManager.getDistinctDeviceType()));
 		atts.add(new Attribute("device_OS"));
 		atts.add(new Attribute("device_has_antivirus"));
 		atts.add(new Attribute("device_has_certificate"));
@@ -558,14 +557,47 @@ public class DataMiner {
 		data = new Instances("yourData", atts, 0);
 
 		Iterator<PatternsKrs> i = dbPatterns.iterator();
-		while(i.hasNext()){
+		/*while(i.hasNext()){
 			PatternsKrs pattern = i.next();
 			double[] vals = new double[data.numAttributes()];
-			vals[0] = pattern.getAssetValue();
-			vals[1] = pattern.getAssetValue();
-			vals[2] = data.attribute(2).addStringValue(pattern.getLogEntryId().toString());
+			vals[0] = pattern.getDecisionCause();
+			vals[1] = pattern.getSilentMode();
+			vals[2] = pattern.getEventType();
+			vals[3] = pattern.getEventLevel();
+			vals[4] = pattern.getUsername();
+			vals[5] = pattern.getUserTrustValue();
+			vals[6] = pattern.getPasswordLength();
+			vals[7] = pattern.getLettersInPassword();
+			vals[8] = pattern.getNumbersInPassword();
+			vals[9] = pattern.getPasswdHasCapitalLetters();
+			vals[10] = pattern.getActivatedAccount();
+			vals[11] = pattern.getUserRole();
+			vals[12] = pattern.getEventTime();
+			vals[13] = pattern.getDeviceType();
+			vals[14] = pattern.getDeviceOS();
+			vals[15] = pattern.getDeviceHasAntivirus();
+			vals[16] = pattern.getDeviceHasCertificate();
+			vals[17] = pattern.getDeviceTrustValue();
+			vals[18] = pattern.getDeviceOwnedBy();
+			vals[19] = pattern.getDeviceHasPassword();
+			vals[20] = pattern.getDeviceScreenTimeout();
+			vals[21] = pattern.getDeviceHasAccessibility();
+			vals[22] = pattern.getDeviceIsRooted();
+			vals[23] = pattern.getAppName();
+			vals[24] = pattern.getAppVendor();
+			vals[25] = pattern.getAppMUSESAware();
+			vals[26] = pattern.getAssetName();
+			vals[27] = pattern.getAssetValue();
+			vals[28] = pattern.getAssetConfidentialLevel();
+			vals[29] = pattern.getAssetLocation();
+			vals[30] = pattern.getMailRecipientAllowed();
+			vals[31] = pattern.getMailContainsCC();
+			vals[32] = pattern.getMailContainsBCC();
+			vals[33] = pattern.getMailHasAttachment();
+			vals[34] = pattern.getLabel();
+			vals[35] = data.attribute(2).addStringValue(pattern.getLogEntryId().toString());
 			data.add(new DenseInstance(1.0, vals));
-		}
+		}*/
 		
 		return data;
 	}
