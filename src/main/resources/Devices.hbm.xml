@@ -24,12 +24,7 @@
                 <comment>In the format XXXXXX YY ZZZZZZ W</comment>
             </column>
         </property>
-        <property name="mac" type="string">
-            <column name="MAC" length="30">
-                <comment>In the format FF:FF:FF:FF:FF:FF:FF:FF</comment>
-            </column>
-        </property>
-        <property name="osName" type="string">
+       <property name="osName" type="string">
             <column name="OS_name" length="30">
                 <comment>The operating system of the device</comment>
             </column>
@@ -42,11 +37,6 @@
         <property name="trustValue" type="java.lang.Double">
             <column name="trust_value" precision="22" scale="0">
                 <comment>The trust value of the device will be between 0 and 1</comment>
-            </column>
-        </property>
-        <property name="securityLevel" type="java.lang.Short">
-            <column name="security_level">
-                <comment>The security level of the device is based on the device security state</comment>
             </column>
         </property>
         <property name="certificate" type="binary">

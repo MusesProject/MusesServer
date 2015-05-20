@@ -36,9 +36,6 @@ public class Devices implements Serializable {
 	@Column(length=30)
 	private String imei;
 
-	@Column(length=30)
-	private String mac;
-
 	@Column(nullable=false, length=30)
 	private String name;
 
@@ -50,9 +47,6 @@ public class Devices implements Serializable {
 
 	@Column(name="owner_type", length=1)
 	private String ownerType;
-
-	@Column(name="security_level")
-	private short securityLevel;
 
 	@Column(name="trust_value")
 	private double trustValue;
@@ -113,14 +107,6 @@ public class Devices implements Serializable {
 		this.imei = imei;
 	}
 
-	public String getMac() {
-		return this.mac;
-	}
-
-	public void setMac(String mac) {
-		this.mac = mac;
-	}
-
 	public String getName() {
 		return this.name;
 	}
@@ -151,14 +137,6 @@ public class Devices implements Serializable {
 
 	public void setOwnerType(String ownerType) {
 		this.ownerType = ownerType;
-	}
-
-	public short getSecurityLevel() {
-		return this.securityLevel;
-	}
-
-	public void setSecurityLevel(short securityLevel) {
-		this.securityLevel = securityLevel;
 	}
 
 	public double getTrustValue() {

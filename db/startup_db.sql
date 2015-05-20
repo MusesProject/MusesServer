@@ -256,7 +256,6 @@ CREATE TABLE `devices` (
   `type` int(10) unsigned NOT NULL COMMENT 'FK to table DEVICE_TYPE(device_type_id)',
   `description` varchar(100) DEFAULT NULL,
   `IMEI` varchar(30) DEFAULT NULL COMMENT 'In the format XXXXXX YY ZZZZZZ W',
-  `MAC` varchar(30) DEFAULT NULL COMMENT 'In the format FF:FF:FF:FF:FF:FF:FF:FF',
   `OS_name` varchar(30) DEFAULT NULL COMMENT 'The operating system of the device',
   `OS_version` varchar(20) DEFAULT NULL COMMENT 'The operating system of the device',
   `trust_value` double DEFAULT NULL COMMENT 'The trust value of the device will be between 0 and 1',
