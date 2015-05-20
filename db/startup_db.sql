@@ -260,7 +260,6 @@ CREATE TABLE `devices` (
   `OS_name` varchar(30) DEFAULT NULL COMMENT 'The operating system of the device',
   `OS_version` varchar(20) DEFAULT NULL COMMENT 'The operating system of the device',
   `trust_value` double DEFAULT NULL COMMENT 'The trust value of the device will be between 0 and 1',
-  `security_level` smallint(6) DEFAULT NULL COMMENT 'The security level of the device is based on the device security state',
   `certificate` blob,
   `owner_type` enum('COMPANY','USER') DEFAULT NULL,
   PRIMARY KEY (`device_id`),
