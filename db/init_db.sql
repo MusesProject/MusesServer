@@ -60,7 +60,7 @@ INSERT INTO `assets` VALUES (1,'Patent','Asset_Unige',0,'PUBLIC','Geneva',now())
 (1696, 'SWEDENPatent', 'The patent is about the RFID technology', 10000, 'INTERNAL', 'sweden/patent/list/SWEDENPatent', NULL);
 
 
-INSERT INTO `muses`.`devices` VALUES (1,'server',1222,'MUSES Server','server','0','a','0',0,0,NULL,NULL),(2,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,NULL,0,0,NULL,NULL);
+INSERT INTO `muses`.`devices` VALUES (1,'server',1222,'MUSES Server','server','a','0',0,0,NULL,NULL),(2,'358648051980583',1222,NULL,'358648051980583',NULL,NULL,0,0,NULL,NULL);
 
 INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('1', '1', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
 INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('2', '2', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
