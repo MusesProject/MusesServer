@@ -40,7 +40,31 @@ import javax.persistence.*;
 @Table(name="patterns_krs")
 @NamedQueries ({
 	@NamedQuery(name="PatternsKrs.findAll",
-			query="SELECT p FROM PatternsKrs p")
+			query="SELECT p FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctEventTypes",
+			query="SELECT DISTINCT p.eventType FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctEventLevel",
+			query="SELECT DISTINCT p.eventLevel FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctUsername",
+			query="SELECT DISTINCT p.username FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctUserRole",
+			query="SELECT DISTINCT p.userRole FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctDeviceType",
+			query="SELECT DISTINCT p.deviceType FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctDeviceOS",
+			query="SELECT DISTINCT p.deviceOS FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctDeviceOwnedBy",
+			query="SELECT DISTINCT p.deviceOwnedBy FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctAppName",
+			query="SELECT DISTINCT p.appName FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctAppVendor",
+			query="SELECT DISTINCT p.appVendor FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctAssetName",
+			query="SELECT DISTINCT p.assetName FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctAssetConfidentialLevel",
+			query="SELECT DISTINCT p.assetConfidentialLevel FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctAssetLocation",
+			query="SELECT DISTINCT p.assetLocation FROM PatternsKrs p")
 })
 public class PatternsKrs implements Serializable {
 	private static final long serialVersionUID = 1L;

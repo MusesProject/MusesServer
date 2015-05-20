@@ -2152,6 +2152,283 @@ public class DBManager {
 		
 		return role;
 	}
+	
+	/**
+     * Get all different values of event_type in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctEventTypes() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctEventTypes");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of event_level in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctEventLevels() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctEventLevel");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of username in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctUsernames() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctUsername");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of user_role in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctUserRoles() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctUserRole");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of device_type in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctDeviceType() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceType");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of device_OS in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctDeviceOS() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceOS");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of device_owned_by in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctDeviceOwnedBy() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceOwnedBy");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of app_name in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctAppName() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctAppName");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of app_vendor in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctAppVendor() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctAppVendor");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of asset_name in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctAssetName() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctAssetName");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of asset_confidential_level in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctAssetConfidentialLevel() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctAssetConfidentialLevel");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of asset_location in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctAssetLocation() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctAssetLocation");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
 	public static void main (String [] arg){
 		
 		DBManager dbManager = new DBManager(ModuleType.RT2AE);

@@ -494,5 +494,14 @@ public class DBManagerTest {
 		else
 			fail("There is not any Role corresponding to that role_id.");
 	}
+	
+	@Test
+	public void testGetDistinctDeviceOwnedBy() {
+		List<String> values = dbmanager.getDistinctDeviceOwnedBy();
+		if(values != null)
+			assertTrue(true);
+		else
+			fail("This column is empty");
+	}
 
 }
