@@ -119,8 +119,11 @@ public class Rt2aeGlobal {
 			device = deviceInstance;
 		}*/
 		//FIXME no function right now change to current implementation
+		logger.info("EVENT PROCESSOR.......: "+event.getDeviceId());
+
 		if (event.getDeviceId()!=null){
 			//deviceSecurityState.setDevice_id(Integer.valueOf(event.getDeviceId()));
+			
 			deviceSecurityState.setDevice_id(new BigInteger(event.getDeviceId()));
 		}
 		deviceSecurityState.setClues(deviceSecurityClues);

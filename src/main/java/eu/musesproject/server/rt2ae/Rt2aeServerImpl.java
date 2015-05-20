@@ -3002,6 +3002,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
 
 		//if(dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).size()!=0){
+		
+		logger.info("RT2AE.......: "+deviceSecurityState.getDevice_id());
+
 		if(dbManager.findDeviceById(new String(deviceSecurityState.getDevice_id().toByteArray())).size()!=0){
 			//eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).get(0);
 			eu.musesproject.server.entity.Devices device = dbManager.findDeviceById(new String(deviceSecurityState.getDevice_id().toByteArray())).get(0);
