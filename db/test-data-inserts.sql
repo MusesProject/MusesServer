@@ -174,3 +174,4 @@ INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `de
 INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('23', '23', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
 INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('24', '24', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
 INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('25', '25', '1', '1', '117', '1', 'Default event', date(now()),time(now()));
+INSERT INTO `muses`.`simple_events` (`event_id`, `event_type_id`, `user_id`, `device_id`, `app_id`, `asset_id`, `data`,`date`,`time`) VALUES ('26', '25', '1', '1', '117', '1', 'Default event', '2015-01-09','17:00:00');
