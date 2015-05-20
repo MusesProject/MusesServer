@@ -437,7 +437,6 @@ public class DBManagerTest {
 		logEntry.setDeviceOwnedBy("");
 		logEntry.setDeviceScreenTimeout(BigInteger.ZERO);
 		short zero = 0;
-		logEntry.setDeviceSecurityLevel(zero);
 		logEntry.setDeviceTrustValue(0);
 		logEntry.setDeviceType("");
 		logEntry.setEventLevel("");
