@@ -239,7 +239,7 @@ DROP TABLE IF EXISTS `devices`;
 CREATE TABLE `devices` (
   `device_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
-  `model` varchar(30) unsigned NOT NULL COMMENT 'Device model, sent from the client',
+  `model` varchar(30) NOT NULL COMMENT 'Device model, sent from the client',
   `description` varchar(100) DEFAULT NULL,
   `IMEI` varchar(30) DEFAULT NULL COMMENT 'In the format XXXXXX YY ZZZZZZ W',
   `OS_name` varchar(30) DEFAULT NULL COMMENT 'The operating system of the device',
