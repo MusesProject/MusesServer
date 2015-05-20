@@ -85,6 +85,11 @@ public class EventProcessorImpl implements EventProcessor {
 		
 		List<eu.musesproject.server.risktrust.Clue> clues = Rt2aeGlobal.getCluesByRequestId(accessRequest.getId());
 		logger.info("Number of clues:"+clues.size());
+		if (clues.size()==0){
+			Clue clue = new Clue();
+			clue.setName("NOT-AVAILABLE-CLUES");
+			clues.add(clue);
+		}
 		return clues;
 
 	}
