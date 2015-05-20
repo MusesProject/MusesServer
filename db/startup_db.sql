@@ -253,7 +253,7 @@ DROP TABLE IF EXISTS `devices`;
 CREATE TABLE `devices` (
   `device_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
-  `type` int(10) unsigned NOT NULL COMMENT 'FK to table DEVICE_TYPE(device_type_id)',
+  `model` varchar(30) unsigned NOT NULL COMMENT 'Device model, sent from the client',
   `description` varchar(100) DEFAULT NULL,
   `IMEI` varchar(30) DEFAULT NULL COMMENT 'In the format XXXXXX YY ZZZZZZ W',
   `OS_name` varchar(30) DEFAULT NULL COMMENT 'The operating system of the device',
@@ -261,9 +261,7 @@ CREATE TABLE `devices` (
   `trust_value` double DEFAULT NULL COMMENT 'The trust value of the device will be between 0 and 1',
   `certificate` blob,
   `owner_type` enum('COMPANY','USER') DEFAULT NULL,
-  PRIMARY KEY (`device_id`),
-  KEY `device_type_id_idx` (`type`),
-  CONSTRAINT `devices-device_type:device_type_id` FOREIGN KEY (`type`) REFERENCES `device_type` (`device_type_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  PRIMARY KEY (`device_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=334 DEFAULT CHARSET=utf8 COMMENT='Table that has been created due to the importance of having a record of the different devices that are using company assets and the need of pairing a device with an owner. Like the users, the devices have also a defined trust value that may be changed by RT2AE decisions.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -26,6 +26,9 @@ public class Devices implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="device_id", unique=true, nullable=false)
 	private String deviceId;
+	
+	@Column(name="model", length=1)
+	private String deviceModel;
 
 	@Lob
 	private byte[] certificate;
@@ -54,11 +57,6 @@ public class Devices implements Serializable {
 	//bi-directional many-to-one association to AdditionalProtection
 	@OneToMany(mappedBy="device")
 	private List<AdditionalProtection> additionalProtections;
-
-	//bi-directional many-to-one association to DeviceType
-	@ManyToOne
-	@JoinColumn(name="type", nullable=false)
-	private DeviceType deviceType;
 
 	//bi-directional many-to-one association to SecurityIncident
 	@OneToMany(mappedBy="device")
@@ -169,12 +167,12 @@ public class Devices implements Serializable {
 		return additionalProtection;
 	}
 
-	public DeviceType getDeviceType() {
-		return this.deviceType;
+	public String getDeviceModel() {
+		return this.deviceModel;
 	}
 
-	public void setDeviceType(DeviceType deviceType) {
-		this.deviceType = deviceType;
+	public void setDeviceType(String deviceModel) {
+		this.deviceModel = deviceModel;
 	}
 
 	public List<SecurityIncident> getSecurityIncidents() {

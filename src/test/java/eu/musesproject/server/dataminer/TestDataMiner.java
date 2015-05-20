@@ -145,7 +145,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testRetrievePendingEvents() {
 		
 		List<SimpleEvents> eventList = dm.getSimpleEvents();
@@ -155,7 +155,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}*/
+	}
 
 	/**
 	  * testDataMining - JUnit test case whose aim is to test execution of current data mining algorithms over retrieved data
@@ -163,7 +163,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dm.getSimpleEvents();
 		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
@@ -179,6 +179,6 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}
+	}*/
 
 }
