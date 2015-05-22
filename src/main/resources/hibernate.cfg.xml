@@ -30,7 +30,6 @@
         <mapping class="eu.musesproject.server.entity.DefaultPolicies"/>
         <mapping class="eu.musesproject.server.entity.Devices"/>
         <mapping class="eu.musesproject.server.entity.DecisionTrustvalues"/>
-        <mapping class="eu.musesproject.server.entity.DeviceType"/>
         <mapping class="eu.musesproject.server.entity.Domains"/>
         <mapping class="eu.musesproject.server.entity.EventType"/>
         <mapping class="eu.musesproject.server.entity.LegalAspects"/>
