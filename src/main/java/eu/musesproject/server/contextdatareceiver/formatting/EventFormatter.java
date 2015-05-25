@@ -41,7 +41,9 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusCleanedEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent;
@@ -83,6 +85,11 @@ public class EventFormatter {
 					cepFileEvent = convertToFileObserverSaveEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.LOCATION)){
 					cepFileEvent = convertToLocationEvent(contextEvent);
+				}else if (contextEvent.getType().equals(EventTypes.USER_ENTERED_PASSWORD_FIELD)){
+					cepFileEvent = convertToPasswordEvent(contextEvent);
+				}else if (contextEvent.getType().equals(EventTypes.USB_DEVICE_CONNECTED)){
+					cepFileEvent = convertToUSBDeviceConnectedEvent(contextEvent);
+
 				}else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 					Logger.getLogger(EventFormatter.class).error("Unsupported sensor:"+contextEvent.getType());
@@ -124,6 +131,33 @@ public class EventFormatter {
 		return (Event)cepFileEvent;
 		
 	}
+	
+	private static Event convertToUSBDeviceConnectedEvent(
+			ContextEvent contextEvent) {
+		USBDeviceConnectedEvent cepFileEvent = new USBDeviceConnectedEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		if (properties.get("id")!=null)
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setConnectedViaUSB(Boolean.valueOf(properties
+				.get("connected_via_usb")));
+		
+		return cepFileEvent;
+	}
+
+	private static Event convertToPasswordEvent(ContextEvent contextEvent) {
+		PasswordEvent cepFileEvent = new PasswordEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		if (properties.get("id")!=null)
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setPackageName(properties.get("packagename"));
+		
+		return cepFileEvent;
+	}
+
 	
 	private static Event convertToLocationEvent(ContextEvent contextEvent) {
 		LocationEvent cepFileEvent = new LocationEvent();

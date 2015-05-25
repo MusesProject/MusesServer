@@ -144,6 +144,8 @@ function boolean requiredApp(String name){
 		result = true;
 	}else if (name.contains("com.lotus.sync.traveler")){
 		result = true;
+	}else if (name.contains("net.openvpn.openvpn")){
+		result = true;
 	}
 
 	return result;
@@ -998,13 +1000,24 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: PasswordEvent()
-
+		not AccessRequest(event=="User entered password")
 
 	then
 		StatusGlobal.log("PASSWORD EVENT******************************");
+		//Rt2aeGlobal.setStatus(Constants.STARTED);
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You just entered a password\nPlease, ensure that you are not being observed.\nIf you are in a public place, somebody could steal your password.","DENY","<packagename>"+e.getPackageName()+"</packagename>");		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("User entered password");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 
 	end
-
 
 	rule "USB device connected"
 	no-loop true
@@ -1015,7 +1028,7 @@ rule "Blacklist app 00001"
 
 	then
 		StatusGlobal.log("USB DEVICE CONNECTED EVENT******************************");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You just inserted a device in the USB port\nPlease, avoid using USB connection.\nThe organization's security policy doesn't allow you to use USB.","ALLOW","");
 
 	end
-
 	

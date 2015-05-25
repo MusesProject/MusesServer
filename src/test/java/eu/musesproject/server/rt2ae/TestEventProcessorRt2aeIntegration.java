@@ -135,6 +135,11 @@ private final String testConfidentialFileSensor = "{\"sensor\":{\"CONTEXT_SENSOR
 	
 	private final String testOpenConfidentialAware = "{\"sensor\":{\"CONTEXT_SENSOR_APP\":{\"id\":\"3\",\"timestamp\":1430827029134,\"appversion\":\"1\",\"type\":\"CONTEXT_SENSOR_APP\",\"backgroundprocess\":\"[com.android.phone]\",\"appname\":\"Sweden Connectivity\",\"packagename\":\"eu.musesproject.musesawareapp\"},\"CONTEXT_SENSOR_DEVICE_PROTECTION\":{\"timestamp\":1430826989605,\"ispasswordprotected\":\"false\",\"screentimeoutinseconds\":\"30\",\"isrooted\":\"false\",\"musesdatabaseexists\":\"true\",\"accessibilityenabled\":\"false\",\"istrustedantivirusinstalled\":\"false\",\"ipaddress\":\"10.122.77.183\",\"type\":\"CONTEXT_SENSOR_DEVICE_PROTECTION\"},\"CONTEXT_SENSOR_CONNECTIVITY\":{\"mobileconnected\":\"true\",\"wifiencryption\":\"unknown\",\"timestamp\":1430827029741,\"bssid\":\"null\",\"bluetoothconnected\":\"TRUE\",\"wifienabled\":\"true\",\"wifineighbors\":\"10\",\"hiddenssid\":\"false\",\"networkid\":\"-1\",\"type\":\"CONTEXT_SENSOR_CONNECTIVITY\",\"wificonnected\":\"true\",\"airplanemode\":\"false\"},\"CONTEXT_SENSOR_PACKAGE\":{\"id\":\"1\",\"timestamp\":1430826989619,\"installedapps\":\"Sistema Android,android,16;LGSetupWizard,com.android.LGSetupWizard,43014;com.android.backupconfirm,com.android.backupconfirm,16;Compartir con Bluetooth,com.android.bluetooth,16;Internet,com.android.browser,1;Calculadora,com.android.calculator2,30000037;Calendario,com.android.calendar,30300813;Cell broadcast,com.android.cellbroadcastreceiver,20100089;Instalador de certificados,com.android.certinstaller,16;Chrome,com.android.chrome,2311111;Contactos,com.android.contacts,30902902;Ayudante acceso a paquete,com.android.defcontainer,16;Desbloqueo facial,com.android.facelock,16;Galera,com.android.gallery3d,40000032;Visor de HTML,com.android.htmlviewer,16;Input Devices,com.android.inputdevices,16;Key Chain,com.android.keychain,16;Battery Solo Widget,net.maicas.android.batterys,23;PassAndroid,org.ligi.passandroid,254;cryptonite,LGSmartcardService,org.simalliance.openmobileapi.service,3;Amazon,uk.amazon.mShop.android,502010\",\"packagename\":\"init\",\"appname\":\"init\",\"packagestatus\":\"init\",\"appversion\":\"-1\",\"type\":\"CONTEXT_SENSOR_PACKAGE\"}},\"action\":{\"timestamp\":1430827037341,\"type\":\"open_asset\",\"properties\":{\"path\":\"/sdcard/aware_app_remote_files/MUSES_confidential_doc.pdf\",\"resourceName\":\"statistics\",\"resourceType\":\"CONFIDENTIAL\"}},\"id\":394997978,\"username\":\"muses\",\"device_id\":\"358648051980583\",\"requesttype\":\"online_decision\"}";
 	
+	private final String testUserEnteredPassword = "{\"sensor\":{\"CONTEXT_SENSOR_APP\":{\"id\":\"3\",\"timestamp\":1402313215730,\"type\":\"CONTEXT_SENSOR_APP\",\"backgroundprocess\":\"[com.android.server.device.enterprise:remote, com.android.cryptonite, com.google.process.gapps, com.google.android.gms.drive, com.android.smspush, com.samsung.music, system, com.sec.spp.push, com.google.android.talk, com.google.process.location, com.android.systemui, com.google.android.gms, com.google.android.apps.maps, com.android.phone, com.sec.android.app.controlpanel, com.tgrape.android.radar, com.android.phone, com.samsung.music, com.android.systemui, com.wssnps, com.google.android.googlequicksearchbox:search, com.android.settings, com.sec.android.app.twdvfs, com.android.bluetooth, com.google.process.location, com.sec.android.inputmethod, com.google.android.youtube, android.process.media, com.google.android.gms, com.sec.phone, com.sec.msc.learninghub, com.google.process.gapps, com.sec.factory, com.google.process.location, com.android.server.vpn.enterprise:remote, com.android.phone, com.sec.android.widgetapp.at.hero.accuweather.widget:remote, eu.musesproject.client, com.android.MtpApplication, com.vlingo.midas, com.google.process.gapps, com.google.android.gms, eu.musesproject.client, com.android.phone, net.openvpn.openvpn, com.android.phone, system, com.sec.android.app.sysscope, com.google.process.location, com.google.process.location, com.samsung.videohub, com.google.android.tts, com.google.android.gm, com.sec.android.app.videoplayer, com.google.android.gms, com.google.process.gapps]\",\"appname\":\"Gmail\"},\"CONTEXT_SENSOR_CONNECTIVITY\":{\"id\":\"3\",\"wifiencryption\":\"[WPA2-PSK-TKIP+CCMP][ESS]\",\"timestamp\":1402313210321,\"bssid\":\"24:a4:3c:03:ae:09\",\"bluetoothconnected\":\"FALSE\",\"wifienabled\":\"true\",\"wifineighbors\":\"8\",\"hiddenssid\":\"false\",\"networkid\":\"1\",\"type\":\"CONTEXT_SENSOR_CONNECTIVITY\",\"wificonnected\":\"true\",\"airplanemode\":\"false\"},\"CONTEXT_SENSOR_LOCATION\":{\"id\":\"3\",\"timestamp\":1402313210321,\"isWithinZone\":\"1,2\",\"type\":\"CONTEXT_SENSOR_LOCATION\"}},\"action\":{\"type\":\"user_entered_password_field\",\"timestamp\":1428357713480,\"properties\":{\"packagename\":\"com.google.android.gm\"}},\"requesttype\":\"online_decision\",\"device_id\":\"36474929437562939\",\"username\":\"muses\"}";
+	
+	private final String testUSBDeviceConnected = "{\"sensor\":{\"CONTEXT_SENSOR_APP\":{\"id\":\"3\",\"timestamp\":1402313215730,\"type\":\"CONTEXT_SENSOR_APP\",\"backgroundprocess\":\"[com.android.server.device.enterprise:remote, com.android.cryptonite, com.google.process.gapps, com.google.android.gms.drive, com.android.smspush, com.samsung.music, system, com.sec.spp.push, com.google.android.talk, com.google.process.location, com.android.systemui, com.google.android.gms, com.google.android.apps.maps, com.android.phone, com.sec.android.app.controlpanel, com.tgrape.android.radar, com.android.phone, com.samsung.music, com.android.systemui, com.wssnps, com.google.android.googlequicksearchbox:search, com.android.settings, com.sec.android.app.twdvfs, com.android.bluetooth, com.google.process.location, com.sec.android.inputmethod, com.google.android.youtube, android.process.media, com.google.android.gms, com.sec.phone, com.sec.msc.learninghub, com.google.process.gapps, com.sec.factory, com.google.process.location, com.android.server.vpn.enterprise:remote, com.android.phone, com.sec.android.widgetapp.at.hero.accuweather.widget:remote, eu.musesproject.client, com.android.MtpApplication, com.vlingo.midas, com.google.process.gapps, com.google.android.gms, eu.musesproject.client, com.android.phone, net.openvpn.openvpn, com.android.phone, system, com.sec.android.app.sysscope, com.google.process.location, com.google.process.location, com.samsung.videohub, com.google.android.tts, com.google.android.gm, com.sec.android.app.videoplayer, com.google.android.gms, com.google.process.gapps]\",\"appname\":\"Gmail\"},\"CONTEXT_SENSOR_CONNECTIVITY\":{\"id\":\"3\",\"wifiencryption\":\"[WPA2-PSK-TKIP+CCMP][ESS]\",\"timestamp\":1402313210321,\"bssid\":\"24:a4:3c:03:ae:09\",\"bluetoothconnected\":\"FALSE\",\"wifienabled\":\"true\",\"wifineighbors\":\"8\",\"hiddenssid\":\"false\",\"networkid\":\"1\",\"type\":\"CONTEXT_SENSOR_CONNECTIVITY\",\"wificonnected\":\"true\",\"airplanemode\":\"false\"},\"CONTEXT_SENSOR_LOCATION\":{\"id\":\"3\",\"timestamp\":1402313210321,\"isWithinZone\":\"1,2\",\"type\":\"CONTEXT_SENSOR_LOCATION\"}},\"action\":{\"type\":\"usb_device_connected\",\"timestamp\":1428357713480,\"properties\":{\"connected_via_usb\":\"true\"}},\"requesttype\":\"online_decision\",\"device_id\":\"36474929437562939\",\"username\":\"muses\", \"id\":\"111\" }";
+
+	
 	public final void testCluesDeviceStateSecurityIncident(){
 		/*EventProcessor processor = null;
 		MusesCorrelationEngineImpl engine = null;
@@ -1858,4 +1863,152 @@ public final void testPolicyOpenConfAssetInSecure(){
 			des.insertFact(formattedEvent);
 		}
 	}
+	
+	public final void testOpenConfidentialAwareReal(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		
+		List<ContextEvent> list = JSONManager.processJSONMessage(testOpenConfidentialAware, "online_decision");
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+			
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLogin);
+		callback.receiveCb(defaultSessionId, testOpenConfidentialAware);
+	}
+
+
+
+	
+	
+	
+	
+	
+	
+	public final void testUserEnteredPassword(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		
+		List<ContextEvent> list = JSONManager.processJSONMessage(testUserEnteredPassword, "online_decision");
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			JSONObject root;
+			try {
+			
+				root = new JSONObject(testUserEnteredPassword);
+				formattedEvent.setSessionId(defaultSessionId);
+				formattedEvent.setUsername(root
+						.getString(JSONIdentifiers.AUTH_USERNAME));
+				formattedEvent.setDeviceId(root
+						.getString(JSONIdentifiers.AUTH_DEVICE_ID));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+	}
+	
+	public final void testUSBDeviceConnected(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		
+		List<ContextEvent> list = JSONManager.processJSONMessage(testUSBDeviceConnected, "online_decision");
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			JSONObject root;
+			try {
+			
+				root = new JSONObject(testUSBDeviceConnected);
+				formattedEvent.setSessionId(defaultSessionId);
+				formattedEvent.setUsername(root
+						.getString(JSONIdentifiers.AUTH_USERNAME));
+				formattedEvent.setDeviceId(root
+						.getString(JSONIdentifiers.AUTH_DEVICE_ID));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+	}
+	
+	public final void testUSBDeviceConnectedInsertEvent(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		callback.receiveCb(defaultSessionId, testLogin);
+		//callback.receiveCb(defaultSessionId, testUSBDeviceConnected);
+		
+		
+		
+		List<ContextEvent> list = JSONManager
+				.processJSONMessage(testUSBDeviceConnected, null, defaultSessionId);
+		
+		String username, deviceId= "";
+		int requestId = 111;
+		
+		
+		try {
+			JSONObject root = new JSONObject(testUSBDeviceConnected);
+			username = root
+					.getString(JSONIdentifiers.AUTH_USERNAME);
+			deviceId = root
+					.getString(JSONIdentifiers.AUTH_DEVICE_ID);
+			//if (requestType.equals(RequestType.ONLINE_DECISION)){
+				requestId = root.getInt(JSONIdentifiers.REQUEST_IDENTIFIER);
+
+			//}
+
+		
+			UserContextEventDataReceiver.getInstance().processContextEventList(
+				list, defaultSessionId, username, deviceId, requestId);
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+	}
+
 }
