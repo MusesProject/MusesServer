@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `access_request`;
 CREATE TABLE `access_request` (
   `access_request_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `event_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table SIMPLE_EVENTS(event_id)',
-  `action` enum('DOWNLOAD_FILE','OPEN_APP','INSTALL_APP','OPEN_FILE') DEFAULT NULL COMMENT 'Possible value of user actions for this concrete access request',
+  `action` varchar(200) DEFAULT NULL COMMENT 'Value of user action for this concrete access request',
   `asset_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table ASSETS(asset_id)',
   `user_id` bigint(20) unsigned NOT NULL COMMENT 'FK to table USERS(user_id)',
   `decision_id` bigint(20) unsigned DEFAULT NULL COMMENT 'Foreign key to the final decision associated to the access request, once the decision is taken. FK to table DECISIONS(decision_id)',
