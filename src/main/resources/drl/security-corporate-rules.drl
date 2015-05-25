@@ -822,8 +822,8 @@ rule "Blacklist app 00001"
 	then
 		
 		StatusGlobal.log("New corporate policy. Id:9 ANTIVIRUS NOT RUNNING");
-		//int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (recommended corporate antivirus) is not running\nWithout antivirus, integrity of corporate data might be compromised","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (antivirus corporativo recomendado) no esta en ejecucion\nSin antivirus, la integridad de datos corporativos pueden verse comprometidos.","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (recommended corporate antivirus) is not running\nWithout antivirus, integrity of corporate data might be compromised","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (antivirus corporativo recomendado) no esta en ejecucion\nSin antivirus, la integridad de datos corporativos pueden verse comprometidos.","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
 		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Antivirus not running");
