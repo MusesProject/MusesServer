@@ -15,6 +15,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.Clue;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent
 import eu.musesproject.server.eventprocessor.util.Constants
 import eu.musesproject.server.risktrust.ThreatOntology
 import java.util.ArrayList
@@ -209,6 +210,9 @@ rule "Clue-identification-00000"
 		clue.setDeviceId(e.getDeviceId());
 		insert(clue);
 	end
+
+	// it should be related to save confidential file in monitored folder 
+
 	
 	rule "Clue-identification-000009"
 	no-loop true
@@ -227,4 +231,20 @@ rule "Clue-identification-00000"
 		insert(clue);
 	end	
 	
+	rule "Clue-identification-0000010"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: USBDeviceConnectedEvent()
+	then
+		
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"USB device connected", ThreatOntology.DATA_LEAKAGE);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
+		insert(clue);
+	end
 

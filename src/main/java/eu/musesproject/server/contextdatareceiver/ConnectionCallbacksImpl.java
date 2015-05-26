@@ -223,7 +223,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 										"FAIL",
 										"Data cannot be processed: Failed authentication");
 						logger.log(Level.INFO, response.toString());
-						connManager.sendData(sessionId, response.toString());
+						// According to issue #11, we should not send data when not logged in, so this line is commented:connManager.sendData(sessionId, response.toString());
 					}
 				}else if ((os != null) && (os.contains(eu.musesproject.server.eventprocessor.util.Constants.OS_WINDOWS))) {
 					//TODO Windows config-sync to be done
@@ -269,9 +269,8 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					}
 
 				} else {//Current sessionId has not been authenticated
-					JSONObject response = JSONManager.createJSON(JSONIdentifiers.AUTH_RESPONSE, "FAIL", "Data cannot be processed: Failed authentication");
-					logger.log(Level.INFO, response.toString());
-					connManager.sendData(sessionId, response.toString());
+					// According to issue #11, we should not send data when not logged in, so this section is commented:
+					logger.log(Level.INFO, "Authentication has failed, any data coming after this authentication failed, should not be replied. According to issue #11, we don't reply with any auth-message ");
 				}
 			}
 		} catch (JSONException je) {

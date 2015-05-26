@@ -144,6 +144,8 @@ function boolean requiredApp(String name){
 		result = true;
 	}else if (name.contains("com.lotus.sync.traveler")){
 		result = true;
+	}else if (name.contains("net.openvpn.openvpn")){
+		result = true;
 	}
 
 	return result;
@@ -742,7 +744,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Uninstalling important application:"+e.getName()+"\nYou are trying to uninstall an application that is important for your system's security. \nUninstalling the application makes your system vulnerable.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Uninstalling important application:"+e.getName()+"\nYou are trying to uninstall an application that is important for your system\'s security. \nUninstalling the application makes your system vulnerable.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Required application list");
 		StatusGlobal.log("**********"+id);
@@ -791,7 +793,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event fileobserver****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file without permission:"+e.getPath()+"\nYou want to access a file, but you do not have the permission to do so.\nThe organization's security policy doesn't allow you to access this file.","DENY","<path>"+e.getPath()+"</path>");		
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file without permission:"+e.getPath()+"\nYou want to access a file, but you do not have the permission to do so.\nThe organization\'s security policy doesn\'t allow you to access this file.","DENY","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Detection Open File in a monitored folder");
 		StatusGlobal.log("**********"+id);
@@ -820,8 +822,8 @@ rule "Blacklist app 00001"
 	then
 		
 		StatusGlobal.log("New corporate policy. Id:9 ANTIVIRUS NOT RUNNING");
-		//int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (recommended corporate antivirus) is not running\nWithout antivirus, integrity of corporate data might be compromised","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (antivirus corporativo recomendado) no esta en ejecucion\nSin antivirus, la integridad de datos corporativos pueden verse comprometidos.","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (recommended corporate antivirus) is not running\nWithout antivirus, integrity of corporate data might be compromised","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (antivirus corporativo recomendado) no esta en ejecucion\nSin antivirus, la integridad de datos corporativos pueden verse comprometidos.","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
 		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Antivirus not running");
@@ -919,7 +921,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("Application to be installed should not be allowed.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Installing application not allowed: "+e.getName()+"\nYou are trying to install an application that is forbidden by your system's security. \nPlease, do not proceed.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Installing application not allowed: "+e.getName()+"\nYou are trying to install an application that is forbidden by your system\'s security. \nPlease, do not proceed.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Install not allowed application");
 		StatusGlobal.log("**********"+id);
@@ -963,7 +965,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("Open asset in restricted area");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file in a restricted area\nYou want to access a file, but you do not have the permission to do so within your current location.\nThe organization's security policy doesn't allow you to access this file at this zone.","DENY","<path>"+e.getPath()+"</path>");		
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file in a restricted area\nYou want to access a file, but you do not have the permission to do so within your current location.\nThe organization\'s security policy doesn\'t allow you to access this file at this zone.","DENY","<path>"+e.getPath()+"</path>");		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Open asset in restricted area");
 		StatusGlobal.log("**********"+id);
@@ -998,13 +1000,24 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: PasswordEvent()
-
+		not AccessRequest(event=="User entered password")
 
 	then
 		StatusGlobal.log("PASSWORD EVENT******************************");
+		//Rt2aeGlobal.setStatus(Constants.STARTED);
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You just entered a password\nPlease, ensure that you are not being observed.\nIf you are in a public place, somebody could steal your password.","DENY","<packagename>"+e.getPackageName()+"</packagename>");		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("User entered password");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 
 	end
-
 
 	rule "USB device connected"
 	no-loop true
@@ -1015,7 +1028,7 @@ rule "Blacklist app 00001"
 
 	then
 		StatusGlobal.log("USB DEVICE CONNECTED EVENT******************************");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You just inserted a device in the USB port\nPlease, avoid using USB connection.\nThe organization\'s security policy doesn\'t allow you to use USB.","ALLOW","");
 
 	end
-
 	

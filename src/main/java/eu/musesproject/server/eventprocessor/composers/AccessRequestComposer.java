@@ -36,6 +36,8 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent;
 import eu.musesproject.server.eventprocessor.util.Constants;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 import eu.musesproject.server.risktrust.AccessRequest;
@@ -123,6 +125,25 @@ public class AccessRequestComposer {
 					composedRequest.setEventId(fileEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.SAVE_ASSET);
 				}
+			}else if (event.getType().equals(EventTypes.USER_ENTERED_PASSWORD_FIELD)){
+				if (event instanceof PasswordEvent) {
+					PasswordEvent pwdEvent = (PasswordEvent) event;
+					requestedCorporateAsset.setId(pwdEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(pwdEvent.getPackageName());//Get the asset identifier
+					composedRequest.setAction(pwdEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(pwdEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.USER_ENTERED_PASSWORD_FIELD);
+				}
+			}else if (event.getType().equals(EventTypes.USB_DEVICE_CONNECTED)){
+				if (event instanceof USBDeviceConnectedEvent) {
+					USBDeviceConnectedEvent usbEvent = (USBDeviceConnectedEvent) event;
+					requestedCorporateAsset.setId(usbEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(usbEvent.getDescription());//Get the asset identifier
+					composedRequest.setAction(usbEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(usbEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.USB_DEVICE_CONNECTED);
+				}
+
 			}else {
 				logger.log(Level.INFO, "Unsupported Event type:"+event.getType());
 				requestedCorporateAsset.setDescription(event.getType());
