@@ -84,7 +84,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dm.getSimpleEvents();
 		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
@@ -100,10 +100,10 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}*/
+	}
 	
 	/**
-	  * testDataMining - JUnit test case whose aim is to test execution of current data mining algorithms over retrieved data
+	  * testBuildInstancesFromPatterns - JUnit test case whose aim is to test if instances are being properly built from DB data
 	  *
 	  * @param none 
 	  * 
@@ -117,7 +117,7 @@ public class TestDataMiner {
 				Iterator<Instance> i = data.iterator();
 				while(i.hasNext()){
 					Instance instance = i.next();
-					System.out.println(instance);
+					//System.out.println(instance);
 					assertNotNull(instance);				
 				}
 			} else {
@@ -128,5 +128,16 @@ public class TestDataMiner {
 			fail("There are no patterns in the table.");
 		}
 	}
+	
+	/**
+	  * testFeatureSelection - JUnit test case whose aim is to test execution of current feature selection algorithms over the built dataset
+	  *
+	  * @param none 
+	  * 
+	  */
+	/*@Test
+	public final void testFeatureSelection() {		
+		dm.featureSelection();
+	}*/
 
 }

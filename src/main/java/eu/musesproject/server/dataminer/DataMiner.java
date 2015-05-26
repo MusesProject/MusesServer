@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
 
 import eu.musesproject.server.scheduler.ModuleType;
@@ -49,8 +50,13 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.Utils;
+import weka.core.converters.ArffSaver;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.converters.Loader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
+import weka.attributeSelection.FuzzyRoughSubsetEval;
+import weka.attributeSelection.HillClimber;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
@@ -212,13 +218,13 @@ public class DataMiner {
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
 		if (accessRequests.size() > 0) {
 			decisionID = accessRequests.get(0).getDecisionId().toString();
-			//List<Decision> decisions = dbManager.findDecisionById(decisionID);
-			List<Decision> decisions = dbManager.findDecisionById("558");
-			if (decisions.size() > 0) {
+			List<Decision> decisions = null;
+			decisions = dbManager.findDecisionById(decisionID);
+			//List<Decision> decisions = dbManager.findDecisionById("558");
+			if (decisions != null) {
 				label = decisions.get(0).getValue();
 				pattern.setLabel(label);
 			} else {
-				//pattern.setLabel(null);
 				/* Secret solution while not having data */
 				if (dbManager.findSecurityViolationByEventId(eventID) != null){
 					pattern.setLabel("STRONGDENY");
@@ -228,7 +234,7 @@ public class DataMiner {
 			}
 		} else {
 			/* Secret solution while not having data */
-			if (dbManager.findSecurityViolationByEventId(eventID) != null){
+			if (dbManager.findSecurityViolationByEventId(eventID).size() > 0){
 				pattern.setLabel("STRONGDENY");
 			} else {
 				pattern.setLabel("GRANTED");
@@ -624,7 +630,6 @@ public class DataMiner {
 				String strDate = sdf.format(pattern.getEventTime());
 				vals[12] = data.attribute(12).parseDate(strDate);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			String deviceModel = pattern.getDeviceType();
@@ -710,10 +715,19 @@ public class DataMiner {
 			replaceMissingValues.setInputFormat(data);
 			newData = Filter.useFilter(data, replaceMissingValues);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		/* OPTIONAL, only if we want the ARFF file
+		 * ArffSaver saver = new ArffSaver();
+		saver.setInstances(newData);
+		try {
+			saver.setFile(new File("./data/test.arff"));
+			saver.setDestination(new File("./data/test.arff"));
+			saver.writeBatch();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
 		
 		
 		return newData;
@@ -721,23 +735,52 @@ public class DataMiner {
 	
 	
 	/**
-	 * Info DM
+	 * Method featureSelection, which uses an algorithm to select the most representative features of
+	 * the data in patterns_krs table
 	 * 
-	 *    The Data Miner needs a list of clue patterns, in other words, already expected patterns (currently supported by Muses
-	 *    Security Rules) that are prone to be adapted to other related events (or slight modifications of current events) that
-	 *    might be happening at the same time.
-	 * 
-	 * 
-	 * @param data The instances extracted from patterns_krs table in DB
-	 * 
+	 * @param none
 	 * 
 	 * @return void
 	 */
 	
-	public void featureSelection(Instances data){
+	public void featureSelection(){
 		
-		AttributeSelection attsel = new AttributeSelection();
+		DataSource source;
+		try {
+			source = new DataSource("./data/test.arff");
+			Instances instances = source.getDataSet();
+			AttributeSelection attsel = new AttributeSelection();
+			FuzzyRoughSubsetEval eval = new FuzzyRoughSubsetEval();
+			HillClimber search = new HillClimber();
+			attsel.setEvaluator(eval);
+			attsel.setSearch(search);
+			try {
+				attsel.SelectAttributes(instances);
+				int[] indexes = attsel.selectedAttributes();
+				System.out.println(Utils.arrayToString(indexes));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}				
 		
+	}
+	
+	/**
+	 * Method dataClassification in which first we erase the attributes that were not selected by
+	 * featureSelection method and then performs classification over the rest of the data
+	 * 
+	 * @param data The original set of instances
+	 * @param indexes The selected indexes by the feature selection algorithm
+	 * 
+	 * @return void
+	 */
+	
+	public void dataClassification(Instances data, int[] indexes){
+		
+						
 		
 	}
 

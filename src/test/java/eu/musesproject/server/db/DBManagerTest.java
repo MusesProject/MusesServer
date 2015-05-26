@@ -401,6 +401,16 @@ public class DBManagerTest {
 	}
 	
 	@Test
+	public void testFindSecurityViolationByEventId() {
+		String eventID = "2";
+		List<SecurityViolation> secViolations = dbmanager.findSecurityViolationByEventId(eventID);
+		if(secViolations.size()>0)
+			assertTrue(true);
+		else
+			fail("There is not any Security Violation corresponding to that event_id.");
+	}
+	
+	@Test
 	public void testFindEventsByUserId() {
 		String userID = "1";
 		String day = "2015-01-09";
