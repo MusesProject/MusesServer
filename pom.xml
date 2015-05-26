@@ -117,6 +117,10 @@
 			<name>Dev Mapfish</name>
 			<url>http://dev.mapfish.org/maven/repository</url>
 		</repository>
+		<repository>
+			<id>local-repo</id>
+			<url>file://${basedir}/lib</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -400,6 +404,11 @@
 			<groupId>nz.ac.waikato.cms.weka</groupId>
 			<artifactId>weka-dev</artifactId>
 			<version>3.7.12</version>
+		</dependency>
+		<dependency>
+			<groupId>weka</groupId>
+			<artifactId>wekafull</artifactId>
+			<version>1.0</version>
 		</dependency>
 		
 

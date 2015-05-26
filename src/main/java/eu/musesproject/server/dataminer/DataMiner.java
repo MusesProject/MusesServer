@@ -44,6 +44,7 @@ import eu.musesproject.server.scheduler.ModuleType;
 
 import org.apache.log4j.Logger;
 
+import weka.attributeSelection.AttributeSelection;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -735,6 +736,7 @@ public class DataMiner {
 	
 	public void featureSelection(Instances data){
 		
+		AttributeSelection attsel = new AttributeSelection();
 		
 		
 	}
