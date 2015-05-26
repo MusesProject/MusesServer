@@ -190,6 +190,7 @@ public class UserContextEventDataReceiver {
 			device = new Devices();
 			device.setName(username);
 			device.setImei(deviceId);
+			device.setTrustValue(0.5);
 			device.setDeviceModel("domemodel");
 			dbManager.setDevice(device);
 		}
