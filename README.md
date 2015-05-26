@@ -14,3 +14,11 @@ There is a [separate repo](https://github.com/MusesProject/Muses-Developer-Guide
 ## Build
 
 You will have to build [Muses common](https://github.com/MusesProject/MusesCommon) module first. 
+
+## Additional Maven dependencies
+
+In order to satisfy weka Maven dependency you will have to download this jar: (http://users.aber.ac.uk/rkj/book/wekafull.jar), add "-1.0" at the end of the name (at the end it should be wekafull-1.0.jar), store it in /lib folder inside the MusesServer project, and then run the following command inside the project folder:
+
+```
+> mvn install:install-file -Dfile=<your_path_to_MusesServer>/lib/wekafull-1.0.jar -DgroupId=weka -DartifactId=wekafull -Dversion=1.0 -Dpackaging=jar -DlocalRepositoryPath=/MusesServer/lib/
+```
