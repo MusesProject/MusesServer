@@ -2129,6 +2129,29 @@ public class DBManager {
 	}
 	
 	/**
+     * Get all different values of decision_cause in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctDecisionCauses() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctDecisionCause");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
      * Get all different values of event_type in patterns_krs table
      * @param void
      * @return List<String>
@@ -2393,6 +2416,29 @@ public class DBManager {
 		try {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctAssetLocation");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
+	/**
+     * Get all different values of label in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctLabels() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctLabels");
 			if (query!=null) {
 				allDifferentValues = query.list();
 			}

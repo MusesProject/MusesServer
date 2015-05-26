@@ -497,7 +497,7 @@ public class DBManagerTest {
 	
 	@Test
 	public void testGetDistinctDeviceOwnedBy() {
-		List<String> values = dbmanager.getDistinctDeviceOwnedBy();
+		List<String> values = dbmanager.getDistinctDeviceOS();		
 		if(values != null)
 			assertTrue(true);
 		else

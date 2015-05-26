@@ -26,12 +26,10 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.sql.*;
 import java.util.Iterator;
 import java.util.List;
@@ -42,12 +40,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.math.BigInteger;
 
-import eu.musesproject.contextmodel.ContextEvent;
-import eu.musesproject.server.contextdatareceiver.JSONManager;
-import eu.musesproject.server.continuousrealtimeeventprocessor.model.*;
-import eu.musesproject.server.knowledgerefinementsystem.model.*;
-import eu.musesproject.server.risktrust.Device;
-import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.scheduler.ModuleType;
 
 import org.apache.log4j.Logger;
@@ -55,7 +47,9 @@ import org.apache.log4j.Logger;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
-import eu.musesproject.server.scheduler.ModuleType;
+import weka.core.Utils;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
@@ -250,10 +244,10 @@ public class DataMiner {
 				String decisionCause = matcher.group(1);
 				pattern.setDecisionCause(decisionCause);
 			} else {
-				pattern.setDecisionCause("");
+				pattern.setDecisionCause(null);
 			}
 		} else {
-			pattern.setDecisionCause("");
+			pattern.setDecisionCause(null);
 		}
 				
 		/* Finding the type of the event */
@@ -262,7 +256,7 @@ public class DataMiner {
 		if (eventType != null) {
 			pattern.setEventType(eventType);
 		} else {
-			pattern.setEventType("");
+			pattern.setEventType(null);
 		}
 		
 		/* Is the event a simple event or a complex event? */
@@ -270,7 +264,7 @@ public class DataMiner {
 		if (eventLevel != null) {
 			pattern.setEventLevel(eventLevel);
 		} else {
-			pattern.setEventLevel("");
+			pattern.setEventLevel(null);
 		}
 		
 		/* Storing only the username */
@@ -279,7 +273,7 @@ public class DataMiner {
 		if (username != null) {
 			pattern.setUsername(username);
 		} else {
-			pattern.setUsername("");
+			pattern.setUsername(null);
 		}
 		
 		/* Extracting information from the password */
@@ -326,8 +320,8 @@ public class DataMiner {
 			pattern.setUserTrustValue(userTrustValue);
 			pattern.setDeviceTrustValue(deviceTrustValue);
 		} else {
-			pattern.setUserTrustValue(0);
-			pattern.setDeviceTrustValue(0);
+			pattern.setUserTrustValue(Double.NaN);
+			pattern.setDeviceTrustValue(Double.NaN);
 		}
 		
 		/* Checking if the user account is activated */
@@ -342,7 +336,7 @@ public class DataMiner {
 		if (userRoleName != null) {
 			pattern.setUserRole(userRoleName);
 		} else {
-			pattern.setUserRole("");
+			pattern.setUserRole(null);
 		}
 		
 		/* Detection time of the event */
@@ -352,7 +346,7 @@ public class DataMiner {
 		if (eventDetection.toString() != null) {
 			pattern.setEventTime(eventDetection);
 		} else {
-			pattern.setEventTime(new Date());
+			pattern.setEventTime(null);
 		}
 		
 		/* Was MUSES in silent or verbose mode? */
@@ -368,7 +362,7 @@ public class DataMiner {
 		if (deviceModel != null) {
 			pattern.setDeviceType(deviceModel);
 		} else {
-			pattern.setDeviceType("");
+			pattern.setDeviceType(null);
 		}
 		
 		/* Device characteristics */
@@ -377,7 +371,7 @@ public class DataMiner {
 		if (userDeviceOS != null) {
 			pattern.setDeviceOS(userDeviceOS);
 		} else {
-			pattern.setDeviceOS("");
+			pattern.setDeviceOS(null);
 		}
 		// Certificate of device
 		byte[] deviceCertificate = userDeviceId.getCertificate();
@@ -391,7 +385,7 @@ public class DataMiner {
 		if (deviceOwner != null) {
 			pattern.setDeviceOwnedBy(deviceOwner);
 		} else {
-			pattern.setDeviceOwnedBy("EMPLOYEE");
+			pattern.setDeviceOwnedBy(null);
 		}
 		
 		/* Characteristics of the application which the user was using at the time of the event */
@@ -401,14 +395,14 @@ public class DataMiner {
 		if (appName != null) {
 			pattern.setAppName(appName);
 		} else {
-			pattern.setAppName("");
+			pattern.setAppName(null);
 		}
 		// Vendor of the app
 		String appVendor = eventApp.getVendor();
 		if (appVendor != null) {
 			pattern.setAppVendor(appVendor);
 		} else {
-			pattern.setAppVendor("");
+			pattern.setAppVendor(null);
 		}
 		// Is the application MUSES Aware?
 		int appMusesAware = eventApp.getIs_MUSES_aware();
@@ -421,7 +415,7 @@ public class DataMiner {
 		if (assetName != null) {
 			pattern.setAssetName(assetName);
 		} else {
-			pattern.setAssetName("");
+			pattern.setAssetName(null);
 		}
 		// Asset value
 		double assetValue = eventAsset.getValue();
@@ -431,14 +425,14 @@ public class DataMiner {
 		if (assetConfidentialLevel != null) {
 			pattern.setAssetConfidentialLevel(assetConfidentialLevel);
 		} else {
-			pattern.setAssetConfidentialLevel(assetConfidentialLevel);
+			pattern.setAssetConfidentialLevel(null);
 		}
 		// Where is the asset located
 		String assetLocation = eventAsset.getLocation();
 		if (assetLocation != null) {
 			pattern.setAssetLocation(assetLocation);
 		} else {
-			pattern.setAssetLocation("");
+			pattern.setAssetLocation(null);
 		}
 		
 		/* Rest of parameters that have to be obtained from the JSON */
@@ -513,92 +507,215 @@ public class DataMiner {
 		
 	}
 	
+	/**
+	 * Method buildInstancesFromPattern, in which data inside patterns_krs table is taken and then 
+	 * transformed into Instances data type, so Weka can manage them.
+	 *
+	 * @param dbPatterns List with all rows in patterns_krs table.
+	 * 
+	 * 
+	 * @return Instances The ordered set of instances to use with Weka methods.
+	 * 
+	 */
 	public Instances buildInstancesFromPatterns (List<PatternsKrs> dbPatterns) {
 		
 		Instances data = null;
 		ArrayList<Attribute> atts = new ArrayList<Attribute>();
-		atts.add(new Attribute("decision_cause"));
+		List<String> decisionCauses = dbManager.getDistinctDecisionCauses();
+		List<String> eventTypes = dbManager.getDistinctEventTypes();
+		List<String> eventLevels = dbManager.getDistinctEventLevels();
+		List<String> usernames = dbManager.getDistinctUsernames();
+		List<String> userRoles = dbManager.getDistinctUserRoles();
+		List<String> deviceTypes = dbManager.getDistinctDeviceType();
+		List<String> deviceOSs = dbManager.getDistinctDeviceOS();
+		List<String> deviceOwners = dbManager.getDistinctDeviceOwnedBy();
+		List<String> appNames = dbManager.getDistinctAppName();
+		List<String> appVendors = dbManager.getDistinctAppVendor();
+		List<String> assetNames = dbManager.getDistinctAssetName();
+		List<String> assetConfidentialLevels = dbManager.getDistinctAssetConfidentialLevel();
+		List<String> assetLocations = dbManager.getDistinctAssetLocation();
+		List<String> allLabels = dbManager.getDistinctLabels();
+		atts.add(new Attribute("decision_cause", decisionCauses));
 		atts.add(new Attribute("silent_mode"));
-		atts.add(new Attribute("event_type", dbManager.getDistinctEventTypes()));
-		atts.add(new Attribute("event_level", dbManager.getDistinctEventLevels()));
-		atts.add(new Attribute("username", dbManager.getDistinctUsernames()));
+		atts.add(new Attribute("event_type", eventTypes));
+		atts.add(new Attribute("event_level", eventLevels));
+		atts.add(new Attribute("username", usernames));
 		atts.add(new Attribute("password_length"));
 		atts.add(new Attribute("letters_in_password"));
 		atts.add(new Attribute("numbers_in_password"));
 		atts.add(new Attribute("passwd_has_capital_letters"));
 		atts.add(new Attribute("user_trust_value"));
 		atts.add(new Attribute("activated_account"));
-		atts.add(new Attribute("user_role", dbManager.getDistinctUserRoles()));
-		atts.add(new Attribute("event_detection", "yyyy-MM-dd'T'HH:mm:ss"));
-		atts.add(new Attribute("device_type", dbManager.getDistinctDeviceType()));
-		atts.add(new Attribute("device_OS"));
+		atts.add(new Attribute("user_role", userRoles));
+		atts.add(new Attribute("event_detection", "yyyy-MM-dd HH:mm:ss"));
+		atts.add(new Attribute("device_type", deviceTypes));
+		atts.add(new Attribute("device_OS", deviceOSs));
 		atts.add(new Attribute("device_has_antivirus"));
 		atts.add(new Attribute("device_has_certificate"));
 		atts.add(new Attribute("device_trust_value"));
-		atts.add(new Attribute("device_owned_by"));
+		atts.add(new Attribute("device_owned_by", deviceOwners));
 		atts.add(new Attribute("device_has_password"));
 		atts.add(new Attribute("device_screen_timeout"));
 		atts.add(new Attribute("device_has_accessibility"));
 		atts.add(new Attribute("device_is_rooted"));
-		atts.add(new Attribute("app_name"));
-		atts.add(new Attribute("app_vendor"));
+		atts.add(new Attribute("app_name", appNames));
+		atts.add(new Attribute("app_vendor", appVendors));
 		atts.add(new Attribute("app_is_MUSES_aware"));
-		atts.add(new Attribute("asset_name"));
+		atts.add(new Attribute("asset_name", assetNames));
 		atts.add(new Attribute("asset_value"));
-		atts.add(new Attribute("asset_confidential_level"));
-		atts.add(new Attribute("asset_location"));
+		atts.add(new Attribute("asset_confidential_level", assetConfidentialLevels));
+		atts.add(new Attribute("asset_location", assetLocations));
 		atts.add(new Attribute("mail_recipient_allowed"));
 		atts.add(new Attribute("mail_contains_cc_allowed"));
 		atts.add(new Attribute("mail_contains_bcc_allowed"));
 		atts.add(new Attribute("mail_has_attachment"));
-		atts.add(new Attribute("id", (ArrayList<String>) null));
-		atts.add(new Attribute("label"));
-		data = new Instances("yourData", atts, 0);
+		atts.add(new Attribute("label", allLabels));
+		data = new Instances("patternsData", atts, 0);
 
 		Iterator<PatternsKrs> i = dbPatterns.iterator();
-		/*while(i.hasNext()){
+		while(i.hasNext()){
 			PatternsKrs pattern = i.next();
 			double[] vals = new double[data.numAttributes()];
-			vals[0] = pattern.getDecisionCause();
+			String decisionCause = pattern.getDecisionCause();
+			if (decisionCause.contentEquals("")) {
+				vals[0] = Utils.missingValue();
+			} else {
+				vals[0] = decisionCauses.indexOf(decisionCause);
+			}
 			vals[1] = pattern.getSilentMode();
-			vals[2] = pattern.getEventType();
-			vals[3] = pattern.getEventLevel();
-			vals[4] = pattern.getUsername();
-			vals[5] = pattern.getUserTrustValue();
+			String eventType = pattern.getEventType();
+			if (eventType == null) {
+				vals[2] = Utils.missingValue();
+			} else {
+				vals[2] = eventTypes.indexOf(eventType);
+			}
+			String eventLevel = pattern.getEventLevel();
+			if (eventLevel == null) {
+				vals[3] = Utils.missingValue();
+			} else {
+				vals[3] = eventLevels.indexOf(eventLevel);
+			}
+			String username = pattern.getUsername();
+			if (username == null) {
+				vals[4] = Utils.missingValue();
+			} else {
+				vals[4] = usernames.indexOf(username);
+			}
+			Double userTrust = pattern.getUserTrustValue();
+			if (userTrust.isNaN()) {
+				vals[5] = Utils.missingValue();
+			} else {
+				vals[5] = userTrust;
+			}
 			vals[6] = pattern.getPasswordLength();
 			vals[7] = pattern.getLettersInPassword();
 			vals[8] = pattern.getNumbersInPassword();
 			vals[9] = pattern.getPasswdHasCapitalLetters();
 			vals[10] = pattern.getActivatedAccount();
-			vals[11] = pattern.getUserRole();
-			vals[12] = pattern.getEventTime();
-			vals[13] = pattern.getDeviceType();
-			vals[14] = pattern.getDeviceOS();
+			String userRole = pattern.getUserRole();
+			if (userRole == null) {
+				vals[11] = Utils.missingValue();
+			} else {
+				vals[11] = userRoles.indexOf(userRole);
+			}
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String strDate = sdf.format(pattern.getEventTime());
+				vals[12] = data.attribute(12).parseDate(strDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String deviceModel = pattern.getDeviceType();
+			if (deviceModel == null) {
+				vals[13] = Utils.missingValue();
+			} else {
+				vals[13] = deviceTypes.indexOf(deviceModel);
+			}
+			String deviceOS = pattern.getDeviceOS();
+			if (deviceOS == null) {
+				vals[14] = Utils.missingValue();
+			} else {
+				vals[14] = deviceOSs.indexOf(deviceOS);
+			}
 			vals[15] = pattern.getDeviceHasAntivirus();
 			vals[16] = pattern.getDeviceHasCertificate();
-			vals[17] = pattern.getDeviceTrustValue();
-			vals[18] = pattern.getDeviceOwnedBy();
+			Double deviceTrust = pattern.getDeviceTrustValue();
+			if (deviceTrust.isNaN()) {
+				vals[17] = Utils.missingValue();
+			} else {
+				vals[17] = deviceTrust;
+			}
+			String deviceOwner = pattern.getDeviceOwnedBy();
+			if (deviceOwner == null) {
+				vals[18] = Utils.missingValue();
+			} else {
+				vals[18] = deviceOwners.indexOf(deviceOwner);
+			}
 			vals[19] = pattern.getDeviceHasPassword();
-			vals[20] = pattern.getDeviceScreenTimeout();
+			vals[20] = pattern.getDeviceScreenTimeout().doubleValue();
 			vals[21] = pattern.getDeviceHasAccessibility();
 			vals[22] = pattern.getDeviceIsRooted();
-			vals[23] = pattern.getAppName();
-			vals[24] = pattern.getAppVendor();
+			String appName = pattern.getAppName();
+			if (appName == null) {
+				vals[23] = Utils.missingValue();
+			} else {
+				vals[23] = appNames.indexOf(appName);
+			}
+			String appVendor = pattern.getAppVendor();
+			if (appVendor == null) {
+				vals[24] = Utils.missingValue();
+			} else {
+				vals[24] = appVendors.indexOf(appVendor);
+			}
 			vals[25] = pattern.getAppMUSESAware();
-			vals[26] = pattern.getAssetName();
+			String assetName = pattern.getAssetName();
+			if (assetName == null) {
+				vals[26] = Utils.missingValue();
+			} else {
+				vals[26] = assetNames.indexOf(assetName);
+			}
 			vals[27] = pattern.getAssetValue();
-			vals[28] = pattern.getAssetConfidentialLevel();
-			vals[29] = pattern.getAssetLocation();
+			String assetConfidentialLevel = pattern.getAssetConfidentialLevel();
+			if (assetConfidentialLevel == null) {
+				vals[28] = Utils.missingValue();
+			} else {
+				vals[28] = assetConfidentialLevels.indexOf(assetConfidentialLevel);
+			}
+			String assetLocation = pattern.getAssetLocation();
+			if (assetLocation == null) {
+				vals[29] = Utils.missingValue();
+			} else {
+				vals[29] = assetLocations.indexOf(assetLocation);
+			}
 			vals[30] = pattern.getMailRecipientAllowed();
 			vals[31] = pattern.getMailContainsCC();
 			vals[32] = pattern.getMailContainsBCC();
 			vals[33] = pattern.getMailHasAttachment();
-			vals[34] = pattern.getLabel();
-			vals[35] = data.attribute(2).addStringValue(pattern.getLogEntryId().toString());
+			String label = pattern.getLabel();
+			if (label == null) {
+				vals[34] = Utils.missingValue();
+			} else {
+				vals[34] = allLabels.indexOf(label);
+			}
+			
 			data.add(new DenseInstance(1.0, vals));
-		}*/
+		}
 		
-		return data;
+		/* As there will be missing data, is important to deal with it before continue working with the instances */
+		ReplaceMissingValues replaceMissingValues = new ReplaceMissingValues();
+		Instances newData = null;
+		try {
+			replaceMissingValues.setInputFormat(data);
+			newData = Filter.useFilter(data, replaceMissingValues);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		return newData;
 	}
 	
 	
@@ -610,13 +727,15 @@ public class DataMiner {
 	 *    might be happening at the same time.
 	 * 
 	 * 
-	 * @param patterns
+	 * @param data The instances extracted from patterns_krs table in DB
 	 * 
 	 * 
 	 * @return void
 	 */
 	
 	public void featureSelection(Instances data){
+		
+		
 		
 	}
 

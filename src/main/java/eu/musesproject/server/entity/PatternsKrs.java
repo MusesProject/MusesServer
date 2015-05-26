@@ -41,6 +41,8 @@ import javax.persistence.*;
 @NamedQueries ({
 	@NamedQuery(name="PatternsKrs.findAll",
 			query="SELECT p FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctDecisionCause",
+			query="SELECT DISTINCT p.decisionCause FROM PatternsKrs p"),
 	@NamedQuery(name="PatternsKrs.findDistinctEventTypes",
 			query="SELECT DISTINCT p.eventType FROM PatternsKrs p"),
 	@NamedQuery(name="PatternsKrs.findDistinctEventLevel",
@@ -64,120 +66,122 @@ import javax.persistence.*;
 	@NamedQuery(name="PatternsKrs.findDistinctAssetConfidentialLevel",
 			query="SELECT DISTINCT p.assetConfidentialLevel FROM PatternsKrs p"),
 	@NamedQuery(name="PatternsKrs.findDistinctAssetLocation",
-			query="SELECT DISTINCT p.assetLocation FROM PatternsKrs p")
+			query="SELECT DISTINCT p.assetLocation FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctLabels",
+			query="SELECT DISTINCT p.label FROM PatternsKrs p")
 })
 public class PatternsKrs implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="log_entry_id", unique=true, nullable=false)
+	@Column(name="log_entry_id", unique=true)
 	private BigInteger logEntryId;
 
-	@Column(name="label", nullable=false)
+	@Column(name="label")
 	private String label;
 
-	@Column(name="decision_cause", nullable=false)
+	@Column(name="decision_cause")
 	private String decisionCause;
 	
-	@Column(name="silent_mode", nullable=false)
+	@Column(name="silent_mode")
 	private int silentMode;
 
-	@Column(name="event_type", nullable=false)
+	@Column(name="event_type")
 	private String eventType;
 	
-	@Column(name="event_level", nullable=false)
+	@Column(name="event_level")
 	private String eventLevel;
 	
-	@Column(name="username", nullable=false)
+	@Column(name="username")
 	private String username;
 	
-	@Column(name="password_length", nullable=false)
+	@Column(name="password_length")
 	private int passwordLength;
 	
-	@Column(name="letters_in_password", nullable=false)
+	@Column(name="letters_in_password")
 	private int lettersInPassword;
 	
-	@Column(name="numbers_in_password", nullable=false)
+	@Column(name="numbers_in_password")
 	private int numbersInPassword;
 	
-	@Column(name="passwd_has_capital_letters", nullable=false)
+	@Column(name="passwd_has_capital_letters")
 	private int passwdHasCapitalLetters;
 	
-	@Column(name="user_trust_value", nullable=false)
+	@Column(name="user_trust_value")
 	private double userTrustValue;
 	
-	@Column(name="activated_account", nullable=false)
+	@Column(name="activated_account")
 	private int activatedAccount;
 	
-	@Column(name="user_role", nullable=false)
+	@Column(name="user_role")
 	private String userRole;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="event_detection", nullable=false)
+	@Column(name="event_detection")
 	private Date eventTime;
 	
-	@Column(name="device_type", nullable=false)
+	@Column(name="device_type")
 	private String deviceType;
 	
-	@Column(name="device_OS", nullable=false)
+	@Column(name="device_OS")
 	private String deviceOS;
 	
-	@Column(name="device_has_antivirus", nullable=false)
+	@Column(name="device_has_antivirus")
 	private int deviceHasAntivirus;
 	
-	@Column(name="device_has_certificate", nullable=false)
+	@Column(name="device_has_certificate")
 	private int deviceHasCertificate;
 	
-	@Column(name="device_trust_value", nullable=false)
+	@Column(name="device_trust_value")
 	private double deviceTrustValue;
 	
-	@Column(name="device_owned_by", nullable=false)
+	@Column(name="device_owned_by")
 	private String deviceOwnedBy;
 	
-	@Column(name="device_has_password", nullable=false)
+	@Column(name="device_has_password")
 	private int deviceHasPassword;
 	
-	@Column(name="device_screen_timeout", nullable=false)
+	@Column(name="device_screen_timeout")
 	private BigInteger deviceScreenTimeout;
 	
-	@Column(name="device_has_accessibility", nullable=false)
+	@Column(name="device_has_accessibility")
 	private int deviceHasAccessibility;
 	
-	@Column(name="device_is_rooted", nullable=false)
+	@Column(name="device_is_rooted")
 	private int deviceIsRooted;
 	
-	@Column(name="app_name", nullable=false)
+	@Column(name="app_name")
 	private String appName;
 	
-	@Column(name="app_vendor", nullable=false)
+	@Column(name="app_vendor")
 	private String appVendor;
 	
-	@Column(name="app_is_MUSES_aware", nullable=false)
+	@Column(name="app_is_MUSES_aware")
 	private int appMUSESAware;
 	
-	@Column(name="asset_name", nullable=false)
+	@Column(name="asset_name")
 	private String assetName;
 	
-	@Column(name="asset_value", nullable=false)
+	@Column(name="asset_value")
 	private double assetValue;
 	
-	@Column(name="asset_confidential_level", nullable=false)
+	@Column(name="asset_confidential_level")
 	private String assetConfidentialLevel;
 	
-	@Column(name="asset_location", nullable=false)
+	@Column(name="asset_location")
 	private String assetLocation;
 	
-	@Column(name="mail_recipient_allowed", nullable=false)
+	@Column(name="mail_recipient_allowed")
 	private int mailRecipientAllowed;
 	
-	@Column(name="mail_contains_cc_allowed", nullable=false)
+	@Column(name="mail_contains_cc_allowed")
 	private int mailContainsCC;
 	
-	@Column(name="mail_contains_bcc_allowed", nullable=false)
+	@Column(name="mail_contains_bcc_allowed")
 	private int mailContainsBCC;
 	
-	@Column(name="mail_has_attachment", nullable=false)
+	@Column(name="mail_has_attachment")
 	private int mailHasAttachment;
 
 	public PatternsKrs() {
