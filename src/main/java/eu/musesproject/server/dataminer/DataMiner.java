@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 import java.sql.*;
 import java.util.Iterator;
 import java.util.List;
@@ -54,9 +55,15 @@ import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.converters.Loader;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
+import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.FuzzyRoughSubsetEval;
+import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.HillClimber;
+import weka.classifiers.trees.*;
+import weka.classifiers.evaluation.Evaluation;
+import weka.classifiers.rules.*;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
@@ -584,7 +591,7 @@ public class DataMiner {
 			PatternsKrs pattern = i.next();
 			double[] vals = new double[data.numAttributes()];
 			String decisionCause = pattern.getDecisionCause();
-			if (decisionCause.contentEquals("")) {
+			if (decisionCause == null) {
 				vals[0] = Utils.missingValue();
 			} else {
 				vals[0] = decisionCauses.indexOf(decisionCause);
@@ -718,8 +725,8 @@ public class DataMiner {
 			e.printStackTrace();
 		}
 		
-		/* OPTIONAL, only if we want the ARFF file
-		 * ArffSaver saver = new ArffSaver();
+		// OPTIONAL, only if we want the ARFF file
+		/*ArffSaver saver = new ArffSaver();
 		saver.setInstances(newData);
 		try {
 			saver.setFile(new File("./data/test.arff"));
@@ -743,28 +750,25 @@ public class DataMiner {
 	 * @return void
 	 */
 	
-	public void featureSelection(){
+	public int[] featureSelection(Instances data){
 		
-		DataSource source;
+		int[] indexes = null;
+		AttributeSelection attsel = new AttributeSelection();
+		//FuzzyRoughSubsetEval eval = new FuzzyRoughSubsetEval();
+		//HillClimber search = new HillClimber();
+		CfsSubsetEval eval = new CfsSubsetEval();
+		GreedyStepwise search = new GreedyStepwise();
+		attsel.setEvaluator(eval);
+		attsel.setSearch(search);
 		try {
-			source = new DataSource("./data/test.arff");
-			Instances instances = source.getDataSet();
-			AttributeSelection attsel = new AttributeSelection();
-			FuzzyRoughSubsetEval eval = new FuzzyRoughSubsetEval();
-			HillClimber search = new HillClimber();
-			attsel.setEvaluator(eval);
-			attsel.setSearch(search);
-			try {
-				attsel.SelectAttributes(instances);
-				int[] indexes = attsel.selectedAttributes();
-				System.out.println(Utils.arrayToString(indexes));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (Exception e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}				
+			attsel.SelectAttributes(data);
+			indexes = attsel.selectedAttributes();
+			System.out.println(Utils.arrayToString(indexes));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return indexes;
 		
 	}
 	
@@ -780,7 +784,34 @@ public class DataMiner {
 	
 	public void dataClassification(Instances data, int[] indexes){
 		
-						
+		Instances newData;
+		Remove remove = new Remove();
+		remove.setAttributeIndicesArray(indexes);
+		remove.setInvertSelection(true);
+		try {
+			remove.setInputFormat(data);
+			newData = Filter.useFilter(data, remove);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		/* Let's try J48 first */
+		/* Also, this classifier is not incremental because we want the rules */
+		String[] options = new String[1];
+		options[0] = "-U";            // unpruned tree
+		J48 tree = new J48();         // new instance of tree
+		try {
+			tree.setOptions(options);     // set the options
+			tree.buildClassifier(data);   // build classifier
+			
+			Evaluation eval = new Evaluation(data);
+			eval.crossValidateModel(tree, data, 10, new Random(1));
+			System.out.println("Percentage of correctly classified instances: "+eval.pctCorrect());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 	}
 

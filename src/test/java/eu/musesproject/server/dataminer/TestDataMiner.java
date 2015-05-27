@@ -84,7 +84,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dm.getSimpleEvents();
 		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
@@ -100,7 +100,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}
+	}*/
 	
 	/**
 	  * testBuildInstancesFromPatterns - JUnit test case whose aim is to test if instances are being properly built from DB data
@@ -108,7 +108,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testBuildInstancesFromPatterns() {		
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		if (patternList.size()>0){
@@ -127,17 +127,38 @@ public class TestDataMiner {
 		} else {
 			fail("There are no patterns in the table.");
 		}
-	}
-	
+	}*/
+		
 	/**
-	  * testFeatureSelection - JUnit test case whose aim is to test execution of current feature selection algorithms over the built dataset
+	  * testDataClassification - JUnit test case whose aim is to test execution of current classification algorithms over the built dataset
 	  *
 	  * @param none 
 	  * 
 	  */
-	/*@Test
-	public final void testFeatureSelection() {		
-		dm.featureSelection();
-	}*/
+	@Test
+	public final void testDataClassification() {
+		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
+		if (patternList.size()>0){
+			Instances data = dm.buildInstancesFromPatterns(patternList);
+			if (data != null) {
+				int[] redIndexes = dm.featureSelection(data);
+				int[] indexes = new int[data.numAttributes()];
+				for (int i = 0; i < data.numAttributes(); i++) {
+					indexes[i] = i;
+				}
+				dm.dataClassification(data, indexes);
+				if (indexes.length > 0) {
+					dm.dataClassification(data, redIndexes);
+				} else {
+					fail("Feature selection not being properly performed");
+				}
+			} else {
+				fail("Instances not being properly built.");
+			}
+						
+		} else {
+			fail("There are no patterns in the table.");
+		}
+	}
 
 }

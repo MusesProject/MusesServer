@@ -2142,6 +2142,7 @@ public class DBManager {
 			query = session.getNamedQuery("PatternsKrs.findDistinctDecisionCause");
 			if (query!=null) {
 				allDifferentValues = query.list();
+				allDifferentValues.remove(allDifferentValues.indexOf(null));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
