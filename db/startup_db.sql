@@ -599,7 +599,6 @@ CREATE TABLE `simple_events` (
   `data` mediumtext NOT NULL COMMENT 'Raw event content (this is the content of the whole event in JSON format)',
   `date` date NOT NULL COMMENT 'Date when the event happens',
   `time` time NOT NULL COMMENT 'Time at when the event happens',
-  `duration` int(11) DEFAULT '0' COMMENT 'Duration in milliseconds',
   `source_id` bigint(20) unsigned DEFAULT NULL COMMENT 'FK to table SOURCES(source_id)',
   `EP_can_access` int(11) DEFAULT '1' COMMENT 'If TRUE (1) the Event Processor can access these data',
   `RT2AE_can_access` int(11) DEFAULT '1' COMMENT 'If TRUE (1) the RT2AE can access these data',
