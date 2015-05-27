@@ -108,7 +108,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testBuildInstancesFromPatterns() {		
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		if (patternList.size()>0){
@@ -127,7 +127,7 @@ public class TestDataMiner {
 		} else {
 			fail("There are no patterns in the table.");
 		}
-	}*/
+	}
 		
 	/**
 	  * testDataClassification - JUnit test case whose aim is to test execution of current classification algorithms over the built dataset

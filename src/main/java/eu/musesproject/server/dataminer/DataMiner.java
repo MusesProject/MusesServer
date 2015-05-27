@@ -363,10 +363,14 @@ public class DataMiner {
 			pattern.setEventTime(null);
 		}
 		
-		/* Was MUSES in silent or verbose mode? */
-		if (eventDate.getDay() < 16 && eventDate.getMonth() <= 3) {
+		/* Was MUSES in silent or verbose mode? */		
+		if (eventDetection.getDay() < 16 && eventDetection.getMonth() <= 3) {
 			pattern.setSilentMode(1);
-		} else {
+		}
+		if (eventDetection.getDay() >= 16 && eventDetection.getMonth() == 3) {
+			pattern.setSilentMode(0);
+		}
+		if (eventDetection.getMonth() > 3) {
 			pattern.setSilentMode(0);
 		}
 		
@@ -614,17 +618,17 @@ public class DataMiner {
 				vals[4] = Utils.missingValue();
 			} else {
 				vals[4] = usernames.indexOf(username);
-			}
+			}			
+			vals[5] = pattern.getPasswordLength();
+			vals[6] = pattern.getLettersInPassword();
+			vals[7] = pattern.getNumbersInPassword();
+			vals[8] = pattern.getPasswdHasCapitalLetters();
 			Double userTrust = pattern.getUserTrustValue();
 			if (userTrust.isNaN()) {
-				vals[5] = Utils.missingValue();
+				vals[9] = Utils.missingValue();
 			} else {
-				vals[5] = userTrust;
+				vals[9] = userTrust;
 			}
-			vals[6] = pattern.getPasswordLength();
-			vals[7] = pattern.getLettersInPassword();
-			vals[8] = pattern.getNumbersInPassword();
-			vals[9] = pattern.getPasswdHasCapitalLetters();
 			vals[10] = pattern.getActivatedAccount();
 			String userRole = pattern.getUserRole();
 			if (userRole == null) {
@@ -726,7 +730,7 @@ public class DataMiner {
 		}
 		
 		// OPTIONAL, only if we want the ARFF file
-		/*ArffSaver saver = new ArffSaver();
+		ArffSaver saver = new ArffSaver();
 		saver.setInstances(newData);
 		try {
 			saver.setFile(new File("./data/test.arff"));
@@ -734,7 +738,7 @@ public class DataMiner {
 			saver.writeBatch();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		
 		return newData;
