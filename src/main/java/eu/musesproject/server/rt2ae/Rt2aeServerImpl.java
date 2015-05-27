@@ -259,6 +259,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setValue("STRONGDENY");
 				decision1.setTime(new java.util.Date());
 				decisionId = dbManager.setDecision(decision1);
+				decision.setId(decisionId);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
@@ -442,6 +443,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 					decision1.setValue("GRANTED");
 					decision1.setTime(new java.util.Date());
 					decisionId = dbManager.setDecision(decision1);
+					decision.setId(decisionId);
+
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
@@ -778,6 +781,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decisionId = dbManager.setDecision(decision1);
+					decision.setId(decisionId);
+
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -867,6 +872,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decisionId = dbManager.setDecision(decision1);
+					decision.setId(decisionId);
+
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -957,6 +964,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decisionId = dbManager.setDecision(decision1);
+					decision.setId(decisionId);
+
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1043,6 +1052,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decisionId = dbManager.setDecision(decision1);
+					decision.setId(decisionId);
+
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1099,6 +1110,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setValue("GRANTED");
 				decision1.setTime(new java.util.Date());
 				decisionId = dbManager.setDecision(decision1);
+				decision.setId(decisionId);
+
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1193,6 +1206,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					try {
 						decisionId = dbManager.setDecision(decision1);
+						decision.setId(decisionId);
+
 
 					} catch (Exception e) {
 						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1282,6 +1297,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					try {
 						decisionId = dbManager.setDecision(decision1);
+						decision.setId(decisionId);
+
 
 					} catch (Exception e) {
 						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1372,6 +1389,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					try {
 						decisionId = dbManager.setDecision(decision1);
+						decision.setId(decisionId);
+
 
 					} catch (Exception e) {
 						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1458,6 +1477,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					try {
 						decisionId = dbManager.setDecision(decision1);
+						decision.setId(decisionId);
+
 
 					} catch (Exception e) {
 						logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1514,6 +1535,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 					decision1.setValue("GRANTED");
 					decision1.setTime(new java.util.Date());
 					decisionId = dbManager.setDecision(decision1);
+					decision.setId(decisionId);
+
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecisions:"+e.getLocalizedMessage());
@@ -1582,6 +1605,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setValue("STRONGDENY");
 				decision1.setTime(new java.util.Date());
 				decisionId = dbManager.setDecision(decision1);
+				decision.setId(decisionId);
+
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
@@ -1636,6 +1661,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			decision1.setValue("GRANTED");
 			decision1.setTime(new java.util.Date());
 			decisionId = dbManager.setDecision(decision1);
+			decision.setId(decisionId);
+
 
 		} catch (Exception e) {
 			logger.error("Please, check database persistence:An error has produced while calling dbManager.setDecision:"+e.getLocalizedMessage());
