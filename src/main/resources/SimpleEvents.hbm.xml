@@ -54,11 +54,6 @@
                 <comment>Time at when the event happens</comment>
             </column>
         </property>
-        <property name="duration" type="java.lang.Integer">
-            <column name="duration">
-                <comment>Duration in milliseconds</comment>
-            </column>
-        </property>
         <property name="epCanAccess" type="java.lang.Integer">
             <column name="EP_can_access">
                 <comment>If TRUE (1) the Event Processor can access these data</comment>

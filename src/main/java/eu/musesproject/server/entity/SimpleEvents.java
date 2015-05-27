@@ -41,8 +41,6 @@ public class SimpleEvents implements Serializable {
 	@Column(nullable=false)
 	private Date date;
 
-	private int duration;
-
 	private int EP_can_access;
 
 	private int KRS_can_access;
@@ -123,14 +121,6 @@ public class SimpleEvents implements Serializable {
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public int getDuration() {
-		return this.duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
 	}
 
 	public int getEP_can_access() {
