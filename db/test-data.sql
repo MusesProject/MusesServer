@@ -123,16 +123,15 @@ DROP TABLE IF EXISTS `applications`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `applications` (
   `app_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `type` bigint(20) DEFAULT NULL COMMENT 'FK to table APP_TYPE(app_type_id)',
   `name` varchar(30) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
   `version` varchar(20) DEFAULT NULL COMMENT 'The current version of the application',
   `last_update` datetime DEFAULT NULL COMMENT 'Last update of application',
   `vendor` varchar(30) DEFAULT NULL COMMENT 'Vendor of the application',
+  `blacklisted` int(11) DEFAULT '0' COMMENT 'If TRUE (1) -> the application is blacklisted',
   `is_MUSES_aware` int(11) DEFAULT '0' COMMENT 'If TRUE (1) -> the application can be monitored easily (it interacts with the system through the API)',
   PRIMARY KEY (`app_id`),
-  KEY `app_type_id_idx` (`type`),
-  CONSTRAINT `applications-app_type:app_type_id` FOREIGN KEY (`type`) REFERENCES `app_type` (`app_type_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  KEY `app_type_id_idx` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8 COMMENT='As MUSES will have both black and white lists, a description of the different applications installed on a device can be found in this table.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -142,7 +141,7 @@ CREATE TABLE `applications` (
 
 LOCK TABLES `applications` WRITE;
 /*!40000 ALTER TABLE `applications` DISABLE KEYS */;
-INSERT INTO `applications` VALUES (117,1174,'musesawaew','desc','89','2014-08-15 00:00:00','android',0),(118,1175,'musesawarew','desc','89','2014-08-15 00:00:00','android',0),(119,1175,'MUSES-Server','desc','89','2014-08-15 00:00:00','java',0);
+INSERT INTO `applications` VALUES (117,'musesawaew','desc','89','2014-08-15 00:00:00','android',0,0),(118,'musesawarew','desc','89','2014-08-15 00:00:00','android',0,0),(119,'MUSES-Server','desc','89','2014-08-15 00:00:00','java',0,0);
 /*!40000 ALTER TABLE `applications` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -75,12 +75,12 @@ CREATE TABLE IF NOT EXISTS `additional_protection` (
 
 CREATE TABLE IF NOT EXISTS `applications` (
   `app_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `type` bigint(20) DEFAULT NULL COMMENT 'FK to table APP_TYPE(app_type_id)',
   `name` varchar(30) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
   `version` varchar(20) DEFAULT NULL COMMENT 'The current version of the application',
   `last_update` datetime DEFAULT NULL COMMENT 'Last update of application',
   `vendor` varchar(30) DEFAULT NULL COMMENT 'Vendor of the application',
+  `blacklisted` int(11) DEFAULT '0' COMMENT 'If TRUE (1) -> the application is blacklisted',
   `is_MUSES_aware` int(11) DEFAULT '0' COMMENT 'If TRUE (1) -> the application can be monitored easily (it interacts with the system through the API)',
   PRIMARY KEY (`app_id`),
   KEY `app_type_id_idx` (`type`)
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `applications` (
 -- Contenu de la table `applications`
 --
 
-INSERT INTO `applications` VALUES (117,1174,'musesawaew','desc','89','2014-08-15 00:00:00','android',0),(118,1175,'musesawarew','desc','89','2014-08-15 00:00:00','android',0),(119,1175,'MUSES-Server','desc','89','2014-08-15 00:00:00','java',0);
+INSERT INTO `applications` VALUES (117,'musesawaew','desc','89','2014-08-15 00:00:00','android',0,0),(118,'musesawarew','desc','89','2014-08-15 00:00:00','android',0,0),(119,'MUSES-Server','desc','89','2014-08-15 00:00:00','java',0,0);
 
 -- --------------------------------------------------------
 
