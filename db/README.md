@@ -19,3 +19,7 @@ Contains all the data for MUSES startup and testing.
 
 To Be Written
 
+## extract_inserts.pl 
+
+To Be Written
+
