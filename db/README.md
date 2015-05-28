@@ -13,7 +13,9 @@ Contains all the data needed for the JUnit tests of the server
 
 ## init_db.sql
 
-Contains all the data for MUSES startup and testing.
+Inserts initial data into the database and makes alterations of the initial definitions. 
 
+## `extract_inserts.pl`
 
+This script extracts inserts from a SQL file after being split by `sql-split`. 
 
