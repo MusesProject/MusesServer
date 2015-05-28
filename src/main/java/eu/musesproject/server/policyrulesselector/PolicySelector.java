@@ -291,9 +291,12 @@ public class PolicySelector {
 		String allowEnd = "</allow>";
 		String denyEnd = "</deny>";
 		String upToYouEnd = "</up-to-you>"; 
+		String decisionIdIni = "<decision>";
+		String decisionIdEnd = "</decision>";
 		String id =  "<id></id>";
 		result = "<files>";
 		result += "<action>";
+		result += decisionIdIni + decision.getId() + decisionIdEnd;
 		result += "<type>"+action+"</type>";
 		if (requestId != null){
 			result = "<request_id>"+requestId+"</request_id>";
@@ -330,8 +333,11 @@ public class PolicySelector {
 		String allowEnd = "</allow>";
 		String denyEnd = "</deny>";
 		String upToYouEnd = "</up-to-you>"; 
+		String decisionIdIni = "<decision>";
+		String decisionIdEnd = "</decision>";
 		result = "<files>";
 		result += "<action>";
+		result += decisionIdIni + decision.getId() + decisionIdEnd;
 		result += "<type>"+action+"</type>";
 		if (requestId != 0){
 			result +="<request_id>"+requestId+"</request_id>";
