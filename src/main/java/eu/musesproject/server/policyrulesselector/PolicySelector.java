@@ -349,6 +349,9 @@ public class PolicySelector {
 				result += "<path>"+asset.getLocation()+"</path>";
 				result += "<condition>"+decision.getCondition()+"</condition>";
 				result += "<riskTreatment>Allowed</riskTreatment>";
+	
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
+	
 			}			
 			result += allowEnd;
 		}else if (decision.equals(Decision.STRONG_DENY_ACCESS)){
@@ -360,6 +363,7 @@ public class PolicySelector {
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
 			}	
 			result += denyEnd;
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
@@ -382,6 +386,7 @@ public class PolicySelector {
 						}
 					}
 				}
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
 			}	
 			result += "</maybe>";
 		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){
@@ -395,6 +400,7 @@ public class PolicySelector {
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
 			}	
 			result += upToYouEnd;
 		}
