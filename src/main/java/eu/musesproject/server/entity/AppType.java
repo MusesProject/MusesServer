@@ -26,9 +26,7 @@ public class AppType implements Serializable {
 	@Column(nullable=false, length=30)
 	private String type;
 
-	//bi-directional many-to-one association to Applications
-	@OneToMany(mappedBy="appType")
-	private List<Applications> applications;
+
 
 	public AppType() {
 	}
@@ -57,26 +55,7 @@ public class AppType implements Serializable {
 		this.type = type;
 	}
 
-	public List<Applications> getApplications() {
-		return this.applications;
-	}
 
-	public void setApplications(List<Applications> applications) {
-		this.applications = applications;
-	}
 
-	public Applications addApplication(Applications application) {
-		getApplications().add(application);
-		application.setAppType(this);
-
-		return application;
-	}
-
-	public Applications removeApplication(Applications application) {
-		getApplications().remove(application);
-		application.setAppType(null);
-
-		return application;
-	}
 
 }

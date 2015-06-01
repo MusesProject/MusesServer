@@ -291,9 +291,12 @@ public class PolicySelector {
 		String allowEnd = "</allow>";
 		String denyEnd = "</deny>";
 		String upToYouEnd = "</up-to-you>"; 
+		String decisionIdIni = "<decision>";
+		String decisionIdEnd = "</decision>";
 		String id =  "<id></id>";
 		result = "<files>";
 		result += "<action>";
+		result += decisionIdIni + decision.getId() + decisionIdEnd;
 		result += "<type>"+action+"</type>";
 		if (requestId != null){
 			result = "<request_id>"+requestId+"</request_id>";
@@ -330,8 +333,11 @@ public class PolicySelector {
 		String allowEnd = "</allow>";
 		String denyEnd = "</deny>";
 		String upToYouEnd = "</up-to-you>"; 
+		String decisionIdIni = "<decision>";
+		String decisionIdEnd = "</decision>";
 		result = "<files>";
 		result += "<action>";
+		result += decisionIdIni + decision.getId() + decisionIdEnd;
 		result += "<type>"+action+"</type>";
 		if (requestId != 0){
 			result +="<request_id>"+requestId+"</request_id>";
@@ -343,6 +349,9 @@ public class PolicySelector {
 				result += "<path>"+asset.getLocation()+"</path>";
 				result += "<condition>"+decision.getCondition()+"</condition>";
 				result += "<riskTreatment>Allowed</riskTreatment>";
+	
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
+	
 			}			
 			result += allowEnd;
 		}else if (decision.equals(Decision.STRONG_DENY_ACCESS)){
@@ -354,6 +363,7 @@ public class PolicySelector {
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
 			}	
 			result += denyEnd;
 		}else if (decision.equals(Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS)){
@@ -376,6 +386,7 @@ public class PolicySelector {
 						}
 					}
 				}
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
 			}	
 			result += "</maybe>";
 		}else if (decision.equals(Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION)){
@@ -389,6 +400,7 @@ public class PolicySelector {
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
 				}
+				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
 			}	
 			result += upToYouEnd;
 		}

@@ -30,6 +30,8 @@ public class Applications implements Serializable {
 	private String description;
 
 	private int is_MUSES_aware;
+	
+	private int blacklisted;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="last_update")
@@ -44,10 +46,6 @@ public class Applications implements Serializable {
 	@Column(length=20)
 	private String version;
 
-	//bi-directional many-to-one association to AppType
-	@ManyToOne
-	@JoinColumn(name="type")
-	private AppType appType;
 
 	//bi-directional many-to-one association to SimpleEvents
 	@OneToMany(mappedBy="application")
@@ -112,14 +110,6 @@ public class Applications implements Serializable {
 		this.version = version;
 	}
 
-	public AppType getAppType() {
-		return this.appType;
-	}
-
-	public void setAppType(AppType appType) {
-		this.appType = appType;
-	}
-
 	public List<SimpleEvents> getSimpleEvents() {
 		return this.simpleEvents;
 	}
@@ -140,6 +130,14 @@ public class Applications implements Serializable {
 		simpleEvent.setApplication(null);
 
 		return simpleEvent;
+	}
+
+	public int getBlacklisted() {
+		return blacklisted;
+	}
+
+	public void setBlacklisted(int blacklisted) {
+		this.blacklisted = blacklisted;
 	}
 
 }

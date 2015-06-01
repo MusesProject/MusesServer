@@ -8,7 +8,7 @@ INSERT INTO `app_type` VALUES (1174,'1174','desc'),(1175,'1175','desc');
 
 --
 
-INSERT INTO `applications` VALUES (117,1174,'musesawaew','desc','89','2014-08-15 00:00:00','android',0),(118,1175,'musesawarew','desc','89','2014-08-15 00:00:00','android',0),(119,1175,'MUSES-Server','desc','89','2014-08-15 00:00:00','java',0);
+INSERT INTO `applications` VALUES (117,'musesawaew','desc','89','2014-08-15 00:00:00','android',0,0),(118,'musesawarew','desc','89','2014-08-15 00:00:00','android',0,0),(119,'MUSES-Server','desc','89','2014-08-15 00:00:00','java',0,0);
 
 --
 
