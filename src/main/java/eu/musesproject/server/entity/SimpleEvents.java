@@ -54,10 +54,6 @@ public class SimpleEvents implements Serializable {
 	@OneToMany(mappedBy="simpleEvent")
 	private List<AdditionalProtection> additionalProtections;
 
-	//bi-directional many-to-one association to RiskInformation
-	@OneToMany(mappedBy="simpleEvent")
-	private List<RiskInformation> riskInformations;
-
 	//bi-directional many-to-one association to SecurityIncident
 	@OneToMany(mappedBy="simpleEvent")
 	private List<SecurityIncident> securityIncidents;
@@ -175,28 +171,6 @@ public class SimpleEvents implements Serializable {
 		additionalProtection.setSimpleEvent(null);
 
 		return additionalProtection;
-	}
-
-	public List<RiskInformation> getRiskInformations() {
-		return this.riskInformations;
-	}
-
-	public void setRiskInformations(List<RiskInformation> riskInformations) {
-		this.riskInformations = riskInformations;
-	}
-
-	public RiskInformation addRiskInformation(RiskInformation riskInformation) {
-		getRiskInformations().add(riskInformation);
-		riskInformation.setSimpleEvent(this);
-
-		return riskInformation;
-	}
-
-	public RiskInformation removeRiskInformation(RiskInformation riskInformation) {
-		getRiskInformations().remove(riskInformation);
-		riskInformation.setSimpleEvent(null);
-
-		return riskInformation;
 	}
 
 	public List<SecurityIncident> getSecurityIncidents() {

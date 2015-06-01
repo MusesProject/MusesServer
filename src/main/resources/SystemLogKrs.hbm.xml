@@ -38,8 +38,8 @@
                 <comment>Corresponding device security state for the event. FK to DEVICE_SECURITY_STATE(device_security_state_id)</comment>
             </column>
         </property>
-        <property name="riskTreatment" type="int">
-            <column name="risk_treatment" not-null="true">
+        <property name="riskTreatment" type="string">
+            <column name="risk_treatment" length="1000">
                 <comment>Corresponding risk treatment for the event. FK to RISK_TREATMENT(risk_treatment_id)</comment>
             </column>
         </property>

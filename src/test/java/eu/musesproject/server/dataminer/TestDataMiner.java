@@ -19,7 +19,6 @@ import eu.musesproject.server.dataminer.DataMiner;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AdditionalProtection;
 import eu.musesproject.server.entity.PatternsKrs;
-import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.SecurityIncident;
 import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.ThreatClue;

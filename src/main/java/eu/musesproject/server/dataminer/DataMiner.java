@@ -182,13 +182,12 @@ public class DataMiner {
 				logEntry.setDeviceSecurityState(BigInteger.ZERO);
 				
 				/* Looking for the risk treatment in case the event caused a security violation */
-				List<RiskInformation> riskTreatment = dbManager.findRiskInformationByEventId(event.getEventId());
-				if (riskTreatment.size() > 0){
-					BigInteger treatment = new BigInteger(riskTreatment.get(0).getRiskInformationId());
-					logEntry.setRiskTreatment(treatment.intValue());
+				String riskTreatment = securityViolations.get(0).getMessage();
+				if (riskTreatment != null){
+					logEntry.setRiskTreatment(riskTreatment);
 				} else {
 					//logger.warn("Risk Treatment not found, or this event did not cause a security violation, assigning 0...");
-					logEntry.setRiskTreatment(0);					
+					logEntry.setRiskTreatment(null);					
 				}
 								
 				/* Time when the event was detected in the device */

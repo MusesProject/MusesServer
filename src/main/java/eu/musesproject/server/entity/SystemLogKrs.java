@@ -37,8 +37,8 @@ public class SystemLogKrs implements Serializable {
 	@Column(name="previous_event_id", nullable=false)
 	private BigInteger previousEventId;
 
-	@Column(name="risk_treatment", nullable=false)
-	private int riskTreatment;
+	@Column(name="risk_treatment", nullable=true)
+	private String riskTreatment;
 
 	@Column(name="security_incident_id", nullable=false)
 	private BigInteger securityIncidentId;
@@ -101,11 +101,11 @@ public class SystemLogKrs implements Serializable {
 		this.previousEventId = previousEventId;
 	}
 
-	public int getRiskTreatment() {
+	public String getRiskTreatment() {
 		return this.riskTreatment;
 	}
 
-	public void setRiskTreatment(int riskTreatment) {
+	public void setRiskTreatment(String riskTreatment) {
 		this.riskTreatment = riskTreatment;
 	}
 

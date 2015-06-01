@@ -39,14 +39,12 @@
         <mapping class="eu.musesproject.server.entity.PatternsKrs"/>
         <mapping class="eu.musesproject.server.entity.RefinedSecurityRules"/>
         <mapping class="eu.musesproject.server.entity.RiskCommunication"/>
-        <mapping class="eu.musesproject.server.entity.RiskInformation"/>
         <mapping class="eu.musesproject.server.entity.RiskPolicy"/>
         <mapping class="eu.musesproject.server.entity.RiskTreatment"/>
         <mapping class="eu.musesproject.server.entity.Roles"/>
         <mapping class="eu.musesproject.server.entity.SecurityIncident"/>
         <mapping class="eu.musesproject.server.entity.SecurityRules"/>
         <mapping class="eu.musesproject.server.entity.SecurityViolation"/>
-        <mapping class="eu.musesproject.server.entity.Sensitivity"/>
         <mapping class="eu.musesproject.server.entity.SensorConfiguration"/>
         <mapping class="eu.musesproject.server.entity.SimpleEvents"/>
         <mapping class="eu.musesproject.server.entity.Sources"/>

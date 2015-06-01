@@ -26,10 +26,6 @@ public class ThreatType implements Serializable {
 	@Column(nullable=false, length=50)
 	private String type;
 
-	//bi-directional many-to-one association to RiskInformation
-	@OneToMany(mappedBy="threatTypeBean")
-	private List<RiskInformation> riskInformations;
-
 	//bi-directional many-to-one association to ThreatClue
 	@OneToMany(mappedBy="threatType")
 	private List<ThreatClue> threatClues;
@@ -59,28 +55,6 @@ public class ThreatType implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public List<RiskInformation> getRiskInformations() {
-		return this.riskInformations;
-	}
-
-	public void setRiskInformations(List<RiskInformation> riskInformations) {
-		this.riskInformations = riskInformations;
-	}
-
-	public RiskInformation addRiskInformation(RiskInformation riskInformation) {
-		getRiskInformations().add(riskInformation);
-		riskInformation.setThreatTypeBean(this);
-
-		return riskInformation;
-	}
-
-	public RiskInformation removeRiskInformation(RiskInformation riskInformation) {
-		getRiskInformations().remove(riskInformation);
-		riskInformation.setThreatTypeBean(null);
-
-		return riskInformation;
 	}
 
 	public List<ThreatClue> getThreatClues() {

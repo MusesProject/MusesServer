@@ -61,10 +61,6 @@ public class Assets implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date available;
 
-	//bi-directional many-to-one association to RiskInformation
-	@OneToMany(mappedBy="asset")
-	private List<RiskInformation> riskInformations;
-
 	//bi-directional many-to-one association to SimpleEvents
 	@OneToMany(mappedBy="asset")
 	private List<SimpleEvents> simpleEvents;
@@ -130,28 +126,6 @@ public class Assets implements Serializable {
 
 	public void setValue(double value) {
 		this.value = value;
-	}
-
-	public List<RiskInformation> getRiskInformations() {
-		return this.riskInformations;
-	}
-
-	public void setRiskInformations(List<RiskInformation> riskInformations) {
-		this.riskInformations = riskInformations;
-	}
-
-	public RiskInformation addRiskInformation(RiskInformation riskInformation) {
-		getRiskInformations().add(riskInformation);
-		riskInformation.setAsset(this);
-
-		return riskInformation;
-	}
-
-	public RiskInformation removeRiskInformation(RiskInformation riskInformation) {
-		getRiskInformations().remove(riskInformation);
-		riskInformation.setAsset(null);
-
-		return riskInformation;
 	}
 
 	public List<SimpleEvents> getSimpleEvents() {

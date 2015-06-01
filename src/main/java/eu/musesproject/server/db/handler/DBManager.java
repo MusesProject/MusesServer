@@ -35,7 +35,6 @@ import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RefinedSecurityRules;
 import eu.musesproject.server.entity.RiskCommunication;
-import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.RiskTreatment;
 import eu.musesproject.server.entity.Roles;
@@ -1920,29 +1919,6 @@ public class DBManager {
 			if (session!=null) session.close();
 		} 
 		return securityViolations;		
-	}
-	
-	/**
-     * Get RiskInformation list by event_id
-     * @param riskInformationEventId
-     * @return List<RiskInformation>
-     */
-	public List<RiskInformation> findRiskInformationByEventId(String riskInformationEventId) {
-		Session session = null;
-		Query query = null;
-		List<RiskInformation> riskInformation = null;
-		try {
-			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("RiskInformation.findByEventId").setString("event_id", riskInformationEventId);
-			if (query!=null) {
-				riskInformation = query.list();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (session!=null) session.close();
-		} 
-		return riskInformation;		
 	}
 
 	public SimpleEvents updateSimpleEvent(String eventType, String assetId) {

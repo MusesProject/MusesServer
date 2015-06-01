@@ -69,14 +69,6 @@
                 <comment>If TRUE (1) the Knowledge Refinement System can access these data</comment>
             </column>
         </property>
-        <set name="riskInformations" table="risk_information" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="event_id" not-null="true">
-                    <comment>FK to table EVENTS(event_id)</comment>
-                </column>
-            </key>
-            <one-to-many class="RiskInformation" />
-        </set>
         <set name="securityIncidents" table="security_incident" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="event_id">

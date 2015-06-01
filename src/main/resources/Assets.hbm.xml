@@ -48,13 +48,5 @@
             </key>
             <one-to-many class="SimpleEvents" />
         </set>
-        <set name="riskInformations" table="risk_information" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="asset_id" not-null="true">
-                    <comment>FK to table ASSET(asset_id)</comment>
-                </column>
-            </key>
-            <one-to-many class="RiskInformation" />
-        </set>
     </class>
 </hibernate-mapping>

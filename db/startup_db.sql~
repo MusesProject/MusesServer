@@ -632,7 +632,7 @@ CREATE TABLE `system_log_krs` (
   `user_behaviour_id` bigint(20) unsigned NOT NULL COMMENT 'Corresponding user''s behaviour for the event. FK to USER_BEHAVIOUR(user_behaviour_id)',
   `security_incident_id` bigint(20) unsigned NOT NULL COMMENT 'Corresponding security incident for the event. FK to SECURITY_INCIDENT(security_incident_id)',
   `device_security_state` bigint(20) unsigned NOT NULL COMMENT 'Corresponding device security state for the event. FK to DEVICE_SECURITY_STATE(device_security_state_id)',
-  `risk_treatment`  varchar(1000) COMMENT 'Corresponding risk treatment for the event.',
+  `risk_treatment` int(10) unsigned NOT NULL COMMENT 'Corresponding risk treatment for the event. FK to RISK_TREATMENT(risk_treatment_id)',
   `start_time` datetime NOT NULL COMMENT 'When the sequence started',
   `finish_time` datetime NOT NULL COMMENT 'When the sequence finished',
   PRIMARY KEY (`log_id`)

@@ -23,7 +23,6 @@
 	<class>eu.musesproject.server.entity.PatternsKrs</class>
 	<class>eu.musesproject.server.entity.RefinedSecurityRules</class>
 	<class>eu.musesproject.server.entity.RiskCommunication</class>
-	<class>eu.musesproject.server.entity.RiskInformation</class>
 	<class>eu.musesproject.server.entity.RiskPolicy</class>
 	<class>eu.musesproject.server.entity.RiskTreatment</class>
 	<class>eu.musesproject.server.entity.Roles</class>
