@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 01-jun-2015 17:13:16 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="eu.musesproject.server.entity.MusesConfig" table="MUSESCONFIG">
+        <id name="configId" type="int">
+            <column name="CONFIGID" />
+            <generator class="assigned" />
+        </id>
+        <property name="accessAttemptsBeforeBlocking" type="int">
+            <column name="ACCESSATTEMPTSBEFOREBLOCKING" />
+        </property>
+        <property name="configName" type="java.lang.String">
+            <column name="CONFIGNAME" />
+        </property>
+        <property name="silentMode" type="boolean">
+            <column name="SILENTMODE" />
+        </property>
+        <property name="date" type="java.util.Date">
+            <column name="DATE" />
+        </property>
+    </class>
+</hibernate-mapping>

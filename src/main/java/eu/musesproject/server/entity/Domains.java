@@ -30,10 +30,8 @@ public class Domains implements Serializable {
 	@Column(nullable=false, length=50)
 	private String name;
 
-	//bi-directional many-to-one association to Sensitivity
-	@ManyToOne
-	@JoinColumn(name="sensitivity_id", nullable=false)
-	private Sensitivity sensitivity;
+	@Column(name="sensitivity_id", nullable=false, length=1)
+	private String sensitivity;
 
 	public Domains() {
 	}
@@ -62,11 +60,11 @@ public class Domains implements Serializable {
 		this.name = name;
 	}
 
-	public Sensitivity getSensitivity() {
+	public String getSensitivity() {
 		return this.sensitivity;
 	}
 
-	public void setSensitivity(Sensitivity sensitivity) {
+	public void setSensitivity(String sensitivity) {
 		this.sensitivity = sensitivity;
 	}
 

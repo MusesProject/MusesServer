@@ -8,11 +8,11 @@
             <column name="domain_id" />
             <generator class="identity" />
         </id>
-        <many-to-one name="sensitivity" class="Sensitivity" fetch="select">
-            <column name="sensitivity_id" not-null="true">
-                <comment>Associated sensitivity level (strictly confidential, protected, public,...) FK to sensitivity table</comment>
-            </column>
-        </many-to-one>
+        <property name="sensitivity" type="string">
+            <column name="sensitivity_id" length="20" not-null="true">
+            	<comment>Associated sensitivity level (strictly confidential, protected, public,...)</comment>
+        	</column>
+        </property>
         <property name="name" type="string">
             <column name="name" length="50" not-null="true">
                 <comment>Name of the domain (e.g. Offers)</comment>

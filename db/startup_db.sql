@@ -260,7 +260,7 @@ CREATE TABLE `domains` (
   `domain_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT 'Name of the domain (e.g. Offers)',
   `description` varchar(100) DEFAULT NULL COMMENT 'Domain description (e.g. Company domain used to store commercial offers to be presented to concrete customers. This kind of information is strictly confidential.)',
-  `sensitivity_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Associated sensitivity level (strictly confidential, protected, public,...) FK to sensitivity table',
+  `sensitivity_id` enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLY_CONFIDENTIAL','NONE') NOT NULL DEFAULT 'CONFIDENTIAL' COMMENT 'Associated sensitivity level (strictly confidential, protected, public,...)',
   PRIMARY KEY (`domain_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='Table which describes the different domains that might apply for different company resources. Depending on this domain, it will have a different sensitivity level.';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -551,21 +551,6 @@ CREATE TABLE `security_violation` (
   CONSTRAINT `security_violation-simple_events:event_id` FOREIGN KEY (`event_id`) REFERENCES `simple_events` (`event_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `security_violation-users:user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1378 DEFAULT CHARSET=utf8 COMMENT='Table to store any detected security violation';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `sensitivity`
---
-
-DROP TABLE IF EXISTS `sensitivity`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sensitivity` (
-  `sensitivity_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `level` smallint(6) NOT NULL COMMENT 'Associated numeric value corresponding to different levels of sensitivity from 1 for Strictly confidential, to 3 for public',
-  PRIMARY KEY (`sensitivity_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='Table for listing all the possible values representing sensitivity of corporate data';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

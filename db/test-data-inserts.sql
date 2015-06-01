@@ -36,7 +36,7 @@ INSERT INTO `default_policies` VALUES (1,'DENY','ACCESS',NULL,'2015-04-23'),(2,'
 INSERT INTO `devices` VALUES (1,'server','1222','MUSES Server','server','a','0',0,NULL,NULL),(2,'358648051980583','1222',NULL,'358648051980583',NULL,NULL,0,NULL,NULL),(201,'f','1222','device','545','a','0',0,NULL,NULL),(202,'f','1223','device','0454','a','0',0,NULL,NULL),(203,'e3da52dbe610b684','1222',NULL,'e3da52dbe610b684',NULL,NULL,0,NULL,NULL),(204,'9aa326e4fd9ccf61','1222',NULL,'9aa326e4fd9ccf61',NULL,NULL,0,NULL,NULL),(205,'36474929437562939','1222',NULL,'36474929437562939',NULL,NULL,0,NULL,NULL),(206,'358648051980583','1222',NULL,'358648051980583',NULL,NULL,0,NULL,NULL),(207,'f1fa4ef09df1d163','1222',NULL,'f1fa4ef09df1d163',NULL,NULL,0,NULL,NULL),(208,'afc398f33cad4e9e','1222',NULL,'afc398f33cad4e9e',NULL,NULL,0,NULL,NULL);
 --
 
-INSERT INTO `domains` VALUES (7,'domain','desc',25);
+INSERT INTO `domains` VALUES (7,'domain','desc','CONFIDENTIAL');
 
 --
 
@@ -90,15 +90,6 @@ INSERT INTO `roles` VALUES (145,'role','desc',1);
 --
 
 
-
---
-
-
---
-
-INSERT INTO `sensitivity` VALUES (25,'sensitivity',1);
-
---
 
 INSERT INTO `sensor_configuration` VALUES (1,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','avast! Mobile Security'),(2,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Mobile Security & Antivirus'),(3,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Avira Antivirus Security'),(4,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','Norton Security & Antivirus'),(5,'CONTEXT_SENSOR_DEVICE_PROTECTION','trustedav','CM Security & Find My Phone'),(6,'CONTEXT_SENSOR_DEVICE_PROTECTION','enabled','true'),(7,'CONTEXT_SENSOR_LOCATION','mindistance','10'),(8,'CONTEXT_SENSOR_LOCATION','mindtime','400'),(9,'CONTEXT_SENSOR_LOCATION','radius','12.0'),(10,'CONTEXT_SENSOR_LOCATION','enabled','true'),(11,'CONTEXT_SENSOR_FILEOBSERVER','path','/SWE/'),(12,'CONTEXT_SENSOR_FILEOBSERVER','enabled','true'),(13,'CONTEXT_SENSOR_APP','enabled','true'),(14,'CONTEXT_SENSOR_CONNECTIVITY','enabled','true'),(15,'CONTEXT_SENSOR_INTERACTION','enabled','true'),(16,'CONTEXT_SENSOR_PACKAGE','enabled','true'),(17,'CONTEXT_SENSOR_SETTINGS','enabled','true'),(18,'CONTEXT_SENSOR_NOTIFICATION','enabled','true');
 
