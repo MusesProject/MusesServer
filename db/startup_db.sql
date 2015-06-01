@@ -325,6 +325,7 @@ CREATE TABLE `muses_config` (
   `config_name` varchar(30) NOT NULL COMMENT 'Name of the configuration',
   `silent_mode` tinyint(4) NOT NULL COMMENT 'Specify whether all devices should run MUSES application in silent mode (true), or verbose (false)',
   `access_attempts_before_blocking` int(10) unsigned NOT NULL DEFAULT '5',
+  `date` datetime DEFAULT NULL COMMENT 'Time from which configuration applies',
   PRIMARY KEY (`config_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='MUSES Server configuration parameters';
 /*!40101 SET character_set_client = @saved_cs_client */;

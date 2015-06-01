@@ -48,7 +48,7 @@ INSERT INTO `legal_aspects` VALUES ('15',20,1,2,'1');
 
 --
 
-INSERT INTO `muses_config` VALUES (1,'SILENT',1,3);
+INSERT INTO `muses_config` VALUES (1,'SILENT',1,3,'2014-11-15 00:00:00');
 
 --
 

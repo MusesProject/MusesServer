@@ -1,6 +1,7 @@
 package eu.musesproject.server.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.*;
 
@@ -29,6 +30,9 @@ public class MusesConfig implements Serializable {
 	
 	@Column(name="silent_mode", nullable=false, length=10)
 	private boolean silentMode;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date date;
 
 	public MusesConfig() {
 	}
@@ -63,6 +67,14 @@ public class MusesConfig implements Serializable {
 
 	public void setSilentMode(boolean silentMode) {
 		this.silentMode = silentMode;
+	}
+	
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date detection) {
+		this.date = detection;
 	}
 
 }
