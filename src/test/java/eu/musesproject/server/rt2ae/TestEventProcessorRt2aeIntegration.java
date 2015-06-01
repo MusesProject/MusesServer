@@ -1168,7 +1168,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testLogout);
 
@@ -1184,7 +1185,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLoginFailPass);
 
 
@@ -1200,7 +1202,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLoginFailUser);
 
 
@@ -1216,7 +1219,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLoginSuccess);
 
 
@@ -1232,7 +1236,7 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLoginNotEnabled);
 
 
@@ -1259,7 +1263,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testConfigSync);
 
@@ -1277,7 +1282,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testSecurityViolation);
 
@@ -1520,7 +1526,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testUserAction3);
 
@@ -1737,7 +1744,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testEventForSessionId);
 
@@ -1782,7 +1790,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testConfigSync);
 
@@ -1877,8 +1886,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-			
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		//callback.receiveCb(defaultSessionId, testLogin);
 		callback.receiveCb(defaultSessionId, testOpenConfidentialAware);
 	}
@@ -1976,7 +1985,8 @@ public final void testPolicyOpenConfAssetInSecure(){
 			assertNotNull(engine);
 			des = EventProcessorImpl.getMusesEngineService();
 		}
-		ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		//ConnectionCallbacksImpl callback = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
 		callback.receiveCb(defaultSessionId, testLogin);
 		//callback.receiveCb(defaultSessionId, testUSBDeviceConnected);
 		

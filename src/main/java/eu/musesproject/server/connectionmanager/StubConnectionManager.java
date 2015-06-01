@@ -21,8 +21,6 @@ package eu.musesproject.server.connectionmanager;
  */
 
 
-import java.util.Set;
-
 import eu.musesproject.client.model.contextmonitoring.Event;
 import eu.musesproject.server.contextdatareceiver.UserContextEventDataReceiver;
 
@@ -54,12 +52,6 @@ public class StubConnectionManager implements IConnectionManager, IConnectionCal
 	public void registerReceiveCb(IConnectionCallbacks callBacks) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public Set<String> getSessionIds() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/*

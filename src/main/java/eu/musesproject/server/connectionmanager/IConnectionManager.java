@@ -20,7 +20,6 @@ package eu.musesproject.server.connectionmanager;
  * #L%
  */
 
-import java.util.Set;
 
 /**
  * Interface 
@@ -32,6 +31,5 @@ public interface IConnectionManager {
 
 	void sendData (String sessionId, String data);
 	void registerReceiveCb (IConnectionCallbacks callBacks);
-	Set<String> getSessionIds();
-	
+
 }
