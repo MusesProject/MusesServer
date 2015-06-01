@@ -68,7 +68,6 @@ import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.PatternsKrs;
-import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityRules;
 import eu.musesproject.server.entity.SecurityViolation;

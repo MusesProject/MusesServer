@@ -34,7 +34,6 @@ import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskCommunication;
-import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.RiskPolicy;
 import eu.musesproject.server.entity.RiskTreatment;
 import eu.musesproject.server.entity.Roles;
@@ -392,7 +391,7 @@ public class DBManagerTest {
 		logEntry.setUserBehaviourId(new BigInteger(30, random));
 		logEntry.setSecurityIncidentId(new BigInteger(30, random));
 		logEntry.setDeviceSecurityState(new BigInteger(30, random));
-		logEntry.setRiskTreatment(3);
+		logEntry.setRiskTreatment(null);
 		logEntry.setStartTime(new Date());
 		logEntry.setFinishTime(new Date());
 		
