@@ -463,10 +463,10 @@ public class DBManagerTest {
 		String day = "2015-01-09";
 		String time = "17:00:00";
 		/* To test if it looks for last events */
-		List<SimpleEvents> events = dbmanager.findEventsByUserId(userID, day, time, Boolean.TRUE);
+		SimpleEvents event = dbmanager.findEventsByUserId(userID, day, time, Boolean.TRUE);
 		/* To test if it looks for next event */
 		//List<SimpleEvents> events = dbmanager.findEventsByUserId(userID, day, time, Boolean.FALSE);
-		if(events.size()>0)
+		if(event != null)
 			assertTrue(true);
 		else
 			fail("There is not any Simple Events corresponding to that user_id, in those dates.");

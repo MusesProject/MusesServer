@@ -52,18 +52,13 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.Utils;
 import weka.core.converters.ArffSaver;
-import weka.core.converters.ConverterUtils.DataSource;
-import weka.core.converters.Loader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.attributeSelection.CfsSubsetEval;
-import weka.attributeSelection.FuzzyRoughSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
-import weka.attributeSelection.HillClimber;
 import weka.classifiers.trees.*;
 import weka.classifiers.evaluation.Evaluation;
-import weka.classifiers.rules.*;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
@@ -75,6 +70,7 @@ import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.RiskInformation;
 import eu.musesproject.server.entity.Roles;
+import eu.musesproject.server.entity.SecurityRules;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.SystemLogKrs;
@@ -141,9 +137,9 @@ public class DataMiner {
 				String user = event.getUser().getUserId();
 				Date day = event.getDate();
 				String time = event.getTime().toString();
-				List<SimpleEvents> userLastEvents = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.TRUE);
-				if (userLastEvents.size() > 0) {
-					BigInteger lastEvent = new BigInteger(userLastEvents.get(userLastEvents.size() - 1).getEventId());
+				SimpleEvents userLastEvent = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.TRUE);
+				if (userLastEvent != null) {
+					BigInteger lastEvent = new BigInteger(userLastEvent.getEventId());
 					logEntry.setPreviousEventId(lastEvent);
 				} else {
 					//logger.warn("No previous events by this user, assigning 0...");
@@ -159,13 +155,18 @@ public class DataMiner {
 					logEntry.setDecisionId(decisionID);
 				} else {
 					//logger.warn("Decision Id not found, assigning 0...");
-					logEntry.setDecisionId(decisionID);
+					logEntry.setDecisionId(BigInteger.ZERO);
 				}
 				
 				/* User behaviour as next event_id */
-				List<SimpleEvents> userNextEvent = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.FALSE);
-				BigInteger nextEvent = new BigInteger(userNextEvent.get(0).getEventId());
-				logEntry.setUserBehaviourId(nextEvent);
+				SimpleEvents userNextEvent = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.FALSE);
+				if (userNextEvent != null) {
+					BigInteger nextEvent = new BigInteger(userNextEvent.getEventId());
+					logEntry.setUserBehaviourId(nextEvent);
+				} else {
+					//logger.warn("No more events by this user after this one, assigning 0...");
+					logEntry.setUserBehaviourId(BigInteger.ZERO);
+				}				
 				
 				/* Looking if that event caused a security violation */
 				List<SecurityViolation> securityViolations = dbManager.findSecurityViolationByEventId(event.getEventId());
@@ -594,129 +595,135 @@ public class DataMiner {
 		while(i.hasNext()){
 			PatternsKrs pattern = i.next();
 			double[] vals = new double[data.numAttributes()];
-			String decisionCause = pattern.getDecisionCause();
-			if (decisionCause == null) {
-				vals[0] = Utils.missingValue();
-			} else {
-				vals[0] = decisionCauses.indexOf(decisionCause);
-			}
-			vals[1] = pattern.getSilentMode();
-			String eventType = pattern.getEventType();
-			if (eventType == null) {
-				vals[2] = Utils.missingValue();
-			} else {
-				vals[2] = eventTypes.indexOf(eventType);
-			}
-			String eventLevel = pattern.getEventLevel();
-			if (eventLevel == null) {
-				vals[3] = Utils.missingValue();
-			} else {
-				vals[3] = eventLevels.indexOf(eventLevel);
-			}
-			String username = pattern.getUsername();
-			if (username == null) {
-				vals[4] = Utils.missingValue();
-			} else {
-				vals[4] = usernames.indexOf(username);
-			}			
-			vals[5] = pattern.getPasswordLength();
-			vals[6] = pattern.getLettersInPassword();
-			vals[7] = pattern.getNumbersInPassword();
-			vals[8] = pattern.getPasswdHasCapitalLetters();
-			Double userTrust = pattern.getUserTrustValue();
-			if (userTrust.isNaN()) {
-				vals[9] = Utils.missingValue();
-			} else {
-				vals[9] = userTrust;
-			}
-			vals[10] = pattern.getActivatedAccount();
-			String userRole = pattern.getUserRole();
-			if (userRole == null) {
-				vals[11] = Utils.missingValue();
-			} else {
-				vals[11] = userRoles.indexOf(userRole);
-			}
-			try {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				String strDate = sdf.format(pattern.getEventTime());
-				vals[12] = data.attribute(12).parseDate(strDate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			String deviceModel = pattern.getDeviceType();
-			if (deviceModel == null) {
-				vals[13] = Utils.missingValue();
-			} else {
-				vals[13] = deviceTypes.indexOf(deviceModel);
-			}
-			String deviceOS = pattern.getDeviceOS();
-			if (deviceOS == null) {
-				vals[14] = Utils.missingValue();
-			} else {
-				vals[14] = deviceOSs.indexOf(deviceOS);
-			}
-			vals[15] = pattern.getDeviceHasAntivirus();
-			vals[16] = pattern.getDeviceHasCertificate();
-			Double deviceTrust = pattern.getDeviceTrustValue();
-			if (deviceTrust.isNaN()) {
-				vals[17] = Utils.missingValue();
-			} else {
-				vals[17] = deviceTrust;
-			}
-			String deviceOwner = pattern.getDeviceOwnedBy();
-			if (deviceOwner == null) {
-				vals[18] = Utils.missingValue();
-			} else {
-				vals[18] = deviceOwners.indexOf(deviceOwner);
-			}
-			vals[19] = pattern.getDeviceHasPassword();
-			vals[20] = pattern.getDeviceScreenTimeout().doubleValue();
-			vals[21] = pattern.getDeviceHasAccessibility();
-			vals[22] = pattern.getDeviceIsRooted();
-			String appName = pattern.getAppName();
-			if (appName == null) {
-				vals[23] = Utils.missingValue();
-			} else {
-				vals[23] = appNames.indexOf(appName);
-			}
-			String appVendor = pattern.getAppVendor();
-			if (appVendor == null) {
-				vals[24] = Utils.missingValue();
-			} else {
-				vals[24] = appVendors.indexOf(appVendor);
-			}
-			vals[25] = pattern.getAppMUSESAware();
-			String assetName = pattern.getAssetName();
-			if (assetName == null) {
-				vals[26] = Utils.missingValue();
-			} else {
-				vals[26] = assetNames.indexOf(assetName);
-			}
-			vals[27] = pattern.getAssetValue();
-			String assetConfidentialLevel = pattern.getAssetConfidentialLevel();
-			if (assetConfidentialLevel == null) {
-				vals[28] = Utils.missingValue();
-			} else {
-				vals[28] = assetConfidentialLevels.indexOf(assetConfidentialLevel);
-			}
-			String assetLocation = pattern.getAssetLocation();
-			if (assetLocation == null) {
-				vals[29] = Utils.missingValue();
-			} else {
-				vals[29] = assetLocations.indexOf(assetLocation);
-			}
-			vals[30] = pattern.getMailRecipientAllowed();
-			vals[31] = pattern.getMailContainsCC();
-			vals[32] = pattern.getMailContainsBCC();
-			vals[33] = pattern.getMailHasAttachment();
-			String label = pattern.getLabel();
-			if (label == null) {
-				vals[34] = Utils.missingValue();
-			} else {
-				vals[34] = allLabels.indexOf(label);
-			}
 			
-			data.add(new DenseInstance(1.0, vals));
+			String eventType = pattern.getEventType();
+			int eventTypeInt = Integer.parseInt(pattern.getEventType());
+			if (eventTypeInt == 14 || eventTypeInt == 7 || eventTypeInt == 10 || eventTypeInt == 11 || eventTypeInt == 15 || eventTypeInt == 12 ) {
+				
+				String decisionCause = pattern.getDecisionCause();
+				if (decisionCause == null) {
+					vals[0] = Utils.missingValue();
+				} else {
+					vals[0] = decisionCauses.indexOf(decisionCause);
+				}
+				vals[1] = pattern.getSilentMode();			
+				if (eventType == null) {
+					vals[2] = Utils.missingValue();
+				} else {
+					vals[2] = eventTypes.indexOf(eventType);
+				}
+				String eventLevel = pattern.getEventLevel();
+				if (eventLevel == null) {
+					vals[3] = Utils.missingValue();
+				} else {
+					vals[3] = eventLevels.indexOf(eventLevel);
+				}
+				String username = pattern.getUsername();
+				if (username == null) {
+					vals[4] = Utils.missingValue();
+				} else {
+					vals[4] = usernames.indexOf(username);
+				}			
+				vals[5] = pattern.getPasswordLength();
+				vals[6] = pattern.getLettersInPassword();
+				vals[7] = pattern.getNumbersInPassword();
+				vals[8] = pattern.getPasswdHasCapitalLetters();
+				Double userTrust = pattern.getUserTrustValue();
+				if (userTrust.isNaN()) {
+					vals[9] = Utils.missingValue();
+				} else {
+					vals[9] = userTrust;
+				}
+				vals[10] = pattern.getActivatedAccount();
+				String userRole = pattern.getUserRole();
+				if (userRole == null) {
+					vals[11] = Utils.missingValue();
+				} else {
+					vals[11] = userRoles.indexOf(userRole);
+				}
+				try {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					String strDate = sdf.format(pattern.getEventTime());
+					vals[12] = data.attribute(12).parseDate(strDate);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				String deviceModel = pattern.getDeviceType();
+				if (deviceModel == null) {
+					vals[13] = Utils.missingValue();
+				} else {
+					vals[13] = deviceTypes.indexOf(deviceModel);
+				}
+				String deviceOS = pattern.getDeviceOS();
+				if (deviceOS == null) {
+					vals[14] = Utils.missingValue();
+				} else {
+					vals[14] = deviceOSs.indexOf(deviceOS);
+				}
+				vals[15] = pattern.getDeviceHasAntivirus();
+				vals[16] = pattern.getDeviceHasCertificate();
+				Double deviceTrust = pattern.getDeviceTrustValue();
+				if (deviceTrust.isNaN()) {
+					vals[17] = Utils.missingValue();
+				} else {
+					vals[17] = deviceTrust;
+				}
+				String deviceOwner = pattern.getDeviceOwnedBy();
+				if (deviceOwner == null) {
+					vals[18] = Utils.missingValue();
+				} else {
+					vals[18] = deviceOwners.indexOf(deviceOwner);
+				}
+				vals[19] = pattern.getDeviceHasPassword();
+				vals[20] = pattern.getDeviceScreenTimeout().doubleValue();
+				vals[21] = pattern.getDeviceHasAccessibility();
+				vals[22] = pattern.getDeviceIsRooted();
+				String appName = pattern.getAppName();
+				if (appName == null) {
+					vals[23] = Utils.missingValue();
+				} else {
+					vals[23] = appNames.indexOf(appName);
+				}
+				String appVendor = pattern.getAppVendor();
+				if (appVendor == null) {
+					vals[24] = Utils.missingValue();
+				} else {
+					vals[24] = appVendors.indexOf(appVendor);
+				}
+				vals[25] = pattern.getAppMUSESAware();
+				String assetName = pattern.getAssetName();
+				if (assetName == null) {
+					vals[26] = Utils.missingValue();
+				} else {
+					vals[26] = assetNames.indexOf(assetName);
+				}
+				vals[27] = pattern.getAssetValue();
+				String assetConfidentialLevel = pattern.getAssetConfidentialLevel();
+				if (assetConfidentialLevel == null) {
+					vals[28] = Utils.missingValue();
+				} else {
+					vals[28] = assetConfidentialLevels.indexOf(assetConfidentialLevel);
+				}
+				String assetLocation = pattern.getAssetLocation();
+				if (assetLocation == null) {
+					vals[29] = Utils.missingValue();
+				} else {
+					vals[29] = assetLocations.indexOf(assetLocation);
+				}
+				vals[30] = pattern.getMailRecipientAllowed();
+				vals[31] = pattern.getMailContainsCC();
+				vals[32] = pattern.getMailContainsBCC();
+				vals[33] = pattern.getMailHasAttachment();
+				String label = pattern.getLabel();
+				if (label == null) {
+					vals[34] = Utils.missingValue();
+				} else {
+					vals[34] = allLabels.indexOf(label);
+				}
+				
+				data.add(new DenseInstance(1.0, vals));
+				
+			}
 		}
 		
 		/* As there will be missing data, is important to deal with it before continue working with the instances */
@@ -788,7 +795,7 @@ public class DataMiner {
 	
 	public void dataClassification(Instances data, int[] indexes){
 		
-		Instances newData;
+		Instances newData = data;
 		Remove remove = new Remove();
 		remove.setAttributeIndicesArray(indexes);
 		remove.setInvertSelection(true);
@@ -806,15 +813,34 @@ public class DataMiner {
 		J48 tree = new J48();         // new instance of tree
 		try {
 			tree.setOptions(options);     // set the options
-			tree.buildClassifier(data);   // build classifier
+			tree.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(data);
 			eval.crossValidateModel(tree, data, 10, new Random(1));
 			System.out.println("Percentage of correctly classified instances: "+eval.pctCorrect());
+			System.out.println(eval.toClassDetailsString("Whatever details:"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+	}	
+
+	
+	/**
+	 * Method ruleComparison in which existing security rules are compared with rules obtained by the
+	 * classifier in dataClassification() method. It proposes new rules to the Knowledge Compiler.
+	 * 
+	 * @param classifierRules Rules obtained by the classifier
+	 * @param securityRules Existing rules in the DB
+	 * 
+	 * @return void
+	 */
+	
+	public void ruleComparison(List<String> classifierRules, List<SecurityRules> securityRules){
+		
+		// TODO: TBD
 		
 		
 	}

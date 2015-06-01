@@ -1865,10 +1865,10 @@ public class DBManager {
      * @param backwards
      * @return List<SimpleEvents>
      */
-	public List<SimpleEvents> findEventsByUserId(String simpleEventUserId, String day, String time, Boolean backwards) {
+	public SimpleEvents findEventsByUserId(String simpleEventUserId, String day, String time, Boolean backwards) {
 		Session session = null;
 		Query query = null;
-		List<SimpleEvents> events = null;
+		SimpleEvents event = null;
 		try {
 			if (backwards) {
 				session = getSessionFactory().openSession();
@@ -1876,6 +1876,7 @@ public class DBManager {
 						setString("user_id", simpleEventUserId).
 						setString("day", day).
 						setString("time", time);
+				query.setMaxResults(1);
 			} else {
 				session = getSessionFactory().openSession();
 				query = session.getNamedQuery("SimpleEvents.findNextByUserId").
@@ -1885,14 +1886,17 @@ public class DBManager {
 				query.setMaxResults(1);
 			}
 			if (query!=null) {
-				events = query.list();
+				List<SimpleEvents> events = query.list();
+				if (events.size() > 0) {
+					event = events.get(0);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (session!=null) session.close();
 		} 
-		return events;		
+		return event;		
 	}
 	
 	/**
