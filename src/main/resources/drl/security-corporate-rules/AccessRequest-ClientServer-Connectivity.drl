@@ -1,0 +1,19 @@
+
+rule "AccessRequest ClientServer Connectivity"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="post")
+		not AccessRequest(event=="AccessRequest ClientServer Connectivity")
+	then
+		StatusGlobal.log("1.4.A new AccessRequest has been detected: FileObserverEvent. Type post");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e);
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest ClientServer Connectivity");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end

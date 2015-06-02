@@ -1,0 +1,14 @@
+
+
+	rule "VirusCleaned"
+	no-loop true
+	dialect "mvel"
+	when
+		c: VirusCleanedEvent()
+		v: VirusFoundEvent()
+	then
+		StatusGlobal.log("VIRUS CLEANED   :"+c.getName);
+		retract(v);
+		StatusGlobal.log("REMOVED PREVIOUS VIRUS FOUND!");
+		retract(c);
+	end	

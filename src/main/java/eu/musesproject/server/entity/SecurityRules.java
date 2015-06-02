@@ -18,6 +18,8 @@ import java.util.List;
 @NamedQueries ({
 	@NamedQuery(name="SecurityRules.findAll", 
 				query="SELECT s FROM SecurityRules s"),
+	@NamedQuery(name="SecurityRules.findByName", 
+				query="SELECT s FROM SecurityRules s where s.name = :name"),
 	@NamedQuery(name="SecurityRules.findByStatus", 
 				query="SELECT s FROM SecurityRules s where s.status = :status")
 })

@@ -1,0 +1,22 @@
+
+	rule "Antivirus not running"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: ChangeSecurityPropertyEvent(isTrustedAntivirusInstalled==false)
+		not AccessRequest(event=="Antivirus not running")
+
+	then
+		
+		StatusGlobal.log("New corporate policy. Id:9 ANTIVIRUS NOT RUNNING");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (recommended corporate antivirus) is not running\nWithout antivirus, integrity of corporate data might be compromised","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Avast Mobile Security (antivirus corporativo recomendado) no esta en ejecucion\nSin antivirus, la integridad de datos corporativos pueden verse comprometidos.","DENY", "<isTrustedAntivirusInstalled>false</isTrustedAntivirusInstalled>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Antivirus not running");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+	end

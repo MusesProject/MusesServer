@@ -1,0 +1,20 @@
+
+rule "AccessRequest Detection access type"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="access")
+		not AccessRequest(event=="AccessRequest Detection access type")
+	then
+		StatusGlobal.log("1.5.A new AccessRequest has been detected: FileObserverEvent. Type access");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e);
+		//GAP (we associate the access requests by id)
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Detection access type");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end	

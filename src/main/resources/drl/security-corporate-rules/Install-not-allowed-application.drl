@@ -1,0 +1,22 @@
+
+
+	rule "Install not allowed application"
+	no-loop true
+	dialect "mvel"
+	when
+		//e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="install")
+		e: AppObserverEvent(eval(blacklistedApp(this.appPackage)),event=="install")
+		not AccessRequest(event=="Install not allowed application")
+	then
+		StatusGlobal.log("Application to be installed should not be allowed.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Installing application not allowed: "+e.getName()+"\nYou are trying to install an application that is forbidden by your system\'s security. \nPlease, do not proceed.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Install not allowed application");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end

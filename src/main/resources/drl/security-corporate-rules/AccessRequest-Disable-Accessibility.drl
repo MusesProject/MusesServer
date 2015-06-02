@@ -1,0 +1,22 @@
+
+
+
+	rule "AccessRequest Disable Accessibility"
+	no-loop true
+	dialect "mvel"
+	when
+		e: ChangeSecurityPropertyEvent(accessibilityEnabled==false)
+		not AccessRequest(event=="AccessRequest Disable Accessibility")
+	then
+		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent. ACCESIBILITY DISABLED");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"The screen lock is required by the security policies","DENY", "<isPasswordProtected>false</isPasswordProtected>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to disable accessibility, which is an important security mechanism for MUSES.\n This can cause the device having a lower level of security.","DENY", "<accessibilityEnabled>false</accessibilityEnabled>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Disable Accessibility");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end

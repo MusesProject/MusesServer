@@ -1,0 +1,26 @@
+
+rule "Blacklist app 00001"
+	no-loop true
+	dialect "java"
+	enabled false
+	when
+		e: AppObserverEvent(name=="Gmail",event=="open_application")
+		not AccessRequest(event=="Blacklist app 00001")
+	then
+		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening harmful application:"+e.getName()+"\nYou are trying to open an application which is considered harmful.\nWith this, other people can potentially access your data on your device.","DENY","<appname>Gmail</appname>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Blacklist app 00001");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+	end
+	

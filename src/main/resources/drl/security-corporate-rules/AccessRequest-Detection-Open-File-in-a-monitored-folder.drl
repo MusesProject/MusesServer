@@ -1,0 +1,26 @@
+
+
+	rule "AccessRequest Detection Open File in a monitored folder"
+	no-loop true
+	dialect "java"
+	when
+		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*", username=="muses")
+		not AccessRequest(event=="AccessRequest Detection Open File in a monitored folder")
+	then
+		StatusGlobal.log("1.3.A new AccessRequest has been detected: FileObserverEvent. Type Open File in a Monitored folder");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event fileobserver****:"+e);
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Accessing file without permission:"+e.getPath()+"\nYou want to access a file, but you do not have the permission to do so.\nThe organization\'s security policy doesn\'t allow you to access this file.","DENY","<path>"+e.getPath()+"</path>");		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Detection Open File in a monitored folder");
+		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+	end

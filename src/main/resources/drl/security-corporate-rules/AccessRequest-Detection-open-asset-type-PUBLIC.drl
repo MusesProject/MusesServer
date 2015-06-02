@@ -1,0 +1,29 @@
+
+	rule "AccessRequest Detection open asset type PUBLIC"
+	no-loop true
+	dialect "java"
+	when
+		e: FileObserverEvent(event=="open_asset", resourceType=="PUBLIC")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+		not AccessRequest(event=="AccessRequest Detection open asset type PUBLIC")
+		//not AccessRequest(event==e.path)
+	then
+		StatusGlobal.log("1.2.A new AccessRequest has been detected: FileObserverEvent. Type open asset type PUBLIC");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"ALLOW", "any");
+		StatusGlobal.log("****Event****:"+e);
+		if(e!=null){
+			int id = Rt2aeGlobal.composeAccessRequest(e,"Action allowed, this is a public file","ALLOW","<resourceType>"+e.getResourceType()+"</resourceType>");
+			AccessRequest request = new AccessRequest();
+			//request.setEvent(e.getPath());
+			request.setEvent("AccessRequest Detection open asset type PUBLIC");
+			StatusGlobal.log("**********"+id);
+			StatusGlobal.log("AccessRequest Detection open asset type PUBLIC:"+e.getEvent() + " " + e.getTimestamp());
+			request.setId(id);
+			request.setEvent_date(new Date(System.currentTimeMillis()));
+			insert(request);
+			////retract(e);
+		}else{
+			StatusGlobal.log("****Rule open asset type PUBLIC with event null******");
+		}	
+	end

@@ -1,0 +1,31 @@
+
+	rule "AccessRequest Detection open asset type strictly confidential secure wifi"
+	no-loop true
+	dialect "java"
+	when
+		e: FileObserverEvent(event=="open_asset", resourceType=="STRICTLY_CONFIDENTIAL")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*")
+		not AccessRequest(event=="AccessRequest Detection open asset type strictly confidential secure wifi") 
+
+	then
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type strictly confidential secure wifi");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		//int id = Rt2aeGlobal.composeAccessRequest(e,conn,"DECIDE", "wifiencryption!=WPA2");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Action denied: This is a strictly confidential asset","ALLOW","<resourceType></resourceType>");
+		StatusGlobal.log("****Event conn****:"+conn);
+		if((conn!=null)&&(e!=null)){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Action allowed: This is a strictly confidential asset, but you are connected to a secure wifi","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		AccessRequest request = new AccessRequest();
+		//request.setEvent(e.getPath());
+		request.setEvent("AccessRequest Detection open asset type strictly confidential secure wifi");
+		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open asset type strictly confidential:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+		
+	end

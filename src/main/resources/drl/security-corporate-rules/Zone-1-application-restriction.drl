@@ -1,0 +1,20 @@
+
+	rule "Zone 1 application restriction"
+	no-loop true
+	dialect "mvel"
+	when
+		e: LocationEvent(isWithinZone matches ".*1.*")
+		e1: AppObserverEvent(appPackage matches ".*GoogleCamera.*",event=="open_application")
+	then
+		StatusGlobal.log("Zone 1 application restriction");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e1);
+		int id = Rt2aeGlobal.composeAccessRequest(e1,"You are in a restricted area\nYou are trying to use an application that is forbidden in the current zone. \nPlease, do not proceed.","DENY","<packagename>"+e1.getAppPackage()+"</packagename>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Zone 1 application restriction");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end

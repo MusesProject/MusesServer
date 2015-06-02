@@ -1,0 +1,22 @@
+
+	rule "Required application list"
+	no-loop true
+	dialect "mvel"
+	when
+		//e: AppObserverEvent(eval(requiredApp(this.name)),event=="uninstall")
+		e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="uninstall")
+		not AccessRequest(event=="Required application list")
+	then
+		StatusGlobal.log("A required application is trying to get uninstalled.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Uninstalling important application:"+e.getName()+"\nYou are trying to uninstall an application that is important for your system\'s security. \nUninstalling the application makes your system vulnerable.","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Required application list");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+
+	end

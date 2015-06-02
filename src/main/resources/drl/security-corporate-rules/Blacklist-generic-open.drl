@@ -1,0 +1,27 @@
+
+
+	rule "Blacklist generic open"
+	no-loop true
+	dialect "java"
+	when
+		e: AppObserverEvent(eval(blacklistedApp(name)),event=="open_application")
+		not AccessRequest(event=="Blacklist generic")
+	then
+		StatusGlobal.log("New corporate policy. Id:6 BLACKLISTED APP "+e.getName());
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful: "+e.getName()+".\nOther people can gain control over your device.","DENY","<appname>"+e.getName()+"</appname>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Abriendo aplicacion peligrosa\nEsta intentando ejecutar una aplicacion considerada peligrosa\nOtras personas podrian acceder a la informacion de su dispositivo.","DENY","<appname>"+e.getName()+"</appname>");
+
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Blacklist generic");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+	end

@@ -1,0 +1,12 @@
+
+	rule "User-Behavior"
+	no-loop true
+	dialect "mvel"
+	when
+		u:UserBehaviorEvent()
+	then
+		StatusGlobal.log("USER BEHAVIOR DETECTED:"+u.getAction());
+		Rt2aeGlobal.notifyUserBehavior(u);
+	end	
+
+

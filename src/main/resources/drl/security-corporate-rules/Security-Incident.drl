@@ -1,0 +1,16 @@
+
+
+	rule "Security Incident"
+	no-loop true
+	dialect "java"
+	when
+		e: SecurityIncidentEvent()
+		e1: ChangeSecurityPropertyEvent(deviceId==e.deviceId)
+
+	then
+		StatusGlobal.log("SECURITY INCIDENT******************************");
+		StatusGlobal.log("WIPE DEVICE: "+e.getDeviceId());
+		StatusGlobal.log("SESSION ID: "+e1.getSessionId()+" TYPE:"+e1.getType());
+		Rt2aeGlobal.wipeDevice(e,e1.getSessionId());
+	end
+

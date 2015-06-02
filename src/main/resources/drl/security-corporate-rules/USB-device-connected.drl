@@ -1,0 +1,13 @@
+	rule "USB device connected"
+	no-loop true
+	dialect "java"
+	when
+		e: USBDeviceConnectedEvent()
+
+
+	then
+		StatusGlobal.log("USB DEVICE CONNECTED EVENT******************************");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You just inserted a device in the USB port\nPlease, avoid using USB connection.\nThe organization\'s security policy doesn\'t allow you to use USB.","DENY","");
+
+	end
+	

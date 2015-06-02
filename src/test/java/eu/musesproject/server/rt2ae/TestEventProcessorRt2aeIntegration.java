@@ -2010,5 +2010,31 @@ public final void testPolicyOpenConfAssetInSecure(){
 
 		}
 	}
+	
+	public final void testStorePoliciesOnStartup(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+
+		}
+	}	
+	
+	public final void testStoreRulesOnStartup(){
+		
+		EventProcessorImpl processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			processor.storeRulesOnStartup();
+			assertNotNull(processor);
+
+		}
+	}
 
 }

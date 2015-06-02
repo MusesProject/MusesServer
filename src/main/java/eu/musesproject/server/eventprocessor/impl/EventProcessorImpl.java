@@ -21,9 +21,15 @@ package eu.musesproject.server.eventprocessor.impl;
  * #L%
  */
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +40,9 @@ import org.drools.io.ResourceFactory;
 
 import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.continuousrealtimeeventprocessor.IMusesCorrelationEngine;
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.CorporatePolicies;
+import eu.musesproject.server.entity.SecurityRules;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
 import eu.musesproject.server.eventprocessor.correlator.engine.TemporalDroolsEngineServiceImpl;
 import eu.musesproject.server.eventprocessor.correlator.engine.changeset.notifficator.DroolsEngineResourceNotifier;
@@ -48,11 +57,13 @@ import eu.musesproject.server.risktrust.DeviceTrustValue;
 import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.Probability;
 import eu.musesproject.server.risktrust.UserTrustValue;
+import eu.musesproject.server.scheduler.ModuleType;
 
 public class EventProcessorImpl implements EventProcessor {
 	
 	private static volatile DroolsEngineService des = null;
 	private Logger logger = Logger.getLogger(EventProcessorImpl.class);
+	private DBManager dbmanager = new DBManager(ModuleType.EP);
 	/**
 	 * @param args
 	 * @throws ClassNotFoundException
@@ -205,7 +216,162 @@ public class EventProcessorImpl implements EventProcessor {
 			return null;
 		}
 		logger.info("Correlator started!");
+		
+		storePoliciesOnStartup();
+		storeRulesOnStartup();
+		
 		return engine;
+	}
+	
+	public void storePoliciesOnStartup() {
+		
+		InputStream[] policyInputStream = null;
+		File[] policyFiles = null;
+		byte[] data = null;
+		
+		dbmanager.removeAllCorporatePolicies();
+		try {
+			policyInputStream = getResourceInputStreamListing(EventProcessorImpl.class, "policies");
+			policyFiles = getResourceFileListing(EventProcessorImpl.class, "policies");
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		CorporatePolicies policy = new CorporatePolicies();
+		
+		for (int i = 0; i < policyInputStream.length; i++) {
+			policy.setName(policyFiles[i].getPath());
+			policy.setDescriptionEn(String.valueOf(i));
+			try {
+				data = istoByteArray(policyInputStream[i]);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			policy.setFile(data);
+			policy.setDate(new Date());
+			dbmanager.setCorporatePolicy(policy);
+		}
+		
+	}
+	
+	public void storeRulesOnStartup() {
+		
+		InputStream[] ruleInputStream = null;
+		File[] ruleFiles = null;
+		byte[] data = null;
+		
+		//dbmanager.removeAllSecurityRules();
+		try {
+			ruleInputStream = getResourceInputStreamListing(EventProcessorImpl.class, "drl/security-corporate-rules");
+			ruleFiles = getResourceFileListing(EventProcessorImpl.class, "drl/security-corporate-rules");
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		SecurityRules rule = new SecurityRules();
+		
+		for (int i = 0; i < ruleInputStream.length; i++) {
+			rule.setName(ruleFiles[i].getPath());
+			try {
+				data = istoByteArray(ruleInputStream[i]);
+				rule.setDescription(new String(data, "UTF-8"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			rule.setFile(data);
+			rule.setModification(new Date());
+			byte[] refined = new byte[1];
+			refined[0]=0;
+			rule.setRefined(refined);
+			rule.setStatus(Constants.VALIDATED);
+			dbmanager.setSecurityRule(rule);
+		}
+		
+	}
+	
+	private static String getStringFromInputStream(InputStream is) {
+		 
+		BufferedReader br = null;
+		StringBuilder sb = new StringBuilder();
+ 
+		String line;
+		try {
+ 
+			br = new BufferedReader(new InputStreamReader(is));
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+ 
+		return sb.toString();
+ 
+	}
+	
+	File[] getResourceFileListing(Class clazz, String path) throws URISyntaxException, IOException {
+		File[] result = null;
+	      URL dirURL = clazz.getClassLoader().getResource(path);
+	      if (dirURL != null && dirURL.getProtocol().equals("file")) {
+
+	        String[] list = new File(dirURL.toURI()).list();
+	        result = new File[list.length];
+	        for (int i = 0; i < list.length; i++) {
+	        	File file = new File(list[i].toString());
+	        	result[i] = file;				
+			}
+	      } 
+	      return result;
+	  }
+	
+	InputStream[] getResourceInputStreamListing(Class clazz, String path) throws URISyntaxException, IOException {
+		InputStream[] result = null;
+	      URL dirURL = clazz.getClassLoader().getResource(path);
+	      if (dirURL != null && dirURL.getProtocol().equals("file")) {
+
+	        String[] list = new File(dirURL.toURI()).list();
+	        result = new InputStream[list.length];
+	        for (int i = 0; i < list.length; i++) {
+	        	InputStream is = clazz.getClassLoader().getResourceAsStream(path+"/"+list[i].toString());	        	
+	        	result[i] = is;				
+			}
+	      } 
+	      return result;
+	  }
+	
+	byte[] istoByteArray(InputStream is) throws IOException{
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+		int nRead;
+		byte[] data = new byte[16384];
+
+		while ((nRead = is.read(data, 0, data.length)) != -1) {
+		  buffer.write(data, 0, nRead);
+		}
+
+		buffer.flush();
+
+		return buffer.toByteArray();
 	}
 		
 	public static DroolsEngineService getMusesEngineService(){

@@ -1,0 +1,25 @@
+
+
+	rule "Unsafe Storage"
+	no-loop true
+	dialect "mvel"
+	when
+		//e: AppObserverEvent(eval(unsafeStorage(this.appPackage)))
+		e: PackageObserverEvent(eval(unsafeStorage(this.installedApps)))
+		//e: PackageObserverEvent(installedApps not matches ".*cryptonite.*")
+		not AccessRequest(event=="Unsafe Storage")
+	then
+		StatusGlobal.log("Safe storage is not enabled on device. Criptonite application is required");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device\nYou require to install a safe storage application to keep corporate data encrypted \nPlease, install Cryptonite from Google Play Store.","DENY","<installedApps>cryptonite</installedApps>");
+		//int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device\nYou require to install a safe storage application to keep corporate data encrypted \nPlease, install Cryptonite from Google Play Store.","DENY","<appPackage>"+e.getAppPackage()+"</appPackage>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Unsafe Storage");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+
+	end

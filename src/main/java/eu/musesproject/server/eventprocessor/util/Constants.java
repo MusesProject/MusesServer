@@ -38,5 +38,6 @@ public class Constants {
 	public final static String CONFIDENTIAL = "CONFIDENTIAL";
 	public final static String STRICTLY_CONFIDENTIAL = "STRICTLY_CONFIDENTIAL";
 	public final static String INTERNAL = "INTERNAL";
+	public final static String VALIDATED = "VALIDATED";
 	
 }

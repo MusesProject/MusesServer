@@ -1,0 +1,24 @@
+
+	rule "Blacklist app 00002"
+	no-loop true
+	dialect "java"
+	when
+		e: AppObserverEvent(name=="Wifi Analyzer",event=="open_application")
+		not AccessRequest(event=="Blacklist app 00002")
+	then
+		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful:"+e.getName()+"\nOther people can gain control over your device.","DENY","<appname>Wifi Analyzer</appname>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Blacklist app 00002");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+	end

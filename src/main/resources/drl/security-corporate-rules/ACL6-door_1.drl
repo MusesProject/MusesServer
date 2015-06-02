@@ -1,0 +1,19 @@
+
+	rule "ACL6 door_1"
+	no-loop true
+	dialect "mvel"
+	when
+		e: FileObserverEvent(event=="open_asset", path=="/sdcard/Swe/door_1", username=="muses2")
+	then
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open door 1 muses2");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		int id = Rt2aeGlobal.composeAccessRequest(e,null,"DENY", "<username>"+e.getUsername()+"</username>");
+		AccessRequest request = new AccessRequest();
+		StatusGlobal.log("**********"+id);
+		StatusGlobal.log("AccessRequest Detection open asset type sensitive:"+e.getEvent() + " " + e.getTimestamp());
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		
+	end

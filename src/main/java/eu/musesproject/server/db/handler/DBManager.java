@@ -23,6 +23,7 @@ import eu.musesproject.server.entity.Applications;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.ConnectionConfig;
+import eu.musesproject.server.entity.CorporatePolicies;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.DefaultPolicies;
@@ -2429,6 +2430,98 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 		return allDifferentValues;		
+	}
+	
+	public void removeAllCorporatePolicies(){
+		Session session = null;
+		Transaction trans = null;
+		try {
+			session = getSessionFactory().openSession();
+			trans=session.beginTransaction();
+			session.createQuery("delete from CorporatePolicies").executeUpdate();
+			trans.commit();
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}	
+	}
+	
+	public void setCorporatePolicy(CorporatePolicies policy) {
+		Session session = null;
+		Transaction trans = null;
+		try {
+			session = getSessionFactory().openSession();
+			trans=session.beginTransaction();
+			session.save(policy);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}				
+	}
+	
+	public void removeAllSecurityRules(){
+		Session session = null;
+		Transaction trans = null;
+		try {
+			session = getSessionFactory().openSession();
+			trans=session.beginTransaction();
+			session.createQuery("delete from SecurityRules").executeUpdate();
+			trans.commit();
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}	
+	}
+	
+	public void setSecurityRule(SecurityRules rule) {
+		Session session = null;
+		Transaction trans = null;
+		SecurityRules existing = getSecurityRuleByName(rule.getName());
+
+		if (existing == null) {
+			try {
+				session = getSessionFactory().openSession();
+				trans = session.beginTransaction();
+				session.save(rule);
+				trans.commit();
+			} catch (Exception e) {
+				if (trans != null)
+					trans.rollback();
+				e.printStackTrace();
+			} finally {
+				if (session != null)
+					session.close();
+			}
+		}
+	}
+	
+	public SecurityRules getSecurityRuleByName(String name) {
+		Query query = null;
+		Session session = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("SecurityRules.findByName").setString("name", name);
+			if (query != null) {
+				List<SecurityRules> list = query.list();
+				for (SecurityRules s: list){
+					if (s.getName().equals(name)) {
+						return s;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return null;
 	}
 	
 	public static void main (String [] arg){

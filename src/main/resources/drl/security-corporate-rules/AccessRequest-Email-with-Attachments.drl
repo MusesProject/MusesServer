@@ -1,0 +1,19 @@
+
+	rule "AccessRequest Email with Attachments"
+	no-loop true
+	dialect "mvel"
+	when
+		v: VirusFoundEvent()
+		e:EmailEvent(numberAttachments>0)
+		not AccessRequest(event=="AccessRequest Email with Attachments")
+	then
+		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Sending e-mail with virus\nYour system is infected with a virus and you want to send an attachment via e-mail.\nThis may cause critical system failure and puts the receiver at risk. Remove the virus first.","DENY", "<noAttachments>1</noAttachments>");
+		
+		AccessRequest request = new AccessRequest();
+		request.setEvent("AccessRequest Email with Attachments");
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+	end	
