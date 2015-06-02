@@ -116,7 +116,7 @@ public class ComMainServlet extends HttpServlet {
 		if (request.getMethod().equalsIgnoreCase("POST")) {
 			// Retrieve connection-type from request header
 			connectionType = request.getHeader(CONNECTION_TYPE);
-			dataAttachedInCurrentReuqest = helper.getRequestData(request);
+			dataAttachedInCurrentReuqest = Helper.getRequestData(request);
 		}else  {
 			// Retrieve connection-type from request parameter
 			connectionType = DATA;
@@ -191,15 +191,15 @@ public class ComMainServlet extends HttpServlet {
 		// Callback the Functional layer about the disconnect
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT)) {
 			logger.log(Level.INFO, "Request type:"+connectionType+" with *ID*: "+currentJSessionID);
-			helper.disconnect(request);
+			Helper.disconnect(request);
 			//sessionHandler.removeCookieToList(cookie);
 			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
 		} 
 		
 		// Add session id to the List
-		if (currentJSessionID != null && !connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
-			//sessionHandler.addCookieToList(cookie);
-		}
+//		if (currentJSessionID != null && !connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
+//			//sessionHandler.addCookieToList(cookie);
+//		}
 
 		// the cookie should only be set by tomcat once when the session has been created. 
 		// after that the client will include the cookie inside every request until the cookie
