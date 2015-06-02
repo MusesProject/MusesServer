@@ -220,7 +220,7 @@ CREATE TABLE `default_policies` (
   `default_policy_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(2000) NOT NULL COMMENT 'Policy subject',
   `description` varchar(2000) NOT NULL COMMENT 'Policy textual description',
-  `file` blob NOT NULL COMMENT 'Policy formalized in standard format (XACML,JSON,...), to make it machine readable',
+  `file` blob  COMMENT 'Policy formalized in standard format (XACML,JSON,...), to make it machine readable',
   `date` date NOT NULL COMMENT 'Date of creation of the policy',
   PRIMARY KEY (`default_policy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table which contains the default security policies, both containing textual descriptions and formalization files.';
