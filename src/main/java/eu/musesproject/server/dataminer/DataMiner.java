@@ -57,6 +57,8 @@ import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
+import weka.classifiers.rules.JRip;
+import weka.classifiers.rules.PART;
 import weka.classifiers.trees.*;
 import weka.classifiers.evaluation.Evaluation;
 import eu.musesproject.server.db.handler.DBManager;
@@ -130,7 +132,7 @@ public class DataMiner {
 				BigInteger eventID = new BigInteger(event.getEventId());
 				logEntry.setCurrentEventId(eventID);
 				
-				logger.info(eventID);
+				//logger.info(eventID);
 				
 				/* Previous event is the last event the user made */
 				String user = event.getUser().getUserId();
@@ -531,7 +533,7 @@ public class DataMiner {
 	 * @param dbPatterns List with all rows in patterns_krs table.
 	 * 
 	 * 
-	 * @return Instances The ordered set of instances to use with Weka methods.
+	 * @return newData The ordered set of instances to use with Weka methods.
 	 * 
 	 */
 	public Instances buildInstancesFromPatterns (List<PatternsKrs> dbPatterns) {
@@ -595,8 +597,12 @@ public class DataMiner {
 			double[] vals = new double[data.numAttributes()];
 			
 			String eventType = pattern.getEventType();
-			int eventTypeInt = Integer.parseInt(pattern.getEventType());
-			if (eventTypeInt == 14 || eventTypeInt == 7 || eventTypeInt == 10 || eventTypeInt == 11 || eventTypeInt == 15 || eventTypeInt == 12 ) {
+			if (eventType.contentEquals("SECURITY_PROPERTY_CHANGED") || 
+					eventType.contentEquals("ACTION_REMOTE_FILE_ACCESS") || 
+					eventType.contentEquals("ACTION_APP_OPEN") || 
+					eventType.contentEquals("ACTION_SEND_MAIL") || 
+					eventType.contentEquals("SAVE_ASSET") || 
+					eventType.contentEquals("VIRUS_FOUND") ) {
 				
 				String decisionCause = pattern.getDecisionCause();
 				if (decisionCause == null) {
@@ -605,11 +611,7 @@ public class DataMiner {
 					vals[0] = decisionCauses.indexOf(decisionCause);
 				}
 				vals[1] = pattern.getSilentMode();			
-				if (eventType == null) {
-					vals[2] = Utils.missingValue();
-				} else {
-					vals[2] = eventTypes.indexOf(eventType);
-				}
+				vals[2] = eventTypes.indexOf(eventType);
 				String eventLevel = pattern.getEventLevel();
 				if (eventLevel == null) {
 					vals[3] = Utils.missingValue();
@@ -735,7 +737,7 @@ public class DataMiner {
 		}
 		
 		// OPTIONAL, only if we want the ARFF file
-		ArffSaver saver = new ArffSaver();
+		/*ArffSaver saver = new ArffSaver();
 		saver.setInstances(newData);
 		try {
 			saver.setFile(new File("./data/test.arff"));
@@ -743,7 +745,7 @@ public class DataMiner {
 			saver.writeBatch();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		
 		return newData;
@@ -788,11 +790,12 @@ public class DataMiner {
 	 * @param data The original set of instances
 	 * @param indexes The selected indexes by the feature selection algorithm
 	 * 
-	 * @return void
+	 * @return classifierIndex The classifier with higher percentage of correctly classified instances
 	 */
 	
-	public void dataClassification(Instances data, int[] indexes){
+	public int dataClassification(Instances data, int[] indexes){
 		
+		int classifierIndex = 0;
 		Instances newData = data;
 		Remove remove = new Remove();
 		remove.setAttributeIndicesArray(indexes);
@@ -804,26 +807,128 @@ public class DataMiner {
 			e.printStackTrace();
 		}
 		
-		/* Let's try J48 first */
-		/* Also, this classifier is not incremental because we want the rules */
-		String[] options = new String[1];
-		options[0] = "-U";            // unpruned tree
-		J48 tree = new J48();         // new instance of tree
+		double percentageCorrect = 0;
+		
+		/* (1) J48 */
+		String[] optionsJ48 = new String[1];
+		optionsJ48[0] = "-U";            // unpruned tree
+		J48 treeJ48 = new J48();         // new instance of tree
 		try {
-			tree.setOptions(options);     // set the options
-			tree.buildClassifier(newData);   // build classifier
+			treeJ48.setOptions(optionsJ48);     // set the options
+			treeJ48.buildClassifier(newData);   // build classifier
 			
-			Evaluation eval = new Evaluation(data);
-			eval.crossValidateModel(tree, data, 10, new Random(1));
-			System.out.println("Percentage of correctly classified instances: "+eval.pctCorrect());
-			System.out.println(eval.toClassDetailsString("Whatever details:"));
+			Evaluation eval = new Evaluation(newData);
+			eval.crossValidateModel(treeJ48, newData, 10, new Random(1));
+			percentageCorrect = eval.pctCorrect();
+			System.out.println("Percentage of correctly classified instances for J48 classifier: "+eval.pctCorrect());
+			//System.out.println(tree.toSummaryString());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		/* (2) JRip */
+		String[] optionsJRip = new String[1];
+		optionsJRip[0] = "-P";            // unpruned tree
+		JRip treeJRip = new JRip();         // new instance of tree
+		try {
+			treeJRip.setOptions(optionsJRip);     // set the options
+			treeJRip.buildClassifier(newData);   // build classifier
+			
+			Evaluation eval = new Evaluation(newData);
+			eval.crossValidateModel(treeJRip, newData, 10, new Random(1));
+			if (eval.pctCorrect() > percentageCorrect) {
+				percentageCorrect = eval.pctCorrect();
+				classifierIndex = 1;
+			}
+			System.out.println("Percentage of correctly classified instances for JRip classifier: "+eval.pctCorrect());
+			//System.out.println(treeJRip.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-	}	
+		/* (3) PART */
+		String[] optionsPART = new String[1];
+		optionsPART[0] = "-U";            // unpruned tree
+		PART treePART = new PART();         // new instance of tree
+		try {
+			treeJRip.setOptions(optionsPART);     // set the options
+			treeJRip.buildClassifier(newData);   // build classifier
+			
+			Evaluation eval = new Evaluation(newData);
+			eval.crossValidateModel(treePART, newData, 10, new Random(1));
+			if (eval.pctCorrect() > percentageCorrect) {
+				percentageCorrect = eval.pctCorrect();
+				classifierIndex = 2;
+			}
+			System.out.println("Percentage of correctly classified instances for PART classifier: "+eval.pctCorrect());
+			//System.out.println(treePART.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		/* (4) REPTree */
+		String[] optionsREPTree = new String[1];
+		optionsREPTree[0] = "-P";            // unpruned tree
+		REPTree treeREPTree = new REPTree();         // new instance of tree
+		try {
+			treeREPTree.setOptions(optionsREPTree);     // set the options
+			treeREPTree.buildClassifier(newData);   // build classifier
+			
+			Evaluation eval = new Evaluation(newData);
+			eval.crossValidateModel(treeREPTree, newData, 10, new Random(1));
+			if (eval.pctCorrect() > percentageCorrect) {
+				percentageCorrect = eval.pctCorrect();
+				classifierIndex = 3;
+			}
+			System.out.println("Percentage of correctly classified instances for REPTree classifier: "+eval.pctCorrect());
+			//System.out.println(treeREPTree.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return classifierIndex;
+		
+	}
+	
+	/**
+	 * Method classifierParser in which weka classifier rules are parsed for the extraction of their
+	 * conditions and classes (label applied to patterns which have been classified by that rule)
+	 * 
+	 * @param classifierRules Rules obtained by the classifier
+	 * @param classifierName 
+	 * 
+	 * @return void
+	 */
+	
+	public List<String> classifierParser(String classifierRules, int classifierIndex){
+		
+		List<String> ruleList = new ArrayList<String>();
+		String ruleJRip = "^\\(\\w+[\\s\\>\\=\\<]+[\\w\\.]+\\)";
+		String rulePART1 = "^(\\w+)[\\s\\>\\=\\<]+\\w+\\sAND$";
+		String rulePART2 = "^(\\w+)[\\s\\>\\=\\<]+\\w+\\:\\s\\w+\\s\\((\\d+)\\.\\d+\\/?(\\d*)\\.*\\d*\\)$";
+		String ruleJ48 = "";
+		String ruleREPTree = "";
+		
+		/* (0) J48
+		 * (1) JRip
+		 * (2) PART
+		 * (3) REPTree
+		 */
+		switch(classifierIndex) {
+		
+		case 1:
+			
+		
+		}
+		
+		
+		//Pattern mailPattern = Pattern.compile(mailJSON);
+		//Matcher matcherMail = mailPattern.matcher(event.getData());
+		//if (matcherMail.find()
+		
+		return ruleList;		
+		
+	}
 
 	
 	/**
@@ -837,8 +942,6 @@ public class DataMiner {
 	 */
 	
 	public void ruleComparison(List<String> classifierRules, List<SecurityRules> securityRules){
-		
-		// TODO: TBD
 		
 		
 	}

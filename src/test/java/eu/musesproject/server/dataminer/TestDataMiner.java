@@ -107,7 +107,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testBuildInstancesFromPatterns() {		
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		if (patternList.size()>0){
@@ -126,7 +126,7 @@ public class TestDataMiner {
 		} else {
 			fail("There are no patterns in the table.");
 		}
-	}
+	}*/
 		
 	/**
 	  * testDataClassification - JUnit test case whose aim is to test execution of current classification algorithms over the built dataset
@@ -145,8 +145,10 @@ public class TestDataMiner {
 				for (int i = 0; i < data.numAttributes(); i++) {
 					indexes[i] = i;
 				}
+				System.out.println("=== Results before feature selection ===");
 				dm.dataClassification(data, indexes);
 				if (indexes.length > 0) {
+					System.out.println("=== Results after feature selection ===");
 					dm.dataClassification(data, redIndexes);
 				} else {
 					fail("Feature selection not being properly performed");
