@@ -903,11 +903,14 @@ public class DataMiner {
 	public List<String> classifierParser(String classifierRules, int classifierIndex){
 		
 		List<String> ruleList = new ArrayList<String>();
-		String ruleJRip = "^\\(\\w+[\\s\\>\\=\\<]+[\\w\\.]+\\)";
-		String rulePART1 = "^(\\w+)[\\s\\>\\=\\<]+\\w+\\sAND$";
-		String rulePART2 = "^(\\w+)[\\s\\>\\=\\<]+\\w+\\:\\s\\w+\\s\\((\\d+)\\.\\d+\\/?(\\d*)\\.*\\d*\\)$";
+		String ruleJRip = "\\((\\w+)([\\s\\>\\=\\<]+)([\\w\\.]+)\\)";
+		String labelJRip = "\\=\\>\\s\\w+\\=(\\w+)";
+		String rulePART1 = "(\\w+)[\\s\\>\\=\\<]+\\w+\\sAND$";
+		String rulePART2 = "(\\w+)[\\s\\>\\=\\<]+\\w+\\:\\s\\w+\\s\\((\\d+)\\.\\d+\\/?(\\d*)\\.*\\d*\\)$";
 		String ruleJ48 = "";
 		String ruleREPTree = "";
+		String lines[] = classifierRules.split("\\r?\\n");
+		int i = 0;
 		
 		/* (0) J48
 		 * (1) JRip
@@ -916,15 +919,37 @@ public class DataMiner {
 		 */
 		switch(classifierIndex) {
 		
-		case 1:
+		case 0:
 			
+		case 1:
+			Pattern JRipPattern = Pattern.compile(ruleJRip);
+			Pattern JRipLabelPattern = Pattern.compile(labelJRip);
+			for (i = 0; i < lines.length; i++) {
+				Matcher JRipMatcher = JRipPattern.matcher(lines[i]);
+				Matcher JRipLabelMatcher = JRipLabelPattern.matcher(lines[i]);
+				while (JRipMatcher.find()) {
+					// Attribute name
+					JRipMatcher.group(1);
+					/* Relationship, JRipMatcher.group(2) can be =, <, <=, >, >= */
+					JRipMatcher.group(2);
+					// Value
+					JRipMatcher.group(3);
+				}
+				if (JRipLabelMatcher.find()) {
+					// Label
+					JRipLabelMatcher.group(1);
+				}
+			}
 		
-		}
+		case 2:
+			
+		case 3:
 		
+		}		
 		
 		//Pattern mailPattern = Pattern.compile(mailJSON);
 		//Matcher matcherMail = mailPattern.matcher(event.getData());
-		//if (matcherMail.find()
+		//if (matcherMail.find(); matcherMail.group(4).
 		
 		return ruleList;		
 		
