@@ -851,8 +851,8 @@ public class DataMiner {
 		optionsPART[0] = "-U";            // unpruned tree
 		PART treePART = new PART();         // new instance of tree
 		try {
-			treeJRip.setOptions(optionsPART);     // set the options
-			treeJRip.buildClassifier(newData);   // build classifier
+			treePART.setOptions(optionsPART);     // set the options
+			treePART.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(newData);
 			eval.crossValidateModel(treePART, newData, 10, new Random(1));
