@@ -1,11 +1,30 @@
 package eu.musesproject.server.db.handler;
 
-import java.math.BigInteger;
+/*
+ * #%L
+ * MUSES Server
+ * %%
+ * Copyright (C) 2013 - 2015 Sweden Connectivity
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -16,7 +35,6 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-
 import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
@@ -50,7 +68,6 @@ import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
-import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
@@ -71,19 +88,33 @@ public class DBManager {
 		this.module = module;
 	}
 
+	// the creation of singleton must be thread-safe
+//	private SessionFactory getSessionFactory() {
+//		if (sessionFactory == null) {
+//			Configuration configuration = new Configuration();
+//			configuration.configure();
+//			serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
+//					configuration.getProperties()).build();
+//			sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+//			
+//		}
+//		return sessionFactory;
+//	}
+	
 	private SessionFactory getSessionFactory() {
 		if (sessionFactory == null) {
-			Configuration configuration = new Configuration();
-			configuration.configure();
-			serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
-					configuration.getProperties()).build();
-			sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-			
+			synchronized(DBManager.class) {
+				if(sessionFactory == null) {
+					Configuration configuration = new Configuration();
+					configuration.configure();
+					ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
+							configuration.getProperties()).build();
+					sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+				}
+			}
 		}
 		return sessionFactory;
 	}
-	
-	
 	
 	public void persist(Object transientInstance) {
 		try {
@@ -119,9 +150,10 @@ public class DBManager {
 			if (module.equals(ModuleType.RT2AE)){
 				event.setKRS_can_access(0);
 			}
-		    Session session = getSessionFactory().openSession();
+		    Session session = null;
 		    Transaction trans = null;
 		    try {
+		    	session = getSessionFactory().openSession();
 		    	trans = session.beginTransaction();
 		    	session.save(event);
 		        trans.commit();
@@ -135,7 +167,6 @@ public class DBManager {
 			logger.log(Level.ERROR, e.getMessage());
 		} 
 	}
-
 	
 	public List<SimpleEvents> getEvent(){
 		Query query = null;
@@ -754,10 +785,10 @@ public class DBManager {
 			//this.setOutcomes(threat.getOutcomes());
 			Iterator<Outcome> o = threat.getOutcomes().iterator();
 			while(o.hasNext()){
-				session = getSessionFactory().openSession();
-				trans = session.beginTransaction();
 				Outcome outcome = o.next();
 				try {
+					session = getSessionFactory().openSession();
+					trans = session.beginTransaction();
 					List<Threat> t = this.findThreatbydescription(threat.getDescription());
 					if(t!=null){
 						outcome.setThreat(t.get(0));

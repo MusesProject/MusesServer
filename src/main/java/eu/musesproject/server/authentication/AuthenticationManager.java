@@ -1,7 +1,8 @@
 package eu.musesproject.server.authentication;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -37,9 +38,13 @@ import eu.musesproject.server.scheduler.ModuleType;
  */
 
 public class AuthenticationManager {
-	private static AuthenticationManager authenticationManagerSingleton = null;
+private static AuthenticationManager authenticationManagerSingleton = null;
 	public Logger logger = Logger.getLogger(AuthenticationManager.class.getName());
-	private List<String> authSessionIdList = new ArrayList<String>();
+	//private List<String> authSessionIdList = new ArrayList<String>(); // several threads will add and remove items from list. the list must be thread safe. 
+	// the best solution is to let tomcat handle the authentication entirely by having security constraints defined. Even if you want to do it manually then 
+	// you have to clean up all the sessions that have timed out in order to not get memory leaks. Beside that a set is more appropriate in this case instead 
+	// of a list. you do not want duplicates of the same session id stored several times. 
+	private Set<String> authSessionIdList = Collections.synchronizedSet(new HashSet<String>());
 	private static DBManager dbManager = new DBManager(ModuleType.EP);
 	
 	/**
@@ -47,8 +52,20 @@ public class AuthenticationManager {
 	 * @return singleton object
 	 */
 	public static AuthenticationManager getInstance(){
+		// this is the old non thread-safe code. assume the singleton has not yet been assigned and then two threads at the same time check to see if the 
+		// singleton is null. both will create their own instance which will defeat the purpose of a singleton. the correct thread-safe version 
+		// is available below.
+//		if (authenticationManagerSingleton == null) {
+//			authenticationManagerSingleton = new AuthenticationManager();
+//		}
+//		return authenticationManagerSingleton;
+		
 		if (authenticationManagerSingleton == null) {
-			authenticationManagerSingleton = new AuthenticationManager();
+			synchronized(AuthenticationManager.class) {
+				if (authenticationManagerSingleton == null) {
+					authenticationManagerSingleton = new AuthenticationManager();
+				}
+			}
 		}
 		return authenticationManagerSingleton;
 	}
@@ -140,13 +157,15 @@ public class AuthenticationManager {
 		return response;
 	}
 
-	public List<String> getAuthSessionIdList() {
-		return authSessionIdList;
-	}
+//	public List<String> getAuthSessionIdList() {
+//	return authSessionIdList;
+//}
 
-	public void setAuthSessionIdList(List<String> authSessionIdList) {
-		this.authSessionIdList = authSessionIdList;
-	}
+
+// we can not allow any external call replace the implementation. what if they replace it with a non thread-safe variant
+//public void setAuthSessionIdList(List<String> authSessionIdList) {
+//	this.authSessionIdList = authSessionIdList;
+//}
 
 	public boolean isAuthenticated(String sessionId) {
 		return authSessionIdList.contains(sessionId);

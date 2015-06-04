@@ -5,30 +5,31 @@
  */
 package eu.musesproject.server.connectionmanager;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+/*
+ * #%L
+ * MUSES Server
+ * %%
+ * Copyright (C) 2013 - 2015 Sweden Connectivity
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 
-import javax.servlet.ServletContext;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.ServletRequestListener;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
+import eu.musesproject.server.contextdatareceiver.ConnectionCallbacksImpl;
 import eu.musesproject.server.db.handler.DBManager;
 
 /**
@@ -39,174 +40,177 @@ import eu.musesproject.server.db.handler.DBManager;
  * @version Jan 27, 2014
  */
 
-public class SessionHandler implements ServletContextListener , HttpSessionListener, ServletRequestListener{
+public class SessionHandler implements ServletContextListener { //, HttpSessionListener, ServletRequestListener{
 	
-	private static Set<String> sessionIDs = new HashSet<String>();
-	private static Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
-	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
+//	private static Set<String> sessionIDs = new HashSet<String>();
+//	private static Map<Date,Cookie> cookieSet = new ConcurrentHashMap<Date,Cookie>();
+//	private static final String ATTRIBUTE_NAME = "com.swedenconnectivity.comserver.SessionHandler";
 	private Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
 	
-	public SessionHandler() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	public void requestDestroyed(ServletRequestEvent sre) {
-		
-	}
-	
-	/**
-	 * This methods check for request method POST/GET, retrieve and set
-	 * poll-interval value from the header 
-	 * @param ServletRequestEvent
-	 * @return void
-	 */
-	
-	@Override
-	public void requestInitialized(ServletRequestEvent sre) {
-		
-		int interval=0;
-		HttpServletRequest request = (HttpServletRequest) sre.getServletRequest();
-		if (request.getMethod().equalsIgnoreCase("POST")){
-			String pollIntervalTimeout = request.getHeader("poll-interval");
-			HttpSession session = request.getSession();
-			if (pollIntervalTimeout != null) {
-				interval = Integer.parseInt(pollIntervalTimeout) * 10;
-				session.setMaxInactiveInterval(interval);
-			}
-			session.setMaxInactiveInterval(60*60); // 0=> never times out// 60 minutes => 60*60  
-		} else if (request.getMethod().equalsIgnoreCase("GET")) {
-			String pollIntervalTimeout = request.getParameter("poll-interval");
-			HttpSession session = request.getSession();
-			if (pollIntervalTimeout != null) {
-				interval = Integer.parseInt(pollIntervalTimeout) * 10;
-				session.setMaxInactiveInterval(interval);
-			}
-			session.setMaxInactiveInterval(60*60); // 0=> never times out// 60 minutes => 60*60  
-		}
-		
-	}
-	
+//	public SessionHandler() {
+//		// TODO Auto-generated constructor stub
+//	}
+//	
+//	@Override
+//	public void requestDestroyed(ServletRequestEvent sre) {
+//		
+//	}
+//	
+//	/**
+//	 * This methods check for request method POST/GET, retrieve and set
+//	 * poll-interval value from the header 
+//	 * @param ServletRequestEvent
+//	 * @return void
+//	 */
+//	
+//	@Override
+//	public void requestInitialized(ServletRequestEvent sre) {
+//		
+//		int interval=0;
+//		HttpServletRequest request = (HttpServletRequest) sre.getServletRequest();
+//		if (request.getMethod().equalsIgnoreCase("POST")){
+//			String pollIntervalTimeout = request.getHeader("poll-interval");
+//			HttpSession session = request.getSession();
+//			if (pollIntervalTimeout != null) {
+//				interval = Integer.parseInt(pollIntervalTimeout) * 10;
+//				session.setMaxInactiveInterval(interval);
+//			}
+//			session.setMaxInactiveInterval(60*60); // 0=> never times out// 60 minutes => 60*60  
+//		} else if (request.getMethod().equalsIgnoreCase("GET")) {
+//			String pollIntervalTimeout = request.getParameter("poll-interval");
+//			HttpSession session = request.getSession();
+//			if (pollIntervalTimeout != null) {
+//				interval = Integer.parseInt(pollIntervalTimeout) * 10;
+//				session.setMaxInactiveInterval(interval);
+//			}
+//			session.setMaxInactiveInterval(60*60); // 0=> never times out// 60 minutes => 60*60  
+//		}
+//		
+//	}
+//	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-		sce.getServletContext().setAttribute(ATTRIBUTE_NAME, this);
+		//ce.getServletContext().setAttribute(ATTRIBUTE_NAME, this);
 		
 	}
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
+		// all the runnables/work units inside the queue will be canceled but the currently running 
+		// task will be finished and not interrupted.
+		ConnectionCallbacksImpl.getExecutor().shutdownNow();
 		if (DBManager.sessionFactory != null) {
 			DBManager.sessionFactory.close();
 		}
 	}
-
-	@Override
-	public void sessionCreated(HttpSessionEvent event) {
-		removeExpiredCookies();
-	}
-
-	/** 
-	 * Called every time a session is destroyed, if the session
-	 * is in the table remove it from the list and call the session callback method
-	 * to inform other users
-	 * @param HttpSessionEvent event
-	 * @return void
-	 */
-	
-	@Override
-	public void sessionDestroyed(HttpSessionEvent event) {
-		removeExpiredCookies();
-	}
-
-	/**
-	 * Get session handler singleTon object
-	 * @param context
-	 * @return
-	 */
-	public static SessionHandler getInstance(ServletContext context) {
-	    return (SessionHandler) context.getAttribute(ATTRIBUTE_NAME);
-	}
-	
-	/**
-	 * Get session id list
-	 * @return sessionIDs
-	 */
-	public Set<String> getSessionIds(){
-		return sessionIDs;
-	}
-
-	public void addCookieToList(Cookie cookie){
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, cookie.getMaxAge());
-		Date d = calendar.getTime();
-		boolean found = false;
-		if(cookieSet.isEmpty()){
-			found=false; 
-		} 
-		for (Map.Entry<Date, Cookie> entry : cookieSet.entrySet()) {
-			if (cookie.getValue().equalsIgnoreCase(entry.getValue().getValue())) {
-				found = true;
-			}
-		}
-		if (!found) {
-			cookieSet.put(d,cookie);
-			addSessionIdToList(cookie.getValue());
-		}
-	}
-		
-	public void removeCookieToList(Cookie cookie){
-		if (!cookieSet.isEmpty()){
-			cookieSet.remove(cookie);
-			removeSessionIdFromList(cookie.getValue());
-		} 
-	}
-	
-	private void removeExpiredCookies(){
-		if (!cookieSet.isEmpty()) {
-			for (Map.Entry<Date, Cookie> entry : cookieSet.entrySet()){
-				if(isExpired(entry.getKey())){
-					removeCookieToList(entry.getValue());
-					removeSessionIdFromList(entry.getValue().getValue());
-				}
-			}
-		}
-	}
-	
-    private boolean isExpired(Date cookieExpires) {
-		if (cookieExpires == null) {
-				return true;
-		}
-		Date now = new Date();
-		if (now.compareTo(cookieExpires) <= 0){
-			return false;
-		}
-		return true; 
-    }
-	
-    /**
-     * add session id to list
-     * @param sessionId
-     * @return void
-     */
-    public void addSessionIdToList(String sessionId){
-    	sessionIDs.add(sessionId);
-    }
-    
-	/**
-	 * remove session ids
-	 * @param sessionId
-	 */
-	public void removeSessionIdFromList(String sessionId){
-		sessionIDs.remove(sessionId);
-	}
-	
-	public void printCurrentList(){
-		logger.log(Level.INFO, "Active session:");
-		for (String id : sessionIDs){
-			logger.log(Level.INFO,id);
-		}
-	}
-	
-
+//
+//	@Override
+//	public void sessionCreated(HttpSessionEvent event) {
+//		removeExpiredCookies();
+//	}
+//
+//	/** 
+//	 * Called every time a session is destroyed, if the session
+//	 * is in the table remove it from the list and call the session callback method
+//	 * to inform other users
+//	 * @param HttpSessionEvent event
+//	 * @return void
+//	 */
+//	
+//	@Override
+//	public void sessionDestroyed(HttpSessionEvent event) {
+//		removeExpiredCookies();
+//	}
+//
+//	/**
+//	 * Get session handler singleTon object
+//	 * @param context
+//	 * @return
+//	 */
+//	public static SessionHandler getInstance(ServletContext context) {
+//	    return (SessionHandler) context.getAttribute(ATTRIBUTE_NAME);
+//	}
+//	
+//	/**
+//	 * Get session id list
+//	 * @return sessionIDs
+//	 */
+//	public Set<String> getSessionIds(){
+//		return sessionIDs;
+//	}
+//
+//	public void addCookieToList(Cookie cookie){
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.add(Calendar.SECOND, cookie.getMaxAge());
+//		Date d = calendar.getTime();
+//		boolean found = false;
+//		if(cookieSet.isEmpty()){
+//			found=false; 
+//		} 
+//		for (Map.Entry<Date, Cookie> entry : cookieSet.entrySet()) {
+//			if (cookie.getValue().equalsIgnoreCase(entry.getValue().getValue())) {
+//				found = true;
+//			}
+//		}
+//		if (!found) {
+//			cookieSet.put(d,cookie);
+//			addSessionIdToList(cookie.getValue());
+//		}
+//	}
+//		
+//	public void removeCookieToList(Cookie cookie){
+//		if (!cookieSet.isEmpty()){
+//			cookieSet.remove(cookie);
+//			removeSessionIdFromList(cookie.getValue());
+//		} 
+//	}
+//	
+//	private void removeExpiredCookies(){
+//		if (!cookieSet.isEmpty()) {
+//			for (Map.Entry<Date, Cookie> entry : cookieSet.entrySet()){
+//				if(isExpired(entry.getKey())){
+//					removeCookieToList(entry.getValue());
+//					removeSessionIdFromList(entry.getValue().getValue());
+//				}
+//			}
+//		}
+//	}
+//	
+//    private boolean isExpired(Date cookieExpires) {
+//		if (cookieExpires == null) {
+//				return true;
+//		}
+//		Date now = new Date();
+//		if (now.compareTo(cookieExpires) <= 0){
+//			return false;
+//		}
+//		return true; 
+//    }
+//	
+//    /**
+//     * add session id to list
+//     * @param sessionId
+//     * @return void
+//     */
+//    public void addSessionIdToList(String sessionId){
+//    	sessionIDs.add(sessionId);
+//    }
+//    
+//	/**
+//	 * remove session ids
+//	 * @param sessionId
+//	 */
+//	public void removeSessionIdFromList(String sessionId){
+//		sessionIDs.remove(sessionId);
+//	}
+//	
+//	public void printCurrentList(){
+//		logger.log(Level.INFO, "Active session:");
+//		for (String id : sessionIDs){
+//			logger.log(Level.INFO,id);
+//		}
+//	}
+//	
+//
 }

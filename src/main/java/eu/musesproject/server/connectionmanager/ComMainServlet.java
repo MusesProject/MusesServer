@@ -1,23 +1,41 @@
-/*
- * version 1.0 - MUSES prototype software
- * Copyright MUSES project (European Commission FP7) - 2013 
- * 
- */
 package eu.musesproject.server.connectionmanager;
+
+/*
+ * #%L
+ * MUSES Server
+ * %%
+ * Copyright (C) 2013 - 2015 Sweden Connectivity
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Queue;
 
-import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import eu.musesproject.server.contextdatareceiver.ConnectionCallbacksImpl;
 	
 	/**
 	 * Class ComMainServlet
@@ -28,19 +46,23 @@ import org.apache.log4j.Logger;
 
 public class ComMainServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
+	// a servlet has to be thread safe so no instance variables are allowed (this is not optional, it is a rule)
+	// read this for more info http://www.javaworld.com/article/2072798/java-web-development/write-thread-safe-servlets.html
+	// there is no issue with those that are final int, final long or final string because they are read-only
+	// the rest needs to fulfill one of these options: become local variables or be thread safe or be stateless
+	private static final long serialVersionUID = 1L; 
 	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());
-	private Helper helper;
-	private SessionHandler sessionHandler;
-	private ConnectionManager connectionManager;
-	private String dataAttachedInCurrentReuqest;
-	private String dataToSendBackInResponse="";
+	private Helper helper; // became stateless
+	//private SessionHandler sessionHandler; // tomcat handles sessions for us
+	private ConnectionManager connectionManager; // removing this requires going from pull to push
+	//private String dataAttachedInCurrentReuqest; // became local variable
+	//private String dataToSendBackInResponse="";  // became local variable
 	private static final String CONNECTION_TYPE = "connection-type";
 	private static final String DATA = "data";
 	private static final int INTERVAL_TO_WAIT = 5;
 	private static final long SLEEP_INTERVAL = 1000;
 	private static final String MUSES_TAG = "MUSES_TAG";
-	private static String connectionType = "connect";
+	//private static String connectionType = "connect"; // became local variable
 	
 	/**
 	 * 
@@ -50,7 +72,7 @@ public class ComMainServlet extends HttpServlet {
 	 */
 	
 	public ComMainServlet(SessionHandler sessionHandler, Helper helper, ConnectionManager communicationManager){
-		this.sessionHandler=sessionHandler;
+		//this.sessionHandler=sessionHandler;
 		this.helper=helper;
 		this.connectionManager=communicationManager;
 	}
@@ -59,20 +81,25 @@ public class ComMainServlet extends HttpServlet {
 	public ComMainServlet() {
 	}
 	
-	/**
-	 * Initialize servlet
-	 * 
-	 * @throws Servlet exception
-	 */
 	@Override
-	public void init() throws ServletException {
-		super.init();
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
 		logger.log(Level.INFO, MUSES_TAG + " init");
 		helper = new Helper();
-		connectionManager = ConnectionManager.getInstance();
-		sessionHandler = SessionHandler.getInstance(getServletContext());
+		connectionManager = ConnectionManager.getInstance(); 
+		//sessionHandler = SessionHandler.getInstance(getServletContext());
+		ConnectionCallbacksImpl.getInstance(); // register callback
+		
+		// the connection manager should be moved to ApplicationScope like this
+		//ConnectionManager connectionManager = ConnectionManager.getInstance(); 
+		//config.getServletContext().setAttribute("ConnectionManager.instance", connectionManager);
+		
+		// the retrieval in doPost() would look like this. bear in mind that objects in application 
+		// scope like ConnectionManager will be accessed by many threads so they must be thread-safe
+		//connectionManager = (ConnectionManager) this.getServletContext().getAttribute("ConnectionManager.instance");
+
 	}
-	
+
 	/**
 	 * Handle POST http/https requests
 	 * @param HttpServletRequest request 
@@ -84,16 +111,26 @@ public class ComMainServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		// by calling getSession() we send a signal to tomcat that we want a session created if there
+		// isn't any already. bear in mind that tomcat will put the JSESSIONID as a cookie in the 
+		// response for us so we don't have to do it ourselves. btw every jsp file already contains this 
+		// method call.
+		HttpSession session = request.getSession();
+		
+		String dataAttachedInCurrentReuqest;
+		String dataToSendBackInResponse="";
+		String connectionType = "connect";
+				
 		// create cookie if not in the request
-		helper.setCookie(request);
-		Cookie cookie = helper.getCookie();
-		String currentJSessionID = cookie.getValue();
+		//Cookie cookie = helper.extractCookie(request);
+		//String currentJSessionID = cookie.getValue();
+		String currentJSessionID = session.getId();
 		
 		// Retrieve data in the request
 		if (request.getMethod().equalsIgnoreCase("POST")) {
 			// Retrieve connection-type from request header
 			connectionType = request.getHeader(CONNECTION_TYPE);
-			dataAttachedInCurrentReuqest = helper.getRequestData(request);
+			dataAttachedInCurrentReuqest = Helper.getRequestData(request);
 		}else  {
 			// Retrieve connection-type from request parameter
 			connectionType = DATA;
@@ -108,7 +145,6 @@ public class ComMainServlet extends HttpServlet {
 		// if "send-data" request
 		if (connectionType!=null && connectionType.equalsIgnoreCase(RequestType.DATA)) {
 			// Callback the FL to receive data from the client and get the response data back into string
-			logger.log(Level.INFO, MUSES_TAG + " Request type:"+connectionType+" with *ID*: "+currentJSessionID+ " with **dataInRequest**: "+dataAttachedInCurrentReuqest);
 			dataToSendBackInResponse="";
 			if (dataAttachedInCurrentReuqest != null){
 				dataToSendBackInResponse = ConnectionManager.toReceive(currentJSessionID, dataAttachedInCurrentReuqest); // FIXME needs to be tested properly
@@ -169,25 +205,29 @@ public class ComMainServlet extends HttpServlet {
 		// Callback the Functional layer about the disconnect
 		if (connectionType!= null && connectionType.equalsIgnoreCase(RequestType.DISCONNECT)) {
 			logger.log(Level.INFO, "Request type:"+connectionType+" with *ID*: "+currentJSessionID);
-			helper.disconnect(request);
-			sessionHandler.removeCookieToList(cookie);
+			Helper.disconnect(request);
+			//sessionHandler.removeCookieToList(cookie);
 			ConnectionManager.toSessionCb(currentJSessionID, Statuses.DISCONNECTED);
 		} 
 		
 		// Add session id to the List
-		if (currentJSessionID != null && !connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
-			sessionHandler.addCookieToList(cookie);
-		}
+//		if (currentJSessionID != null && !connectionType.equalsIgnoreCase(RequestType.DISCONNECT) ) {
+//			//sessionHandler.addCookieToList(cookie);
+//		}
 
-		// Setup response to send back
-		response.setContentType("text/html");
-		response.addCookie(cookie);
-		
+		// the cookie should only be set by tomcat once when the session has been created. 
+		// after that the client will include the cookie inside every request until the cookie
+		// expires. btw this is the correct mime type for json (Source: RFC 4627)
+		// should already be in response because we called the getSession above
+		//response.addCookie(cookie);
+		response.setContentType("application/json");
 	}
 	
-	public String getResponseData(){
-		return dataToSendBackInResponse;
-	}
+	// we don't have any instance variable so we can not have a getter either. this method is called
+	// by some unit test assert methods. those methods should instead extract the payload from httpsresponse
+	//public String getResponseData(){
+	//	return dataToSendBackInResponse;
+	//}
 	
 	
 	public String waitForDataIfAvailable(int timeout, String currentJSessionID){
@@ -198,7 +238,6 @@ public class ComMainServlet extends HttpServlet {
 				for (DataHandler dataHandler : connectionManager.getDataHandlerQueue()){ // FIXME concurrent thread
 					if (dataHandler.getSessionId().equalsIgnoreCase(currentJSessionID)){
 						connectionManager.removeDataHandler(dataHandler);
-						dataToSendBackInResponse = dataHandler.getData();
 						return dataHandler.getData();
 					}
 				}

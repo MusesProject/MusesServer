@@ -22,6 +22,8 @@ package eu.musesproject.server.contextdatareceiver;
  */
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -51,17 +53,34 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private Logger logger = Logger.getLogger(ConnectionCallbacksImpl.class.getName());
 	private ConnectionManager connManager;
-	boolean isDataAvailable = false;
-	public static volatile String lastSessionId = null;
-	private static volatile String data = "";
-	public static volatile String receiveData;
-	private static DBManager dbManager = new DBManager(ModuleType.EP);
+	private static ConnectionCallbacksImpl ConnectionCallbacksImplSingleton = null;
+	//boolean isDataAvailable = false; // not used
+	//public static volatile String lastSessionId = null; // several threads will assign to it. one shared variable for several clients to store their sessionid!
 
-	public ConnectionCallbacksImpl(){
+	//private static volatile String data = ""; // became local
+	//public static volatile String receiveData; // became local
+	private static DBManager dbManager = new DBManager(ModuleType.EP);
+	private static ExecutorService executor = Executors.newFixedThreadPool(100); 
+	
+
+	private ConnectionCallbacksImpl(){
 		connManager = ConnectionManager.getInstance();
 		connManager.registerReceiveCb(this);
 		startConnection();
 	}
+	
+	// we don't want to register a new callback everytime tomcat creates a new instance of the ComMainServlet (or everytime a person refreshes the /server )
+	public static ConnectionCallbacksImpl getInstance(){
+		if (ConnectionCallbacksImplSingleton == null) {
+			synchronized(ConnectionCallbacksImpl.class){
+				if (ConnectionCallbacksImplSingleton == null) {
+					ConnectionCallbacksImplSingleton = new ConnectionCallbacksImpl();
+				}
+			}
+		}
+		return ConnectionCallbacksImplSingleton;
+	}
+
 	
 	
 	private static class ProcessThread implements Runnable {
@@ -101,15 +120,21 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		String osVersion = null;
 		int requestId = 0;
 
-		ConnectionCallbacksImpl.lastSessionId = sessionId;
-		ConnectionCallbacksImpl.receiveData = rData;
+		//ConnectionCallbacksImpl.lastSessionId = sessionId;
+		//ConnectionCallbacksImpl.receiveData = rData;
+		
+		// became local variable from being class variable for thread safety
+		String data = "";
+		String receiveData = rData;		
+		
 		
 		logger.log(Level.INFO, MUSES_TAG + "  Info SS, received callback from CM with data:"+rData);
 		
 		try {
 			// First, get the request type, in order to differentiate between login
 			// and data exchange
-			root = new JSONObject(ConnectionCallbacksImpl.receiveData);
+			//root = new JSONObject(ConnectionCallbacksImpl.receiveData);
+			root = new JSONObject(receiveData);
 			requestType = root.getString(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER);
 
 			if (requestType.equals(RequestType.LOGIN)) {
@@ -233,8 +258,10 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				//Data exchange: We should check if sessionId is correctly authenticated
 				if (AuthenticationManager.getInstance().isAuthenticated(sessionId)) {
 
+					//List<ContextEvent> list = JSONManager
+					//		.processJSONMessage(ConnectionCallbacksImpl.receiveData, null, sessionId);
 					List<ContextEvent> list = JSONManager
-							.processJSONMessage(ConnectionCallbacksImpl.receiveData, null, sessionId);
+							.processJSONMessage(receiveData, null, sessionId);
 					logger.log(Level.INFO, "Starting ProcessThread...");
 					
 					
@@ -254,18 +281,26 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 						logger.log(Level.INFO, "Original JSON message:" + receiveData);
 					}
 					
-					Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId, requestId));
-					t.start();
+					// Thread t = new Thread(new ProcessThread(list, sessionId, username, deviceId, requestId));
+					// t.start(); 
+					// the executor is a pool of threads/workers. runnables are work units that we
+					// assign to the workers to execute. this way the number of threads are fixed and under 
+					// control. this is important because cpu time is a limited resource. if the running machine
+					// has more capacity then increase the pool size of executor above in class variable section.
+					Runnable runnable = new ProcessThread(list, sessionId, username, deviceId, requestId);
+					executor.execute(runnable);
 
 					logger.log(Level.INFO,
 							"Resuming receiveCb after calling ProcessThread...");
 
 					logger.info("*************Receive Callback called: "
-							+ ConnectionCallbacksImpl.receiveData
+							//+ ConnectionCallbacksImpl.receiveData
+							+ receiveData
 							+ "from client ID " + sessionId);
 					if (data != null) {
-						connManager.sendData(sessionId,
-								ConnectionCallbacksImpl.data);
+						//connManager.sendData(sessionId,
+						//		ConnectionCallbacksImpl.data);
+						connManager.sendData(sessionId, data);
 					}
 
 				} else {//Current sessionId has not been authenticated
@@ -278,7 +313,8 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 			je.printStackTrace();
 		}
 
-		return ConnectionCallbacksImpl.data;
+		//return ConnectionCallbacksImpl.data;
+		return data;
 	}
 	@Override
 	public void sessionCb(String sessionId, int status) {
@@ -286,4 +322,7 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 		
 	}
 
+	public static ExecutorService getExecutor() {
+		return executor;
+	}
 }
