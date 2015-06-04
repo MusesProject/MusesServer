@@ -23,6 +23,7 @@ package eu.musesproject.server.connectionmanager;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -38,23 +39,26 @@ import org.apache.log4j.Logger;
 public class ConnectionManager implements IConnectionManager{
 
 	private static Logger logger = Logger.getLogger(ConnectionManager.class.getName());
-	private static IConnectionCallbacks callBacks;
-	private DataHandler dataHandler;
-	private SessionHandler sessionCounter;
+	private static IConnectionCallbacks callBacks; // this one is registered in ComMainServlet.init(). 
+	//private DataHandler dataHandler; // multiple thread will have access to connectionmanager singleton. therefore we can not have this instance variable. 
+	// private SessionHandler sessionCounter; // the sessionHandler class have been disabled is not going to be used anymore.  
 	private static ConnectionManager connectionManagerSingleton = null;
-	private static Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>();
+	//private static Queue<DataHandler> dataHandlerQueue = new LinkedList<DataHandler>(); // this queue will be accessed by many threads. thread-safety is mandatory.
+	// the queue should store info based on username and device id because session id can change and that will cause the queue to grow indefinitely.
+	private static Queue<DataHandler> dataHandlerQueue = new ConcurrentLinkedQueue<DataHandler>(); // this concrete implementation of queue interface is thread-safe.
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static final String MUSES_TAG_LEVEL_2 = "MUSES_TAG_LEVEL_2";
-	/**
-	 * Constructor initialises callback
-	 * @param calBacks
-	 */
-	public ConnectionManager(IConnectionCallbacks iCallbacks){ // FIXME this constrctor is used by Unit test only
-		callBacks = iCallbacks;
-	}
+	
+//	/**
+//	 * Constructor initialises callback
+//	 * @param calBacks
+//	 */
+//	public ConnectionManager(IConnectionCallbacks iCallbacks){ // FIXME this constrctor is used by Unit test only
+//		callBacks = iCallbacks;
+//	}
 	
 	private ConnectionManager() {
-		sessionCounter = new SessionHandler();
+		//sessionCounter = new SessionHandler();
 	}
 	
 	/**
@@ -62,8 +66,20 @@ public class ConnectionManager implements IConnectionManager{
 	 * @return singleton object
 	 */
 	public static ConnectionManager getInstance(){
+		// this is the old non thread-safe code. assume the singleton has not yet been assigned and then two threads at the same time check to see if the 
+		// singleton is null. both will create their own instance which will defeat the purpose of a singleton. the correct thread-safe version 
+		// is available below.
+//		if (connectionManagerSingleton == null) {
+//			connectionManagerSingleton = new ConnectionManager();
+//		}
+//		return connectionManagerSingleton;
+		
 		if (connectionManagerSingleton == null) {
-			connectionManagerSingleton = new ConnectionManager();
+			synchronized(ConnectionManager.class){
+				if (connectionManagerSingleton == null) {
+					connectionManagerSingleton = new ConnectionManager();
+				}
+			}
 		}
 		return connectionManagerSingleton;
 	}
@@ -79,19 +95,19 @@ public class ConnectionManager implements IConnectionManager{
 	public void sendData(String sessionId, String dta) { // FIXME if several packets are sent with same session ID there is no way to find out which one was sent
 		if (sessionId != null && dta != null && !dta.equals("")) {
 			logger.log(Level.INFO, MUSES_TAG_LEVEL_2 +" Data added in queue with ID:" + sessionId);
-			dataHandler = new DataHandler(sessionId, dta);	
+			DataHandler dataHandler = new DataHandler(sessionId, dta);	
 			addDataHandler(dataHandler);
 		}
 	}
 
-	/**
-	 * Get all sessionIds
-	 * @return Set<String>
-	 */
-	@Override
-	public Set<String> getSessionIds() {
-		return sessionCounter.getSessionIds();
-	}
+//	/**
+//	 * Get all sessionIds
+//	 * @return Set<String>
+//	 */
+//	@Override
+//	public Set<String> getSessionIds() {
+//		return sessionCounter.getSessionIds();
+//	}
 	
 	/**
 	 * Registers for callbacks

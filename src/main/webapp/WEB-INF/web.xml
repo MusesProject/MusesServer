@@ -4,10 +4,11 @@
    -
 	 -->
 	 
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"	>
-    
+<web-app
+        version="3.0"
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
   <display-name>server</display-name>
   
       <!--
@@ -23,9 +24,12 @@
 
 
   <session-config>
-       <session-timeout>
+       <session-timeout> <!-- needs to be synced with poll timeout -->
            30
        </session-timeout>
+       <cookie-config>
+           <max-age>3600</max-age>
+       </cookie-config>
   </session-config>
   
   <filter>

@@ -32,10 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import eu.musesproject.client.model.contextmonitoring.Event;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.connectionmanager.IConnectionManager;
@@ -67,17 +64,19 @@ public class UserContextEventDataReceiver {
 	private static UserContextEventDataReceiver INSTANCE = new UserContextEventDataReceiver();
 	private StubEventCorrelationData data = null;
 	private Logger logger = Logger.getLogger(UserContextEventDataReceiver.class);
-	
-	private synchronized static void createInstance() {
-        if (INSTANCE == null) { 
-            INSTANCE = new UserContextEventDataReceiver();
-        }
-    }
- 
+
     public static UserContextEventDataReceiver getInstance() {
-        createInstance();
+    	if (INSTANCE == null) {
+    		synchronized(UserContextEventDataReceiver.class) {
+    			if (INSTANCE == null) {
+    				INSTANCE = new UserContextEventDataReceiver();
+    			}
+    		}
+    	}
+
         return INSTANCE;
     }
+    
 	
 	/**
 	 * Info M

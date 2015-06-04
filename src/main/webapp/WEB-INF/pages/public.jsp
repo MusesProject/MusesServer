@@ -13,7 +13,7 @@
         <h1>Muses Server</h1>
     <%!
     {
-    ConnectionCallbacksImpl connCb = new ConnectionCallbacksImpl();
+    //ConnectionCallbacksImpl connCb = new ConnectionCallbacksImpl();
     System.out.println( "Module wants to use connection manager should create object here in this JSP " );
     }
 	%>

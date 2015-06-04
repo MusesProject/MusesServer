@@ -197,8 +197,8 @@ public class TestContextDataReceiver extends TestCase {
 	}
 	
 	public final void testLoginReal() {
-	
-		ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		// the ConnectionCallbacksImpl has been turned into a singleton to getInstance should be called instead of constructor
+		ConnectionCallbacksImpl cb = ConnectionCallbacksImpl.getInstance();
 		
 		cb.receiveCb("EIIWJ232", testJSONLoginMessage);
 	}
