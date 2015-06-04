@@ -790,12 +790,12 @@ public class DataMiner {
 	 * @param data The original set of instances
 	 * @param indexes The selected indexes by the feature selection algorithm
 	 * 
-	 * @return classifierIndex The classifier with higher percentage of correctly classified instances
+	 * @return classifierRules Output of the classifier, consisting of rules
 	 */
 	
-	public int dataClassification(Instances data, int[] indexes){
+	public String dataClassification(Instances data, int[] indexes){
 		
-		int classifierIndex = 0;
+		String classifierRules = null;
 		Instances newData = data;
 		Remove remove = new Remove();
 		remove.setAttributeIndicesArray(indexes);
@@ -821,7 +821,7 @@ public class DataMiner {
 			eval.crossValidateModel(treeJ48, newData, 10, new Random(1));
 			percentageCorrect = eval.pctCorrect();
 			System.out.println("Percentage of correctly classified instances for J48 classifier: "+eval.pctCorrect());
-			//System.out.println(tree.toSummaryString());
+			classifierRules = treeJ48.toSummaryString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -838,7 +838,7 @@ public class DataMiner {
 			eval.crossValidateModel(treeJRip, newData, 10, new Random(1));
 			if (eval.pctCorrect() > percentageCorrect) {
 				percentageCorrect = eval.pctCorrect();
-				classifierIndex = 1;
+				classifierRules = treeJRip.toString();
 			}
 			System.out.println("Percentage of correctly classified instances for JRip classifier: "+eval.pctCorrect());
 			//System.out.println(treeJRip.toString());
@@ -858,7 +858,7 @@ public class DataMiner {
 			eval.crossValidateModel(treePART, newData, 10, new Random(1));
 			if (eval.pctCorrect() > percentageCorrect) {
 				percentageCorrect = eval.pctCorrect();
-				classifierIndex = 2;
+				classifierRules = treePART.toString();
 			}
 			System.out.println("Percentage of correctly classified instances for PART classifier: "+eval.pctCorrect());
 			//System.out.println(treePART.toString());
@@ -878,7 +878,7 @@ public class DataMiner {
 			eval.crossValidateModel(treeREPTree, newData, 10, new Random(1));
 			if (eval.pctCorrect() > percentageCorrect) {
 				percentageCorrect = eval.pctCorrect();
-				classifierIndex = 3;
+				classifierRules = treeREPTree.toString();
 			}
 			System.out.println("Percentage of correctly classified instances for REPTree classifier: "+eval.pctCorrect());
 			//System.out.println(treeREPTree.toString());
@@ -886,7 +886,7 @@ public class DataMiner {
 			e.printStackTrace();
 		}
 		
-		return classifierIndex;
+		return classifierRules;
 		
 	}
 	
@@ -895,12 +895,11 @@ public class DataMiner {
 	 * conditions and classes (label applied to patterns which have been classified by that rule)
 	 * 
 	 * @param classifierRules Rules obtained by the classifier
-	 * @param classifierName 
 	 * 
-	 * @return void
+	 * @return ruleList List of rules in a format that can be compared to the existing set of rules
 	 */
 	
-	public List<String> classifierParser(String classifierRules, int classifierIndex){
+	public List<String> classifierParser(String classifierRules){
 		
 		List<String> ruleList = new ArrayList<String>();
 		String ruleJRip = "\\((\\w+)([\\s\\>\\=\\<]+)([\\w\\.]+)\\)";
@@ -912,16 +911,7 @@ public class DataMiner {
 		String lines[] = classifierRules.split("\\r?\\n");
 		int i = 0;
 		
-		/* (0) J48
-		 * (1) JRip
-		 * (2) PART
-		 * (3) REPTree
-		 */
-		switch(classifierIndex) {
-		
-		case 0:
-			
-		case 1:
+		if (lines[0].contains("JRIP")) {
 			Pattern JRipPattern = Pattern.compile(ruleJRip);
 			Pattern JRipLabelPattern = Pattern.compile(labelJRip);
 			for (i = 0; i < lines.length; i++) {
@@ -940,16 +930,16 @@ public class DataMiner {
 					JRipLabelMatcher.group(1);
 				}
 			}
-		
-		case 2:
+		}
+		if (lines[0].contains("PART")) {
 			
-		case 3:
-		
-		}		
-		
-		//Pattern mailPattern = Pattern.compile(mailJSON);
-		//Matcher matcherMail = mailPattern.matcher(event.getData());
-		//if (matcherMail.find(); matcherMail.group(4).
+		}
+		if (lines[0].contains("J48")) {
+			
+		}
+		if (lines[0].contains("REPTree")) {
+			
+		}
 		
 		return ruleList;		
 		
