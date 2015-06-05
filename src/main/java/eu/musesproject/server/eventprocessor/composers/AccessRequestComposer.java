@@ -30,6 +30,7 @@ import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.SimpleEvents;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AddNoteEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
@@ -142,6 +143,16 @@ public class AccessRequestComposer {
 					composedRequest.setAction(usbEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(usbEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.USB_DEVICE_CONNECTED);
+				}
+
+			}else if (event.getType().equals(EventTypes.ADD_NOTE)){
+				if (event instanceof AddNoteEvent) {
+					AddNoteEvent addNoteEvent = (AddNoteEvent) event;
+					requestedCorporateAsset.setId(addNoteEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(addNoteEvent.getDescription());//Get the asset identifier
+					composedRequest.setAction(addNoteEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(addNoteEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.ADD_NOTE);
 				}
 
 			}else {

@@ -48,6 +48,7 @@ public class EventTypes {
 	public final static String LOCATION = "CONTEXT_SENSOR_LOCATION";
 	public final static String USER_ENTERED_PASSWORD_FIELD = "user_entered_password_field";
 	public final static String USB_DEVICE_CONNECTED = "CONTEXT_SENSOR_PERIPHERAL";
+	public final static String ADD_NOTE = "add_note";
 
 	
 	
