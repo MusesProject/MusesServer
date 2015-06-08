@@ -64,7 +64,7 @@ public class ParsingUtils {
 		String labelJRip = "\\=\\>\\s\\w+\\=(\\w+)";
 		String rulePART = "(\\w+)([\\s\\>\\=\\<]+)(\\w+)\\s?(AND|\\:)?\\s?(\\w*)";
 		String ruleJ48 = "\\|*\\s*(\\w+)([\\s\\>\\=\\<]+)(\\w+)\\s?\\:?\\s?(\\w*)";
-		String ruleREPTree = "";
+		String ruleREPTree = "\\|*\\s*(\\w+)([\\s\\>\\=\\<]+)(\\w+\\.?\\w*)\\s?\\:?\\s?(\\w*)";
 		String lines[] = classifierRules.split("\\r?\\n");
 		int i = 0;
 		
@@ -112,17 +112,13 @@ public class ParsingUtils {
 			for (i = 1; i < lines.length; i++) {
 				Matcher J48Matcher = J48Pattern.matcher(lines[i]);
 				while (J48Matcher.find()) {
-					logger.info(J48Matcher.group(1));
-					logger.info(J48Matcher.group(2));
-					logger.info(J48Matcher.group(3));
 					// Attribute name
 					J48Matcher.group(1);
-					/* Relationship, PARTMatcher.group(2) can be =, <, <=, >, >= */
+					/* Relationship, J48Matcher.group(2) can be =, <, <=, >, >= */
 					J48Matcher.group(2);
 					// Value
 					J48Matcher.group(3);
 					if (!J48Matcher.group(4).isEmpty()) {
-						logger.info(J48Matcher.group(4));
 						// Label
 						J48Matcher.group(4);
 					}
@@ -131,6 +127,26 @@ public class ParsingUtils {
 			
 		}
 		if (lines[0].contains("REPTree")) {
+			Pattern REPTreePattern = Pattern.compile(ruleREPTree);
+			for (i = 1; i < lines.length; i++) {
+				Matcher REPTreeMatcher = REPTreePattern.matcher(lines[i]);
+				while (REPTreeMatcher.find()) {
+					logger.info(REPTreeMatcher.group(1));
+					logger.info(REPTreeMatcher.group(2));
+					logger.info(REPTreeMatcher.group(3));
+					// Attribute name
+					REPTreeMatcher.group(1);
+					/* Relationship, REPTreeMatcher.group(2) can be =, <, <=, >, >= */
+					REPTreeMatcher.group(2);
+					// Value
+					REPTreeMatcher.group(3);
+					if (!REPTreeMatcher.group(4).isEmpty()) {
+						logger.info(REPTreeMatcher.group(4));
+						// Label
+						REPTreeMatcher.group(4);
+					}
+				}
+			}
 			
 		}
 		
