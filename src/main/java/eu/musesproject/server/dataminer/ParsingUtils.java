@@ -63,7 +63,7 @@ public class ParsingUtils {
 		String ruleJRip = "\\((\\w+)([\\s\\>\\=\\<]+)([\\w\\.]+)\\)";
 		String labelJRip = "\\=\\>\\s\\w+\\=(\\w+)";
 		String rulePART = "(\\w+)([\\s\\>\\=\\<]+)(\\w+)\\s?(AND|\\:)?\\s?(\\w*)";
-		String ruleJ48 = "";
+		String ruleJ48 = "\\|*\\s*(\\w+)([\\s\\>\\=\\<]+)(\\w+)\\s?\\:?\\s?(\\w*)";
 		String ruleREPTree = "";
 		String lines[] = classifierRules.split("\\r?\\n");
 		int i = 0;
@@ -71,7 +71,7 @@ public class ParsingUtils {
 		if (lines[0].contains("JRIP")) {
 			Pattern JRipPattern = Pattern.compile(ruleJRip);
 			Pattern JRipLabelPattern = Pattern.compile(labelJRip);
-			for (i = 0; i < lines.length; i++) {
+			for (i = 1; i < lines.length; i++) {
 				Matcher JRipMatcher = JRipPattern.matcher(lines[i]);
 				Matcher JRipLabelMatcher = JRipLabelPattern.matcher(lines[i]);
 				while (JRipMatcher.find()) {
@@ -108,6 +108,26 @@ public class ParsingUtils {
 			
 		}
 		if (lines[0].contains("J48")) {
+			Pattern J48Pattern = Pattern.compile(ruleJ48);
+			for (i = 1; i < lines.length; i++) {
+				Matcher J48Matcher = J48Pattern.matcher(lines[i]);
+				while (J48Matcher.find()) {
+					logger.info(J48Matcher.group(1));
+					logger.info(J48Matcher.group(2));
+					logger.info(J48Matcher.group(3));
+					// Attribute name
+					J48Matcher.group(1);
+					/* Relationship, PARTMatcher.group(2) can be =, <, <=, >, >= */
+					J48Matcher.group(2);
+					// Value
+					J48Matcher.group(3);
+					if (!J48Matcher.group(4).isEmpty()) {
+						logger.info(J48Matcher.group(4));
+						// Label
+						J48Matcher.group(4);
+					}
+				}
+			}
 			
 		}
 		if (lines[0].contains("REPTree")) {
