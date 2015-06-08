@@ -5,6 +5,7 @@ global eu.musesproject.server.eventprocessor.correlator.global.StatusGlobal Stat
 global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2aeGlobal
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AddNoteEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
@@ -136,6 +137,13 @@ declare USBDeviceConnectedEvent
 	@timestamp ( event_date )
 	@expires (1m)
 end
+
+declare AddNoteEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
 
 
 function boolean requiredApp(String name){
@@ -1032,3 +1040,14 @@ rule "Blacklist app 00001"
 
 	end
 	
+
+	rule "Emas Add Note"
+	no-loop true
+	dialect "java"
+	when
+		e: AddNoteEvent()
+		//conn: ConnectivityEvent()
+	then
+		StatusGlobal.log("EMAS ADD NOTE EVENT******************************");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are not allowed to use Emas while connected to an unsecure WiFi\nYou are connected to an unsecure network and try to add a note.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.","DENY","<wifienabled>false</wifienabled>");
+	end

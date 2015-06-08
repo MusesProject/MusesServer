@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import com.ibm.icu.util.StringTokenizer;
 
 import eu.musesproject.contextmodel.ContextEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AddNoteEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
@@ -89,6 +90,8 @@ public class EventFormatter {
 					cepFileEvent = convertToPasswordEvent(contextEvent);
 				}else if (contextEvent.getType().equals(EventTypes.USB_DEVICE_CONNECTED)){
 					cepFileEvent = convertToUSBDeviceConnectedEvent(contextEvent);
+				}else if (contextEvent.getType().equals(EventTypes.ADD_NOTE)){
+					cepFileEvent = convertToAddNoteEvent(contextEvent);
 
 				}else {
 					cepFileEvent = new Event();// Any other unsupported sensor
@@ -132,6 +135,20 @@ public class EventFormatter {
 		
 	}
 	
+	private static Event convertToAddNoteEvent(ContextEvent contextEvent) {
+		AddNoteEvent cepFileEvent = new AddNoteEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		if (properties.get("id")!=null)
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		cepFileEvent.setId_event(properties.get("id_event"));
+		cepFileEvent.setId_user(properties.get("id_user"));
+		cepFileEvent.setDescription(properties.get("description"));
+		cepFileEvent.setTitle(properties.get("title"));
+		return cepFileEvent;
+	}
+
 	private static Event convertToUSBDeviceConnectedEvent(
 			ContextEvent contextEvent) {
 		USBDeviceConnectedEvent cepFileEvent = new USBDeviceConnectedEvent();
