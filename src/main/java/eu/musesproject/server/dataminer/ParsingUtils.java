@@ -213,21 +213,126 @@ public class ParsingUtils {
 		
 	}
 	
+	/**
+	 * Method DBRulesParser in which rules that are in the database, and written in Drools language
+	 * are parsed for the extraction of their conditions and classes (label applied to patterns 
+	 * which have been classified by that rule)
+	 * 
+	 * @param none
+	 * 
+	 * @return ruleList List of rules in a format that can be compared to classifier rules
+	 */
 	public List<String> DBRulesParser() {
 		
 		List<String> ruleList = new ArrayList<String>();
+		List<String> ruleContent = new ArrayList<String>();
 		List<SecurityRules> dbRules = dbManager.getSecurityRulesByStatus("VALIDATED");
+		int i = 0;
+		int ruleStarts = 0;
+		int ruleEnds = 0;
 		
 		if (dbRules != null) {
-			Iterator<SecurityRules> i = dbRules.iterator();
-			while (i.hasNext()) {
-				SecurityRules dbRule = i.next();
-				dbRule.getDescription();
+			Iterator<SecurityRules> it = dbRules.iterator();
+			while (it.hasNext()) {
+				SecurityRules dbRule = it.next();				
+				String[] lines = dbRule.getDescription().split("\\r?\\n");
+				for (i = 0; i < lines.length; i++) {
+					if (lines[i].contentEquals("when")) {
+						ruleStarts = i;
+					} else if (lines[i].matches("\\s+int\\sid")) {
+						ruleEnds = i;
+					}
+				}
+				for (i = ruleStarts; i <= ruleEnds; i++) {
+					ruleContent.add(lines[i]);
+				}
+				/* Type of rule? */
+				if (dbRule.getDescription().contains("ChangeSecurityPropertyEvent")) {
+					
+				} else if (dbRule.getDescription().contains("AppObserverEvent")) {
+					
+				} else if (dbRule.getDescription().contains("FileObserverEvent")) {
+					
+				} else if (dbRule.getDescription().contains("LocationEvent")) {
+					// TODO: fill in when I read Zones					
+				} else if (dbRule.getDescription().contains("EmailEvent")) {
+					
+				}
 			}
 		}
 		
 		return ruleList;
 		
+	}
+	
+	/**
+	 * Method SecurityPropertyRuleParser for parsing rules which conditions are like:
+	 * when
+		e: ChangeSecurityPropertyEvent(isTrustedAntivirusInstalled==false)
+		...
+	 * 
+	 * @param droolsRule Rule in the Drools format "when <conditions>* then <action>"
+	 * 
+	 * @return parsedRule Final rule in the format that is needed
+	 */
+	public String SecurityPropertyRuleParser(List<String> droolsRule) {
+		
+		String parsedRule = null;
+		
+		return parsedRule;
+	}
+	
+	/**
+	 * Method AppObserverRuleParser for parsing rules which conditions are like:
+	 * when
+		e: AppObserverEvent(name=="Wifi Analyzer",event=="open_application")
+		...
+	 * 
+	 * @param droolsRule Rule in the Drools format "when <conditions>* then <action>"
+	 * 
+	 * @return parsedRule Final rule in the format that is needed
+	 */
+	public String AppObserverRuleParser(List<String> droolsRule) {
+		
+		String parsedRule = null;
+		
+		return parsedRule;
+	}
+	
+	/**
+	 * Method FileObserverRuleParser for parsing rules which conditions are like:
+	 * when
+		e: FileObserverEvent(event=="open_asset", resourceType=="CONFIDENTIAL")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
+		...
+	 * 
+	 * @param droolsRule Rule in the Drools format "when <conditions>* then <action>"
+	 * 
+	 * @return parsedRule Final rule in the format that is needed
+	 */
+	public String FileObserverRuleParser(List<String> droolsRule) {
+		
+		String parsedRule = null;
+		
+		return parsedRule;
+	}
+	
+	/**
+	 * Method EmailRuleParser for parsing rules which conditions are like:
+	 * when
+		v: VirusFoundEvent()
+		e:EmailEvent(numberAttachments>0)
+		...
+	 * 
+	 * @param droolsRule Rule in the Drools format "when <conditions>* then <action>"
+	 * 
+	 * @return parsedRule Final rule in the format that is needed
+	 */
+	public String EmailRuleParser(List<String> droolsRule) {
+		
+		String parsedRule = null;
+		
+		return parsedRule;
 	}
 
 }

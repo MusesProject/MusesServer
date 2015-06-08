@@ -219,17 +219,17 @@ public class DataMiner {
 	public PatternsKrs minePatterns(SimpleEvents event){
 		
 		PatternsKrs pattern = new PatternsKrs();
+		logger.info(event.getEventId());
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
-		String decisionID = null;
+		String decisionID = "558";
 		String label;
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
 		if (accessRequests.size() > 0) {
-			decisionID = accessRequests.get(0).getDecisionId().toString();
+			//decisionID = accessRequests.get(0).getDecisionId().toString();
 			List<Decision> decisions = null;
 			decisions = dbManager.findDecisionById(decisionID);
-			//List<Decision> decisions = dbManager.findDecisionById("558");
 			if (decisions != null) {
 				label = decisions.get(0).getValue();
 				pattern.setLabel(label);
@@ -633,9 +633,8 @@ public class DataMiner {
 					eventType.contentEquals("ACTION_APP_OPEN") || 
 					eventType.contentEquals("ACTION_SEND_MAIL") || 
 					eventType.contentEquals("SAVE_ASSET") || 
-					eventType.contentEquals("VIRUS_FOUND") ) {
-				
-				logger.info(pattern.getLogEntryId());
+					eventType.contentEquals("VIRUS_FOUND") || 
+					eventType.contentEquals("CONTEXT_SENSOR_PACKAGE") ) {
 				
 				String decisionCause = pattern.getDecisionCause();
 				if (decisionCause == null) {
