@@ -67,7 +67,9 @@ import javax.persistence.*;
 	@NamedQuery(name="PatternsKrs.findDistinctAssetLocation",
 			query="SELECT DISTINCT p.assetLocation FROM PatternsKrs p"),
 	@NamedQuery(name="PatternsKrs.findDistinctLabels",
-			query="SELECT DISTINCT p.label FROM PatternsKrs p")
+			query="SELECT DISTINCT p.label FROM PatternsKrs p"),
+	@NamedQuery(name="PatternsKrs.findDistinctWifiEncryptions",
+			query="SELECT DISTINCT p.wifiEncryption FROM PatternsKrs p")
 })
 public class PatternsKrs implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -182,6 +184,15 @@ public class PatternsKrs implements Serializable {
 	
 	@Column(name="mail_has_attachment")
 	private int mailHasAttachment;
+	
+	@Column(name="wifiencryption")
+	private String wifiEncryption;
+	
+	@Column(name="wifienabled")
+	private int wifiEnabled;
+	
+	@Column(name="wificonnected")
+	private int wifiConnected;
 
 	public PatternsKrs() {
 	}
@@ -472,6 +483,30 @@ public class PatternsKrs implements Serializable {
 
 	public void setMailHasAttachment(int mailHasAttachment) {
 		this.mailHasAttachment = mailHasAttachment;
+	}
+
+	public String getWifiEncryption() {
+		return wifiEncryption;
+	}
+
+	public void setWifiEncryption(String wifiEncryption) {
+		this.wifiEncryption = wifiEncryption;
+	}
+
+	public int getWifiEnabled() {
+		return wifiEnabled;
+	}
+
+	public void setWifiEnabled(int wifiEnabled) {
+		this.wifiEnabled = wifiEnabled;
+	}
+
+	public int getWifiConnected() {
+		return wifiConnected;
+	}
+
+	public void setWifiConnected(int wifiConnected) {
+		this.wifiConnected = wifiConnected;
 	}
 
 }

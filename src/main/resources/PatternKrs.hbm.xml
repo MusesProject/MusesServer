@@ -101,17 +101,26 @@
         <property name="assetLocation" type="java.lang.String">
             <column name="ASSETLOCATION" />
         </property>
-        <property name="mailRecipientAllowed" type="java.lang.String">
+        <property name="mailRecipientAllowed" type="int">
             <column name="MAILRECIPIENTALLOWED" />
         </property>
-        <property name="mailContainsCC" type="java.lang.String">
+        <property name="mailContainsCC" type="int">
             <column name="MAILCONTAINSCC" />
         </property>
-        <property name="mailContainsBCC" type="java.lang.String">
+        <property name="mailContainsBCC" type="int">
             <column name="MAILCONTAINSBCC" />
         </property>
         <property name="mailHasAttachment" type="int">
             <column name="MAILHASATTACHMENT" />
+        </property>
+        <property name="wifiEncryption" type="java.lang.String">
+            <column name="WIFIENCRYPTION" />
+        </property>
+        <property name="wifiEnabled" type="int">
+            <column name="WIFIENABLED" />
+        </property>
+        <property name="wifiConnected" type="int">
+            <column name="WIFICONNECTED" />
         </property>
     </class>
 </hibernate-mapping>

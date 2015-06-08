@@ -49,7 +49,6 @@ import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Assets;
-import eu.musesproject.server.entity.Clue;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.Outcome;
@@ -532,6 +531,9 @@ public class DBManagerTest {
 		logEntry.setUsername("");
 		logEntry.setUserRole("");
 		logEntry.setUserTrustValue(0);
+		logEntry.setWifiEncryption("[WPA2-PSK-TKIP+CCMP][ESS]");
+		logEntry.setWifiEnabled(1);
+		logEntry.setWifiConnected(1);
 		
 		list.add(logEntry);
 		dbmanager.setPatternsKRS(list);		

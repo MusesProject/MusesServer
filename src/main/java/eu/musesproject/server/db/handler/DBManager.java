@@ -2463,6 +2463,29 @@ public class DBManager {
 		return allDifferentValues;		
 	}
 	
+	/**
+     * Get all different values of wifiencryption in patterns_krs table
+     * @param void
+     * @return List<String>
+     */
+	public List<String> getDistinctWifiEncryptions() {
+		Session session = null;
+		Query query = null;
+		List<String> allDifferentValues = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("PatternsKrs.findDistinctWifiEncryptions");
+			if (query!=null) {
+				allDifferentValues = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return allDifferentValues;		
+	}
+	
 	public void removeAllCorporatePolicies(){
 		Session session = null;
 		Transaction trans = null;

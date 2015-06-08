@@ -389,6 +389,9 @@ CREATE TABLE `patterns_krs` (
   `mail_contains_cc_allowed` int(11) COMMENT 'If the event is about sending an email, specify whether the mail contains (1) or not (0) someone in CC',
   `mail_contains_bcc_allowed` int(11) COMMENT 'If the event is about sending an email, specify whether the mail contains (1) or not (0) someone in BCC',
   `mail_has_attachment` int(11) COMMENT 'If the event is about sending an email, specify whether the mail contains (1) or not (0) an attachment',
+  `wifiencryption` varchar(30) COMMENT 'When sending an asset, information about encryption of the wifi network',
+  `wifienabled` int(11) COMMENT 'When sending an asset, information about wifi connection being enabled',
+  `wificonnected` int(11) COMMENT 'When sending an asset, information about wifi being connected',
   PRIMARY KEY (`log_entry_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Patterns built with the extracted information from the events';
 /*!40101 SET character_set_client = @saved_cs_client */;
