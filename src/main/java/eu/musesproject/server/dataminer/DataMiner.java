@@ -87,6 +87,7 @@ public class DataMiner {
 	
 	private static DBManager dbManager = new DBManager(ModuleType.KRS);
 	private static final String MUSES_TAG = "MUSES_TAG";
+	private static ParsingUtils parser = new ParsingUtils();
 	private Logger logger = Logger.getLogger(DataMiner.class);
 	
 	public List<SimpleEvents> getSimpleEvents() {
@@ -890,60 +891,7 @@ public class DataMiner {
 		
 	}
 	
-	/**
-	 * Method classifierParser in which weka classifier rules are parsed for the extraction of their
-	 * conditions and classes (label applied to patterns which have been classified by that rule)
-	 * 
-	 * @param classifierRules Rules obtained by the classifier
-	 * 
-	 * @return ruleList List of rules in a format that can be compared to the existing set of rules
-	 */
 	
-	public List<String> classifierParser(String classifierRules){
-		
-		List<String> ruleList = new ArrayList<String>();
-		String ruleJRip = "\\((\\w+)([\\s\\>\\=\\<]+)([\\w\\.]+)\\)";
-		String labelJRip = "\\=\\>\\s\\w+\\=(\\w+)";
-		String rulePART1 = "(\\w+)[\\s\\>\\=\\<]+\\w+\\sAND$";
-		String rulePART2 = "(\\w+)[\\s\\>\\=\\<]+\\w+\\:\\s\\w+\\s\\((\\d+)\\.\\d+\\/?(\\d*)\\.*\\d*\\)$";
-		String ruleJ48 = "";
-		String ruleREPTree = "";
-		String lines[] = classifierRules.split("\\r?\\n");
-		int i = 0;
-		
-		if (lines[0].contains("JRIP")) {
-			Pattern JRipPattern = Pattern.compile(ruleJRip);
-			Pattern JRipLabelPattern = Pattern.compile(labelJRip);
-			for (i = 0; i < lines.length; i++) {
-				Matcher JRipMatcher = JRipPattern.matcher(lines[i]);
-				Matcher JRipLabelMatcher = JRipLabelPattern.matcher(lines[i]);
-				while (JRipMatcher.find()) {
-					// Attribute name
-					JRipMatcher.group(1);
-					/* Relationship, JRipMatcher.group(2) can be =, <, <=, >, >= */
-					JRipMatcher.group(2);
-					// Value
-					JRipMatcher.group(3);
-				}
-				if (JRipLabelMatcher.find()) {
-					// Label
-					JRipLabelMatcher.group(1);
-				}
-			}
-		}
-		if (lines[0].contains("PART")) {
-			
-		}
-		if (lines[0].contains("J48")) {
-			
-		}
-		if (lines[0].contains("REPTree")) {
-			
-		}
-		
-		return ruleList;		
-		
-	}
 
 	
 	/**
