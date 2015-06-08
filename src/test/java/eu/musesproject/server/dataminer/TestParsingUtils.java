@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eu.musesproject.server.db.handler.DBManager;
@@ -16,10 +18,16 @@ public class TestParsingUtils {
 	
 	static ParsingUtils parser = new ParsingUtils();
 	private static DBManager dbManager = new DBManager(ModuleType.KRS);
-	private Logger logger = Logger.getLogger(TestDataMiner.class);
+	private Logger logger = Logger.getLogger(TestParsingUtils.class);
 
-	public TestParsingUtils() {
-		// TODO Auto-generated constructor stub
+	@BeforeClass
+	public  static void setUpBeforeClass() throws Exception {
+
+	}
+	
+	@AfterClass
+	public  static void setUpAfterClass() throws Exception {
+
 	}
 	
 	/**
@@ -31,8 +39,10 @@ public class TestParsingUtils {
 	  */
 	@Test
 	public final void testClassifierParser() {
-		String ruleJRip = "JRIP rules:\n===========\n\n(event_type = SECURITY_PROPERTY_CHANGED) and (device_screen_timeout <= 30) => label=STRONGDENY (18457.0/5980.0)";
-		String rulePART = "PART decision list\n------------------\n\ndevice_screen_timeout <= 30 AND\ndevice_is_rooted <= 0 AND\nsilent_mode > 0: STRONGDENY (13985.0/4947.0)";
+		String ruleJRip = "JRIP rules:\n===========\n\n(event_type = SECURITY_PROPERTY_CHANGED) and (device_screen_timeout <= 30) => label=STRONGDENY (18457.0/5980.0)\n"+
+				"(event_type = SECURITY_PROPERTY_CHANGED) and (passwd_has_capital_letters >= 2) and (device_screen_timeout >= 120) and (letters_in_password >= 7) => label=STRONGDENY (3198.0/911.0)";
+		String rulePART = "PART decision list\n------------------\n\ndevice_screen_timeout <= 30 AND\ndevice_is_rooted <= 0 AND\nsilent_mode > 0: STRONGDENY (13985.0/4947.0)\n"+
+				"letters_in_password > 3 AND\npasswd_has_capital_letters > 1 AND\ndevice_is_rooted <= 0 AND\ndevice_screen_timeout > 60 AND\nletters_in_password > 6: STRONGDENY (2723.0/773.0)";
 		String ruleJ48 = "J48 pruned tree\n------------------\n\nevent_type = SECURITY_PROPERTY_CHANGED\n|   device_is_rooted <= 0\n|   |   silent_mode > 0\n"+
 		"|   |   |   device_screen_timeout > 30\n   |   |   |   passwd_has_capital_letters <= 3\n|   |   |   |   |   device_has_password <= 0: STRONGDENY (2001.0/774.0)\n"+
 				"|   |   |   |   |   device_has_password > 0\n|   |   |   |   |   |   password_length <= 6: GRANTED (67.0)\n"+
@@ -46,10 +56,10 @@ public class TestParsingUtils {
 				"|   |   |   |   |   |   |   |   device_has_password >= 0.5 : GRANTED (220/105) [79/37]";
 		
 		
-		List<String> ruleListJRip = parser.classifierParser(ruleJRip);
-		List<String> ruleListPART = parser.classifierParser(rulePART);
-		List<String> ruleListJ48 = parser.classifierParser(ruleJ48);
-		List<String> ruleListREPTree = parser.classifierParser(ruleREPTree);
+		List<String> ruleListJRip = parser.JRipParser(ruleJRip);
+		List<String> ruleListPART = parser.PARTParser(rulePART);
+		List<String> ruleListJ48 = parser.J48Parser(ruleJ48);
+		List<String> ruleListREPTree = parser.REPTreeParser(ruleREPTree);
 		
 		if (ruleListJRip != null || ruleListPART != null || ruleListJ48 != null || ruleListREPTree != null) {
 			Iterator<String> i1 = ruleListJRip.iterator();
@@ -59,18 +69,22 @@ public class TestParsingUtils {
 			
 			while (i1.hasNext()) {
 				String rule = i1.next();
+				logger.info("JRIP rule: "+rule);
 				assertNotNull(rule);
 			}
 			while (i2.hasNext()) {
 				String rule = i2.next();
+				logger.info("PART rule: "+rule);
 				assertNotNull(rule);
 			}
 			while (i3.hasNext()) {
 				String rule = i3.next();
+				logger.info("J48 rule: "+rule);
 				assertNotNull(rule);
 			}
 			while (i4.hasNext()) {
 				String rule = i4.next();
+				logger.info("REPTree rule: "+rule);
 				assertNotNull(rule);
 			}
 		} else {

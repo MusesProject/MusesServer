@@ -455,7 +455,7 @@ public class DataMiner {
 			pattern.setAssetLocation(null);
 		}
 		
-		/* Rest of parameters that have to be obtained from the JSON */
+		/* Rest of parameters that have to be obtained from JSON */
 		// This solution of reading from the csv is strictly strictly processing the data from trials #1
 		File configFile = null;
 		FileReader fr = null;
@@ -523,6 +523,32 @@ public class DataMiner {
 			
 		}
 		
+		/* If the user is opening an asset */
+		/* {id=3, wifiencryption=[WPA2-PSK-TKIP+CCMP][ESS], bssid=24:a4:3c:04:ae:09, 
+		 * bluetoothconnected=FALSE, wifienabled=true, wifineighbors=6, hiddenssid=false, 
+		 * networkid=1, wificonnected=true, airplanemode=false}
+		 */
+		if (eventTypeId.getEventTypeId() == 8) {
+			String wifiJSON = "\\{\\w+\\=\\d+,\\swifiencryption\\=([\\[\\w\\-\\+\\]]*),\\s\\w+=[\\w\\:]+,\\sbluetoothconnected\\=(\\w+),\\swifienabled\\=(\\w+),\\swifineighbors\\=(\\d+),\\shiddenssid\\=(\\w+),\\s\\w+\\=\\w+,\\swificonnected\\=(\\w+)";
+			Pattern wifiPattern = Pattern.compile(wifiJSON);
+			Matcher matcherWifi = wifiPattern.matcher(event.getData());
+			if (matcherWifi.find()) {
+				pattern.setWifiEncryption(matcherWifi.group(1));
+				if(matcherWifi.group(3).contentEquals("true")) {
+					pattern.setWifiEnabled(1);
+				} else {
+					pattern.setWifiEnabled(0);
+				}
+				if(matcherWifi.group(6).contentEquals("true")) {
+					pattern.setWifiConnected(1);
+				} else {
+					pattern.setWifiConnected(0);
+				}
+			}
+			
+		}
+		
+		
 		return pattern;
 		
 	}
@@ -555,6 +581,7 @@ public class DataMiner {
 		List<String> assetConfidentialLevels = dbManager.getDistinctAssetConfidentialLevel();
 		List<String> assetLocations = dbManager.getDistinctAssetLocation();
 		List<String> allLabels = dbManager.getDistinctLabels();
+		List<String> wifiEncryptions = dbManager.getDistinctWifiEncryptions();
 		atts.add(new Attribute("decision_cause", decisionCauses));
 		atts.add(new Attribute("silent_mode"));
 		atts.add(new Attribute("event_type", eventTypes));
@@ -589,6 +616,9 @@ public class DataMiner {
 		atts.add(new Attribute("mail_contains_cc_allowed"));
 		atts.add(new Attribute("mail_contains_bcc_allowed"));
 		atts.add(new Attribute("mail_has_attachment"));
+		atts.add(new Attribute("wifiencryption", wifiEncryptions));
+		atts.add(new Attribute("wifienabled"));
+		atts.add(new Attribute("wificonnected"));
 		atts.add(new Attribute("label", allLabels));
 		data = new Instances("patternsData", atts, 0);
 
@@ -604,6 +634,8 @@ public class DataMiner {
 					eventType.contentEquals("ACTION_SEND_MAIL") || 
 					eventType.contentEquals("SAVE_ASSET") || 
 					eventType.contentEquals("VIRUS_FOUND") ) {
+				
+				logger.info(pattern.getLogEntryId());
 				
 				String decisionCause = pattern.getDecisionCause();
 				if (decisionCause == null) {
@@ -715,11 +747,19 @@ public class DataMiner {
 				vals[31] = pattern.getMailContainsCC();
 				vals[32] = pattern.getMailContainsBCC();
 				vals[33] = pattern.getMailHasAttachment();
-				String label = pattern.getLabel();
-				if (label == null) {
+				String wifiEncryption = pattern.getWifiEncryption();
+				if (wifiEncryption == null) {
 					vals[34] = Utils.missingValue();
 				} else {
-					vals[34] = allLabels.indexOf(label);
+					vals[34] = wifiEncryptions.indexOf(wifiEncryption);
+				}
+				vals[35] = pattern.getWifiEnabled();
+				vals[36] = pattern.getWifiConnected();
+				String label = pattern.getLabel();
+				if (label == null) {
+					vals[37] = Utils.missingValue();
+				} else {
+					vals[37] = allLabels.indexOf(label);
 				}
 				
 				data.add(new DenseInstance(1.0, vals));
@@ -738,7 +778,7 @@ public class DataMiner {
 		}
 		
 		// OPTIONAL, only if we want the ARFF file
-		/*ArffSaver saver = new ArffSaver();
+		ArffSaver saver = new ArffSaver();
 		saver.setInstances(newData);
 		try {
 			saver.setFile(new File("./data/test.arff"));
@@ -746,7 +786,7 @@ public class DataMiner {
 			saver.writeBatch();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		
 		return newData;
@@ -757,9 +797,9 @@ public class DataMiner {
 	 * Method featureSelection, which uses an algorithm to select the most representative features of
 	 * the data in patterns_krs table
 	 * 
-	 * @param none
+	 * @param data The instances from patterns_krs table
 	 * 
-	 * @return void
+	 * @return indexes The indexes of the attributes selected by the algorithm
 	 */
 	
 	public int[] featureSelection(Instances data){
@@ -815,7 +855,7 @@ public class DataMiner {
 		optionsJ48[0] = "-U";            // unpruned tree
 		J48 treeJ48 = new J48();         // new instance of tree
 		try {
-			treeJ48.setOptions(optionsJ48);     // set the options
+			//treeJ48.setOptions(optionsJ48);     // set the options
 			treeJ48.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(newData);
@@ -832,7 +872,7 @@ public class DataMiner {
 		optionsJRip[0] = "-P";            // unpruned tree
 		JRip treeJRip = new JRip();         // new instance of tree
 		try {
-			treeJRip.setOptions(optionsJRip);     // set the options
+			//treeJRip.setOptions(optionsJRip);     // set the options
 			treeJRip.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(newData);
@@ -852,7 +892,7 @@ public class DataMiner {
 		optionsPART[0] = "-U";            // unpruned tree
 		PART treePART = new PART();         // new instance of tree
 		try {
-			treePART.setOptions(optionsPART);     // set the options
+			//treePART.setOptions(optionsPART);     // set the options
 			treePART.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(newData);
@@ -872,7 +912,7 @@ public class DataMiner {
 		optionsREPTree[0] = "-P";            // unpruned tree
 		REPTree treeREPTree = new REPTree();         // new instance of tree
 		try {
-			treeREPTree.setOptions(optionsREPTree);     // set the options
+			//treeREPTree.setOptions(optionsREPTree);     // set the options
 			treeREPTree.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(newData);
@@ -882,6 +922,7 @@ public class DataMiner {
 				classifierRules = treeREPTree.toString();
 			}
 			System.out.println("Percentage of correctly classified instances for REPTree classifier: "+eval.pctCorrect());
+			//System.out.println(treeREPTree.toSource("prueba"));
 			//System.out.println(treeREPTree.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -889,9 +930,7 @@ public class DataMiner {
 		
 		return classifierRules;
 		
-	}
-	
-	
+	}	
 
 	
 	/**

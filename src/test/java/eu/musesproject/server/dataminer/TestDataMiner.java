@@ -1,12 +1,11 @@
 package eu.musesproject.server.dataminer;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -17,20 +16,14 @@ import weka.core.Instance;
 import weka.core.Instances;
 import eu.musesproject.server.dataminer.DataMiner;
 import eu.musesproject.server.db.handler.DBManager;
-import eu.musesproject.server.entity.AdditionalProtection;
 import eu.musesproject.server.entity.PatternsKrs;
-import eu.musesproject.server.entity.SecurityIncident;
-import eu.musesproject.server.entity.SystemLogKrs;
-import eu.musesproject.server.entity.ThreatClue;
 import eu.musesproject.server.entity.SimpleEvents;
-import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.scheduler.ModuleType;
 
 public class TestDataMiner {
 	
 	static DataMiner dm = new DataMiner();
 	private static DBManager dbManager = new DBManager(ModuleType.KRS);
-	private Logger logger = Logger.getLogger(TestDataMiner.class);
 	
 	@BeforeClass
 	public  static void setUpBeforeClass() throws Exception {
@@ -83,7 +76,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dm.getSimpleEvents();
 		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
@@ -99,7 +92,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}*/
+	}
 	
 	/**
 	  * testBuildInstancesFromPatterns - JUnit test case whose aim is to test if instances are being properly built from DB data
@@ -107,7 +100,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testBuildInstancesFromPatterns() {		
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		if (patternList.size()>0){
@@ -126,7 +119,7 @@ public class TestDataMiner {
 		} else {
 			fail("There are no patterns in the table.");
 		}
-	}*/
+	}
 		
 	/**
 	  * testDataClassification - JUnit test case whose aim is to test execution of current classification algorithms over the built dataset
