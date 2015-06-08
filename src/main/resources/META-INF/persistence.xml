@@ -10,9 +10,11 @@
 	<class>eu.musesproject.server.entity.Applications</class>
 	<class>eu.musesproject.server.entity.Assets</class>
 	<class>eu.musesproject.server.entity.Clue</class>
+	<class>eu.musesproject.server.entity.ConnectionConfig</class>
 	<class>eu.musesproject.server.entity.CorporatePolicies</class>
 	<class>eu.musesproject.server.entity.Decision</class>
-	<class>eu.musesproject.server.entity.DecisionTrustvalue</class>
+	<class>eu.musesproject.server.entity.DecisionTrustvalues</class>
+	<class>eu.musesproject.server.entity.DefaultPolicies</class>
 	<class>eu.musesproject.server.entity.Devices</class>
 	<class>eu.musesproject.server.entity.Domains</class>
 	<class>eu.musesproject.server.entity.EventType</class>
@@ -28,6 +30,8 @@
 	<class>eu.musesproject.server.entity.Roles</class>
 	<class>eu.musesproject.server.entity.SecurityIncident</class>
 	<class>eu.musesproject.server.entity.SecurityRules</class>
+	<class>eu.musesproject.server.entity.SecurityViolation</class>
+	<class>eu.musesproject.server.entity.SensorConfiguration</class>
 	<class>eu.musesproject.server.entity.SimpleEvents</class>
 	<class>eu.musesproject.server.entity.Sources</class>
 	<class>eu.musesproject.server.entity.SystemLogKrs</class>
@@ -36,6 +40,7 @@
 	<class>eu.musesproject.server.entity.ThreatType</class>
 	<class>eu.musesproject.server.entity.UserBehaviour</class>
 	<class>eu.musesproject.server.entity.Users</class>
+	<class>eu.musesproject.server.entity.Zone</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/muses" />
 			<property name="javax.persistence.jdbc.user" value="muses" />
