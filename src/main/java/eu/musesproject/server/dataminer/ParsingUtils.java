@@ -309,7 +309,7 @@ public class ParsingUtils {
 	 */
 	public String SecurityPropertyRuleParser(List<String> droolsRule) {
 		
-		String parsedRule = null;
+		String parsedRule = "";
 		String secPropertyEvent = "e\\:\\s?ChangeSecurityPropertyEvent\\(([a-zA-Z]+)([\\=\\w]+)\\)";
 		String devProtectionEvent = "d\\:\\s?DeviceProtectionEvent\\(([a-zA-Z]+)([\\=<>]+)(\\w+)\\)";
 		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
@@ -355,7 +355,7 @@ public class ParsingUtils {
 	 */
 	public String AppObserverRuleParser(List<String> droolsRule) {
 		
-		String parsedRule = null;
+		String parsedRule = "";
 		String appEvent = "e1?\\:\\s?AppObserverEvent\\((.*),\\s?(event)\\=\\=\\\"(\\w+)\\\"\\)";
 		String conditionType1 = "eval\\(blacklistedApp\\(name\\)\\)";
 		String conditionType2 = "(name)\\=\\=\\\"([\\w\\s]*)\\\"";
@@ -415,77 +415,75 @@ public class ParsingUtils {
 	public String FileObserverRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = "";
-		String fileEventType1 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
-		String fileEventType2 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\",\\s?(\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
-		String fileEventType3 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\",\\s?(\\w+)\\=\\=\\\"([\\w\\/\\.]+)\\\",\\s?(\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
-		String fileEventType4 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\",\\s?(\\w+)\\s(n?o?t?)\\s?matches\\s\\\"\\.\\*(\\w+)\\.\\*\\\",\\s?(\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
-		String connectionEvent = "conn\\:\\s?ConnectivityEvent\\((\\w+)(\\=\\=\\w+),\\s?(\\w+)(\\=\\=\\w+),\\s?(\\w+)\\s(n?o?t?)\\s?matches\\s\\\"\\.\\*(\\w+)\\.\\*\\\"\\)";
+		String fileEvent = "e\\:\\s?FileObserverEvent\\((.*)\\)";
+		String conditionType1 = "(\\w+)\\=\\=\\\"(\\w+)\\\""; // Like event=="open_asset", resourceType=="CONFIDENTIAL", username=="muses"
+		String conditionType2 = "(\\w+)\\=\\=\\\"([\\w\\/\\.]+)\\\""; // Like path=="/sdcard/Swe/door_1"
+		String conditionType3 = "(\\w+)\\s(n?o?t?)\\s?matches\\s\\\"\\.\\*(\\w+)\\.\\*\\\""; // Like path matches ".*Swe.*", wifiEncryption matches ".*WPA2.*", wifiEncryption not matches ".*WPA2.*"
+		String connectionEvent = "conn\\:\\s?ConnectivityEvent\\((.*)\\)";
+		String conditionType4 = "(\\w+)([\\=\\w]+)"; // Like wifiConnected==true, wifiEnabled==true, bluetoothConnected==true
 		String locationEvent = ""; // TODO: fill in when I read Zones
 		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
-		Pattern fileEventType1Pattern = Pattern.compile(fileEventType1);
-		Pattern fileEventType2Pattern = Pattern.compile(fileEventType2);
-		Pattern fileEventType3Pattern = Pattern.compile(fileEventType3);
-		Pattern fileEventType4Pattern = Pattern.compile(fileEventType4);
+		Pattern filePattern = Pattern.compile(fileEvent);
+		Pattern conditionType1Pattern = Pattern.compile(conditionType1);
+		Pattern conditionType2Pattern = Pattern.compile(conditionType2);
+		Pattern conditionType3Pattern = Pattern.compile(conditionType3);
+		Pattern conditionType4Pattern = Pattern.compile(conditionType4);
 		Pattern connectionPattern = Pattern.compile(connectionEvent);
 		Pattern labelPattern = Pattern.compile(label);
 				
-		Iterator<String> i = droolsRule.iterator();
-		while (i.hasNext()) {
-			String line = i.next();
-			Matcher fileEventType1Matcher = fileEventType1Pattern.matcher(line);
-			Matcher fileEventType2Matcher = fileEventType2Pattern.matcher(line);
-			Matcher fileEventType3Matcher = fileEventType3Pattern.matcher(line);
-			Matcher fileEventType4Matcher = fileEventType4Pattern.matcher(line);
+		Iterator<String> it = droolsRule.iterator();
+		while (it.hasNext()) {
+			String line = it.next();						
+			Matcher fileMatcher = filePattern.matcher(line);
 			Matcher connectionMatcher = connectionPattern.matcher(line);
 			Matcher labelMatcher = labelPattern.matcher(line);
-			if (fileEventType1Matcher.find()) {
-				parsedRule += this.droolsToKRSDictionary(fileEventType1Matcher.group(1))+
-						"=>"+
-						this.droolsToKRSDictionary(fileEventType1Matcher.group(2))+
-						" AND ";
-			}
-			if (fileEventType2Matcher.find()) {
-				parsedRule += this.droolsToKRSDictionary(fileEventType2Matcher.group(1))+"=>"+
-						this.droolsToKRSDictionary(fileEventType2Matcher.group(2))+" AND "+
-						this.droolsToKRSDictionary(fileEventType2Matcher.group(3))+"=>"+
-						fileEventType2Matcher.group(4)+
-						" AND ";
-			}
-			if (fileEventType3Matcher.find()) {
-				parsedRule += this.droolsToKRSDictionary(fileEventType3Matcher.group(1))+"=>"+
-						this.droolsToKRSDictionary(fileEventType3Matcher.group(2))+" AND "+
-						this.droolsToKRSDictionary(fileEventType3Matcher.group(3))+"=>"+
-						fileEventType3Matcher.group(4)+" AND "+
-						fileEventType3Matcher.group(5)+"=>"+
-						fileEventType3Matcher.group(6)+
-						" AND ";
-			}
-			if (fileEventType4Matcher.find()) {
-				parsedRule += this.droolsToKRSDictionary(fileEventType4Matcher.group(1))+"=>"+
-						this.droolsToKRSDictionary(fileEventType4Matcher.group(2))+" AND ";
-				if(fileEventType4Matcher.group(4).contentEquals("not")) {
-					parsedRule += this.droolsToKRSDictionary(fileEventType4Matcher.group(3))+"!=>"+
-							fileEventType4Matcher.group(5)+" AND ";
-				} else {
-					parsedRule += this.droolsToKRSDictionary(fileEventType4Matcher.group(3))+"=>"+
-							fileEventType4Matcher.group(5)+" AND ";
+			if (fileMatcher.find()) {
+				String[] conditions = fileMatcher.group(1).split("\\s?\\,\\s?");
+				for (int i = 0; i < conditions.length; i++) {
+					Matcher conditionType1Matcher = conditionType1Pattern.matcher(conditions[i]);
+					Matcher conditionType2Matcher = conditionType2Pattern.matcher(conditions[i]);
+					Matcher conditionType3Matcher = conditionType3Pattern.matcher(conditions[i]);
+					if (conditionType1Matcher.find()) {
+						parsedRule += this.droolsToKRSDictionary(conditionType1Matcher.group(1))+
+								"=>"+
+								this.droolsToKRSDictionary(conditionType1Matcher.group(2))+
+								" AND ";
+					}
+					if (conditionType2Matcher.find()) {
+						parsedRule += this.droolsToKRSDictionary(conditionType2Matcher.group(1))+"=>"+
+								conditionType2Matcher.group(2)+
+								" AND ";
+					}
+					if (conditionType3Matcher.find() && conditionType3Matcher.group(2).contentEquals("not")) {
+						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"!=>"+
+								conditionType3Matcher.group(3)+
+								" AND ";
+					} else if (conditionType3Matcher.find()) {
+						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"=>"+
+								conditionType3Matcher.group(3)+
+								" AND ";
+					}
 				}
-				parsedRule += fileEventType4Matcher.group(6)+"=>"+
-						fileEventType4Matcher.group(7)+
-						" AND ";
 			}
 			if (connectionMatcher.find()) {
-				parsedRule += connectionMatcher.group(1)+
-						this.droolsToKRSDictionary(connectionMatcher.group(2))+" AND "+
-						connectionMatcher.group(3)+
-						this.droolsToKRSDictionary(connectionMatcher.group(4))+
-						" AND ";
-				if(connectionMatcher.group(6).contentEquals("not")) {
-					parsedRule += connectionMatcher.group(5)+"!=>"+
-							connectionMatcher.group(7)+" AND ";
-				} else {
-					parsedRule += connectionMatcher.group(5)+"=>"+
-							connectionMatcher.group(7)+" AND ";
+				String[] conditions = connectionMatcher.group(1).split("\\s?\\,\\s?");
+				for (int i = 0; i < conditions.length; i++) {
+					Matcher conditionType3Matcher = conditionType3Pattern.matcher(conditions[i]);
+					Matcher conditionType4Matcher = conditionType4Pattern.matcher(conditions[i]);
+					if (conditionType3Matcher.find() && conditionType3Matcher.group(2).contentEquals("not")) {
+						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"!=>"+
+								conditionType3Matcher.group(3)+
+								" AND ";
+					} else if (conditionType3Matcher.find()) {
+						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"=>"+
+								conditionType3Matcher.group(3)+
+								" AND ";
+					}
+					if (conditionType4Matcher.find()) {
+						parsedRule += this.droolsToKRSDictionary(conditionType4Matcher.group(1))+
+								this.droolsToKRSDictionary(conditionType4Matcher.group(2))+
+								" AND ";
+					}
 				}
 			}
 			if (labelMatcher.find() && parsedRule != null) {
@@ -548,7 +546,8 @@ public class ParsingUtils {
 	
 	/**
 	 * Method droolsToKRSDictionary which translates from Drools used variable names to the ones used
-	 * for naming attributes in the instances or patterns
+	 * for naming attributes in the instances or patterns. Returns the same word if it
+	 * does not find a translation
 	 * 
 	 * @param droolsWord Used word for naming a variable in a Drools rule
 	 * 
@@ -622,7 +621,11 @@ public class ParsingUtils {
 			attribute = ">0";
 		}
 		
-		return attribute;
+		if (attribute != null) {
+			return attribute;
+		} else {
+			return droolsWord;
+		}
 		
 	}
 
