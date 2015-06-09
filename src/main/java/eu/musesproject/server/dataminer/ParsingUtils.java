@@ -253,7 +253,6 @@ public class ParsingUtils {
 					for (i = ruleStarts; i <= ruleEnds; i++) {
 						ruleContent.add(lines[i]);
 					}
-					logger.info(ruleContent);
 				} else {
 					continue;
 				}
@@ -261,24 +260,24 @@ public class ParsingUtils {
 				/* Type of rule? */
 				if (dbRule.getDescription().contains("ChangeSecurityPropertyEvent")) {
 					
-					String resultRule = SecurityPropertyRuleParser(ruleContent);
+					String resultRule = this.SecurityPropertyRuleParser(ruleContent);
 					ruleList.add(resultRule);
 					
 				} else if (dbRule.getDescription().contains("AppObserverEvent")) {
 					
-					String resultRule = AppObserverRuleParser(ruleContent);
+					String resultRule = this.AppObserverRuleParser(ruleContent);
 					ruleList.add(resultRule);
 					
 				} else if (dbRule.getDescription().contains("FileObserverEvent")) {
 					
-					String resultRule = FileObserverRuleParser(ruleContent);
+					String resultRule = this.FileObserverRuleParser(ruleContent);
 					ruleList.add(resultRule);
 					
 				} else if (dbRule.getDescription().contains("LocationEvent")) {
 					// TODO: fill in when I read Zones					
 				} else if (dbRule.getDescription().contains("EmailEvent")) {
 					
-					String resultRule = EmailRuleParser(ruleContent);
+					String resultRule = this.EmailRuleParser(ruleContent);
 					ruleList.add(resultRule);
 					
 				}
@@ -302,10 +301,34 @@ public class ParsingUtils {
 	public String SecurityPropertyRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = null;
-		
+		String secPropertyEvent = "e\\:\\sChangeSecurityPropertyEvent\\(([a-zA-Z]+)([\\=\\w]+)\\)";
+		String devProtectionEvent = "d\\:\\sDeviceProtectionEvent\\(([a-zA-Z]+)([\\=<>]+)(\\w+)\\)";
+		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:]*\\\",\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:]*\\\"\\);";
+		Pattern conditionPattern = Pattern.compile(secPropertyEvent);
+		Pattern anotherConditionPattern = Pattern.compile(devProtectionEvent);
+		Pattern labelPattern = Pattern.compile(label);
+				
 		Iterator<String> i = droolsRule.iterator();
 		while (i.hasNext()) {
 			String line = i.next();
+			Matcher conditionMatcher = conditionPattern.matcher(line);
+			Matcher anotherConditionMatcher = anotherConditionPattern.matcher(line);
+			Matcher labelMatcher = labelPattern.matcher(line);
+			while (conditionMatcher.find()) {
+				parsedRule = this.droolsToKRSDictionary(conditionMatcher.group(1))+
+						this.droolsToKRSDictionary(conditionMatcher.group(2))+
+						"AND";
+			}
+			while (anotherConditionMatcher.find()) {
+				parsedRule = this.droolsToKRSDictionary(anotherConditionMatcher.group(1))+
+						anotherConditionMatcher.group(2)+
+						anotherConditionMatcher.group(3)+
+						"AND";
+			}
+			if (labelMatcher.find()) {
+				parsedRule += "THEN";
+				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
+			}
 		}
 		
 		return parsedRule;
@@ -447,6 +470,12 @@ public class ParsingUtils {
 		}
 		if (droolsWord.equalsIgnoreCase("accessibilityEnabled")) {
 			attribute = "device_has_accessibility";
+		}
+		if (droolsWord.equalsIgnoreCase("==false")) {
+			attribute = "<=0";
+		}
+		if (droolsWord.equalsIgnoreCase("==true")) {
+			attribute = ">0";
 		}
 		
 		return attribute;
