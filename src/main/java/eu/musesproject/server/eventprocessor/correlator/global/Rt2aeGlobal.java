@@ -31,7 +31,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import eu.musesproject.client.model.RequestType;
 import eu.musesproject.client.model.decisiontable.PolicyDT;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.contextdatareceiver.JSONManager;
@@ -281,7 +280,7 @@ public class Rt2aeGlobal {
 	}
 	
 
-	public int composeAccessRequest(FileObserverEvent event, ConnectivityEvent connEvent, String mode, String condition){//Simulate response from RT2AE, for demo purposes
+	/*public int composeAccessRequest(FileObserverEvent event, ConnectivityEvent connEvent, String mode, String condition){//Simulate response from RT2AE, for demo purposes
 		logger.info("[composeAccessRequest] event,conn");
 		Decision[] decisions = new Decision[1];
 		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
@@ -327,7 +326,7 @@ public class Rt2aeGlobal {
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
 		
 		return composedRequest.getId();
-	}
+	}*/
 	
 	public int deny(AppObserverEvent event, String message){//Simulate response from RT2AE, for demo purposes
 		logger.info("[deny]");
@@ -676,6 +675,84 @@ public class Rt2aeGlobal {
 		connManager.sendData(sessionId, response.toString()); 
 		return 1;
 	}
+	
+	public int composeAccessRequestI18n(Event event, String key, String mode, String condition){//Simulate response from RT2AE, for demo purposes
+		logger.info("[composedAccessRequest]");
+		Decision[] decisions = new Decision[1];
+		String language = "en";
+		String message = "";
+		
+		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequest(event);
+		composedRequest.setId(requests.size()+1);
+		requests.add(composedRequest);
+		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+		Decision decision = null;
+		Context context = new Context();
+		
+		//Get the user language (english by default)
+		
+		if(event.getUsername() != null){
+			Users user = dbManager.findUserByUsername(event.getUsername()).get(0);
+			if (user.getLanguage() != null){
+				logger.info("language: "+ user.getLanguage());
+				language = user.getLanguage();				
+			}
+		}
+		
+		// Get the mapping message associated to language
+		
+		message = dbManager.getMessageByKey(key,language);
+		
+		//Store security violation in db
+		
+		storeComplexEvent(event, message, mode, condition, composedRequest.getEventId());
+		
+		PolicyCompliance policyCompliance = policyCompliance(composedRequest, message, event, mode, condition);
+		try{
+			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
+		}catch(javax.persistence.EntityExistsException e){
+			logger.error("Please, check database persistence:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+		}catch(Exception e){
+			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+		}		
+		//Control based on policy compliance
+		
+		if (decision == null){
+			if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
+				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
+				decision = Decision.STRONG_DENY_ACCESS;
+			}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
+				decision = Decision.GRANTED_ACCESS;
+			}
+		}
+		decision.setCondition(condition);
+		decisions[0] = decision;
+		
+		//Select the most appropriate policy according to the decision and the action of the request		
+		logger.info("		Session id:"+event.getSessionId());
+		PolicySelector policySelector = new PolicySelector();
+		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
+		logger.log(Level.INFO, MUSES_TAG + " Request action: "+composedRequest.getAction());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.log(Level.INFO, MUSES_TAG + " Selecting policy action: "+composedRequest.getAction());
+
+		logger.info("		" + policyDT.getRawPolicy());
+		logger.info("		" + decision.toString());
+		//requests.add(composedRequest);
+		
+		//Send policy
+		
+		Device device = new Device();
+		PolicyTransmitter transmitter = new PolicyTransmitter();
+		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		logger.log(Level.INFO, MUSES_TAG + " Now sending policy:"+policyDT.getRawPolicy());
+		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
+
+		return composedRequest.getId();
+	}
+	
+	
 	
 	
 }

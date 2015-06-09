@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -35,6 +36,7 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+
 import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.entity.AccessRequest;
 import eu.musesproject.server.entity.Applications;
@@ -49,6 +51,7 @@ import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
 import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.ListOfpossibleRisktreatment;
+import eu.musesproject.server.entity.Message;
 import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.Outcome;
 import eu.musesproject.server.entity.PatternsKrs;
@@ -2568,6 +2571,31 @@ public class DBManager {
 				for (SecurityRules s: list){
 					if (s.getName().equals(name)) {
 						return s;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return null;
+	}
+	
+	public String getMessageByKey(String key, String language) {
+
+		Query query = null;
+		Session session = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Message.findByKeyAndLanguage").setParameter("key", key).setParameter("language",language);
+			if (query != null) {
+				List<Message> list = query.list();
+				for (Message m: list){
+					if (m.getKey().equals(key)) {
+						if (m.getLanguage().equals(language)){
+							return m.getTranslation();
+						}						
 					}
 				}
 			}

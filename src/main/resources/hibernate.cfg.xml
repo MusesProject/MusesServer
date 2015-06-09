@@ -34,6 +34,7 @@
         <mapping class="eu.musesproject.server.entity.EventType"/>
         <mapping class="eu.musesproject.server.entity.LegalAspects"/>
         <mapping class="eu.musesproject.server.entity.ListOfpossibleRisktreatment"/>
+        <mapping class="eu.musesproject.server.entity.Message"/>
         <mapping class="eu.musesproject.server.entity.MusesConfig"/>
         <mapping class="eu.musesproject.server.entity.Outcome"/>
         <mapping class="eu.musesproject.server.entity.PatternsKrs"/>
