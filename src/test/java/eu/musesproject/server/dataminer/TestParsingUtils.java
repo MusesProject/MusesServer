@@ -31,8 +31,8 @@ public class TestParsingUtils {
 	}
 	
 	/**
-	  * testClassifierParser - JUnit test case whose aim is to test if the regular expressions in classifierParser
-	  * are correctly built
+	  * testClassifierParser - JUnit test case whose aim is to test if the regular expressions in
+	  * classifierParser are correctly built
 	  *
 	  * @param none 
 	  * 
@@ -89,6 +89,28 @@ public class TestParsingUtils {
 			}
 		} else {
 			fail("Rules not being properly parsed");
+		}
+		
+	}
+	
+	/**
+	  * testDBRulesParser - JUnit test case whose aim is to test if the regular expressions in 
+	  * DBRulesParser are correctly built
+	  *
+	  * @param none 
+	  * 
+	  */
+	@Test
+	public final void testDBRulesParser() {
+		List<String> DBRules = parser.DBRulesParser();
+		if (DBRules != null) {
+			Iterator<String> i = DBRules.iterator();
+			while (i.hasNext()) {
+				String rule = i.next();
+				assertNotNull(rule);
+			}
+		} else {
+			fail ("Rules not being properly parsed");
 		}
 		
 	}

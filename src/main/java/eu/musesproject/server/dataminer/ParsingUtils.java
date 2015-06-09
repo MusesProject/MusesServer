@@ -225,37 +225,61 @@ public class ParsingUtils {
 	public List<String> DBRulesParser() {
 		
 		List<String> ruleList = new ArrayList<String>();
-		List<String> ruleContent = new ArrayList<String>();
 		List<SecurityRules> dbRules = dbManager.getSecurityRulesByStatus("VALIDATED");
 		int i = 0;
-		int ruleStarts = 0;
-		int ruleEnds = 0;
 		
 		if (dbRules != null) {
 			Iterator<SecurityRules> it = dbRules.iterator();
+			Pattern eraseSpaces = Pattern.compile("^\\s*(.*)");
 			while (it.hasNext()) {
-				SecurityRules dbRule = it.next();				
-				String[] lines = dbRule.getDescription().split("\\r?\\n");
+				SecurityRules dbRule = it.next();
+				String[] lines = dbRule.getDescription().split("\\n");
+				List<String> ruleContent = new ArrayList<String>();
+				int ruleStarts = 0;
+				int ruleEnds = 0;
 				for (i = 0; i < lines.length; i++) {
-					if (lines[i].contentEquals("when")) {
-						ruleStarts = i;
-					} else if (lines[i].matches("\\s+int\\sid")) {
-						ruleEnds = i;
+					Matcher spacesMatcher = eraseSpaces.matcher(lines[i]);
+					if(spacesMatcher.find()) {
+						lines[i] = spacesMatcher.group(1);
+						if (lines[i].matches("^when")) {
+							ruleStarts = i;
+						} else if (lines[i].matches("^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:]*\\\",\\s?\\\"\\w+\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:]*\\\"\\);")) {
+							ruleEnds = i;
+							//logger.info(lines[i]);
+						}
 					}
 				}
-				for (i = ruleStarts; i <= ruleEnds; i++) {
-					ruleContent.add(lines[i]);
+				if (ruleStarts > 0 && ruleEnds > 0) {
+					for (i = ruleStarts; i <= ruleEnds; i++) {
+						ruleContent.add(lines[i]);
+					}
+					logger.info(ruleContent);
+				} else {
+					continue;
 				}
+				
 				/* Type of rule? */
 				if (dbRule.getDescription().contains("ChangeSecurityPropertyEvent")) {
 					
+					String resultRule = SecurityPropertyRuleParser(ruleContent);
+					ruleList.add(resultRule);
+					
 				} else if (dbRule.getDescription().contains("AppObserverEvent")) {
 					
+					String resultRule = AppObserverRuleParser(ruleContent);
+					ruleList.add(resultRule);
+					
 				} else if (dbRule.getDescription().contains("FileObserverEvent")) {
+					
+					String resultRule = FileObserverRuleParser(ruleContent);
+					ruleList.add(resultRule);
 					
 				} else if (dbRule.getDescription().contains("LocationEvent")) {
 					// TODO: fill in when I read Zones					
 				} else if (dbRule.getDescription().contains("EmailEvent")) {
+					
+					String resultRule = EmailRuleParser(ruleContent);
+					ruleList.add(resultRule);
 					
 				}
 			}
@@ -279,6 +303,11 @@ public class ParsingUtils {
 		
 		String parsedRule = null;
 		
+		Iterator<String> i = droolsRule.iterator();
+		while (i.hasNext()) {
+			String line = i.next();
+		}
+		
 		return parsedRule;
 	}
 	
@@ -295,6 +324,11 @@ public class ParsingUtils {
 	public String AppObserverRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = null;
+		
+		Iterator<String> i = droolsRule.iterator();
+		while (i.hasNext()) {
+			String line = i.next();
+		}
 		
 		return parsedRule;
 	}
@@ -314,6 +348,11 @@ public class ParsingUtils {
 		
 		String parsedRule = null;
 		
+		Iterator<String> i = droolsRule.iterator();
+		while (i.hasNext()) {
+			String line = i.next();
+		}
+		
 		return parsedRule;
 	}
 	
@@ -332,7 +371,86 @@ public class ParsingUtils {
 		
 		String parsedRule = null;
 		
+		Iterator<String> i = droolsRule.iterator();
+		while (i.hasNext()) {
+			String line = i.next();
+		}
+		
 		return parsedRule;
+	}
+	
+	/**
+	 * Method droolsToKRSDictionary which translates from Drools used variable names to the ones used
+	 * for naming attributes in the instances or patterns
+	 * 
+	 * @param droolsWord Used word for naming a variable in a Drools rule
+	 * 
+	 * @return attribute Corresponding name of the attribute
+	 */
+	public String droolsToKRSDictionary(String droolsWord) {
+		
+		String attribute = null;
+		
+		if (droolsWord.equalsIgnoreCase("DENY")) {
+			attribute = "STRONGDENY";
+		}
+		if (droolsWord.equalsIgnoreCase("ALLOW")) {
+			attribute = "GRANTED";
+		}
+		if (droolsWord.equalsIgnoreCase("isTrustedAntivirusInstalled")) {
+			attribute = "device_has_antivirus";
+		}
+		if (droolsWord.equalsIgnoreCase("open_application")) {
+			attribute = "ACTION_APP_OPEN";
+		}
+		if (droolsWord.equalsIgnoreCase("event")) {
+			attribute = "event_type";
+		}
+		if (droolsWord.equalsIgnoreCase("resourceType")) {
+			attribute = "asset_confidential_level";
+		}
+		if (droolsWord.equalsIgnoreCase("name")) {
+			attribute = "app_name";
+		}
+		if (droolsWord.equalsIgnoreCase("isPasswordProtected")) {
+			attribute = "device_has_password";
+		}
+		if (droolsWord.equalsIgnoreCase("path")) {
+			attribute = "asset_location";
+		}
+		if (droolsWord.equalsIgnoreCase("open_asset")) {
+			attribute = "ACTION_REMOTE_FILE_ACCESS";
+		}
+		if (droolsWord.equalsIgnoreCase("save_asset")) {
+			attribute = "SAVE_ASSET";
+		}
+		if (droolsWord.equalsIgnoreCase("isWithinZone")) {
+			attribute = "zone";
+		}
+		if (droolsWord.equalsIgnoreCase("isRooted")) {
+			attribute = "device_is_rooted";
+		}
+		if (droolsWord.equalsIgnoreCase("VirusFoundEvent")) {
+			attribute = "VIRUS_FOUND";
+		}
+		if (droolsWord.equalsIgnoreCase("numberAttachments")) {
+			attribute = "mail_has_attachments";
+		}
+		if (droolsWord.equalsIgnoreCase("uninstall")) {
+			attribute = "CONTEXT_SENSOR_PACKAGE";
+		}
+		if (droolsWord.equalsIgnoreCase("install")) {
+			attribute = "CONTEXT_SENSOR_PACKAGE";
+		}
+		if (droolsWord.equalsIgnoreCase("screenTimeoutInSeconds")) {
+			attribute = "device_screen_timeout";
+		}
+		if (droolsWord.equalsIgnoreCase("accessibilityEnabled")) {
+			attribute = "device_has_accessibility";
+		}
+		
+		return attribute;
+		
 	}
 
 }

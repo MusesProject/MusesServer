@@ -401,7 +401,7 @@ public class DBManager {
 		List<SecurityRules> securityRuleList = null;
 		try {
 			session = getSessionFactory().openSession();
-			query = session.getNamedQuery("SecurityRule.findByStatus").setString("status", status);
+			query = session.getNamedQuery("SecurityRules.findByStatus").setString("status", status);
 			if (query!=null) {
 				securityRuleList = query.list();
 			}
