@@ -122,5 +122,8 @@
         <property name="wifiConnected" type="int">
             <column name="WIFICONNECTED" />
         </property>
+        <property name="bluetoothConnected" type="int">
+            <column name="BLUETOOTHCONNECTED" />
+        </property>
     </class>
 </hibernate-mapping>

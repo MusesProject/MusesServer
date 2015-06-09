@@ -534,6 +534,7 @@ public class DBManagerTest {
 		logEntry.setWifiEncryption("[WPA2-PSK-TKIP+CCMP][ESS]");
 		logEntry.setWifiEnabled(1);
 		logEntry.setWifiConnected(1);
+		logEntry.setBluetoothConnected(0);
 		
 		list.add(logEntry);
 		dbmanager.setPatternsKRS(list);		

@@ -193,6 +193,9 @@ public class PatternsKrs implements Serializable {
 	
 	@Column(name="wificonnected")
 	private int wifiConnected;
+	
+	@Column(name="bluetoothconnected")
+	private int bluetoothConnected;
 
 	public PatternsKrs() {
 	}
@@ -507,6 +510,14 @@ public class PatternsKrs implements Serializable {
 
 	public void setWifiConnected(int wifiConnected) {
 		this.wifiConnected = wifiConnected;
+	}
+
+	public int getBluetoothConnected() {
+		return bluetoothConnected;
+	}
+
+	public void setBluetoothConnected(int bluetoothConnected) {
+		this.bluetoothConnected = bluetoothConnected;
 	}
 
 }

@@ -534,6 +534,11 @@ public class DataMiner {
 			Matcher matcherWifi = wifiPattern.matcher(event.getData());
 			if (matcherWifi.find()) {
 				pattern.setWifiEncryption(matcherWifi.group(1));
+				if(matcherWifi.group(2).contentEquals("true")) {
+					pattern.setBluetoothConnected(1);
+				} else {
+					pattern.setBluetoothConnected(0);
+				}
 				if(matcherWifi.group(3).contentEquals("true")) {
 					pattern.setWifiEnabled(1);
 				} else {
@@ -616,9 +621,10 @@ public class DataMiner {
 		atts.add(new Attribute("mail_contains_cc_allowed"));
 		atts.add(new Attribute("mail_contains_bcc_allowed"));
 		atts.add(new Attribute("mail_has_attachment"));
-		atts.add(new Attribute("wifiencryption", wifiEncryptions));
-		atts.add(new Attribute("wifienabled"));
-		atts.add(new Attribute("wificonnected"));
+		atts.add(new Attribute("wifiEncryption", wifiEncryptions));
+		atts.add(new Attribute("wifiEnabled"));
+		atts.add(new Attribute("wifiConnected"));
+		atts.add(new Attribute("bluetoothConnected"));
 		atts.add(new Attribute("label", allLabels));
 		data = new Instances("patternsData", atts, 0);
 
@@ -754,11 +760,12 @@ public class DataMiner {
 				}
 				vals[35] = pattern.getWifiEnabled();
 				vals[36] = pattern.getWifiConnected();
+				vals[37] = pattern.getBluetoothConnected();
 				String label = pattern.getLabel();
 				if (label == null) {
-					vals[37] = Utils.missingValue();
+					vals[38] = Utils.missingValue();
 				} else {
-					vals[37] = allLabels.indexOf(label);
+					vals[38] = allLabels.indexOf(label);
 				}
 				
 				data.add(new DenseInstance(1.0, vals));
@@ -943,6 +950,7 @@ public class DataMiner {
 	 */
 	
 	public void ruleComparison(List<String> classifierRules, List<SecurityRules> securityRules){
+		
 		
 		
 	}
