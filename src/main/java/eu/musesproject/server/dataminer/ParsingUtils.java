@@ -77,7 +77,7 @@ public class ParsingUtils {
 			while (JRipMatcher.find()) {
 				if(JRipMatcher.group(1).contentEquals("label")) {
 					// Label
-					rule += "THEN";
+					rule += " THEN ";
 					rule += JRipMatcher.group(3);
 					ruleList.add(rule);
 				} else {
@@ -87,7 +87,7 @@ public class ParsingUtils {
 					rule += JRipMatcher.group(2);
 					// Value
 					rule += JRipMatcher.group(3);
-					rule += "AND";
+					rule += " AND ";
 				}
 			}
 		}
@@ -123,10 +123,10 @@ public class ParsingUtils {
 				rule += PARTMatcher.group(2);
 				// Value
 				rule += PARTMatcher.group(3);
-				rule += "AND";
+				rule += " AND ";
 				if (!PARTMatcher.group(5).isEmpty()) {
 					// Label
-					rule += "THEN";
+					rule += " THEN ";
 					rule += PARTMatcher.group(5);
 					ruleList.add(rule);
 					rule = "";
@@ -231,6 +231,7 @@ public class ParsingUtils {
 		if (dbRules != null) {
 			Iterator<SecurityRules> it = dbRules.iterator();
 			Pattern eraseSpaces = Pattern.compile("^\\s*(.*)");
+			Pattern label = Pattern.compile("^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e1?,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\:\\-\\']*,\\s?\\\"\\w+\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);");
 			while (it.hasNext()) {
 				SecurityRules dbRule = it.next();
 				String[] lines = dbRule.getDescription().split("\\n");
@@ -241,11 +242,11 @@ public class ParsingUtils {
 					Matcher spacesMatcher = eraseSpaces.matcher(lines[i]);
 					if(spacesMatcher.find()) {
 						lines[i] = spacesMatcher.group(1);
+						Matcher labelMatcher = label.matcher(lines[i]);
 						if (lines[i].matches("^when")) {
 							ruleStarts = i;
-						} else if (lines[i].matches("^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e1?,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"\\w+\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);")) {
+						} else if (labelMatcher.find()) {
 							ruleEnds = i;
-							//logger.info(lines[i]);
 						}
 					}
 				}
@@ -311,7 +312,7 @@ public class ParsingUtils {
 		String parsedRule = null;
 		String secPropertyEvent = "e\\:\\s?ChangeSecurityPropertyEvent\\(([a-zA-Z]+)([\\=\\w]+)\\)";
 		String devProtectionEvent = "d\\:\\s?DeviceProtectionEvent\\(([a-zA-Z]+)([\\=<>]+)(\\w+)\\)";
-		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*\\\",\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
+		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
 		Pattern conditionPattern = Pattern.compile(secPropertyEvent);
 		Pattern anotherConditionPattern = Pattern.compile(devProtectionEvent);
 		Pattern labelPattern = Pattern.compile(label);
@@ -325,16 +326,16 @@ public class ParsingUtils {
 			while (conditionMatcher.find()) {
 				parsedRule += this.droolsToKRSDictionary(conditionMatcher.group(1))+
 						this.droolsToKRSDictionary(conditionMatcher.group(2))+
-						"AND";
+						" AND ";
 			}
 			if (anotherConditionMatcher.find()) {
 				parsedRule += this.droolsToKRSDictionary(anotherConditionMatcher.group(1))+
 						anotherConditionMatcher.group(2)+
 						anotherConditionMatcher.group(3)+
-						"AND";
+						" AND ";
 			}
 			if (labelMatcher.find() && parsedRule != null) {
-				parsedRule += "THEN";
+				parsedRule += "THEN ";
 				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
 			}
 		}
@@ -359,7 +360,7 @@ public class ParsingUtils {
 		String conditionType1 = "eval\\(blacklistedApp\\(name\\)\\)";
 		String conditionType2 = "(name)\\=\\=\\\"([\\w\\s]*)\\\"";
 		String conditionType3 = "(appPackage)\\smatches\\s\\\"\\.\\*(\\w+)\\.\\*\\\"";
-		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*\\\",\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
+		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
 		Pattern conditionPattern = Pattern.compile(appEvent);
 		Pattern conditionType1Pattern = Pattern.compile(conditionType1);
 		Pattern conditionType2Pattern = Pattern.compile(conditionType2);
@@ -380,19 +381,19 @@ public class ParsingUtils {
 				} else if (conditionType2Matcher.find()) {
 					parsedRule += this.droolsToKRSDictionary(conditionType2Matcher.group(1))+"=>"+
 							conditionType2Matcher.group(2)+
-							"AND";
+							" AND ";
 				} else if (conditionType3Matcher.find()) {
 					parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"=>"+
 							conditionType3Matcher.group(2)+
-							"AND";
+							" AND ";
 				}
 				parsedRule += this.droolsToKRSDictionary(conditionMatcher.group(2))+
 						"=>"+
 						this.droolsToKRSDictionary(conditionMatcher.group(3))+
-						"AND";
+						" AND ";
 			}
 			if (labelMatcher.find() && parsedRule != null) {
-				parsedRule += "THEN";
+				parsedRule += "THEN ";
 				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
 			}
 		}
@@ -413,11 +414,84 @@ public class ParsingUtils {
 	 */
 	public String FileObserverRuleParser(List<String> droolsRule) {
 		
-		String parsedRule = null;
-		
+		String parsedRule = "";
+		String fileEventType1 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
+		String fileEventType2 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\",\\s?(\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
+		String fileEventType3 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\",\\s?(\\w+)\\=\\=\\\"([\\w\\/\\.]+)\\\",\\s?(\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
+		String fileEventType4 = "e\\:\\s?FileObserverEvent\\((\\w+)\\=\\=\\\"(\\w+)\\\",\\s?(\\w+)\\s(n?o?t?)\\s?matches\\s\\\"\\.\\*(\\w+)\\.\\*\\\",\\s?(\\w+)\\=\\=\\\"(\\w+)\\\"\\)";
+		String connectionEvent = "conn\\:\\s?ConnectivityEvent\\((\\w+)(\\=\\=\\w+),\\s?(\\w+)(\\=\\=\\w+),\\s?(\\w+)\\s(n?o?t?)\\s?matches\\s\\\"\\.\\*(\\w+)\\.\\*\\\"\\)";
+		String locationEvent = ""; // TODO: fill in when I read Zones
+		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
+		Pattern fileEventType1Pattern = Pattern.compile(fileEventType1);
+		Pattern fileEventType2Pattern = Pattern.compile(fileEventType2);
+		Pattern fileEventType3Pattern = Pattern.compile(fileEventType3);
+		Pattern fileEventType4Pattern = Pattern.compile(fileEventType4);
+		Pattern connectionPattern = Pattern.compile(connectionEvent);
+		Pattern labelPattern = Pattern.compile(label);
+				
 		Iterator<String> i = droolsRule.iterator();
 		while (i.hasNext()) {
 			String line = i.next();
+			Matcher fileEventType1Matcher = fileEventType1Pattern.matcher(line);
+			Matcher fileEventType2Matcher = fileEventType2Pattern.matcher(line);
+			Matcher fileEventType3Matcher = fileEventType3Pattern.matcher(line);
+			Matcher fileEventType4Matcher = fileEventType4Pattern.matcher(line);
+			Matcher connectionMatcher = connectionPattern.matcher(line);
+			Matcher labelMatcher = labelPattern.matcher(line);
+			if (fileEventType1Matcher.find()) {
+				parsedRule += this.droolsToKRSDictionary(fileEventType1Matcher.group(1))+
+						"=>"+
+						this.droolsToKRSDictionary(fileEventType1Matcher.group(2))+
+						" AND ";
+			}
+			if (fileEventType2Matcher.find()) {
+				parsedRule += this.droolsToKRSDictionary(fileEventType2Matcher.group(1))+"=>"+
+						this.droolsToKRSDictionary(fileEventType2Matcher.group(2))+" AND "+
+						this.droolsToKRSDictionary(fileEventType2Matcher.group(3))+"=>"+
+						fileEventType2Matcher.group(4)+
+						" AND ";
+			}
+			if (fileEventType3Matcher.find()) {
+				parsedRule += this.droolsToKRSDictionary(fileEventType3Matcher.group(1))+"=>"+
+						this.droolsToKRSDictionary(fileEventType3Matcher.group(2))+" AND "+
+						this.droolsToKRSDictionary(fileEventType3Matcher.group(3))+"=>"+
+						fileEventType3Matcher.group(4)+" AND "+
+						fileEventType3Matcher.group(5)+"=>"+
+						fileEventType3Matcher.group(6)+
+						" AND ";
+			}
+			if (fileEventType4Matcher.find()) {
+				parsedRule += this.droolsToKRSDictionary(fileEventType4Matcher.group(1))+"=>"+
+						this.droolsToKRSDictionary(fileEventType4Matcher.group(2))+" AND ";
+				if(fileEventType4Matcher.group(4).contentEquals("not")) {
+					parsedRule += this.droolsToKRSDictionary(fileEventType4Matcher.group(3))+"!=>"+
+							fileEventType4Matcher.group(5)+" AND ";
+				} else {
+					parsedRule += this.droolsToKRSDictionary(fileEventType4Matcher.group(3))+"=>"+
+							fileEventType4Matcher.group(5)+" AND ";
+				}
+				parsedRule += fileEventType4Matcher.group(6)+"=>"+
+						fileEventType4Matcher.group(7)+
+						" AND ";
+			}
+			if (connectionMatcher.find()) {
+				parsedRule += connectionMatcher.group(1)+
+						this.droolsToKRSDictionary(connectionMatcher.group(2))+" AND "+
+						connectionMatcher.group(3)+
+						this.droolsToKRSDictionary(connectionMatcher.group(4))+
+						" AND ";
+				if(connectionMatcher.group(6).contentEquals("not")) {
+					parsedRule += connectionMatcher.group(5)+"!=>"+
+							connectionMatcher.group(7)+" AND ";
+				} else {
+					parsedRule += connectionMatcher.group(5)+"=>"+
+							connectionMatcher.group(7)+" AND ";
+				}
+			}
+			if (labelMatcher.find() && parsedRule != null) {
+				parsedRule += "THEN ";
+				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
+			}
 		}
 		
 		return parsedRule;
@@ -438,8 +512,8 @@ public class ParsingUtils {
 		
 		String parsedRule = "";
 		String mailEvent = "e\\:\\s?EmailEvent\\(([a-zA-Z]+)([\\=<>\\w]+)\\)";
-		String virusEvent = "v\\:\\s(VirusFoundEvent)\\(\\)";
-		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*\\\",\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
+		String virusEvent = "v\\:\\s?(VirusFoundEvent)\\(\\)";
+		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
 		Pattern mailPattern = Pattern.compile(mailEvent);
 		Pattern virusPattern = Pattern.compile(virusEvent);
 		Pattern labelPattern = Pattern.compile(label);
@@ -447,25 +521,24 @@ public class ParsingUtils {
 		Iterator<String> i = droolsRule.iterator();
 		while (i.hasNext()) {
 			String line = i.next();
-			//logger.info(line);
 			Matcher mailMatcher = mailPattern.matcher(line);
 			Matcher virusMatcher = virusPattern.matcher(line);
 			Matcher labelMatcher = labelPattern.matcher(line);
 			if (mailMatcher.find()) {
 				parsedRule += this.droolsToKRSDictionary(mailMatcher.group(1));
 				if (mailMatcher.group(2).contentEquals("==0")) {
-					parsedRule += "<=0AND";
+					parsedRule += "<=0 AND ";
 				} else {
-					parsedRule += ">0AND";
+					parsedRule += ">0 AND ";
 				}
 			}
 			if (virusMatcher.find()) {
 				parsedRule += "event_type=>"+
 						this.droolsToKRSDictionary(virusMatcher.group(1))+
-						"AND";
+						" AND ";
 			}
 			if (labelMatcher.find() && parsedRule != null) {
-				parsedRule += "THEN";
+				parsedRule += "THEN ";
 				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
 			}
 		}
