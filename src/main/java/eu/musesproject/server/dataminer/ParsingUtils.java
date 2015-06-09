@@ -243,7 +243,7 @@ public class ParsingUtils {
 						lines[i] = spacesMatcher.group(1);
 						if (lines[i].matches("^when")) {
 							ruleStarts = i;
-						} else if (lines[i].matches("^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:]*\\\",\\s?\\\"\\w+\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:]*\\\"\\);")) {
+						} else if (lines[i].matches("^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e1?,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:]*,\\s?\\\"\\w+\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:]*\\\"\\);")) {
 							ruleEnds = i;
 							//logger.info(lines[i]);
 						}
@@ -261,24 +261,32 @@ public class ParsingUtils {
 				if (dbRule.getDescription().contains("ChangeSecurityPropertyEvent")) {
 					
 					String resultRule = this.SecurityPropertyRuleParser(ruleContent);
-					ruleList.add(resultRule);
+					if (resultRule != null) {
+						ruleList.add(resultRule);
+					}
 					
 				} else if (dbRule.getDescription().contains("AppObserverEvent")) {
 					
 					String resultRule = this.AppObserverRuleParser(ruleContent);
-					ruleList.add(resultRule);
+					if (resultRule != null) {
+						ruleList.add(resultRule);
+					}					
 					
 				} else if (dbRule.getDescription().contains("FileObserverEvent")) {
 					
 					String resultRule = this.FileObserverRuleParser(ruleContent);
-					ruleList.add(resultRule);
+					if (resultRule != null) {
+						ruleList.add(resultRule);
+					}
 					
 				} else if (dbRule.getDescription().contains("LocationEvent")) {
 					// TODO: fill in when I read Zones					
 				} else if (dbRule.getDescription().contains("EmailEvent")) {
 					
 					String resultRule = this.EmailRuleParser(ruleContent);
-					ruleList.add(resultRule);
+					if (resultRule != null) {
+						ruleList.add(resultRule);
+					}
 					
 				}
 			}
@@ -319,13 +327,13 @@ public class ParsingUtils {
 						this.droolsToKRSDictionary(conditionMatcher.group(2))+
 						"AND";
 			}
-			while (anotherConditionMatcher.find()) {
+			if (anotherConditionMatcher.find()) {
 				parsedRule = this.droolsToKRSDictionary(anotherConditionMatcher.group(1))+
 						anotherConditionMatcher.group(2)+
 						anotherConditionMatcher.group(3)+
 						"AND";
 			}
-			if (labelMatcher.find()) {
+			if (labelMatcher.find() && parsedRule != null) {
 				parsedRule += "THEN";
 				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
 			}
@@ -347,10 +355,46 @@ public class ParsingUtils {
 	public String AppObserverRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = null;
-		
+		String appEvent = "e1?\\:\\sAppObserverEvent\\((.*),\\s?(event)\\=\\=\\\"(\\w+)\\\"\\)";
+		String conditionType1 = "eval\\(blacklistedApp\\(name\\)\\)";
+		String conditionType2 = "(name)\\=\\=\\\"([\\w\\s]*)\\\"";
+		String conditionType3 = "(appPackage)\\smatches\\s\\\"\\.\\*(\\w+)\\.\\*\\\"";
+		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:]*\\\",\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:]*\\\"\\);";
+		Pattern conditionPattern = Pattern.compile(appEvent);
+		Pattern conditionType1Pattern = Pattern.compile(conditionType1);
+		Pattern conditionType2Pattern = Pattern.compile(conditionType2);
+		Pattern conditionType3Pattern = Pattern.compile(conditionType3);
+		Pattern labelPattern = Pattern.compile(label);
+				
 		Iterator<String> i = droolsRule.iterator();
 		while (i.hasNext()) {
 			String line = i.next();
+			Matcher conditionMatcher = conditionPattern.matcher(line);
+			Matcher labelMatcher = labelPattern.matcher(line);
+			while (conditionMatcher.find()) {
+				Matcher conditionType1Matcher = conditionType1Pattern.matcher(conditionMatcher.group(1));
+				Matcher conditionType2Matcher = conditionType2Pattern.matcher(conditionMatcher.group(1));
+				Matcher conditionType3Matcher = conditionType3Pattern.matcher(conditionMatcher.group(1));
+				if (conditionType1Matcher.find()) {
+					parsedRule = "app_name=>orrentANDapp_name=>vuzeAND";
+				} else if (conditionType2Matcher.find()) {
+					parsedRule = this.droolsToKRSDictionary(conditionType2Matcher.group(1))+"=>"+
+							conditionType2Matcher.group(2)+
+							"AND";
+				} else if (conditionType3Matcher.find()) {
+					parsedRule = this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"=>"+
+							conditionType3Matcher.group(2)+
+							"AND";
+				}
+				parsedRule += this.droolsToKRSDictionary(conditionMatcher.group(2))+
+						"=>"+
+						this.droolsToKRSDictionary(conditionMatcher.group(3))+
+						"AND";
+			}
+			if (labelMatcher.find() && parsedRule != null) {
+				parsedRule += "THEN";
+				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
+			}
 		}
 		
 		return parsedRule;
@@ -432,7 +476,7 @@ public class ParsingUtils {
 		if (droolsWord.equalsIgnoreCase("resourceType")) {
 			attribute = "asset_confidential_level";
 		}
-		if (droolsWord.equalsIgnoreCase("name")) {
+		if (droolsWord.equalsIgnoreCase("name") || droolsWord.equalsIgnoreCase("appPackage")) {
 			attribute = "app_name";
 		}
 		if (droolsWord.equalsIgnoreCase("isPasswordProtected")) {
