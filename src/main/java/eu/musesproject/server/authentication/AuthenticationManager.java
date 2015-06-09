@@ -146,7 +146,7 @@ private static AuthenticationManager authenticationManagerSingleton = null;
 			} else {
 				logger.log(Level.INFO, "Logout failed");
 				// Send authentication response with failure message
-				response = JSONManager.createJSON(JSONIdentifiers.LOGOUT_RESPONSE, Constants.FAIL, "No session found");
+				response = JSONManager.createJSON(JSONIdentifiers.LOGOUT_RESPONSE, Constants.FAIL, "No session found, you are already logged out.");
 				logger.log(Level.INFO, response.toString());
 
 			}

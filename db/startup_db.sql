@@ -782,6 +782,19 @@ CREATE TABLE `zone` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+--
+-- Table structure for table `message`
+--
+
+DROP TABLE IF EXISTS `message`;
+
+CREATE TABLE `message` (
+  `idmessage` INT NOT NULL,
+  `key` VARCHAR(2000) NULL,
+  `language` VARCHAR(45) NULL,
+  `translation` VARCHAR(5000) NULL,
+  PRIMARY KEY (`idmessage`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Internationalization of messages associated to corporate policies';
 
 ALTER TABLE `assets` CHANGE `confidential_level` `confidential_level` 
 enum('PUBLIC','INTERNAL','CONFIDENTIAL','STRICTLY_CONFIDENTIAL','NONE') NOT NULL;
