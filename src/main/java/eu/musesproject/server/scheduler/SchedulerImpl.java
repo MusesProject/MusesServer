@@ -39,6 +39,7 @@ public class SchedulerImpl implements Scheduler {
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private DBManager dbManager;
 	public SchedulerImpl() {
+		dbManager = new DBManager(ModuleType.ERASER);
 	}
 	
 	@Override
