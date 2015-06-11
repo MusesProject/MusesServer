@@ -46,7 +46,9 @@ import java.util.List;
     @NamedQuery(name="SimpleEvents.findLastEventByEventType", 
     			query="SELECT s FROM SimpleEvents s where s.eventType = :event_type_id"),
     @NamedQuery(name="SimpleEvents.deleteSimpleEventByEventId", 
-    			query="delete FROM SimpleEvents s where s.eventId = :event_id")
+    			query="delete FROM SimpleEvents s where s.eventId = :event_id"),
+    @NamedQuery(name="SimpleEvents.findDeviceConfig",
+    			query="SELECT s FROM SimpleEvents s where s.eventType = :event_type_id and s.device = :device_id and s.date <= :day")
 })	
 
 public class SimpleEvents implements Serializable {

@@ -233,7 +233,8 @@ public class DataMiner {
 				}
 				
 				/* Checking the device security state of the device */
-				logEntry.setDeviceSecurityState(BigInteger.ZERO);
+				Devices device = event.getDevice();				
+				logEntry.setDeviceSecurityState(BigInteger.valueOf((long) device.getTrustValue()));
 				
 				/* Looking for the risk treatment in case the event caused a security violation */
 				String riskTreatment = securityViolations.get(0).getMessage();
@@ -265,7 +266,9 @@ public class DataMiner {
 	/**
 	  * minePatterns - Method for filling the patterns_krs table in the database. Each row of this table consists of all interesting information related to an event.
 	  *
-	  * @param none 
+	  * @param event The simple event over which the data mining is going to be performed 
+	  * 
+	  * @return pattern The built pattern to be stored in the database
 	  * 
 	  */
 	public PatternsKrs minePatterns(SimpleEvents event){
@@ -411,11 +414,7 @@ public class DataMiner {
 		Date eventDate = event.getDate();
 		Time eventTime = event.getTime();
 		Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
-		if (eventDetection.toString() != null) {
-			pattern.setEventTime(eventDetection);
-		} else {
-			pattern.setEventTime(null);
-		}
+		pattern.setEventTime(eventDetection);
 		
 		/* Was MUSES in silent or verbose mode? */		
 		if (eventDetection.getDay() < 16 && eventDetection.getMonth() <= 3) {
@@ -508,41 +507,49 @@ public class DataMiner {
 		}
 		
 		/* Rest of parameters that have to be obtained from JSON */
-		// This solution of reading from the csv is strictly strictly processing the data from trials #1
-		File configFile = null;
-		FileReader fr = null;
-		BufferedReader br = null;
-		try {		
-			configFile = new File ("/home/paloma/MUSES/Trials/devicesconfiguration.csv");
-			fr = new FileReader (configFile);
-			br = new BufferedReader(fr);
-			String line;
-	        while((line=br.readLine())!=null) {
-	        	String[] content = line.split(",");
-	        	/* content[1] = "ispasswordprotected"
-	        	 * content[2] = "isrooted"
-	        	 * content[3] = "screentimeoutinseconds"
-	        	 * content[4] = "istrustedantivirusinstalled"
-	        	 * content[5] = "accessibilityenabled"
-	        	 * */
-	        	if (content[0].equals(userDeviceId.getDeviceId())) {
-	        		pattern.setDeviceHasPassword(Integer.parseInt(content[1]));
-	        		BigInteger time = BigInteger.valueOf(Integer.parseInt(content[3]));
-	        		pattern.setDeviceScreenTimeout(time);
-	        		pattern.setDeviceHasAccessibility(Integer.parseInt(content[5]));
-	        		pattern.setDeviceIsRooted(Integer.parseInt(content[2]));
-	        	}
-	        }
-		} catch(Exception e) {
-			e.printStackTrace();
-	    }
-		try{                   
-            if( null != fr ){  
-               fr.close();    
-            }                 
-         }catch (Exception e2){
-            e2.printStackTrace();
-         }
+		/* Device configuration has to be taken from the last SECURITY_PROPERTY_CHANGED event */
+		SimpleEvents configEvent = dbManager.findDeviceConfigurationBySimpleEvent(Integer.parseInt(userDeviceId.getDeviceId()), eventDate.toString());
+		String configData = configEvent.getData();
+		// configData format is like:
+		// {event=security_property_changed, properties={"id":"1",
+		// "ispasswordprotected":"true","isrootpermissiongiven":"false",
+		// "screentimeoutinseconds":"300","musesdatabaseexists":"true",
+		// "isrooted":"false","accessibilityenabled":"false",
+		// "istrustedantivirusinstalled":"false","ipaddress":"172.17.1.52"}}
+		String configFormat = "\\\"?(\\w+)\\\"?[\\:\\=]\\\"?(\\w+)\\\"?";
+		Pattern configPattern = Pattern.compile(configFormat);
+		Matcher configMatcher = configPattern.matcher(configData);
+		while (configMatcher.find()) {
+			if (configMatcher.group(1).equalsIgnoreCase("ispasswordprotected")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceHasPassword(1);
+				} else {
+					pattern.setDeviceHasPassword(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("screentimeoutinseconds")) {
+				BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
+				pattern.setDeviceScreenTimeout(time);
+			} else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceIsRooted(1);;
+				} else {
+					pattern.setDeviceIsRooted(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("accessibilityenabled")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceHasAccessibility(1);;
+				} else {
+					pattern.setDeviceHasAccessibility(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("istrustedantivirusinstalled")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceHasAntivirus(1);
+				} else {
+					pattern.setDeviceHasAntivirus(0);
+				}
+			}			
+			
+		}
         
 		/* If the user is sending an email */
 		/* Data in event_type_if = 11
@@ -586,7 +593,7 @@ public class DataMiner {
 			Matcher matcherWifi = wifiPattern.matcher(event.getData());
 			if (matcherWifi.find()) {
 				pattern.setWifiEncryption(matcherWifi.group(1));
-				if(matcherWifi.group(2).contentEquals("true")) {
+				if(matcherWifi.group(2).equalsIgnoreCase("true")) {
 					pattern.setBluetoothConnected(1);
 				} else {
 					pattern.setBluetoothConnected(0);

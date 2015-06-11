@@ -642,7 +642,16 @@ public class ParsingUtils {
 			String[] conditionsRule2 = sidesRule2[0].split("\\sAND\\s?");
 			String labelRule2 = sidesRule2[1];
 			
-			if (conditionsRule1.length == conditionsRule1.length) {
+			if (conditionsRule1.length == conditionsRule1.length) { // Not the same number of conditions = not the same
+				String conditionFormat = "(\\w+)([\\=<>\\!])(\\w+)";
+				Pattern conditionPattern = Pattern.compile(conditionFormat);
+				for (int i = 0; i < conditionsRule1.length; i++) {
+					Matcher conditionMatcher1 = conditionPattern.matcher(conditionsRule1[i]);
+					Matcher conditionMatcher2 = conditionPattern.matcher(conditionsRule2[i]);
+					if (conditionMatcher1.find() && conditionMatcher2.find()) {
+						
+					}
+				}
 				
 			}
 			
