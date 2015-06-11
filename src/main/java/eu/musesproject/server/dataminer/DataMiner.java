@@ -26,6 +26,8 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
+import static org.junit.Assert.fail;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,11 +92,63 @@ public class DataMiner {
 	private static ParsingUtils parser = new ParsingUtils();
 	private Logger logger = Logger.getLogger(DataMiner.class);
 	
-	public List<SimpleEvents> getSimpleEvents() {
+	/**
+	 * Method ruleComparison in which existing security rules are compared with rules obtained by the
+	 * classifier in dataClassification() method. It proposes new rules to the Knowledge Compiler.
+	 * This is the main output of the Data Miner.
+	 * 
+	 * 
+	 * @return void
+	 */
+	
+	public void ruleComparison(){
 		
-		List<SimpleEvents> Events = dbManager.getEvent();
+		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
+		List<String> classifierRules = null;
+		List<String> droolsRules = null;
+		if (patternList.size()>0){
+			Instances data = this.buildInstancesFromPatterns(patternList);
+			if (data != null) {
+				int[] indexes = new int[data.numAttributes()];
+				int[] selectedIndexes = this.featureSelection(data);
+				for (int i = 0; i < data.numAttributes(); i++) {
+					indexes[i] = i;
+				}
+				/* Uncomment to compare accuracy results before/after performing feature selection */
+				//System.out.println("=== Results before feature selection ===");
+				String notParsedClassifierRules = this.dataClassification(data, indexes);
+				String[] ruleLines = notParsedClassifierRules.split("\\n+");
+				if (ruleLines[0].contains("JRIP")) {
+					classifierRules = parser.JRipParser(notParsedClassifierRules);
+				} else if (ruleLines[0].contains("PART")) {
+					classifierRules = parser.PARTParser(notParsedClassifierRules);
+				} else if (ruleLines[0].contains("J48")) {
+					classifierRules = parser.J48Parser(notParsedClassifierRules);
+				} else if (ruleLines[0].contains("REPTree")) {
+					classifierRules = parser.REPTreeParser(notParsedClassifierRules);
+				}
+				droolsRules = parser.DBRulesParser();
+				
+				if (classifierRules != null && droolsRules != null) {
+					logger.info(classifierRules.get(0));
+					logger.info(droolsRules.get(0));					
+				}
+				
+				if (indexes.length > 0) {
+					//System.out.println("=== Results after feature selection ===");
+					this.dataClassification(data, selectedIndexes);
+				} else {
+					logger.error("Feature selection not being properly performed");
+				}
+			} else {
+				logger.error("Instances not being properly built.");
+			}
+						
+		} else {
+			fail("There are no patterns in the table.");
+		}
 		
-		return Events;
+		
 	}
 	
 	
@@ -943,23 +997,7 @@ public class DataMiner {
 		
 		return classifierRules;
 		
-	}	
-
-	
-	/**
-	 * Method ruleComparison in which existing security rules are compared with rules obtained by the
-	 * classifier in dataClassification() method. It proposes new rules to the Knowledge Compiler.
-	 * 
-	 * @param classifierRules Rules obtained by the classifier
-	 * @param securityRules Existing rules in the DB
-	 * 
-	 * @return void
-	 */
-	
-	public void ruleComparison(List<String> classifierRules, List<SecurityRules> securityRules){
-		
-		
-		
 	}
+	
 
 }

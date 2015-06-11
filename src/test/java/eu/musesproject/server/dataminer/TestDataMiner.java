@@ -36,6 +36,14 @@ public class TestDataMiner {
 	}
 	
 	/**
+	 * testDataMiner - JUnit test which tests the complete functionality of the Data Miner, obtaining the final output
+	 */
+	@Test
+	public final void testDataMiner() {
+		dm.ruleComparison();
+	}
+	
+	/**
 	  * testRetrieveUnprocessed - JUnit test case whose aim is to test unprocessed data retrieval from the database
 	  *
 	  * @param none 
@@ -61,7 +69,7 @@ public class TestDataMiner {
 	  */
 	@Test
 	public final void testDataMining() {		
-		List<SimpleEvents> list = dm.getSimpleEvents();
+		List<SimpleEvents> list = dbManager.getEvent();
 		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
 		if (list.size()>0){
 			Iterator<SimpleEvents> i = list.iterator();
