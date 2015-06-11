@@ -21,15 +21,23 @@ package eu.musesproject.server.scheduler;
  */
 
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import eu.musesproject.server.connectionmanager.ComMainServlet;
+
 public class DailyJob implements Job{
+
+	private static final String MUSES_TAG = "MUSES_TAG";
+	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		Scheduler scheduler = new SchedulerImpl();
+		logger.log(Level.INFO, MUSES_TAG + "  Daily Job called..");
 		scheduler.erase();
 	}
 

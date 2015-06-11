@@ -50,6 +50,7 @@ import eu.musesproject.server.entity.DefaultPolicies;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.Domains;
 import eu.musesproject.server.entity.EventType;
+import eu.musesproject.server.entity.LegalAspects;
 import eu.musesproject.server.entity.ListOfpossibleRisktreatment;
 import eu.musesproject.server.entity.Message;
 import eu.musesproject.server.entity.MusesConfig;
@@ -342,6 +343,30 @@ public class DBManager {
 		return null;
 	}
 	
+	
+    /**
+     * Get Users list 
+     * @return List<User>
+     */
+	public LegalAspects getLegalAspect() {	
+		Session session = null;
+		Query query = null;
+		List<LegalAspects> legalAspects = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("LegalAspects.findAll");
+			if (query!=null) {
+				legalAspects = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return legalAspects.get(0);
+	}
+    
+	
 	    
     /**
      * Get EventType object by key 
@@ -585,7 +610,50 @@ public class DBManager {
 			if (session!=null) session.close();
 		}
 	}
-      
+    
+    
+    /**
+     * Delete SimpleEvent by id
+     */
+    
+
+    public void deleteSimpleEventByEventId(String eventId) {
+    	Session session = null;
+		try {
+			session = getSessionFactory().openSession();
+			session.getNamedQuery("SimpleEvents.deleteSimpleEventByEventId").setString("event_id", eventId);
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+	}
+    
+    
+    /**
+     * Delete SimpleEvent by id
+     */
+    
+
+    public void updateSimpleEvent(SimpleEvents simpleEvent) {
+    	Session session = null;
+    	Transaction trans = null;
+		try {
+			session = getSessionFactory().openSession();
+			trans = session.beginTransaction();
+			session.update(simpleEvent);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans != null)
+				trans.rollback();
+			logger.log(Level.ERROR, e.getMessage());
+		} finally {
+			if (session != null)
+				session.close();
+		}
+		
+	}
+    
 	/**
      * Get Clue list
      * @return List<Clue>
