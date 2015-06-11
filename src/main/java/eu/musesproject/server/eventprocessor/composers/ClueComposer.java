@@ -21,7 +21,11 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.EventType;
+import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
@@ -30,9 +34,11 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserve
 import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent;
 import eu.musesproject.server.risktrust.Clue;
+import eu.musesproject.server.scheduler.ModuleType;
 
 
 public class ClueComposer {
+	private static DBManager dbManager = new DBManager(ModuleType.EP);
 	
 	
 	/*public static Clue composeClue(int requestId, Event event){
@@ -84,6 +90,14 @@ public static Clue composeClue(Event event, String name, String type){
 			USBDeviceConnectedEvent usbEvent = (USBDeviceConnectedEvent) event;
 			composedClue.setId((int)usbEvent.getTimestamp());
 			composedClue.setTimestamp(usbEvent.getTimestamp());
+
+		}else if (event instanceof ChangeSecurityPropertyEvent){
+			ChangeSecurityPropertyEvent secEvent = (ChangeSecurityPropertyEvent) event;
+			EventType eventType = dbManager.getEventTypeByKey(event.getType());
+			int eventTypeIndex = eventType.getEventTypeId();
+			SimpleEvents associatedEvent = dbManager.findLastEventByEventType(eventTypeIndex);
+			composedClue.setId(Integer.valueOf(associatedEvent.getEventId()));
+			composedClue.setTimestamp(secEvent.getTimestamp());
 
 		}
 		composedClue.setName(name);
