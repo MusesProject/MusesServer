@@ -48,7 +48,6 @@ import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
-import eu.musesproject.server.risktrust.OpportunityDescriptor;
 import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.risktrust.Probability;
