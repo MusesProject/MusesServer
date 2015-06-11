@@ -62,7 +62,7 @@ public static Clue composeClue(Event event, String name, String type){
 		
 		Clue composedClue = new Clue();
 		
-		if (event instanceof FileObserverEvent){
+		/*if (event instanceof FileObserverEvent){
 			FileObserverEvent fileEvent = (FileObserverEvent)event;
 			composedClue.setId((int)fileEvent.getTimestamp());
 			composedClue.setTimestamp(fileEvent.getTimestamp());
@@ -99,7 +99,14 @@ public static Clue composeClue(Event event, String name, String type){
 			composedClue.setId(Integer.valueOf(associatedEvent.getEventId()));
 			composedClue.setTimestamp(secEvent.getTimestamp());
 
-		}
+		}else{*/
+			
+			EventType eventType = dbManager.getEventTypeByKey(event.getType());
+			int eventTypeIndex = eventType.getEventTypeId();
+			SimpleEvents associatedEvent = dbManager.findLastEventByEventType(eventTypeIndex);
+			composedClue.setId(Integer.valueOf(associatedEvent.getEventId()));
+			
+		//}
 		composedClue.setName(name);
 		composedClue.setType(type);
 		return composedClue;

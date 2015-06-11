@@ -22,7 +22,9 @@ package eu.musesproject.server.entity;
 
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.util.List;
 
 
@@ -32,7 +34,13 @@ import java.util.List;
  */
 @Entity
 @Table(name="threat_type")
-@NamedQuery(name="ThreatType.findAll", query="SELECT t FROM ThreatType t")
+
+
+@NamedQueries({
+	@NamedQuery(name="ThreatType.findAll", query="SELECT t FROM ThreatType t"),
+	@NamedQuery(name="ThreatType.findByType", 
+				query="SELECT t FROM ThreatType t where t.type = :type")	
+})
 public class ThreatType implements Serializable {
 	private static final long serialVersionUID = 1L;
 

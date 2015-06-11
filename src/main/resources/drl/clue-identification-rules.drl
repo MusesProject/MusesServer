@@ -5,6 +5,7 @@ global eu.musesproject.server.eventprocessor.correlator.global.StatusGlobal Stat
 global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2aeGlobal
 
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AdditionalProtection
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AddNoteEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent
@@ -16,6 +17,17 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserve
 import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusFoundEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ChangeSecurityPropertyEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent
+
+import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.VirusCleanedEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent
+
+
 import eu.musesproject.server.eventprocessor.util.Constants
 import eu.musesproject.server.risktrust.ThreatOntology
 import java.util.ArrayList
@@ -87,6 +99,72 @@ declare ChangeSecurityPropertyEvent
 	@timestamp ( event_date )
 	@expires (1m)
 end
+
+declare AddNoteEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare AppObserverEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare OpenFileEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare UserBehaviorEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare VirusCleanedEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare SensorAppEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare PasswordEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare LocationEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare SecurityIncidentEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+function boolean unsafeStorage(String name){
+	System.out.println("Safe storage input:"+name);
+	boolean result = true;
+	if (name.contains("cryptonite")){
+		result = false;
+	}
+	System.out.println("Unsafe storage result:"+result);
+
+	return result;
+}
+
 
 rule "Clue-identification-00000"
 	no-loop true
@@ -265,4 +343,100 @@ rule "Clue-identification-00000"
 		clue.setDeviceId(e.getDeviceId());
 		insert(clue);
 	end
+
+
+	rule "Clue-identification-0000011"
+	no-loop true
+	salience 65000
+	dialect "java"
+	when
+		e: AddNoteEvent()
+
+	then
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Emas Add Note", ThreatOntology.DATA_LEAKAGE);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
+		insert(clue);
+	end
+
+
+	rule "Clue-identification-0000012"
+	no-loop true
+	salience 65000	
+	dialect "java"
+	when
+		e: PasswordEvent()
+
+
+	then
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"User entered password", ThreatOntology.DATA_LEAKAGE);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
+		insert(clue);
+		
+	end	
+
+	rule "Clue-identification-0000013"
+	no-loop true
+	salience 65000		
+	dialect "java"
+	when
+		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*", username=="muses")
+		e1: LocationEvent(isWithinZone matches ".*1.*")
+
+	then
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Open asset in restricted area", ThreatOntology.DATA_LEAKAGE);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
+		insert(clue);
+		
+	end	
+
+	rule "Clue-identification-0000014"
+	no-loop true
+	salience 65000		
+	dialect "java"
+	when
+		e: ChangeSecurityPropertyEvent(isTrustedAntivirusInstalled==false)
+
+
+	then
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Antivirus not running", ThreatOntology.DATA_LEAKAGE);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
+		insert(clue);
+		
+	end	
+
+	rule "Clue-identification-0000015"
+	no-loop true
+	salience 65000		
+	dialect "java"
+	when
+		e: ChangeSecurityPropertyEvent(isRooted==true)
+
+
+	then
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());		
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Rooted device", ThreatOntology.DATA_LEAKAGE);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		clue.setUsername(e.getUsername());
+		clue.setDeviceId(e.getDeviceId());
+		insert(clue);
+		
+	end		
+
 

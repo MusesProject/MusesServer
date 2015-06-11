@@ -36,7 +36,9 @@ import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.contextdatareceiver.JSONManager;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Devices;
+import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.SecurityViolation;
+import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.ThreatClue;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
@@ -138,17 +140,42 @@ public class Rt2aeGlobal {
 		eu.musesproject.server.eventprocessor.correlator.model.owl.Clue factClue = new eu.musesproject.server.eventprocessor.correlator.model.owl.Clue();
 		Clue composedClue = ClueComposer.composeClue(event, name, type);
 		//TODO Complete the composition of threat attributes, based on the information of the event
+		
+		//Associated access request
+		EventType eventType = dbManager.getEventTypeByKey(event.getType());
+		int eventTypeIndex = eventType.getEventTypeId();
+		SimpleEvents associatedEvent = dbManager.findLastEventByEventType(eventTypeIndex);
+		
+		//TODO get access request and associate it to clue, for it to be stored
+		List<eu.musesproject.server.entity.AccessRequest> list = dbManager.findAccessRequestByEventId(associatedEvent.getEventId());
+		if (list.size()>0){
+			eu.musesproject.server.entity.AccessRequest request = list.get(list.size()-1);
+			if (request !=null)
+				composedClue.setRequestId(Integer.valueOf(request.getAccessRequestId()));
+			storeClue(composedClue, request);
+		}
 		clues.add(composedClue);
 		factClue.setName(composedClue.getName());
 		factClue.setTimestamp(composedClue.getTimestamp());
 		factClue.setEvent_date(new Date(System.currentTimeMillis()));
-		storeClue(composedClue);
+
 		return factClue;
 	}
 	
-	private void storeClue(Clue composedClue) {
+	private void storeClue(Clue composedClue, eu.musesproject.server.entity.AccessRequest request) {
 
 		ThreatClue entityClue = new ThreatClue();
+		String name = composedClue.getName();
+		if (name.length()>50){
+			name = composedClue.getName().substring(0,49);
+		}
+		entityClue.setName(name);
+		entityClue.setModification(new Date());
+		entityClue.setThreatType(dbManager.getThreatTypebyType(composedClue.getType()));
+		entityClue.setAccessRequest(request);
+		entityClue.setAsset(dbManager.findAssetById(String.valueOf(request.getAssetId())));
+		entityClue.setSimpleEvent(dbManager.findEventByEventId(String.valueOf(request.getEventId())));
+		dbManager.addThreatClue(entityClue);
 		
 	}
 

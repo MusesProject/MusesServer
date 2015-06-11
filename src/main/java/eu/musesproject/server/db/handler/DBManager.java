@@ -70,6 +70,9 @@ import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Sources;
 import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Threat;
+import eu.musesproject.server.entity.ThreatClue;
+import eu.musesproject.server.entity.ThreatType;
+
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
@@ -2002,6 +2005,30 @@ public class DBManager {
 		} 
 		return event;		
 	}
+	public SimpleEvents findEventByEventId(String eventId) {
+		Session session = null;
+		Query query = null;
+		SimpleEvents event = null;
+		try {
+		
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("SimpleEvents.findEventByEventId").
+						setString("eventId", eventId);
+				query.setMaxResults(1);
+			
+			if (query!=null) {
+				List<SimpleEvents> events = query.list();
+				if (events.size() > 0) {
+					event = events.get(0);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		} 
+		return event;		
+	}
 	
 	/**
      * Get SecurityViolations list by event_id
@@ -2724,6 +2751,49 @@ public class DBManager {
 		return null;
 	}
 	
+    /**
+     * Get ThreatType object by type 
+     * @param key
+     * @return ThreatType
+     */
+    
+    public ThreatType getThreatTypebyType(String type) {
+    	Session session = null;
+		Query query = null;
+		ThreatType tType = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("ThreatType.findByType").setString("type", type);
+			if (query!=null) {
+				tType = (ThreatType) query.uniqueResult();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return tType;
+    }
+    
+	public void addThreatClue(ThreatClue entityClue) {
+		Session session = null;
+		Transaction trans = null;
+
+		try {
+			session = getSessionFactory().openSession();
+			trans = session.beginTransaction();
+			session.save(entityClue);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans != null)
+				trans.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session != null)
+				session.close();
+		}
+
+	}
 	public static void main (String [] arg){
 		
 		DBManager dbManager = new DBManager(ModuleType.RT2AE);
