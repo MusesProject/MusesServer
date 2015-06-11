@@ -34,23 +34,6 @@ public class TestDataMiner {
 	public  static void setUpAfterClass() throws Exception {
 
 	}
-
-	@Test
-	public void testGetSimpleEvents() {
-		
-		List<SimpleEvents> List = dm.getSimpleEvents();
-			
-		if (List.size()>0){
-			Iterator<SimpleEvents> i = List.iterator();
-			while(i.hasNext()){
-				SimpleEvents event = i.next();
-				assertNotNull(event);
-			}
-		}else{
-			fail("There are not simple events in the database, please create some events first.");
-		}					
-		
-	}
 	
 	/**
 	 * testDataMiner - JUnit test which tests the complete functionality of the Data Miner, obtaining the final output
