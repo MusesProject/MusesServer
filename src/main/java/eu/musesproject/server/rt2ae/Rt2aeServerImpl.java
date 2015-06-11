@@ -48,6 +48,7 @@ import eu.musesproject.server.risktrust.Decision;
 import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceSecurityState;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
+import eu.musesproject.server.risktrust.OpportunityDescriptor;
 import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.PolicyCompliance;
 import eu.musesproject.server.risktrust.Probability;
@@ -56,6 +57,7 @@ import eu.musesproject.server.risktrust.Rt2ae;
 import eu.musesproject.server.risktrust.SecurityIncident;
 import eu.musesproject.server.risktrust.SolvingRiskTreatment;
 import eu.musesproject.server.risktrust.Threat;
+import eu.musesproject.server.risktrust.TrustValue;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
 import eu.musesproject.server.scheduler.ModuleType;
@@ -230,7 +232,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			decision.setInformation(policyCompliance.getReason());
 			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Disable Accessibility")){
-				decision.setSolving_risktreatment(SolvingRiskTreatment.ACCESSIBILITY);	
+				decision.setSolving_risktreatment(8);	
 			}
 			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
 			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
@@ -737,7 +739,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+				decision.setSolving_risktreatment(1);
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
 				
@@ -852,7 +854,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+				decision.setSolving_risktreatment(4);
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS:Your Antivirus is not running on your device,please launch your Antivirus in order to protect your device");
 				
@@ -963,7 +965,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				}
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_NETWORK);
+				decision.setSolving_risktreatment(2);
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
@@ -2113,7 +2115,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-				decision.setSolving_risktreatment(SolvingRiskTreatment.VIRUS_FOUND);
+				decision.setSolving_risktreatment(1);
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS:Your device seems to have a Virus,please scan you device with an Antivirus or use another device");
 				
@@ -2228,7 +2230,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
-				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
+				decision.setSolving_risktreatment(4);
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS:Your Antivirus is not running on your device,please launch your Antivirus in order to protect your device");
 				
@@ -2339,7 +2341,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				}
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
-				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSECURE_NETWORK);
+				decision.setSolving_risktreatment(2);
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 				logger.info("Decision: MAYBE_ACCESS");
 				logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
@@ -4686,7 +4688,68 @@ public class Rt2aeServerImpl implements Rt2ae {
 		
 	}
 	
+	/**
+	 * Updates trust in user given negative outcome.
+	 * 
+	 * @param user1
+	 *            the user1
+	 * @param opportunityDescriptor
+	 *            the opportunity descriptor
+	 */
+	public void updatesTrustInUserGivenNegativeOutcome(User user1,
+			OpportunityDescriptor opportunityDescriptor) {
+		eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(user1.getUsername());
+		List<eu.musesproject.server.entity.Users> users = new ArrayList<eu.musesproject.server.entity.Users>();
+
+		UserTrustValue usertrustvalue = new UserTrustValue();
+		usertrustvalue.setValue(0.0);
+		if(user1.getUsertrustvalue().getValue() <= 0)
+			user1.setUsertrustvalue(usertrustvalue );
+		else{
+			UserTrustValue t = new UserTrustValue();//new TrustValue((user1.getUsertrustvalue().getValue() - 0.05));
+			t.setValue(user1.getUsertrustvalue().getValue()-0.05);
+			
+			user1.setUsertrustvalue(t);
+			
+		}
+		musesUser.setTrustValue(user1.getUsertrustvalue().getValue());
+		users.add(musesUser);
+		dbManager.setUsers(users);
+	}
+
+	/**
+	 * Updates trust in user given positive outcome.
+	 * 
+	 * @param user1
+	 *            the user1
+	 * @param opportunityDescriptor
+	 *            the opportunity descriptor
+	 */
+	public void updatesTrustInUserGivenPositiveOutcome(User user1,
+			OpportunityDescriptor opportunityDescriptor) {
+		//System.out.println("Former users trust value is: " + user1.getUsertrustvalue().getValue());
+		eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(user1.getUsername());
+		List<eu.musesproject.server.entity.Users> users = new ArrayList<eu.musesproject.server.entity.Users>();
+
+		UserTrustValue usertrustvalue = new UserTrustValue();
+		usertrustvalue.setValue(1.0);
+		if(user1.getUsertrustvalue().getValue() >= 1)
+			user1.setUsertrustvalue(usertrustvalue);
+		else{
+			UserTrustValue t = new UserTrustValue();//TrustValue t = new TrustValue((user1.getTrustValue().getValue() + 0.1));
+			t.setValue(user1.getUsertrustvalue().getValue()+0.1);
+
+			user1.setUsertrustvalue(t);
+			}
+		System.out.println("New users trust value is: " + user1.getUsertrustvalue().getValue());
+		//GuiMain.getPersistenceManager().setSimUsers(new ArrayList<SimUser>(Arrays.asList(user1)));
+		
+		musesUser.setTrustValue(user1.getUsertrustvalue().getValue());
+		users.add(musesUser);
+		dbManager.setUsers(users);
+	}
 	
+		
 	
 	
 
