@@ -181,7 +181,8 @@ public class DataMiner {
 				}
 				
 				/* Checking the device security state of the device */
-				logEntry.setDeviceSecurityState(BigInteger.ZERO);
+				Devices device = event.getDevice();				
+				logEntry.setDeviceSecurityState(BigInteger.valueOf((long) device.getTrustValue()));
 				
 				/* Looking for the risk treatment in case the event caused a security violation */
 				String riskTreatment = securityViolations.get(0).getMessage();
@@ -213,7 +214,9 @@ public class DataMiner {
 	/**
 	  * minePatterns - Method for filling the patterns_krs table in the database. Each row of this table consists of all interesting information related to an event.
 	  *
-	  * @param none 
+	  * @param event The simple event over which the data mining is going to be performed 
+	  * 
+	  * @return pattern The built pattern to be stored in the database
 	  * 
 	  */
 	public PatternsKrs minePatterns(SimpleEvents event){
@@ -223,11 +226,11 @@ public class DataMiner {
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
-		String decisionID = "558";
+		String decisionID = null;
 		String label;
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
 		if (accessRequests.size() > 0) {
-			//decisionID = accessRequests.get(0).getDecisionId().toString();
+			decisionID = accessRequests.get(0).getDecisionId().toString();
 			List<Decision> decisions = null;
 			decisions = dbManager.findDecisionById(decisionID);
 			if (decisions != null) {
@@ -461,32 +464,38 @@ public class DataMiner {
 		// "screentimeoutinseconds":"300","musesdatabaseexists":"true",
 		// "isrooted":"false","accessibilityenabled":"false",
 		// "istrustedantivirusinstalled":"false","ipaddress":"172.17.1.52"}}
-		String configFormat = "\\\"?ispasswordprotected\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?\\w+\\\"?\\:\\\"?\\w+\\\"?,\\s?\\\"?screentimeoutinseconds\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?\\w+\\\"?\\:\\\"?\\w+\\\"?,\\s?\\\"?isrooted\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?accessibilityenabled\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?istrustedantivirusinstalled\\\"?\\:\\\"?(\\w+)\\\"?";
+		String configFormat = "\\\"?(\\w+)\\\"?[\\:\\=]\\\"?(\\w+)\\\"?";
 		Pattern configPattern = Pattern.compile(configFormat);
 		Matcher configMatcher = configPattern.matcher(configData);
-		if (configMatcher.find()) {
-			if (configMatcher.group(1).equalsIgnoreCase("true")) {
-				pattern.setDeviceHasPassword(1);
-			} else {
-				pattern.setDeviceHasPassword(0);
-			}
-			BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
-			pattern.setDeviceScreenTimeout(time);
-			if (configMatcher.group(3).equalsIgnoreCase("true")) {
-				pattern.setDeviceIsRooted(1);;
-			} else {
-				pattern.setDeviceIsRooted(0);
-			}
-			if (configMatcher.group(4).equalsIgnoreCase("true")) {
-				pattern.setDeviceHasAccessibility(1);;
-			} else {
-				pattern.setDeviceHasAccessibility(0);
-			}
-			if (configMatcher.group(4).equalsIgnoreCase("true")) {
-				pattern.setDeviceHasAntivirus(1);
-			} else {
-				pattern.setDeviceHasAntivirus(0);
-			}
+		while (configMatcher.find()) {
+			if (configMatcher.group(1).equalsIgnoreCase("ispasswordprotected")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceHasPassword(1);
+				} else {
+					pattern.setDeviceHasPassword(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("screentimeoutinseconds")) {
+				BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
+				pattern.setDeviceScreenTimeout(time);
+			} else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceIsRooted(1);;
+				} else {
+					pattern.setDeviceIsRooted(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("accessibilityenabled")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceHasAccessibility(1);;
+				} else {
+					pattern.setDeviceHasAccessibility(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("istrustedantivirusinstalled")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					pattern.setDeviceHasAntivirus(1);
+				} else {
+					pattern.setDeviceHasAntivirus(0);
+				}
+			}			
 			
 		}
         

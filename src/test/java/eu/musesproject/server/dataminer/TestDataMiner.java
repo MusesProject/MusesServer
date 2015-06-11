@@ -67,10 +67,9 @@ public class TestDataMiner {
 			Iterator<SimpleEvents> i = list.iterator();
 			while(i.hasNext()){
 				SimpleEvents event = i.next();
-				//if (Integer.parseInt(event.getEventId()) < 18) { continue; }
 				PatternsKrs pattern = dm.minePatterns(event);
-				patternList.add(pattern);
-				assertNotNull(pattern);				
+				assertNotNull(pattern);
+				patternList.add(pattern);	
 			}
 			dbManager.setPatternsKRS(patternList);
 		}else{
