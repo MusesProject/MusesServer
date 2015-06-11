@@ -368,7 +368,7 @@ rule "AccessRequest Detection open asset type internal secure wifi"
 
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type internal secure wifi","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type internal secure wifi","ALLOW","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type internal secure wifi");
@@ -796,7 +796,7 @@ rule "Blacklist app 00001"
 
 	rule "Antivirus not running"
 	no-loop true
-	salience 65000
+	salience 0
 	dialect "mvel"
 	when
 		e: ChangeSecurityPropertyEvent(isTrustedAntivirusInstalled==false)

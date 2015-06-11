@@ -37,6 +37,7 @@ import eu.musesproject.server.contextdatareceiver.JSONManager;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.SecurityViolation;
+import eu.musesproject.server.entity.ThreatClue;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.composers.AccessRequestComposer;
 import eu.musesproject.server.eventprocessor.composers.AdditionalProtectionComposer;
@@ -141,9 +142,16 @@ public class Rt2aeGlobal {
 		factClue.setName(composedClue.getName());
 		factClue.setTimestamp(composedClue.getTimestamp());
 		factClue.setEvent_date(new Date(System.currentTimeMillis()));
+		storeClue(composedClue);
 		return factClue;
 	}
 	
+	private void storeClue(Clue composedClue) {
+
+		ThreatClue entityClue = new ThreatClue();
+		
+	}
+
 	public AdditionalProtection composeAdditionalProtection(eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest request, Event event){
 		logger.info("[composeAdditionalProtection]");
 		AdditionalProtection additionalProtection = AdditionalProtectionComposer.composeAdditionalProtection(request.getId(),event);		
@@ -493,6 +501,11 @@ public class Rt2aeGlobal {
 					//compliance.setReason("Action allowed");
 					compliance.setReason(message);
 				}
+			}else{
+				compliance.setResult(PolicyCompliance.MAYBE);
+				compliance.setCompliance(false);
+				compliance.setReason(message);
+				compliance.setCondition(condition);
 			}
 		}else if (mode.equals("DENY")){
 			if (event instanceof AppObserverEvent){
@@ -707,7 +720,7 @@ public class Rt2aeGlobal {
 		
 		storeComplexEvent(event, message, mode, condition, composedRequest.getEventId());
 		
-		PolicyCompliance policyCompliance = policyCompliance(composedRequest, message, event, mode, condition);
+		PolicyCompliance policyCompliance = policyCompliance(composedRequest, key, event, mode, condition);
 		try{
 			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		}catch(javax.persistence.EntityExistsException e){

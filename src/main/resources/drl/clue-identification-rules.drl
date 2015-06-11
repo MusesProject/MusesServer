@@ -128,6 +128,24 @@ rule "Clue-identification-00000"
 		clue.setDeviceId(e.getDeviceId());
 		insert(clue);
 	end
+
+	rule "Clue-Antivirus not running"
+	no-loop true
+	salience 65000
+	dialect "mvel"
+	when
+		e: ChangeSecurityPropertyEvent(isTrustedAntivirusInstalled==false)
+		not AccessRequest(event=="Antivirus not running")
+
+	then
+		StatusGlobal.log("3.A new clue has been identified, associated to event:"+e.getTimestamp());
+		StatusGlobal.log("Identifier:"+e.getTimestamp());
+		Clue clue = Rt2aeGlobal.composeClue(e,"Antivirus is not running", ThreatOntology.DATA_LEAKAGE);
+		StatusGlobal.log("CREATED CLUE:"+clue.getTimestamp());
+		//clue.setUsername(e.getUsername());
+		//clue.setDeviceId(e.getDeviceId());
+		insert(clue);
+	end	
 	
 	
 	rule "Device-security-state-00001"
