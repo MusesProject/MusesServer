@@ -231,8 +231,73 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			decision.setInformation(policyCompliance.getReason());
 			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Disable Accessibility")){
-				decision.setSolving_risktreatment(8);	
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ACCESSIBILITY);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("Antivirus not running")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING);
 			}
+			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Detection open asset type confidential unsecure wifi")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.OPEN_CONFIDENTIAL_ASSET_UNSECURE_WIFI);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Detection open asset type internal unsecure wifi")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.OPEN_INTERNAL_ASSET_UNSECURE_WIFI);
+			}
+			
+			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Detection open asset type strictly confidential unsecure wifi")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.OPEN_STRICTLY_CONFIDENTIAL_ASSET_UNSECURE_WIFI);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("Blacklist app 00001")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.BLACKLIST_APP_0001);
+			}
+			
+			if (policyCompliance.getReason().equalsIgnoreCase("Blacklist app 00002")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.BLACKLIST_APP_0002);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Email with Attachments")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.EMAIL_WITH_ATTACHEMENT);
+			}
+			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Change Security Property-password-protected")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.CHANGE_SECURITY_PROPERTY_PASSWORD_PROTECTED);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Change Security Property-screen-timeout")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.CHANGE_SECURITY_PROPERTY_SCREEN_TIMEOUT);
+			}
+			
+			if (policyCompliance.getReason().equalsIgnoreCase("Required application list")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.REQUIRED_APPLICATION_LIST);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Detection Open File in a monitored folder")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.DETECTION_OPEN_FILE_MONITORED_FOLDER);
+			}
+			
+			if (policyCompliance.getReason().equalsIgnoreCase("Rooted device")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ROOTED_DEVICE);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("Blacklist generic open")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.BLACKLIST_GENERIC_OPEN);
+			}
+			if (policyCompliance.getReason().equalsIgnoreCase("Unsafe Storage")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.UNSAFE_STORAGE);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("Install not allowed application")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.INSTALL_NOT_ALLOWED_APPLICATION);
+			}
+			
+			if (policyCompliance.getReason().equalsIgnoreCase("Zone 1 application restriction")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.ZONE_1_APPLICATION_RESTRICTION);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("Open asset in restricted zone 1")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.OPEN_ASSET_IN_RESTRICTED_ZONE_1);
+			}
+			
+			if (policyCompliance.getReason().equalsIgnoreCase("User entered password")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.USER_ENTERED_PASSWORD);	
+			} 
+			if (policyCompliance.getReason().equalsIgnoreCase("Emas Add Note")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.EMAS_ADD_NOTE);
+			}
+			
+			
 			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
 			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 			eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
