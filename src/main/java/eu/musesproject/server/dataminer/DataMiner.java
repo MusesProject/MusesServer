@@ -26,8 +26,6 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
-import static org.junit.Assert.fail;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -145,7 +143,7 @@ public class DataMiner {
 			}
 						
 		} else {
-			fail("There are no patterns in the table.");
+			logger.error("There are no patterns in the table.");
 		}
 		
 		
