@@ -359,11 +359,7 @@ public class DataMiner {
 		Date eventDate = event.getDate();
 		Time eventTime = event.getTime();
 		Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
-		if (eventDetection.toString() != null) {
-			pattern.setEventTime(eventDetection);
-		} else {
-			pattern.setEventTime(null);
-		}
+		pattern.setEventTime(eventDetection);
 		
 		/* Was MUSES in silent or verbose mode? */		
 		if (eventDetection.getDay() < 16 && eventDetection.getMonth() <= 3) {
@@ -456,41 +452,43 @@ public class DataMiner {
 		}
 		
 		/* Rest of parameters that have to be obtained from JSON */
-		// This solution of reading from the csv is strictly strictly processing the data from trials #1
-		File configFile = null;
-		FileReader fr = null;
-		BufferedReader br = null;
-		try {		
-			configFile = new File ("/home/paloma/MUSES/Trials/devicesconfiguration.csv");
-			fr = new FileReader (configFile);
-			br = new BufferedReader(fr);
-			String line;
-	        while((line=br.readLine())!=null) {
-	        	String[] content = line.split(",");
-	        	/* content[1] = "ispasswordprotected"
-	        	 * content[2] = "isrooted"
-	        	 * content[3] = "screentimeoutinseconds"
-	        	 * content[4] = "istrustedantivirusinstalled"
-	        	 * content[5] = "accessibilityenabled"
-	        	 * */
-	        	if (content[0].equals(userDeviceId.getDeviceId())) {
-	        		pattern.setDeviceHasPassword(Integer.parseInt(content[1]));
-	        		BigInteger time = BigInteger.valueOf(Integer.parseInt(content[3]));
-	        		pattern.setDeviceScreenTimeout(time);
-	        		pattern.setDeviceHasAccessibility(Integer.parseInt(content[5]));
-	        		pattern.setDeviceIsRooted(Integer.parseInt(content[2]));
-	        	}
-	        }
-		} catch(Exception e) {
-			e.printStackTrace();
-	    }
-		try{                   
-            if( null != fr ){  
-               fr.close();    
-            }                 
-         }catch (Exception e2){
-            e2.printStackTrace();
-         }
+		/* Device configuration has to be taken from the last SECURITY_PROPERTY_CHANGED event */
+		SimpleEvents configEvent = dbManager.findDeviceConfigurationBySimpleEvent(Integer.parseInt(userDeviceId.getDeviceId()), eventDate.toString());
+		String configData = configEvent.getData();
+		// configData format is like:
+		// {event=security_property_changed, properties={"id":"1",
+		// "ispasswordprotected":"true","isrootpermissiongiven":"false",
+		// "screentimeoutinseconds":"300","musesdatabaseexists":"true",
+		// "isrooted":"false","accessibilityenabled":"false",
+		// "istrustedantivirusinstalled":"false","ipaddress":"172.17.1.52"}}
+		String configFormat = "\\\"?ispasswordprotected\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?\\w+\\\"?\\:\\\"?\\w+\\\"?,\\s?\\\"?screentimeoutinseconds\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?\\w+\\\"?\\:\\\"?\\w+\\\"?,\\s?\\\"?isrooted\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?accessibilityenabled\\\"?\\:\\\"?(\\w+)\\\"?,\\s?\\\"?istrustedantivirusinstalled\\\"?\\:\\\"?(\\w+)\\\"?";
+		Pattern configPattern = Pattern.compile(configFormat);
+		Matcher configMatcher = configPattern.matcher(configData);
+		if (configMatcher.find()) {
+			if (configMatcher.group(1).equalsIgnoreCase("true")) {
+				pattern.setDeviceHasPassword(1);
+			} else {
+				pattern.setDeviceHasPassword(0);
+			}
+			BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
+			pattern.setDeviceScreenTimeout(time);
+			if (configMatcher.group(3).equalsIgnoreCase("true")) {
+				pattern.setDeviceIsRooted(1);;
+			} else {
+				pattern.setDeviceIsRooted(0);
+			}
+			if (configMatcher.group(4).equalsIgnoreCase("true")) {
+				pattern.setDeviceHasAccessibility(1);;
+			} else {
+				pattern.setDeviceHasAccessibility(0);
+			}
+			if (configMatcher.group(4).equalsIgnoreCase("true")) {
+				pattern.setDeviceHasAntivirus(1);
+			} else {
+				pattern.setDeviceHasAntivirus(0);
+			}
+			
+		}
         
 		/* If the user is sending an email */
 		/* Data in event_type_if = 11
@@ -534,7 +532,7 @@ public class DataMiner {
 			Matcher matcherWifi = wifiPattern.matcher(event.getData());
 			if (matcherWifi.find()) {
 				pattern.setWifiEncryption(matcherWifi.group(1));
-				if(matcherWifi.group(2).contentEquals("true")) {
+				if(matcherWifi.group(2).equalsIgnoreCase("true")) {
 					pattern.setBluetoothConnected(1);
 				} else {
 					pattern.setBluetoothConnected(0);

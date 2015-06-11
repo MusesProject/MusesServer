@@ -34,23 +34,6 @@ public class TestDataMiner {
 	public  static void setUpAfterClass() throws Exception {
 
 	}
-
-	@Test
-	public void testGetSimpleEvents() {
-		
-		List<SimpleEvents> List = dm.getSimpleEvents();
-			
-		if (List.size()>0){
-			Iterator<SimpleEvents> i = List.iterator();
-			while(i.hasNext()){
-				SimpleEvents event = i.next();
-				assertNotNull(event);
-			}
-		}else{
-			fail("There are not simple events in the database, please create some events first.");
-		}					
-		
-	}
 	
 	/**
 	  * testRetrieveUnprocessed - JUnit test case whose aim is to test unprocessed data retrieval from the database
@@ -76,7 +59,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dm.getSimpleEvents();
 		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
@@ -84,6 +67,7 @@ public class TestDataMiner {
 			Iterator<SimpleEvents> i = list.iterator();
 			while(i.hasNext()){
 				SimpleEvents event = i.next();
+				//if (Integer.parseInt(event.getEventId()) < 18) { continue; }
 				PatternsKrs pattern = dm.minePatterns(event);
 				patternList.add(pattern);
 				assertNotNull(pattern);				
@@ -92,7 +76,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}*/
+	}
 	
 	/**
 	  * testBuildInstancesFromPatterns - JUnit test case whose aim is to test if instances are being properly built from DB data
@@ -100,7 +84,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testBuildInstancesFromPatterns() {		
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		if (patternList.size()>0){
@@ -119,7 +103,7 @@ public class TestDataMiner {
 		} else {
 			fail("There are no patterns in the table.");
 		}
-	}*/
+	}
 		
 	/**
 	  * testDataClassification - JUnit test case whose aim is to test execution of current classification algorithms over the built dataset
@@ -138,11 +122,12 @@ public class TestDataMiner {
 				for (int i = 0; i < data.numAttributes(); i++) {
 					indexes[i] = i;
 				}
+				/* Uncomment to compare accuracy results before/after performing frature selection */
 				//System.out.println("=== Results before feature selection ===");
-				//dm.dataClassification(data, indexes);
+				dm.dataClassification(data, indexes);
 				if (indexes.length > 0) {
-					System.out.println("=== Results after feature selection ===");
-					dm.dataClassification(data, redIndexes);
+					//System.out.println("=== Results after feature selection ===");
+					//dm.dataClassification(data, redIndexes);
 				} else {
 					fail("Feature selection not being properly performed");
 				}

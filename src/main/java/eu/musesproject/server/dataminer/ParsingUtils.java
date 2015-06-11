@@ -77,7 +77,7 @@ public class ParsingUtils {
 			while (JRipMatcher.find()) {
 				if(JRipMatcher.group(1).contentEquals("label")) {
 					// Label
-					rule += " THEN ";
+					rule.concat(" THEN ");
 					rule += JRipMatcher.group(3);
 					ruleList.add(rule);
 				} else {
