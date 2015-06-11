@@ -45,9 +45,9 @@ import java.util.List;
     			query="SELECT s FROM SimpleEvents s where s.user = :user_id and (s.date = :day and s.time > :time) or s.date > :day"),
     @NamedQuery(name="SimpleEvents.findLastEventByEventType", 
     			query="SELECT s FROM SimpleEvents s where s.eventType = :event_type_id"),
-    @NamedQuery(name="SimpleEvents.findDeviceConfig", 
-    			query="SELECT s FROM SimpleEvents s where s.eventType = :event_type_id and s.device = :device_id and s.date <= :day")
-})
+    @NamedQuery(name="SimpleEvents.deleteSimpleEventByEventId", 
+    			query="delete FROM SimpleEvents s where s.eventId = :event_id")
+})	
 
 public class SimpleEvents implements Serializable {
 	private static final long serialVersionUID = 1L;

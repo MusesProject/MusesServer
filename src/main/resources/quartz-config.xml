@@ -19,7 +19,7 @@
 				<name>daily_checker</name>
 				<job-name>eraser</job-name>
 				<job-group>database_accessors</job-group>
-				<cron-expression>0/30 * * * * ?</cron-expression>
+				<cron-expression>0 15 10 ? * *</cron-expression>
 			</cron>
 		</trigger>
 	</schedule>

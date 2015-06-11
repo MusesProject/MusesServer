@@ -32,20 +32,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.log4j.Logger;
-
 import eu.musesproject.client.model.contextmonitoring.Event;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.connectionmanager.IConnectionManager;
 import eu.musesproject.server.connectionmanager.StubConnectionManager;
 import eu.musesproject.server.contextdatareceiver.formatting.EventFormatter;
 import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
-import eu.musesproject.server.dataminer.DataMiner;
 import eu.musesproject.server.db.eventcorrelation.StubEventCorrelationData;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Devices;
-import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
@@ -64,7 +60,6 @@ import eu.musesproject.server.scheduler.ModuleType;
 public class UserContextEventDataReceiver {
 	
 	private static DBManager dbManager = new DBManager(ModuleType.EP);
-	private static DataMiner dm = new DataMiner();
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static UserContextEventDataReceiver INSTANCE = new UserContextEventDataReceiver();
 	private StubEventCorrelationData data = null;
@@ -172,7 +167,6 @@ public class UserContextEventDataReceiver {
 		// Database insertion
 
 		List<SimpleEvents> list = new ArrayList<SimpleEvents>();
-		List<PatternsKrs> pList = new ArrayList<PatternsKrs>();
 		SimpleEvents event = new SimpleEvents();
 		event.setEventType(dbManager.getEventTypeByKey(eventType));
 		if (event.getEventType() == null){
@@ -207,10 +201,6 @@ public class UserContextEventDataReceiver {
 		event.setRT2AE_can_access(1);
 		list.add(event);
 		dbManager.setSimpleEvents(list);
-		dm.retrievePendingEvents(list);
-		PatternsKrs pattern = dm.minePatterns(event);
-		pList.add(pattern);
-		dbManager.setPatternsKRS(pList);
 
 	}
 
