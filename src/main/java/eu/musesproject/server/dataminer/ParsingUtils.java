@@ -628,5 +628,30 @@ public class ParsingUtils {
 		}
 		
 	}
+	
+	public boolean isAlike (String rule1, String rule2) {
+		
+		boolean same = false;
+		
+		String[] sidesRule1 = rule1.split("\\sTHEN\\s");
+		String[] sidesRule2 = rule2.split("\\sTHEN\\s");
+		
+		if (sidesRule1.length == 2 && sidesRule2.length == 2) {
+			String[] conditionsRule1 = sidesRule1[0].split("\\sAND\\s?");
+			String labelRule1 = sidesRule1[1];
+			String[] conditionsRule2 = sidesRule2[0].split("\\sAND\\s?");
+			String labelRule2 = sidesRule2[1];
+			
+			if (conditionsRule1.length == conditionsRule1.length) {
+				
+			}
+			
+		} else {
+			logger.error("Rules do not have the proper format");
+		}
+		
+		return same;
+		
+	}
 
 }
