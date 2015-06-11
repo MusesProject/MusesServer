@@ -5,8 +5,16 @@
  */
 package eu.musesproject.server.knowledgecompiler;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import eu.musesproject.server.dataminer.DataMiner;
+import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.SecurityRules;
 import eu.musesproject.server.knowledgerefinementsystem.model.Message;
 import eu.musesproject.server.knowledgerefinementsystem.model.Pattern;
+import eu.musesproject.server.scheduler.ModuleType;
 
 /**
  * Class KnowledgeCompiler
@@ -16,6 +24,9 @@ import eu.musesproject.server.knowledgerefinementsystem.model.Pattern;
  */
 
 public class KnowledgeCompiler {
+	
+	private static DBManager dbManager = new DBManager(ModuleType.KRS);
+	private Logger logger = Logger.getLogger(DataMiner.class);
 	
 	/**
 	 * Info DM
@@ -31,7 +42,10 @@ public class KnowledgeCompiler {
 	 */
 	
 	public void compileNewRules(){
-
+		
+		List<SecurityRules> dmRules = dbManager.getSecurityRulesByStatus("VALIDATED");
+		
+		
 	}	
 	
 	/**
