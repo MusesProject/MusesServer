@@ -1637,7 +1637,7 @@ public class DBManager {
 	}
 	
     /**
-     * Get MUSES Config
+     * Get most recent MUSES Config
      * @return MusesConfig
      */
 	public MusesConfig getMusesConfig() {
