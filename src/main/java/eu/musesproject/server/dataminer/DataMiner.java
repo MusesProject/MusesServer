@@ -182,7 +182,10 @@ public class DataMiner {
 				
 				SystemLogKrs logEntry = new SystemLogKrs();
 				SimpleEvents event = i.next();
-				BigInteger eventID = new BigInteger(event.getEventId());
+				BigInteger eventID = null;
+				if ((event != null)&&(event.getEventId() != null)){
+					eventID = new BigInteger(event.getEventId());
+				}	
 				logEntry.setCurrentEventId(eventID);
 				
 				//logger.info(eventID);
@@ -203,6 +206,10 @@ public class DataMiner {
 				
 				/* Looking for decision_id in table access_request */
 				BigInteger decisionID = BigInteger.ZERO;
+	
+				if (eventID == null){
+					eventID = BigInteger.valueOf(0);// Control added by S2
+				}
 				List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID.toString());
 				if (accessRequests.size() == 1) {
 					decisionID = accessRequests.get(0).getDecisionId();
@@ -237,7 +244,9 @@ public class DataMiner {
 				logEntry.setDeviceSecurityState(BigInteger.valueOf((long) device.getTrustValue()));
 				
 				/* Looking for the risk treatment in case the event caused a security violation */
-				String riskTreatment = securityViolations.get(0).getMessage();
+				String riskTreatment = null;
+				if (securityViolations.size()>0)
+					riskTreatment = securityViolations.get(0).getMessage();
 				if (riskTreatment != null){
 					logEntry.setRiskTreatment(riskTreatment);
 				} else {
@@ -323,7 +332,11 @@ public class DataMiner {
 				
 		/* Finding the type of the event */
 		EventType eventTypeId = event.getEventType();
-		String eventType = eventTypeId.getEventTypeKey();
+		String eventType = null;
+		if (eventTypeId != null){
+			eventType = eventTypeId.getEventTypeKey();
+		}
+		
 		if (eventType != null) {
 			pattern.setEventType(eventType);
 		} else {
@@ -331,7 +344,10 @@ public class DataMiner {
 		}
 		
 		/* Is the event a simple event or a complex event? */
-		String eventLevel = eventTypeId.getEventLevel();
+		String eventLevel = null;
+		if (eventTypeId != null){
+			eventLevel = eventTypeId.getEventLevel();
+		}	
 		if (eventLevel != null) {
 			pattern.setEventLevel(eventLevel);
 		} else {
@@ -438,7 +454,10 @@ public class DataMiner {
 		
 		/* Device characteristics */
 		// OS
-		String userDeviceOS = userDeviceId.getOS_name().concat(userDeviceId.getOS_version());
+		String userDeviceOS = null;
+		if (userDeviceId.getOS_name()!=null){
+			userDeviceOS = userDeviceId.getOS_name().concat(userDeviceId.getOS_version());
+		}	
 		if (userDeviceOS != null) {
 			pattern.setDeviceOS(userDeviceOS);
 		} else {
@@ -446,7 +465,7 @@ public class DataMiner {
 		}
 		// Certificate of device
 		byte[] deviceCertificate = userDeviceId.getCertificate();
-		if (deviceCertificate.length > 0) {
+		if ((deviceCertificate != null) && (deviceCertificate.length > 0)) {
 			pattern.setDeviceHasCertificate(1);
 		} else {
 			pattern.setDeviceHasCertificate(0);
@@ -560,7 +579,8 @@ public class DataMiner {
 		 * "cc":"other.listener@generic.com, 2other.listener@generic.com"}}
 		*/
 		
-		if (eventTypeId.getEventTypeId() == 11) {
+		
+		if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
 			String mailJSON =  	"\\\"to\\\"\\:\\\"(.*)\\\",\\\"noAttachments\\\"\\:\\\"(.*)\\\",\\\"subject\\\"\\:\\\"(.*)\\\",\\\"bcc\\\"\\:\\\"(.*)\\\",\\\"attachmentInfo\\\"\\:\\\"(.*)\\\",\\\"from\\\"\\:\\\"(.*)\\\",\\\"cc\\\"\\:\\\"(.*)\\\"";
 			Pattern mailPattern = Pattern.compile(mailJSON);
 			Matcher matcherMail = mailPattern.matcher(event.getData());
@@ -587,7 +607,7 @@ public class DataMiner {
 		 * bluetoothconnected=FALSE, wifienabled=true, wifineighbors=6, hiddenssid=false, 
 		 * networkid=1, wificonnected=true, airplanemode=false}
 		 */
-		if (eventTypeId.getEventTypeId() == 8) {
+		if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 8)) {
 			String wifiJSON = "\\{\\w+\\=\\d+,\\swifiencryption\\=([\\[\\w\\-\\+\\]]*),\\s\\w+=[\\w\\:]+,\\sbluetoothconnected\\=(\\w+),\\swifienabled\\=(\\w+),\\swifineighbors\\=(\\d+),\\shiddenssid\\=(\\w+),\\s\\w+\\=\\w+,\\swificonnected\\=(\\w+)";
 			Pattern wifiPattern = Pattern.compile(wifiJSON);
 			Matcher matcherWifi = wifiPattern.matcher(event.getData());
