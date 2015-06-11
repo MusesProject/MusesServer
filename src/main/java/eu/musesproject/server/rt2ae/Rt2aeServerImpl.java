@@ -4695,7 +4695,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	 *            the user1
 	 * @param opportunityDescriptor
 	 *            the opportunity descriptor
-	 */
+	
 	public void updatesTrustInUserGivenNegativeOutcome(User user1,
 			OpportunityDescriptor opportunityDescriptor) {
 		eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(user1.getUsername());
@@ -4724,7 +4724,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	 *            the user1
 	 * @param opportunityDescriptor
 	 *            the opportunity descriptor
-	 */
+	 
 	public void updatesTrustInUserGivenPositiveOutcome(User user1,
 			OpportunityDescriptor opportunityDescriptor) {
 		//System.out.println("Former users trust value is: " + user1.getUsertrustvalue().getValue());
@@ -4749,7 +4749,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		dbManager.setUsers(users);
 	}
 	
-		
+		*/
 	
 	
 
