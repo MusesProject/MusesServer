@@ -229,7 +229,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			}
 
-			decision.setInformation(policyCompliance.getReason());
+			decision.setInformation(policyCompliance.getInformation());
 			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Disable Accessibility")){
 				decision.setSolving_risktreatment(SolvingRiskTreatment.ACCESSIBILITY);	
 			} 
