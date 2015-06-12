@@ -28,17 +28,20 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import eu.musesproject.server.connectionmanager.ComMainServlet;
+import eu.musesproject.server.dataminer.DataMiner;
 
 public class DailyJob implements Job{
 
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());
+	private static DataMiner dm = new DataMiner();
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		Scheduler scheduler = new SchedulerImpl();
 		logger.log(Level.INFO, MUSES_TAG + "  Daily Job called..");
 		scheduler.erase();
+		dm.ruleComparison();
 	}
 
 }

@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.SecurityRules;
+import eu.musesproject.server.eventprocessor.util.Constants;
 import eu.musesproject.server.scheduler.ModuleType;
 
 /*
@@ -225,7 +226,7 @@ public class ParsingUtils {
 	public List<String> DBRulesParser() {
 		
 		List<String> ruleList = new ArrayList<String>();
-		List<SecurityRules> dbRules = dbManager.getSecurityRulesByStatus("VALIDATED");
+		List<SecurityRules> dbRules = dbManager.getSecurityRulesByStatus(Constants.VALIDATED);
 		int i = 0;
 		
 		if (dbRules != null) {
@@ -643,7 +644,7 @@ public class ParsingUtils {
 			String labelRule2 = sidesRule2[1];
 			
 			if (conditionsRule1.length == conditionsRule1.length) { // Not the same number of conditions = not the same
-				String conditionFormat = "(\\w+)([\\=<>\\!])(\\w+)";
+				String conditionFormat = "(\\w+)([\\=<>\\!\\s]+)(\\w+)";
 				Pattern conditionPattern = Pattern.compile(conditionFormat);
 				Matcher conditionMatcher1 = conditionPattern.matcher(sidesRule1[0]);
 				Matcher conditionMatcher2 = conditionPattern.matcher(sidesRule1[0]);

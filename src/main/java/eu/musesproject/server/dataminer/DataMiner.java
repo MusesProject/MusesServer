@@ -76,11 +76,13 @@ import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Users;
+import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
+import eu.musesproject.server.eventprocessor.util.Constants;
 
 /**
  * The Class DataMiner.
  * 
- * @author Sergio Zamarripa (S2)
+ * @author Sergio Zamarripa (S2) & Paloma de las Cuevas (UGR)
  * @version Sep 30, 2013
  */
 public class DataMiner {
@@ -104,6 +106,7 @@ public class DataMiner {
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		List<String> classifierRules = null;
 		List<String> droolsRules = null;
+		List<SecurityRules> alreadyDraftRules = dbManager.getSecurityRulesByStatus(Constants.DRAFT);
 		if (patternList.size()>0){
 			logger.info("Initialising Data Miner rule generation...");
 			Instances data = this.buildInstancesFromPatterns(patternList);
@@ -130,13 +133,32 @@ public class DataMiner {
 				droolsRules = parser.DBRulesParser();
 				logger.info("Comparing...");
 				if (classifierRules != null && droolsRules != null) {
-					Iterator i1 = droolsRules.iterator();
-					Iterator i2 = classifierRules.iterator();
+					Iterator<String> i1 = droolsRules.iterator();
+					Iterator<String> i2 = classifierRules.iterator();
 					while (i1.hasNext()) {
-						String dbRule = (String) i1.next();
+						String dbRule = i1.next();
 						while (i2.hasNext()) {
-							String proposedRule = (String) i2.next();
+							String proposedRule = i2.next();
 							boolean same = parser.isAlike(dbRule, proposedRule);
+							if (!same) {
+								if (alreadyDraftRules.size() > 0) {
+									Iterator<SecurityRules> i3 = alreadyDraftRules.iterator();
+									while (i3.hasNext()) {
+										SecurityRules draftRule = i3.next();
+										String ruleString = draftRule.getDescription();
+										same = parser.isAlike(proposedRule, ruleString);
+									}
+								}
+								SecurityRules finalRule = new SecurityRules();
+								finalRule.setDescription(proposedRule);
+								finalRule.setStatus(Constants.DRAFT);
+								finalRule.setModification(new Date());
+								finalRule.setName("Proposed Rule by Data Miner");
+								byte[] refined = new byte[1];
+								refined[0] = 0;
+								finalRule.setRefined(refined);
+								dbManager.setSecurityRule(finalRule);
+							}
 							logger.info(dbRule+" VS. "+proposedRule+" ARE THE SAME? ->"+same);
 						}
 					}
@@ -873,7 +895,7 @@ public class DataMiner {
 		}
 		
 		// OPTIONAL, only if we want the ARFF file
-		ArffSaver saver = new ArffSaver();
+		/*ArffSaver saver = new ArffSaver();
 		saver.setInstances(newData);
 		try {
 			saver.setFile(new File("./data/test.arff"));
@@ -881,7 +903,7 @@ public class DataMiner {
 			saver.writeBatch();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		
 		return newData;
@@ -910,7 +932,7 @@ public class DataMiner {
 		try {
 			attsel.SelectAttributes(data);
 			indexes = attsel.selectedAttributes();
-			System.out.println(Utils.arrayToString(indexes));
+			logger.info("Selected Features: "+Utils.arrayToString(indexes));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
