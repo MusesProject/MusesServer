@@ -645,11 +645,41 @@ public class ParsingUtils {
 			if (conditionsRule1.length == conditionsRule1.length) { // Not the same number of conditions = not the same
 				String conditionFormat = "(\\w+)([\\=<>\\!])(\\w+)";
 				Pattern conditionPattern = Pattern.compile(conditionFormat);
-				for (int i = 0; i < conditionsRule1.length; i++) {
-					Matcher conditionMatcher1 = conditionPattern.matcher(conditionsRule1[i]);
-					Matcher conditionMatcher2 = conditionPattern.matcher(conditionsRule2[i]);
-					if (conditionMatcher1.find() && conditionMatcher2.find()) {
-						
+				Matcher conditionMatcher1 = conditionPattern.matcher(sidesRule1[0]);
+				Matcher conditionMatcher2 = conditionPattern.matcher(sidesRule1[0]);
+				while (conditionMatcher1.find()) {
+					while (conditionMatcher2.find()) {
+						if (conditionMatcher1.group(1).contentEquals(conditionMatcher2.group(1))) {
+							if (conditionMatcher1.group(3).matches("\\w+") && 
+									conditionMatcher2.group(3).contains(conditionMatcher1.group(3))) {
+								same = true;
+							} else if (conditionMatcher1.group(3).matches("\\d+")) {
+								// As there is no "eval()" function in Java...
+								if (conditionMatcher1.group(2).contentEquals("=") && 
+										Integer.parseInt(conditionMatcher1.group(3)) == Integer.parseInt(conditionMatcher2.group(3))) {
+									same = true;
+								} else if (conditionMatcher1.group(2).contentEquals("<") && 
+										Integer.parseInt(conditionMatcher1.group(3)) < Integer.parseInt(conditionMatcher2.group(3))) {
+									same = true;
+								} else if (conditionMatcher1.group(2).contentEquals(">") && 
+										Integer.parseInt(conditionMatcher1.group(3)) > Integer.parseInt(conditionMatcher2.group(3))) {
+									same = true;
+								} else if (conditionMatcher1.group(2).contentEquals("<=") && 
+										Integer.parseInt(conditionMatcher1.group(3)) <= Integer.parseInt(conditionMatcher2.group(3))) {
+									same = true;
+								} else if (conditionMatcher1.group(2).contentEquals(">=") && 
+										Integer.parseInt(conditionMatcher1.group(3)) >= Integer.parseInt(conditionMatcher2.group(3))) {
+									same = true;
+								}
+							} else {
+								same = false;
+							}
+							if (same && !labelRule1.contentEquals(labelRule2)) {
+								same = false;
+							}
+						} else {
+							continue;
+						}
 					}
 				}
 				

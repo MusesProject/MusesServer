@@ -105,6 +105,7 @@ public class DataMiner {
 		List<String> classifierRules = null;
 		List<String> droolsRules = null;
 		if (patternList.size()>0){
+			logger.info("Initialising Data Miner rule generation...");
 			Instances data = this.buildInstancesFromPatterns(patternList);
 			if (data != null) {
 				int[] indexes = new int[data.numAttributes()];
@@ -112,10 +113,10 @@ public class DataMiner {
 				for (int i = 0; i < data.numAttributes(); i++) {
 					indexes[i] = i;
 				}
-				/* Uncomment to compare accuracy results before/after performing feature selection */
-				//System.out.println("=== Results before feature selection ===");
+				logger.info("Classifying...");
 				String notParsedClassifierRules = this.dataClassification(data, indexes);
 				String[] ruleLines = notParsedClassifierRules.split("\\n+");
+				logger.info("Obtaining rules from best classifier...");
 				if (ruleLines[0].contains("JRIP")) {
 					classifierRules = parser.JRipParser(notParsedClassifierRules);
 				} else if (ruleLines[0].contains("PART")) {
@@ -125,11 +126,20 @@ public class DataMiner {
 				} else if (ruleLines[0].contains("REPTree")) {
 					classifierRules = parser.REPTreeParser(notParsedClassifierRules);
 				}
+				logger.info("Obtaining rules from DB...");
 				droolsRules = parser.DBRulesParser();
-				
+				logger.info("Comparing...");
 				if (classifierRules != null && droolsRules != null) {
-					logger.info(classifierRules.get(0));
-					logger.info(droolsRules.get(0));					
+					Iterator i1 = droolsRules.iterator();
+					Iterator i2 = classifierRules.iterator();
+					while (i1.hasNext()) {
+						String dbRule = (String) i1.next();
+						while (i2.hasNext()) {
+							String proposedRule = (String) i2.next();
+							boolean same = parser.isAlike(dbRule, proposedRule);
+							logger.info(dbRule+" VS. "+proposedRule+" ARE THE SAME? ->"+same);
+						}
+					}
 				}
 				
 				if (indexes.length > 0) {
@@ -287,11 +297,11 @@ public class DataMiner {
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
-		String decisionID = "558";
+		String decisionID = null;
 		String label;
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
 		if (accessRequests.size() > 0) {
-			//decisionID = accessRequests.get(0).getDecisionId().toString();
+			decisionID = accessRequests.get(0).getDecisionId().toString();
 			List<Decision> decisions = null;
 			decisions = dbManager.findDecisionById(decisionID);
 			if (decisions != null) {
@@ -936,7 +946,7 @@ public class DataMiner {
 		double percentageCorrect = 0;
 		
 		/* (1) J48 */
-		String[] optionsJ48 = new String[1];
+		/*String[] optionsJ48 = new String[1];
 		optionsJ48[0] = "-U";            // unpruned tree
 		J48 treeJ48 = new J48();         // new instance of tree
 		try {
@@ -950,14 +960,14 @@ public class DataMiner {
 			classifierRules = treeJ48.toSummaryString();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		/* (2) JRip */
 		String[] optionsJRip = new String[1];
 		optionsJRip[0] = "-P";            // unpruned tree
 		JRip treeJRip = new JRip();         // new instance of tree
 		try {
-			//treeJRip.setOptions(optionsJRip);     // set the options
+			treeJRip.setOptions(optionsJRip);     // set the options
 			treeJRip.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(newData);
@@ -977,7 +987,7 @@ public class DataMiner {
 		optionsPART[0] = "-U";            // unpruned tree
 		PART treePART = new PART();         // new instance of tree
 		try {
-			//treePART.setOptions(optionsPART);     // set the options
+			treePART.setOptions(optionsPART);     // set the options
 			treePART.buildClassifier(newData);   // build classifier
 			
 			Evaluation eval = new Evaluation(newData);
@@ -993,7 +1003,7 @@ public class DataMiner {
 		}
 		
 		/* (4) REPTree */
-		String[] optionsREPTree = new String[1];
+		/*String[] optionsREPTree = new String[1];
 		optionsREPTree[0] = "-P";            // unpruned tree
 		REPTree treeREPTree = new REPTree();         // new instance of tree
 		try {
@@ -1011,7 +1021,7 @@ public class DataMiner {
 			//System.out.println(treeREPTree.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		return classifierRules;
 		
