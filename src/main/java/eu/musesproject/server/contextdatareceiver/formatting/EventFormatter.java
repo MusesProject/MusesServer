@@ -245,8 +245,13 @@ public class EventFormatter {
 			cepFileEvent.setIsTrustedAntivirusInstalled(Boolean
 					.valueOf(properties.get("istrustedantivirusinstalled")));
 			cepFileEvent.setIpAddress(properties.get("ipaddress"));
+			try{
 			cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties
 					.get("screentimeoutinseconds")));
+			} catch(NumberFormatException nfe){
+				Logger.getLogger(EventFormatter.class).info("Value of screentimeoutinseconds is not a number. Setting max value.");
+				cepFileEvent.setScreenTimeoutInSeconds(2147483647);//Max int value: 2^31-1
+			}
 			cepFileEvent.setAccessibilityEnabled(Boolean.valueOf(properties
 					.get("accessibilityenabled")));
 			cepFileEvent
