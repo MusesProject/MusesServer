@@ -643,7 +643,7 @@ public class ParsingUtils {
 			String[] conditionsRule2 = sidesRule2[0].split("\\sAND\\s?");
 			String labelRule2 = sidesRule2[1];
 			
-			if (conditionsRule1.length == conditionsRule1.length) { // Not the same number of conditions = not the same
+			if (conditionsRule1.length == conditionsRule2.length) { // Not the same number of conditions = not the same
 				String conditionFormat = "(\\w+)([\\=<>\\!\\s]+)(\\w+)";
 				Pattern conditionPattern = Pattern.compile(conditionFormat);
 				Matcher conditionMatcher1 = conditionPattern.matcher(sidesRule1[0]);
@@ -651,25 +651,31 @@ public class ParsingUtils {
 				while (conditionMatcher1.find()) {
 					while (conditionMatcher2.find()) {
 						if (conditionMatcher1.group(1).contentEquals(conditionMatcher2.group(1))) {
-							if (conditionMatcher1.group(3).matches("\\w+") && 
+							if (!conditionMatcher1.group(3).matches("\\d+") && 
 									conditionMatcher2.group(3).contains(conditionMatcher1.group(3))) {
+								logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
 								same = true;
 							} else if (conditionMatcher1.group(3).matches("\\d+")) {
 								// As there is no "eval()" function in Java...
 								if (conditionMatcher1.group(2).contentEquals("=") && 
 										Integer.parseInt(conditionMatcher1.group(3)) == Integer.parseInt(conditionMatcher2.group(3))) {
+									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
 									same = true;
 								} else if (conditionMatcher1.group(2).contentEquals("<") && 
 										Integer.parseInt(conditionMatcher1.group(3)) < Integer.parseInt(conditionMatcher2.group(3))) {
+									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
 									same = true;
 								} else if (conditionMatcher1.group(2).contentEquals(">") && 
 										Integer.parseInt(conditionMatcher1.group(3)) > Integer.parseInt(conditionMatcher2.group(3))) {
+									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
 									same = true;
 								} else if (conditionMatcher1.group(2).contentEquals("<=") && 
 										Integer.parseInt(conditionMatcher1.group(3)) <= Integer.parseInt(conditionMatcher2.group(3))) {
+									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
 									same = true;
 								} else if (conditionMatcher1.group(2).contentEquals(">=") && 
 										Integer.parseInt(conditionMatcher1.group(3)) >= Integer.parseInt(conditionMatcher2.group(3))) {
+									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
 									same = true;
 								}
 							} else {

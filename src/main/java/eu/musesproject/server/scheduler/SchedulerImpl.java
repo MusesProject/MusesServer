@@ -28,14 +28,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import eu.musesproject.server.connectionmanager.SessionHandler;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.LegalAspects;
 import eu.musesproject.server.entity.SimpleEvents;
 
 public class SchedulerImpl implements Scheduler {
 
-	private Logger logger = Logger.getLogger(SessionHandler.class.getName());
+	private Logger logger = Logger.getLogger(SchedulerImpl.class.getName());
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private DBManager dbManager;
 	public SchedulerImpl() {
