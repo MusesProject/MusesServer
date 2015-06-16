@@ -75,7 +75,6 @@ public class TestDataMiner {
 			Iterator<SimpleEvents> i = list.iterator();
 			while(i.hasNext()){
 				SimpleEvents event = i.next();
-				//if (Integer.parseInt(event.getEventId()) > 214800) {
 				PatternsKrs pattern = dm.minePatterns(event);
 				patternList.add(pattern);
 				assertNotNull(pattern);	}			

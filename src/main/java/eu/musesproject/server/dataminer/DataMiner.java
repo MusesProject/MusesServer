@@ -315,7 +315,7 @@ public class DataMiner {
 	public PatternsKrs minePatterns(SimpleEvents event){
 		
 		PatternsKrs pattern = new PatternsKrs();
-		logger.info(event.getEventId());
+		//logger.info(event.getEventId());
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
