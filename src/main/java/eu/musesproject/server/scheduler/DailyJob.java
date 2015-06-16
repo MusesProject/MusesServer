@@ -27,13 +27,12 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import eu.musesproject.server.connectionmanager.ComMainServlet;
 import eu.musesproject.server.dataminer.DataMiner;
 
 public class DailyJob implements Job{
 
 	private static final String MUSES_TAG = "MUSES_TAG";
-	private static Logger logger = Logger.getLogger(ComMainServlet.class.getName());
+	private static Logger logger = Logger.getLogger(DailyJob.class.getName());
 	private static DataMiner dm = new DataMiner();
 
 	@Override
