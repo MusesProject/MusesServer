@@ -21,7 +21,7 @@ INSERT INTO `assets` VALUES (1,'Patent','Asset_Unige',0,'PUBLIC','Geneva',now())
 
 --
 
-INSERT INTO `connection_config` VALUES (1,5000,10000,60000,1,5);
+INSERT INTO `connection_config` VALUES (1,5000,60000,60000,1,5);
 
 --
 
