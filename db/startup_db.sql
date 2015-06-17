@@ -146,7 +146,7 @@ DROP TABLE IF EXISTS `connection_config`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `connection_config` (
   `config_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `timeout` int(10) unsigned NOT NULL DEFAULT '5000',
+  `timeout` int(10) unsigned NOT NULL DEFAULT '10000',
   `poll_timeout` int(10) unsigned NOT NULL DEFAULT '60000',
   `sleep_poll_timeout` int(10) unsigned NOT NULL DEFAULT '60000',
   `polling_enabled` tinyint(1) NOT NULL COMMENT 'Specify whether the polling is enabled or not',
