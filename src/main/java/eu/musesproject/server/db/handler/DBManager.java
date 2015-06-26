@@ -2794,6 +2794,25 @@ public class DBManager {
 		}
 
 	}
+	
+    public void updateAccessRequest(AccessRequest accessRequest) {
+    	Session session = null;
+    	Transaction trans = null;
+		try {
+			session = getSessionFactory().openSession();
+			trans = session.beginTransaction();
+			session.update(accessRequest);
+			trans.commit();
+		} catch (Exception e) {
+			if (trans != null)
+				trans.rollback();
+			logger.log(Level.ERROR, e.getMessage());
+		} finally {
+			if (session != null)
+				session.close();
+		}
+		
+	}
 	public static void main (String [] arg){
 		
 		DBManager dbManager = new DBManager(ModuleType.RT2AE);
