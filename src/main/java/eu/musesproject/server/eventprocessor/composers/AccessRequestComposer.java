@@ -37,6 +37,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent;
 import eu.musesproject.server.eventprocessor.util.Constants;
@@ -78,7 +79,8 @@ public class AccessRequestComposer {
 					}else{
 						requestedCorporateAsset.setConfidential_level(Constants.PUBLIC);
 					}
-					composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
 					
 					//Store asset
@@ -91,7 +93,8 @@ public class AccessRequestComposer {
 					AppObserverEvent appEvent = (AppObserverEvent) event;
 					requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
 					requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
-					composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+					//composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(appEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(appEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.APPOBSERVER);
 					
@@ -122,7 +125,8 @@ public class AccessRequestComposer {
 					FileObserverEvent fileEvent = (FileObserverEvent) event;
 					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
 					requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
-					composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.SAVE_ASSET);
 				}
@@ -153,6 +157,16 @@ public class AccessRequestComposer {
 					composedRequest.setAction(addNoteEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(addNoteEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.ADD_NOTE);
+				}
+
+			}else if (event.getType().equals(EventTypes.PACKAGE)){
+				if (event instanceof PackageObserverEvent) {
+					PackageObserverEvent packageEvent = (PackageObserverEvent) event;
+					requestedCorporateAsset.setId(packageEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(packageEvent.getDescription());//Get the asset identifier
+					composedRequest.setAction(packageEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(packageEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.PACKAGE);
 				}
 
 			}else {
