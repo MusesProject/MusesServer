@@ -23,6 +23,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Opportunity
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -139,6 +140,12 @@ declare USBDeviceConnectedEvent
 end
 
 declare AddNoteEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
+declare Opportunity
 	@role( event )
 	@timestamp ( event_date )
 	@expires (1m)
@@ -1051,13 +1058,13 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "java"
 	when
-		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*")
+		e: FileObserverEvent(event=="open_asset", path matches ".*confidential.*")
 		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
 		not AccessRequest(event=="Access file in monitored folder unsecure wifi")
 	then
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Access file in monitored folder unsecure wifi");
 		request.setId(id);
@@ -1066,4 +1073,19 @@ rule "Blacklist app 00001"
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
+	end	
+
+
+	rule "Opportunity"
+	no-loop true
+	dialect "java"
+	when
+		o: Opportunity()
+		e: FileObserverEvent(event=="open_asset", path matches ".*confidential.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
+		ar: AccessRequest(id==o.decisionId)
+	then
+		StatusGlobal.log("OPPORTUNITY RECEIVED******************************");
+		int id = Rt2aeGlobal.composeAccessRequestOpportunity(o,e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		
 	end	

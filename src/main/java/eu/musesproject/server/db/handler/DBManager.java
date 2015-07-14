@@ -1276,7 +1276,7 @@ public class DBManager {
 				session.save(accessrequest);
 				session.flush();
 				trans.commit();
-				session.close();				
+				//session.close();				
 			} catch (Exception e) {
 				if (trans!=null) trans.rollback();
 				logger.log(Level.ERROR, e.getMessage());
