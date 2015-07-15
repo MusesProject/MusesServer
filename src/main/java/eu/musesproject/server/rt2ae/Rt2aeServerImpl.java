@@ -1281,7 +1281,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					.getRiskvalue()) {
 
 				
-				if (clues.get(0).getName().contains("NOT-AVAILABLE-CLUES")){
+				if (clues.get(0).getName().contains("NOT-AVAILABLE-CLUES") && accessRequest.getOpportunityDescriptor() == null ){
 					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 					RiskTreatment [] riskTreatments = new RiskTreatment[1];
 					
