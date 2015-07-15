@@ -197,7 +197,7 @@ public class Rt2aeGlobal {
 		
 		for (Iterator<AccessRequest> iterator = requests.iterator(); iterator.hasNext();) {
 			AccessRequest accessRequest = (AccessRequest) iterator.next();
-			Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:accessRequest.getId()"+accessRequest.getId());
+			//Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:accessRequest.getId()"+accessRequest.getId());
 			if (accessRequest.getId()==requestId){
 				eventId = accessRequest.getEventId();
 			}
@@ -205,7 +205,7 @@ public class Rt2aeGlobal {
 		
 		for (Iterator<Clue> iterator = clues.iterator(); iterator.hasNext();) {
 			Clue clue = (Clue) iterator.next();
-			Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:clue.getId-"+clue.getId()+" eventId:"+(int)eventId);
+			//Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:clue.getId-"+clue.getId()+" eventId:"+(int)eventId);
 			if (clue.getId()==(int)eventId){
 				clue.setRequestId(requestId);
 				aux = convertClue(clue);

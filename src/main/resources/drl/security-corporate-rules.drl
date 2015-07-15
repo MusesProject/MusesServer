@@ -734,7 +734,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Required application list","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Required application list","DENY","<packagestatus>REMOVED</packagestatus>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Required application list");
 		StatusGlobal.log("**********"+id);
