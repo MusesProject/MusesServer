@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.musesproject</groupId>
 	<artifactId>server</artifactId>
-	<version>0.1.0</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>MUSES Server</name>
 	<properties>
