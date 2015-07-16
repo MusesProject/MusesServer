@@ -4821,7 +4821,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			try {
 				
 				
-				dbManager.persist(device);
+				dbManager.setDevice(device);
 				
 	
 			} catch (Exception e) {

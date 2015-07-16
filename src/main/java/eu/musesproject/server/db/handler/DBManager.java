@@ -72,7 +72,6 @@ import eu.musesproject.server.entity.SystemLogKrs;
 import eu.musesproject.server.entity.Threat;
 import eu.musesproject.server.entity.ThreatClue;
 import eu.musesproject.server.entity.ThreatType;
-
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
@@ -1590,6 +1589,44 @@ public class DBManager {
 		
 		device.setOS_name(musesDevice.getOS_name());
 		device.setOS_version(musesDevice.getOS_version());
+		
+		
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 */
+	
+	public void setDevice(Device device){
+		
+		Session session = null;
+		Transaction trans = null;
+				
+
+		try {
+			session = getSessionFactory().openSession();
+			trans = session.beginTransaction();
+			if (this.getDeviceByIMEI(device.getDeviceId()) == null){
+				
+			    session.save(device);
+				session.flush();
+
+			    trans.commit();
+			}else{
+				 session.merge(device);
+				 session.flush();
+
+				 trans.commit();
+			    
+			}
+		} catch (Exception e) {
+			if (trans!=null) trans.rollback();
+			logger.log(Level.ERROR, e.getMessage());
+		} finally {
+			if (session!=null) session.close();
+		} 
 		
 		
 	}
