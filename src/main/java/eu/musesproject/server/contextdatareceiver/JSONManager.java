@@ -417,7 +417,7 @@ public class JSONManager {
 		return root;
 	}
 	
-	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig, ConnectionConfig connConfig, List<Zone> zoneConfig) {
+	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig, ConnectionConfig connConfig, List<Zone> zoneConfig, String defaultPoliciesXML) {
 		JSONObject root = new JSONObject();
 		try {
 
@@ -472,6 +472,10 @@ public class JSONManager {
             
             root.put(JSONIdentifiers.CONNECTION_CONFIG,XML.toJSONObject(connConfigXML));
             
+            if (defaultPoliciesXML != null){
+            	root.put("default-policies", XML.toJSONObject(defaultPoliciesXML));
+            }
+            
             
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -501,13 +505,13 @@ public class JSONManager {
 		return "<"+tag+">"+value+"</"+tag+">";
 	}
 
-	public static JSONObject createDefaultPoliciesJSON(
+	public static String createDefaultPoliciesJSON(
 			List<DefaultPolicies> defaultPolicies) {
 		
-		JSONObject root = new JSONObject();
-		try {
+		//JSONObject root = new JSONObject();
+		//try {
 
-            root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, "default-policies");
+            //root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, "default-policies");
             
           //Default Policies
             String defaultPoliciesXML = "";
@@ -520,12 +524,13 @@ public class JSONManager {
 				defaultPoliciesXML += "</"+JSONIdentifiers.DEVICE_POLICY+">";
 			}
 
-            root.put("policy", XML.toJSONObject(defaultPoliciesXML));
+            //root.put("default-policies", XML.toJSONObject(defaultPoliciesXML));
 
-		} catch (JSONException e) {
+		/*} catch (JSONException e) {
 			e.printStackTrace();
-		}
-		return root;
+		}*/
+		//return root;
+           return defaultPoliciesXML; 
 	}
 
 }
