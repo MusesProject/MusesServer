@@ -2360,8 +2360,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctDecisionCause");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
-				allDifferentValues.remove(allDifferentValues.indexOf(null));
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2384,10 +2388,10 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctEventTypes");
 			if (query!=null) {
-				Integer nullIndex = null;
+				int nullIndex = -1;
 				allDifferentValues = query.list();
 				nullIndex = allDifferentValues.indexOf(null);
-				if (nullIndex != null) {
+				if (nullIndex > -1){
 					allDifferentValues.remove(nullIndex);
 				}				
 			}
@@ -2412,8 +2416,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctEventLevel");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
-				allDifferentValues.remove(allDifferentValues.indexOf(null));
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2436,7 +2444,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctUsername");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2459,7 +2472,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctUserRole");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2482,7 +2500,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceType");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2505,8 +2528,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceOS");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
-				allDifferentValues.remove(allDifferentValues.indexOf(null));
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2529,8 +2556,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceOwnedBy");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
-				allDifferentValues.remove(allDifferentValues.indexOf(null));
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2553,7 +2584,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctAppName");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2576,7 +2612,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctAppVendor");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2599,7 +2640,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctAssetName");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2622,7 +2668,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctAssetConfidentialLevel");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2645,7 +2696,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctAssetLocation");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2668,7 +2724,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctLabels");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2691,8 +2752,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctWifiEncryptions");
 			if (query!=null) {
+				int nullIndex = -1;
 				allDifferentValues = query.list();
-				allDifferentValues.remove(allDifferentValues.indexOf(null));
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex > -1){
+					allDifferentValues.remove(nullIndex);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

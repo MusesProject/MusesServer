@@ -463,15 +463,11 @@ public class DataMiner {
 				pattern.setEventTime(eventDetection);
 				
 				/* Was MUSES in silent or verbose mode? */		
-				if (eventDetection.getDay() < 8 && eventDetection.getMonth() <= 7) {
+				if (eventDetection.getDay() >= 25 && eventDetection.getMonth() <= 7) {
 					pattern.setSilentMode(1);
-				} else { pattern.setSilentMode(1); }
-				/*if (eventDetection.getDay() >= 16 && eventDetection.getMonth() == 3) {
+				} else {
 					pattern.setSilentMode(0);
 				}
-				if (eventDetection.getMonth() > 3) {
-					pattern.setSilentMode(0);
-				}*/
 				
 				/* Obtaining the model of device */
 				Devices userDeviceId = event.getDevice();
@@ -596,6 +592,8 @@ public class DataMiner {
 						} else {
 							pattern.setDeviceHasAntivirus(0);
 						}
+					} else if (configMatcher.group(1).equalsIgnoreCase("isscreanlocked")) {
+						pattern.setDeviceScreenTimeout(BigInteger.ZERO);
 					}			
 					
 				}
@@ -783,15 +781,11 @@ public class DataMiner {
 			pattern.setEventTime(eventDetection);
 			
 			/* Was MUSES in silent or verbose mode? */		
-			if (eventDetection.getDay() < 8 && eventDetection.getMonth() <= 7) {
+			if (eventDetection.getDay() >= 25 && eventDetection.getMonth() <= 7) {
 				pattern.setSilentMode(1);
-			} else { pattern.setSilentMode(1); }
-			/*if (eventDetection.getDay() >= 16 && eventDetection.getMonth() == 3) {
+			} else {
 				pattern.setSilentMode(0);
 			}
-			if (eventDetection.getMonth() > 3) {
-				pattern.setSilentMode(0);
-			}*/
 			
 			/* Obtaining the model of device */
 			Devices userDeviceId = event.getDevice();
@@ -916,6 +910,8 @@ public class DataMiner {
 					} else {
 						pattern.setDeviceHasAntivirus(0);
 					}
+				} else if (configMatcher.group(1).equalsIgnoreCase("isscreanlocked")) {
+					pattern.setDeviceScreenTimeout(BigInteger.ZERO);
 				}			
 				
 			}
