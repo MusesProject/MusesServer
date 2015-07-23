@@ -215,15 +215,16 @@ public class DataMiner {
 				SystemLogKrs logEntry = new SystemLogKrs();
 				SimpleEvents event = i.next();
 				BigInteger eventID = null;
+				String user = null;
 				if ((event != null)&&(event.getEventId() != null)){
 					eventID = new BigInteger(event.getEventId());
+					user = event.getUser().getUserId();
 				}	
 				logEntry.setCurrentEventId(eventID);
 				
 				//logger.info(eventID);
 				
-				/* Previous event is the last event the user made */
-				String user = event.getUser().getUserId();
+				/* Previous event is the last event the user made */				 
 				Date day = event.getDate();
 				String time = event.getTime().toString();
 				SimpleEvents userLastEvent = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.TRUE);
@@ -315,354 +316,672 @@ public class DataMiner {
 	public PatternsKrs minePatterns(SimpleEvents event){
 		
 		PatternsKrs pattern = new PatternsKrs();
-		//logger.info(event.getEventId());
+		logger.info(event.getEventId());
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
-		String decisionID = null;
 		String label;
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
+		List<SecurityViolation> secViolations = dbManager.findSecurityViolationByEventId(eventID);
+		Iterator<SecurityViolation> it = null;
+		if (secViolations.size() > 0) {
+			it = secViolations.iterator();
+		}
 		if (accessRequests.size() > 0) {
-			decisionID = accessRequests.get(0).getDecisionId().toString();
-			List<Decision> decisions = null;
-			decisions = dbManager.findDecisionById(decisionID);
-			if (decisions != null) {
-				label = decisions.get(0).getValue();
-				pattern.setLabel(label);
-			} else {
-				/* Secret solution while not having data */
-				if (dbManager.findSecurityViolationByEventId(eventID) != null){
-					pattern.setLabel("STRONGDENY");
+			for (int i = 0; i < accessRequests.size(); i++) {
+				String accessRequestId = accessRequests.get(i).getAccessRequestId();
+				List<Decision> decisions = dbManager.findDecisionByAccessRequestId(accessRequestId);
+				if (decisions.size() > 0) {
+					label = decisions.get(0).getValue();
+					pattern.setLabel(label);
 				} else {
-					pattern.setLabel("GRANTED");
+					/* Secret solution while not having data */
+					if (secViolations.size() > 0){
+						pattern.setLabel("STRONGDENY");
+					} else {
+						pattern.setLabel("GRANTED");
+					}
 				}
-			}
+				
+				/* Obtaining decision cause */				
+				if (secViolations.size() > 0 && pattern.getLabel().contentEquals("STRONGDENY")) {
+					if (it.hasNext()) {
+						SecurityViolation secViolation = it.next();
+						Pattern p = Pattern.compile("<(.+?)>(.+?)</(.+?)>");
+						Matcher matcher = p.matcher(secViolation.getConditionText());
+						if (matcher.find()) {
+							String decisionCause = matcher.group(1);
+							pattern.setDecisionCause(decisionCause);
+						}
+					} else {
+						pattern.setDecisionCause(null);
+					}
+				} else {
+					pattern.setDecisionCause("GRANTED");
+				}
+				
+				/* Finding the type of the event */
+				EventType eventTypeId = event.getEventType();
+				String eventType = null;
+				if (eventTypeId != null){
+					eventType = eventTypeId.getEventTypeKey();
+				}
+				
+				if (eventType != null) {
+					pattern.setEventType(eventType);
+				} else {
+					pattern.setEventType(null);
+				}
+				
+				/* Is the event a simple event or a complex event? */
+				String eventLevel = null;
+				if (eventTypeId != null){
+					eventLevel = eventTypeId.getEventLevel();
+				}	
+				if (eventLevel != null) {
+					pattern.setEventLevel(eventLevel);
+				} else {
+					pattern.setEventLevel(null);
+				}
+				
+				/* Storing only the username */
+				Users user = event.getUser();
+				String username = user.getUsername();
+				if (username != null) {
+					pattern.setUsername(username);
+				} else {
+					pattern.setUsername(null);
+				}
+				
+				/* Extracting information from the password */
+				String userPassword = user.getPassword();
+				// Characters in the password
+				int passwordLength = userPassword.length();
+				pattern.setPasswordLength(passwordLength);
+				// Lexical information about the password
+				String digits = "\\d";
+				String letters = "[a-zA-Z]";
+				String capLetters = "[A-Z]";
+				Pattern digitPattern = Pattern.compile(digits);
+				Pattern letterPattern = Pattern.compile(letters);
+				Pattern capLetterPattern = Pattern.compile(capLetters);
+				Matcher digitsMatcher = digitPattern.matcher(userPassword);
+				Matcher lettersMatcher = letterPattern.matcher(userPassword);
+				Matcher capLettersMatcher = capLetterPattern.matcher(userPassword);
+				
+				int digitsCount = 0;
+				int lettersCount = 0;
+				int capLettersCount = 0;
+				
+				while (digitsMatcher.find()) {
+					digitsCount++;
+				}
+				while (lettersMatcher.find()) {
+					lettersCount++;
+				}
+				while (capLettersMatcher.find()) {
+					capLettersCount++;
+				}
+				
+				pattern.setNumbersInPassword(digitsCount);
+				pattern.setLettersInPassword(lettersCount);
+				pattern.setPasswdHasCapitalLetters(capLettersCount);
+				
+				/* Obtaining the user and device trust values at the time the event was thrown */
+				List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId("545");
+				//List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionID);
+				double userTrustValue, deviceTrustValue;
+				if (trustValues.size() > 0) {
+					userTrustValue = trustValues.get(0).getUsertrustvalue();
+					deviceTrustValue = trustValues.get(0).getDevicetrustvalue();
+					pattern.setUserTrustValue(userTrustValue);
+					pattern.setDeviceTrustValue(deviceTrustValue);
+				} else {
+					pattern.setUserTrustValue(Double.NaN);
+					pattern.setDeviceTrustValue(Double.NaN);
+				}
+				
+				/* Checking if the user account is activated */
+				int activatedAccount = user.getEnabled();
+				pattern.setActivatedAccount(activatedAccount);
+				
+				/* Obtaining the role of the user inside the company */
+				int userRoleId = user.getRoleId();
+				//Roles userRole = dbManager.getRoleById(userRoleId);
+				Roles userRole = dbManager.getRoleById(145);
+				String userRoleName = userRole.getName();
+				if (userRoleName != null) {
+					pattern.setUserRole(userRoleName);
+				} else {
+					pattern.setUserRole(null);
+				}
+				
+				/* Detection time of the event */
+				Date eventDate = event.getDate();
+				Time eventTime = event.getTime();
+				Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
+				pattern.setEventTime(eventDetection);
+				
+				/* Was MUSES in silent or verbose mode? */		
+				if (eventDetection.getDay() < 8 && eventDetection.getMonth() <= 7) {
+					pattern.setSilentMode(1);
+				} else { pattern.setSilentMode(1); }
+				/*if (eventDetection.getDay() >= 16 && eventDetection.getMonth() == 3) {
+					pattern.setSilentMode(0);
+				}
+				if (eventDetection.getMonth() > 3) {
+					pattern.setSilentMode(0);
+				}*/
+				
+				/* Obtaining the model of device */
+				Devices userDeviceId = event.getDevice();
+				String deviceModel = userDeviceId.getDeviceModel();
+				if (deviceModel != null) {
+					pattern.setDeviceType(deviceModel);
+				} else {
+					pattern.setDeviceType(null);
+				}
+				
+				/* Device characteristics */
+				// OS
+				String userDeviceOS = null;
+				if (userDeviceId.getOS_name()!=null){
+					userDeviceOS = userDeviceId.getOS_name().concat(userDeviceId.getOS_version());
+				}	
+				if (userDeviceOS != null) {
+					pattern.setDeviceOS(userDeviceOS);
+				} else {
+					pattern.setDeviceOS(null);
+				}
+				// Certificate of device
+				byte[] deviceCertificate = userDeviceId.getCertificate();
+				if ((deviceCertificate != null) && (deviceCertificate.length > 0)) {
+					pattern.setDeviceHasCertificate(1);
+				} else {
+					pattern.setDeviceHasCertificate(0);
+				}
+				// Device company owned or employee owned
+				String deviceOwner = userDeviceId.getOwnerType();
+				if (deviceOwner != null) {
+					pattern.setDeviceOwnedBy(deviceOwner);
+				} else {
+					pattern.setDeviceOwnedBy(null);
+				}
+				
+				/* Characteristics of the application which the user was using at the time of the event */
+				Applications eventApp = event.getApplication();
+				// App name and version
+				String appName = eventApp.getName().concat(eventApp.getVersion());
+				if (appName != null) {
+					pattern.setAppName(appName);
+				} else {
+					pattern.setAppName(null);
+				}
+				// Vendor of the app
+				String appVendor = eventApp.getVendor();
+				if (appVendor != null) {
+					pattern.setAppVendor(appVendor);
+				} else {
+					pattern.setAppVendor(null);
+				}
+				// Is the application MUSES Aware?
+				int appMusesAware = eventApp.getIs_MUSES_aware();
+				pattern.setAppMUSESAware(appMusesAware);
+				
+				/* Asset that the event is trying to access to */
+				Assets eventAsset = event.getAsset();
+				// Name of the asset
+				String assetName = eventAsset.getTitle();
+				if (assetName != null) {
+					pattern.setAssetName(assetName);
+				} else {
+					pattern.setAssetName(null);
+				}
+				// Asset value
+				double assetValue = eventAsset.getValue();
+				pattern.setAssetValue(assetValue);
+				// Confidentiality level of the asset
+				String assetConfidentialLevel = eventAsset.getConfidentialLevel();
+				if (assetConfidentialLevel != null) {
+					pattern.setAssetConfidentialLevel(assetConfidentialLevel);
+				} else {
+					pattern.setAssetConfidentialLevel(null);
+				}
+				// Where is the asset located
+				String assetLocation = eventAsset.getLocation();
+				if (assetLocation != null) {
+					pattern.setAssetLocation(assetLocation);
+				} else {
+					pattern.setAssetLocation(null);
+				}
+				
+				/* Rest of parameters that have to be obtained from JSON */
+				/* Device configuration has to be taken from the last SECURITY_PROPERTY_CHANGED event */
+				SimpleEvents configEvent = dbManager.findDeviceConfigurationBySimpleEvent(Integer.parseInt(userDeviceId.getDeviceId()), eventDate.toString());
+				String configData = configEvent.getData();
+				// configData format is like:
+				// {event=security_property_changed, properties={"id":"1",
+				// "ispasswordprotected":"true","isrootpermissiongiven":"false",
+				// "screentimeoutinseconds":"300","musesdatabaseexists":"true",
+				// "isrooted":"false","accessibilityenabled":"false",
+				// "istrustedantivirusinstalled":"false","ipaddress":"172.17.1.52"}}
+				String configFormat = "\\\"?(\\w+)\\\"?[\\:\\=]\\\"?(\\w+)\\\"?";
+				Pattern configPattern = Pattern.compile(configFormat);
+				Matcher configMatcher = configPattern.matcher(configData);
+				while (configMatcher.find()) {
+					if (configMatcher.group(1).equalsIgnoreCase("ispasswordprotected")) {
+						if (configMatcher.group(2).equalsIgnoreCase("true")) {
+							pattern.setDeviceHasPassword(1);
+						} else {
+							pattern.setDeviceHasPassword(0);
+						}
+					} else if (configMatcher.group(1).equalsIgnoreCase("screentimeoutinseconds")) {
+						BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
+						pattern.setDeviceScreenTimeout(time);
+					} else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
+						if (configMatcher.group(2).equalsIgnoreCase("true")) {
+							pattern.setDeviceIsRooted(1);;
+						} else {
+							pattern.setDeviceIsRooted(0);
+						}
+					} else if (configMatcher.group(1).equalsIgnoreCase("accessibilityenabled")) {
+						if (configMatcher.group(2).equalsIgnoreCase("true")) {
+							pattern.setDeviceHasAccessibility(1);;
+						} else {
+							pattern.setDeviceHasAccessibility(0);
+						}
+					} else if (configMatcher.group(1).equalsIgnoreCase("istrustedantivirusinstalled")) {
+						if (configMatcher.group(2).equalsIgnoreCase("true")) {
+							pattern.setDeviceHasAntivirus(1);
+						} else {
+							pattern.setDeviceHasAntivirus(0);
+						}
+					}			
+					
+				}
+		        
+				/* If the user is sending an email */
+				/* Data in event_type_if = 11
+				 * {event=ACTION_SEND_MAIL, properties={"to":"the.reiceiver@generic.com,
+				 * another.direct.receiver@generic.com","noAttachments":"1",
+				 * "subject":"MUSES sensor status subject","bcc":"hidden.reiceiver@generic.com",
+				 * "from":"max.mustermann@generic.com","attachmentInfo":"pdf",
+				 * "cc":"other.listener@generic.com, 2other.listener@generic.com"}}
+				*/
+				
+				
+				if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
+					String mailJSON =  	"\\\"to\\\"\\:\\\"(.*)\\\",\\\"noAttachments\\\"\\:\\\"(.*)\\\",\\\"subject\\\"\\:\\\"(.*)\\\",\\\"bcc\\\"\\:\\\"(.*)\\\",\\\"attachmentInfo\\\"\\:\\\"(.*)\\\",\\\"from\\\"\\:\\\"(.*)\\\",\\\"cc\\\"\\:\\\"(.*)\\\"";
+					Pattern mailPattern = Pattern.compile(mailJSON);
+					Matcher matcherMail = mailPattern.matcher(event.getData());
+					if (matcherMail.find()) {
+						if (matcherMail.group(4).equals("none")) {
+							pattern.setMailContainsBCC(0);
+						} else {
+							pattern.setMailContainsBCC(1);
+						}
+
+						if (matcherMail.group(7).equals("none")) {
+							pattern.setMailContainsCC(0);
+						} else {
+							pattern.setMailContainsCC(1);
+						}				
+						pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
+						pattern.setMailRecipientAllowed(1);
+					}
+					
+				}
+				
+				/* If the user is opening an asset */
+				/* {id=3, wifiencryption=[WPA2-PSK-TKIP+CCMP][ESS], bssid=24:a4:3c:04:ae:09, 
+				 * bluetoothconnected=FALSE, wifienabled=true, wifineighbors=6, hiddenssid=false, 
+				 * networkid=1, wificonnected=true, airplanemode=false}
+				 */
+				if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 8)) {
+					String wifiJSON = "\\{\\w+\\=\\d+,\\swifiencryption\\=([\\[\\w\\-\\+\\]]*),\\s\\w+=[\\w\\:]+,\\sbluetoothconnected\\=(\\w+),\\swifienabled\\=(\\w+),\\swifineighbors\\=(\\d+),\\shiddenssid\\=(\\w+),\\s\\w+\\=\\w+,\\swificonnected\\=(\\w+)";
+					Pattern wifiPattern = Pattern.compile(wifiJSON);
+					Matcher matcherWifi = wifiPattern.matcher(event.getData());
+					if (matcherWifi.find()) {
+						pattern.setWifiEncryption(matcherWifi.group(1));
+						if(matcherWifi.group(2).equalsIgnoreCase("true")) {
+							pattern.setBluetoothConnected(1);
+						} else {
+							pattern.setBluetoothConnected(0);
+						}
+						if(matcherWifi.group(3).contentEquals("true")) {
+							pattern.setWifiEnabled(1);
+						} else {
+							pattern.setWifiEnabled(0);
+						}
+						if(matcherWifi.group(6).contentEquals("true")) {
+							pattern.setWifiConnected(1);
+						} else {
+							pattern.setWifiConnected(0);
+						}
+					}
+					
+				}
+				
+			}			
 		} else {
 			/* Secret solution while not having data */
-			if (dbManager.findSecurityViolationByEventId(eventID).size() > 0){
+			if (secViolations.size() > 0){
 				pattern.setLabel("STRONGDENY");
-			} else {
-				pattern.setLabel("GRANTED");
-			}
-		}
-		
-		/* Obtaining decision cause */
-		if (pattern.getLabel().contentEquals("STRONGDENY")){
-			List<SecurityViolation> secViolations = dbManager.findSecurityViolationByEventId(eventID);
-			if (secViolations.size() > 0) {
 				Pattern p = Pattern.compile("<(.+?)>(.+?)</(.+?)>");
 				Matcher matcher = p.matcher(secViolations.get(0).getConditionText());
-				matcher.find();
-				String decisionCause = matcher.group(1);
-				pattern.setDecisionCause(decisionCause);
+				if (matcher.find()) {
+					String decisionCause = matcher.group(1);
+					pattern.setDecisionCause(decisionCause);
+				} else {
+					pattern.setDecisionCause(null);
+				}
 			} else {
-				pattern.setDecisionCause(null);
+				pattern.setLabel("GRANTED");
+				pattern.setDecisionCause("GRANTED");
 			}
-		} else {
-			pattern.setDecisionCause(null);
-		}
+			
+			/* Finding the type of the event */
+			EventType eventTypeId = event.getEventType();
+			String eventType = null;
+			if (eventTypeId != null){
+				eventType = eventTypeId.getEventTypeKey();
+			}
+			
+			if (eventType != null) {
+				pattern.setEventType(eventType);
+			} else {
+				pattern.setEventType(null);
+			}
+			
+			/* Is the event a simple event or a complex event? */
+			String eventLevel = null;
+			if (eventTypeId != null){
+				eventLevel = eventTypeId.getEventLevel();
+			}	
+			if (eventLevel != null) {
+				pattern.setEventLevel(eventLevel);
+			} else {
+				pattern.setEventLevel(null);
+			}
+			
+			/* Storing only the username */
+			Users user = event.getUser();
+			String username = user.getUsername();
+			if (username != null) {
+				pattern.setUsername(username);
+			} else {
+				pattern.setUsername(null);
+			}
+			
+			/* Extracting information from the password */
+			String userPassword = user.getPassword();
+			// Characters in the password
+			int passwordLength = userPassword.length();
+			pattern.setPasswordLength(passwordLength);
+			// Lexical information about the password
+			String digits = "\\d";
+			String letters = "[a-zA-Z]";
+			String capLetters = "[A-Z]";
+			Pattern digitPattern = Pattern.compile(digits);
+			Pattern letterPattern = Pattern.compile(letters);
+			Pattern capLetterPattern = Pattern.compile(capLetters);
+			Matcher digitsMatcher = digitPattern.matcher(userPassword);
+			Matcher lettersMatcher = letterPattern.matcher(userPassword);
+			Matcher capLettersMatcher = capLetterPattern.matcher(userPassword);
+			
+			int digitsCount = 0;
+			int lettersCount = 0;
+			int capLettersCount = 0;
+			
+			while (digitsMatcher.find()) {
+				digitsCount++;
+			}
+			while (lettersMatcher.find()) {
+				lettersCount++;
+			}
+			while (capLettersMatcher.find()) {
+				capLettersCount++;
+			}
+			
+			pattern.setNumbersInPassword(digitsCount);
+			pattern.setLettersInPassword(lettersCount);
+			pattern.setPasswdHasCapitalLetters(capLettersCount);
+			
+			/* Obtaining the user and device trust values at the time the event was thrown */
+			List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId("545");
+			//List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionID);
+			double userTrustValue, deviceTrustValue;
+			if (trustValues.size() > 0) {
+				userTrustValue = trustValues.get(0).getUsertrustvalue();
+				deviceTrustValue = trustValues.get(0).getDevicetrustvalue();
+				pattern.setUserTrustValue(userTrustValue);
+				pattern.setDeviceTrustValue(deviceTrustValue);
+			} else {
+				pattern.setUserTrustValue(Double.NaN);
+				pattern.setDeviceTrustValue(Double.NaN);
+			}
+			
+			/* Checking if the user account is activated */
+			int activatedAccount = user.getEnabled();
+			pattern.setActivatedAccount(activatedAccount);
+			
+			/* Obtaining the role of the user inside the company */
+			int userRoleId = user.getRoleId();
+			//Roles userRole = dbManager.getRoleById(userRoleId);
+			Roles userRole = dbManager.getRoleById(145);
+			String userRoleName = userRole.getName();
+			if (userRoleName != null) {
+				pattern.setUserRole(userRoleName);
+			} else {
+				pattern.setUserRole(null);
+			}
+			
+			/* Detection time of the event */
+			Date eventDate = event.getDate();
+			Time eventTime = event.getTime();
+			Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
+			pattern.setEventTime(eventDetection);
+			
+			/* Was MUSES in silent or verbose mode? */		
+			if (eventDetection.getDay() < 8 && eventDetection.getMonth() <= 7) {
+				pattern.setSilentMode(1);
+			} else { pattern.setSilentMode(1); }
+			/*if (eventDetection.getDay() >= 16 && eventDetection.getMonth() == 3) {
+				pattern.setSilentMode(0);
+			}
+			if (eventDetection.getMonth() > 3) {
+				pattern.setSilentMode(0);
+			}*/
+			
+			/* Obtaining the model of device */
+			Devices userDeviceId = event.getDevice();
+			String deviceModel = userDeviceId.getDeviceModel();
+			if (deviceModel != null) {
+				pattern.setDeviceType(deviceModel);
+			} else {
+				pattern.setDeviceType(null);
+			}
+			
+			/* Device characteristics */
+			// OS
+			String userDeviceOS = null;
+			if (userDeviceId.getOS_name()!=null){
+				userDeviceOS = userDeviceId.getOS_name().concat(userDeviceId.getOS_version());
+			}	
+			if (userDeviceOS != null) {
+				pattern.setDeviceOS(userDeviceOS);
+			} else {
+				pattern.setDeviceOS(null);
+			}
+			// Certificate of device
+			byte[] deviceCertificate = userDeviceId.getCertificate();
+			if ((deviceCertificate != null) && (deviceCertificate.length > 0)) {
+				pattern.setDeviceHasCertificate(1);
+			} else {
+				pattern.setDeviceHasCertificate(0);
+			}
+			// Device company owned or employee owned
+			String deviceOwner = userDeviceId.getOwnerType();
+			if (deviceOwner != null) {
+				pattern.setDeviceOwnedBy(deviceOwner);
+			} else {
+				pattern.setDeviceOwnedBy(null);
+			}
+			
+			/* Characteristics of the application which the user was using at the time of the event */
+			Applications eventApp = event.getApplication();
+			// App name and version
+			String appName = eventApp.getName().concat(eventApp.getVersion());
+			if (appName != null) {
+				pattern.setAppName(appName);
+			} else {
+				pattern.setAppName(null);
+			}
+			// Vendor of the app
+			String appVendor = eventApp.getVendor();
+			if (appVendor != null) {
+				pattern.setAppVendor(appVendor);
+			} else {
+				pattern.setAppVendor(null);
+			}
+			// Is the application MUSES Aware?
+			int appMusesAware = eventApp.getIs_MUSES_aware();
+			pattern.setAppMUSESAware(appMusesAware);
+			
+			/* Asset that the event is trying to access to */
+			Assets eventAsset = event.getAsset();
+			// Name of the asset
+			String assetName = eventAsset.getTitle();
+			if (assetName != null) {
+				pattern.setAssetName(assetName);
+			} else {
+				pattern.setAssetName(null);
+			}
+			// Asset value
+			double assetValue = eventAsset.getValue();
+			pattern.setAssetValue(assetValue);
+			// Confidentiality level of the asset
+			String assetConfidentialLevel = eventAsset.getConfidentialLevel();
+			if (assetConfidentialLevel != null) {
+				pattern.setAssetConfidentialLevel(assetConfidentialLevel);
+			} else {
+				pattern.setAssetConfidentialLevel(null);
+			}
+			// Where is the asset located
+			String assetLocation = eventAsset.getLocation();
+			if (assetLocation != null) {
+				pattern.setAssetLocation(assetLocation);
+			} else {
+				pattern.setAssetLocation(null);
+			}
+			
+			/* Rest of parameters that have to be obtained from JSON */
+			/* Device configuration has to be taken from the last SECURITY_PROPERTY_CHANGED event */
+			SimpleEvents configEvent = dbManager.findDeviceConfigurationBySimpleEvent(Integer.parseInt(userDeviceId.getDeviceId()), eventDate.toString());
+			String configData = configEvent.getData();
+			// configData format is like:
+			// {event=security_property_changed, properties={"id":"1",
+			// "ispasswordprotected":"true","isrootpermissiongiven":"false",
+			// "screentimeoutinseconds":"300","musesdatabaseexists":"true",
+			// "isrooted":"false","accessibilityenabled":"false",
+			// "istrustedantivirusinstalled":"false","ipaddress":"172.17.1.52"}}
+			String configFormat = "\\\"?(\\w+)\\\"?[\\:\\=]\\\"?(\\w+)\\\"?";
+			Pattern configPattern = Pattern.compile(configFormat);
+			Matcher configMatcher = configPattern.matcher(configData);
+			while (configMatcher.find()) {
+				if (configMatcher.group(1).equalsIgnoreCase("ispasswordprotected")) {
+					if (configMatcher.group(2).equalsIgnoreCase("true")) {
+						pattern.setDeviceHasPassword(1);
+					} else {
+						pattern.setDeviceHasPassword(0);
+					}
+				} else if (configMatcher.group(1).equalsIgnoreCase("screentimeoutinseconds")) {
+					BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
+					pattern.setDeviceScreenTimeout(time);
+				} else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
+					if (configMatcher.group(2).equalsIgnoreCase("true")) {
+						pattern.setDeviceIsRooted(1);;
+					} else {
+						pattern.setDeviceIsRooted(0);
+					}
+				} else if (configMatcher.group(1).equalsIgnoreCase("accessibilityenabled")) {
+					if (configMatcher.group(2).equalsIgnoreCase("true")) {
+						pattern.setDeviceHasAccessibility(1);;
+					} else {
+						pattern.setDeviceHasAccessibility(0);
+					}
+				} else if (configMatcher.group(1).equalsIgnoreCase("istrustedantivirusinstalled")) {
+					if (configMatcher.group(2).equalsIgnoreCase("true")) {
+						pattern.setDeviceHasAntivirus(1);
+					} else {
+						pattern.setDeviceHasAntivirus(0);
+					}
+				}			
 				
-		/* Finding the type of the event */
-		EventType eventTypeId = event.getEventType();
-		String eventType = null;
-		if (eventTypeId != null){
-			eventType = eventTypeId.getEventTypeKey();
-		}
-		
-		if (eventType != null) {
-			pattern.setEventType(eventType);
-		} else {
-			pattern.setEventType(null);
-		}
-		
-		/* Is the event a simple event or a complex event? */
-		String eventLevel = null;
-		if (eventTypeId != null){
-			eventLevel = eventTypeId.getEventLevel();
-		}	
-		if (eventLevel != null) {
-			pattern.setEventLevel(eventLevel);
-		} else {
-			pattern.setEventLevel(null);
-		}
-		
-		/* Storing only the username */
-		Users user = event.getUser();
-		String username = user.getUsername();
-		if (username != null) {
-			pattern.setUsername(username);
-		} else {
-			pattern.setUsername(null);
-		}
-		
-		/* Extracting information from the password */
-		String userPassword = user.getPassword();
-		// Characters in the password
-		int passwordLength = userPassword.length();
-		pattern.setPasswordLength(passwordLength);
-		// Lexical information about the password
-		String digits = "\\d";
-		String letters = "[a-zA-Z]";
-		String capLetters = "[A-Z]";
-		Pattern digitPattern = Pattern.compile(digits);
-		Pattern letterPattern = Pattern.compile(letters);
-		Pattern capLetterPattern = Pattern.compile(capLetters);
-		Matcher digitsMatcher = digitPattern.matcher(userPassword);
-		Matcher lettersMatcher = letterPattern.matcher(userPassword);
-		Matcher capLettersMatcher = capLetterPattern.matcher(userPassword);
-		
-		int digitsCount = 0;
-		int lettersCount = 0;
-		int capLettersCount = 0;
-		
-		while (digitsMatcher.find()) {
-			digitsCount++;
-		}
-		while (lettersMatcher.find()) {
-			lettersCount++;
-		}
-		while (capLettersMatcher.find()) {
-			capLettersCount++;
-		}
-		
-		pattern.setNumbersInPassword(digitsCount);
-		pattern.setLettersInPassword(lettersCount);
-		pattern.setPasswdHasCapitalLetters(capLettersCount);
-		
-		/* Obtaining the user and device trust values at the time the event was thrown */
-		List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId("545");
-		//List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionID);
-		double userTrustValue, deviceTrustValue;
-		if (trustValues.size() > 0) {
-			userTrustValue = trustValues.get(0).getUsertrustvalue();
-			deviceTrustValue = trustValues.get(0).getDevicetrustvalue();
-			pattern.setUserTrustValue(userTrustValue);
-			pattern.setDeviceTrustValue(deviceTrustValue);
-		} else {
-			pattern.setUserTrustValue(Double.NaN);
-			pattern.setDeviceTrustValue(Double.NaN);
-		}
-		
-		/* Checking if the user account is activated */
-		int activatedAccount = user.getEnabled();
-		pattern.setActivatedAccount(activatedAccount);
-		
-		/* Obtaining the role of the user inside the company */
-		int userRoleId = user.getRoleId();
-		//Roles userRole = dbManager.getRoleById(userRoleId);
-		Roles userRole = dbManager.getRoleById(145);
-		String userRoleName = userRole.getName();
-		if (userRoleName != null) {
-			pattern.setUserRole(userRoleName);
-		} else {
-			pattern.setUserRole(null);
-		}
-		
-		/* Detection time of the event */
-		Date eventDate = event.getDate();
-		Time eventTime = event.getTime();
-		Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
-		pattern.setEventTime(eventDetection);
-		
-		/* Was MUSES in silent or verbose mode? */		
-		if (eventDetection.getDay() < 16 && eventDetection.getMonth() <= 3) {
-			pattern.setSilentMode(1);
-		}
-		if (eventDetection.getDay() >= 16 && eventDetection.getMonth() == 3) {
-			pattern.setSilentMode(0);
-		}
-		if (eventDetection.getMonth() > 3) {
-			pattern.setSilentMode(0);
-		}
-		
-		/* Obtaining the model of device */
-		Devices userDeviceId = event.getDevice();
-		String deviceModel = userDeviceId.getDeviceModel();
-		if (deviceModel != null) {
-			pattern.setDeviceType(deviceModel);
-		} else {
-			pattern.setDeviceType(null);
-		}
-		
-		/* Device characteristics */
-		// OS
-		String userDeviceOS = null;
-		if (userDeviceId.getOS_name()!=null){
-			userDeviceOS = userDeviceId.getOS_name().concat(userDeviceId.getOS_version());
-		}	
-		if (userDeviceOS != null) {
-			pattern.setDeviceOS(userDeviceOS);
-		} else {
-			pattern.setDeviceOS(null);
-		}
-		// Certificate of device
-		byte[] deviceCertificate = userDeviceId.getCertificate();
-		if ((deviceCertificate != null) && (deviceCertificate.length > 0)) {
-			pattern.setDeviceHasCertificate(1);
-		} else {
-			pattern.setDeviceHasCertificate(0);
-		}
-		// Device company owned or employee owned
-		String deviceOwner = userDeviceId.getOwnerType();
-		if (deviceOwner != null) {
-			pattern.setDeviceOwnedBy(deviceOwner);
-		} else {
-			pattern.setDeviceOwnedBy(null);
-		}
-		
-		/* Characteristics of the application which the user was using at the time of the event */
-		Applications eventApp = event.getApplication();
-		// App name and version
-		String appName = eventApp.getName().concat(eventApp.getVersion());
-		if (appName != null) {
-			pattern.setAppName(appName);
-		} else {
-			pattern.setAppName(null);
-		}
-		// Vendor of the app
-		String appVendor = eventApp.getVendor();
-		if (appVendor != null) {
-			pattern.setAppVendor(appVendor);
-		} else {
-			pattern.setAppVendor(null);
-		}
-		// Is the application MUSES Aware?
-		int appMusesAware = eventApp.getIs_MUSES_aware();
-		pattern.setAppMUSESAware(appMusesAware);
-		
-		/* Asset that the event is trying to access to */
-		Assets eventAsset = event.getAsset();
-		// Name of the asset
-		String assetName = eventAsset.getTitle();
-		if (assetName != null) {
-			pattern.setAssetName(assetName);
-		} else {
-			pattern.setAssetName(null);
-		}
-		// Asset value
-		double assetValue = eventAsset.getValue();
-		pattern.setAssetValue(assetValue);
-		// Confidentiality level of the asset
-		String assetConfidentialLevel = eventAsset.getConfidentialLevel();
-		if (assetConfidentialLevel != null) {
-			pattern.setAssetConfidentialLevel(assetConfidentialLevel);
-		} else {
-			pattern.setAssetConfidentialLevel(null);
-		}
-		// Where is the asset located
-		String assetLocation = eventAsset.getLocation();
-		if (assetLocation != null) {
-			pattern.setAssetLocation(assetLocation);
-		} else {
-			pattern.setAssetLocation(null);
-		}
-		
-		/* Rest of parameters that have to be obtained from JSON */
-		/* Device configuration has to be taken from the last SECURITY_PROPERTY_CHANGED event */
-		SimpleEvents configEvent = dbManager.findDeviceConfigurationBySimpleEvent(Integer.parseInt(userDeviceId.getDeviceId()), eventDate.toString());
-		String configData = configEvent.getData();
-		// configData format is like:
-		// {event=security_property_changed, properties={"id":"1",
-		// "ispasswordprotected":"true","isrootpermissiongiven":"false",
-		// "screentimeoutinseconds":"300","musesdatabaseexists":"true",
-		// "isrooted":"false","accessibilityenabled":"false",
-		// "istrustedantivirusinstalled":"false","ipaddress":"172.17.1.52"}}
-		String configFormat = "\\\"?(\\w+)\\\"?[\\:\\=]\\\"?(\\w+)\\\"?";
-		Pattern configPattern = Pattern.compile(configFormat);
-		Matcher configMatcher = configPattern.matcher(configData);
-		while (configMatcher.find()) {
-			if (configMatcher.group(1).equalsIgnoreCase("ispasswordprotected")) {
-				if (configMatcher.group(2).equalsIgnoreCase("true")) {
-					pattern.setDeviceHasPassword(1);
-				} else {
-					pattern.setDeviceHasPassword(0);
-				}
-			} else if (configMatcher.group(1).equalsIgnoreCase("screentimeoutinseconds")) {
-				BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
-				pattern.setDeviceScreenTimeout(time);
-			} else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
-				if (configMatcher.group(2).equalsIgnoreCase("true")) {
-					pattern.setDeviceIsRooted(1);;
-				} else {
-					pattern.setDeviceIsRooted(0);
-				}
-			} else if (configMatcher.group(1).equalsIgnoreCase("accessibilityenabled")) {
-				if (configMatcher.group(2).equalsIgnoreCase("true")) {
-					pattern.setDeviceHasAccessibility(1);;
-				} else {
-					pattern.setDeviceHasAccessibility(0);
-				}
-			} else if (configMatcher.group(1).equalsIgnoreCase("istrustedantivirusinstalled")) {
-				if (configMatcher.group(2).equalsIgnoreCase("true")) {
-					pattern.setDeviceHasAntivirus(1);
-				} else {
-					pattern.setDeviceHasAntivirus(0);
-				}
-			}			
+			}
+	        
+			/* If the user is sending an email */
+			/* Data in event_type_if = 11
+			 * {event=ACTION_SEND_MAIL, properties={"to":"the.reiceiver@generic.com,
+			 * another.direct.receiver@generic.com","noAttachments":"1",
+			 * "subject":"MUSES sensor status subject","bcc":"hidden.reiceiver@generic.com",
+			 * "from":"max.mustermann@generic.com","attachmentInfo":"pdf",
+			 * "cc":"other.listener@generic.com, 2other.listener@generic.com"}}
+			*/
 			
-		}
-        
-		/* If the user is sending an email */
-		/* Data in event_type_if = 11
-		 * {event=ACTION_SEND_MAIL, properties={"to":"the.reiceiver@generic.com,
-		 * another.direct.receiver@generic.com","noAttachments":"1",
-		 * "subject":"MUSES sensor status subject","bcc":"hidden.reiceiver@generic.com",
-		 * "from":"max.mustermann@generic.com","attachmentInfo":"pdf",
-		 * "cc":"other.listener@generic.com, 2other.listener@generic.com"}}
-		*/
-		
-		
-		if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
-			String mailJSON =  	"\\\"to\\\"\\:\\\"(.*)\\\",\\\"noAttachments\\\"\\:\\\"(.*)\\\",\\\"subject\\\"\\:\\\"(.*)\\\",\\\"bcc\\\"\\:\\\"(.*)\\\",\\\"attachmentInfo\\\"\\:\\\"(.*)\\\",\\\"from\\\"\\:\\\"(.*)\\\",\\\"cc\\\"\\:\\\"(.*)\\\"";
-			Pattern mailPattern = Pattern.compile(mailJSON);
-			Matcher matcherMail = mailPattern.matcher(event.getData());
-			if (matcherMail.find()) {
-				if (matcherMail.group(4).equals("none")) {
-					pattern.setMailContainsBCC(0);
-				} else {
-					pattern.setMailContainsBCC(1);
-				}
+			
+			if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
+				String mailJSON =  	"\\\"to\\\"\\:\\\"(.*)\\\",\\\"noAttachments\\\"\\:\\\"(.*)\\\",\\\"subject\\\"\\:\\\"(.*)\\\",\\\"bcc\\\"\\:\\\"(.*)\\\",\\\"attachmentInfo\\\"\\:\\\"(.*)\\\",\\\"from\\\"\\:\\\"(.*)\\\",\\\"cc\\\"\\:\\\"(.*)\\\"";
+				Pattern mailPattern = Pattern.compile(mailJSON);
+				Matcher matcherMail = mailPattern.matcher(event.getData());
+				if (matcherMail.find()) {
+					if (matcherMail.group(4).equals("none")) {
+						pattern.setMailContainsBCC(0);
+					} else {
+						pattern.setMailContainsBCC(1);
+					}
 
-				if (matcherMail.group(7).equals("none")) {
-					pattern.setMailContainsCC(0);
-				} else {
-					pattern.setMailContainsCC(1);
-				}				
-				pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
-				pattern.setMailRecipientAllowed(1);
+					if (matcherMail.group(7).equals("none")) {
+						pattern.setMailContainsCC(0);
+					} else {
+						pattern.setMailContainsCC(1);
+					}				
+					pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
+					pattern.setMailRecipientAllowed(1);
+				}
+				
 			}
 			
-		}
-		
-		/* If the user is opening an asset */
-		/* {id=3, wifiencryption=[WPA2-PSK-TKIP+CCMP][ESS], bssid=24:a4:3c:04:ae:09, 
-		 * bluetoothconnected=FALSE, wifienabled=true, wifineighbors=6, hiddenssid=false, 
-		 * networkid=1, wificonnected=true, airplanemode=false}
-		 */
-		if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 8)) {
-			String wifiJSON = "\\{\\w+\\=\\d+,\\swifiencryption\\=([\\[\\w\\-\\+\\]]*),\\s\\w+=[\\w\\:]+,\\sbluetoothconnected\\=(\\w+),\\swifienabled\\=(\\w+),\\swifineighbors\\=(\\d+),\\shiddenssid\\=(\\w+),\\s\\w+\\=\\w+,\\swificonnected\\=(\\w+)";
-			Pattern wifiPattern = Pattern.compile(wifiJSON);
-			Matcher matcherWifi = wifiPattern.matcher(event.getData());
-			if (matcherWifi.find()) {
-				pattern.setWifiEncryption(matcherWifi.group(1));
-				if(matcherWifi.group(2).equalsIgnoreCase("true")) {
-					pattern.setBluetoothConnected(1);
-				} else {
-					pattern.setBluetoothConnected(0);
+			/* If the user is opening an asset */
+			/* {id=3, wifiencryption=[WPA2-PSK-TKIP+CCMP][ESS], bssid=24:a4:3c:04:ae:09, 
+			 * bluetoothconnected=FALSE, wifienabled=true, wifineighbors=6, hiddenssid=false, 
+			 * networkid=1, wificonnected=true, airplanemode=false}
+			 */
+			if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 8)) {
+				String wifiJSON = "\\{\\w+\\=\\d+,\\swifiencryption\\=([\\[\\w\\-\\+\\]]*),\\s\\w+=[\\w\\:]+,\\sbluetoothconnected\\=(\\w+),\\swifienabled\\=(\\w+),\\swifineighbors\\=(\\d+),\\shiddenssid\\=(\\w+),\\s\\w+\\=\\w+,\\swificonnected\\=(\\w+)";
+				Pattern wifiPattern = Pattern.compile(wifiJSON);
+				Matcher matcherWifi = wifiPattern.matcher(event.getData());
+				if (matcherWifi.find()) {
+					pattern.setWifiEncryption(matcherWifi.group(1));
+					if(matcherWifi.group(2).equalsIgnoreCase("true")) {
+						pattern.setBluetoothConnected(1);
+					} else {
+						pattern.setBluetoothConnected(0);
+					}
+					if(matcherWifi.group(3).contentEquals("true")) {
+						pattern.setWifiEnabled(1);
+					} else {
+						pattern.setWifiEnabled(0);
+					}
+					if(matcherWifi.group(6).contentEquals("true")) {
+						pattern.setWifiConnected(1);
+					} else {
+						pattern.setWifiConnected(0);
+					}
 				}
-				if(matcherWifi.group(3).contentEquals("true")) {
-					pattern.setWifiEnabled(1);
-				} else {
-					pattern.setWifiEnabled(0);
-				}
-				if(matcherWifi.group(6).contentEquals("true")) {
-					pattern.setWifiConnected(1);
-				} else {
-					pattern.setWifiConnected(0);
-				}
+				
 			}
-			
-		}
+		}		
 		
 		
 		return pattern;
@@ -745,142 +1064,149 @@ public class DataMiner {
 			double[] vals = new double[data.numAttributes()];
 			
 			String eventType = pattern.getEventType();
-			if (eventType.contentEquals("SECURITY_PROPERTY_CHANGED") || 
-					eventType.contentEquals("ACTION_REMOTE_FILE_ACCESS") || 
-					eventType.contentEquals("ACTION_APP_OPEN") || 
-					eventType.contentEquals("ACTION_SEND_MAIL") || 
-					eventType.contentEquals("SAVE_ASSET") || 
-					eventType.contentEquals("VIRUS_FOUND") || 
-					eventType.contentEquals("CONTEXT_SENSOR_PACKAGE") ) {
-				
-				String decisionCause = pattern.getDecisionCause();
-				if (decisionCause == null) {
-					vals[0] = Utils.missingValue();
-				} else {
-					vals[0] = decisionCauses.indexOf(decisionCause);
-				}
-				vals[1] = pattern.getSilentMode();			
-				vals[2] = eventTypes.indexOf(eventType);
-				String eventLevel = pattern.getEventLevel();
-				if (eventLevel == null) {
-					vals[3] = Utils.missingValue();
-				} else {
-					vals[3] = eventLevels.indexOf(eventLevel);
-				}
-				String username = pattern.getUsername();
-				if (username == null) {
-					vals[4] = Utils.missingValue();
-				} else {
-					vals[4] = usernames.indexOf(username);
-				}			
-				vals[5] = pattern.getPasswordLength();
-				vals[6] = pattern.getLettersInPassword();
-				vals[7] = pattern.getNumbersInPassword();
-				vals[8] = pattern.getPasswdHasCapitalLetters();
-				Double userTrust = pattern.getUserTrustValue();
-				if (userTrust.isNaN()) {
-					vals[9] = Utils.missingValue();
-				} else {
-					vals[9] = userTrust;
-				}
-				vals[10] = pattern.getActivatedAccount();
-				String userRole = pattern.getUserRole();
-				if (userRole == null) {
-					vals[11] = Utils.missingValue();
-				} else {
-					vals[11] = userRoles.indexOf(userRole);
-				}
-				try {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					String strDate = sdf.format(pattern.getEventTime());
-					vals[12] = data.attribute(12).parseDate(strDate);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				String deviceModel = pattern.getDeviceType();
-				if (deviceModel == null) {
-					vals[13] = Utils.missingValue();
-				} else {
-					vals[13] = deviceTypes.indexOf(deviceModel);
-				}
-				String deviceOS = pattern.getDeviceOS();
-				if (deviceOS == null) {
-					vals[14] = Utils.missingValue();
-				} else {
-					vals[14] = deviceOSs.indexOf(deviceOS);
-				}
-				vals[15] = pattern.getDeviceHasAntivirus();
-				vals[16] = pattern.getDeviceHasCertificate();
-				Double deviceTrust = pattern.getDeviceTrustValue();
-				if (deviceTrust.isNaN()) {
-					vals[17] = Utils.missingValue();
-				} else {
-					vals[17] = deviceTrust;
-				}
-				String deviceOwner = pattern.getDeviceOwnedBy();
-				if (deviceOwner == null) {
-					vals[18] = Utils.missingValue();
-				} else {
-					vals[18] = deviceOwners.indexOf(deviceOwner);
-				}
-				vals[19] = pattern.getDeviceHasPassword();
-				vals[20] = pattern.getDeviceScreenTimeout().doubleValue();
-				vals[21] = pattern.getDeviceHasAccessibility();
-				vals[22] = pattern.getDeviceIsRooted();
-				String appName = pattern.getAppName();
-				if (appName == null) {
-					vals[23] = Utils.missingValue();
-				} else {
-					vals[23] = appNames.indexOf(appName);
-				}
-				String appVendor = pattern.getAppVendor();
-				if (appVendor == null) {
-					vals[24] = Utils.missingValue();
-				} else {
-					vals[24] = appVendors.indexOf(appVendor);
-				}
-				vals[25] = pattern.getAppMUSESAware();
-				String assetName = pattern.getAssetName();
-				if (assetName == null) {
-					vals[26] = Utils.missingValue();
-				} else {
-					vals[26] = assetNames.indexOf(assetName);
-				}
-				vals[27] = pattern.getAssetValue();
-				String assetConfidentialLevel = pattern.getAssetConfidentialLevel();
-				if (assetConfidentialLevel == null) {
-					vals[28] = Utils.missingValue();
-				} else {
-					vals[28] = assetConfidentialLevels.indexOf(assetConfidentialLevel);
-				}
-				String assetLocation = pattern.getAssetLocation();
-				if (assetLocation == null) {
-					vals[29] = Utils.missingValue();
-				} else {
-					vals[29] = assetLocations.indexOf(assetLocation);
-				}
-				vals[30] = pattern.getMailRecipientAllowed();
-				vals[31] = pattern.getMailContainsCC();
-				vals[32] = pattern.getMailContainsBCC();
-				vals[33] = pattern.getMailHasAttachment();
-				String wifiEncryption = pattern.getWifiEncryption();
-				if (wifiEncryption == null) {
-					vals[34] = Utils.missingValue();
-				} else {
-					vals[34] = wifiEncryptions.indexOf(wifiEncryption);
-				}
-				vals[35] = pattern.getWifiEnabled();
-				vals[36] = pattern.getWifiConnected();
-				vals[37] = pattern.getBluetoothConnected();
-				String label = pattern.getLabel();
-				if (label == null) {
-					vals[38] = Utils.missingValue();
-				} else {
-					vals[38] = allLabels.indexOf(label);
-				}
-				
-				data.add(new DenseInstance(1.0, vals));
-				
+			if (eventType == null) {
+				continue;
+			} else {
+				if (eventType.contentEquals("SECURITY_PROPERTY_CHANGED") || 
+						eventType.contentEquals("ACTION_REMOTE_FILE_ACCESS") || 
+						eventType.contentEquals("ACTION_APP_OPEN") || 
+						eventType.contentEquals("ACTION_SEND_MAIL") || 
+						eventType.contentEquals("SAVE_ASSET") || 
+						eventType.contentEquals("VIRUS_FOUND") || 
+						eventType.contentEquals("CONTEXT_SENSOR_PACKAGE") ||
+						eventType.contentEquals("user_entered_password_field") ||
+						eventType.contentEquals("CONTEXT_SENSOR_PERIPHERAL") ||
+						eventType.contentEquals("USER_BEHAVIOR") ||
+						eventType.contentEquals("CONTEXT_SENSOR_APP")) {
+					
+					String decisionCause = pattern.getDecisionCause();
+					if (decisionCause == null) {
+						vals[0] = Utils.missingValue();
+					} else {
+						vals[0] = decisionCauses.indexOf(decisionCause);
+					}
+					vals[1] = pattern.getSilentMode();			
+					vals[2] = eventTypes.indexOf(eventType);
+					String eventLevel = pattern.getEventLevel();
+					if (eventLevel == null) {
+						vals[3] = Utils.missingValue();
+					} else {
+						vals[3] = eventLevels.indexOf(eventLevel);
+					}
+					String username = pattern.getUsername();
+					if (username == null) {
+						vals[4] = Utils.missingValue();
+					} else {
+						vals[4] = usernames.indexOf(username);
+					}			
+					vals[5] = pattern.getPasswordLength();
+					vals[6] = pattern.getLettersInPassword();
+					vals[7] = pattern.getNumbersInPassword();
+					vals[8] = pattern.getPasswdHasCapitalLetters();
+					Double userTrust = pattern.getUserTrustValue();
+					if (userTrust.isNaN()) {
+						vals[9] = Utils.missingValue();
+					} else {
+						vals[9] = userTrust;
+					}
+					vals[10] = pattern.getActivatedAccount();
+					String userRole = pattern.getUserRole();
+					if (userRole == null) {
+						vals[11] = Utils.missingValue();
+					} else {
+						vals[11] = userRoles.indexOf(userRole);
+					}
+					try {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String strDate = sdf.format(pattern.getEventTime());
+						vals[12] = data.attribute(12).parseDate(strDate);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					String deviceModel = pattern.getDeviceType();
+					if (deviceModel == null) {
+						vals[13] = Utils.missingValue();
+					} else {
+						vals[13] = deviceTypes.indexOf(deviceModel);
+					}
+					String deviceOS = pattern.getDeviceOS();
+					if (deviceOS == null) {
+						vals[14] = Utils.missingValue();
+					} else {
+						vals[14] = deviceOSs.indexOf(deviceOS);
+					}
+					vals[15] = pattern.getDeviceHasAntivirus();
+					vals[16] = pattern.getDeviceHasCertificate();
+					Double deviceTrust = pattern.getDeviceTrustValue();
+					if (deviceTrust.isNaN()) {
+						vals[17] = Utils.missingValue();
+					} else {
+						vals[17] = deviceTrust;
+					}
+					String deviceOwner = pattern.getDeviceOwnedBy();
+					if (deviceOwner == null) {
+						vals[18] = Utils.missingValue();
+					} else {
+						vals[18] = deviceOwners.indexOf(deviceOwner);
+					}
+					vals[19] = pattern.getDeviceHasPassword();
+					vals[20] = pattern.getDeviceScreenTimeout().doubleValue();
+					vals[21] = pattern.getDeviceHasAccessibility();
+					vals[22] = pattern.getDeviceIsRooted();
+					String appName = pattern.getAppName();
+					if (appName == null) {
+						vals[23] = Utils.missingValue();
+					} else {
+						vals[23] = appNames.indexOf(appName);
+					}
+					String appVendor = pattern.getAppVendor();
+					if (appVendor == null) {
+						vals[24] = Utils.missingValue();
+					} else {
+						vals[24] = appVendors.indexOf(appVendor);
+					}
+					vals[25] = pattern.getAppMUSESAware();
+					String assetName = pattern.getAssetName();
+					if (assetName == null) {
+						vals[26] = Utils.missingValue();
+					} else {
+						vals[26] = assetNames.indexOf(assetName);
+					}
+					vals[27] = pattern.getAssetValue();
+					String assetConfidentialLevel = pattern.getAssetConfidentialLevel();
+					if (assetConfidentialLevel == null) {
+						vals[28] = Utils.missingValue();
+					} else {
+						vals[28] = assetConfidentialLevels.indexOf(assetConfidentialLevel);
+					}
+					String assetLocation = pattern.getAssetLocation();
+					if (assetLocation == null) {
+						vals[29] = Utils.missingValue();
+					} else {
+						vals[29] = assetLocations.indexOf(assetLocation);
+					}
+					vals[30] = pattern.getMailRecipientAllowed();
+					vals[31] = pattern.getMailContainsCC();
+					vals[32] = pattern.getMailContainsBCC();
+					vals[33] = pattern.getMailHasAttachment();
+					String wifiEncryption = pattern.getWifiEncryption();
+					if (wifiEncryption == null) {
+						vals[34] = Utils.missingValue();
+					} else {
+						vals[34] = wifiEncryptions.indexOf(wifiEncryption);
+					}
+					vals[35] = pattern.getWifiEnabled();
+					vals[36] = pattern.getWifiConnected();
+					vals[37] = pattern.getBluetoothConnected();
+					String label = pattern.getLabel();
+					if (label == null) {
+						vals[38] = Utils.missingValue();
+					} else {
+						vals[38] = allLabels.indexOf(label);
+					}
+					
+					data.add(new DenseInstance(1.0, vals));
+				}				
 			}
 		}
 		
@@ -895,7 +1221,7 @@ public class DataMiner {
 		}
 		
 		// OPTIONAL, only if we want the ARFF file
-		/*ArffSaver saver = new ArffSaver();
+		ArffSaver saver = new ArffSaver();
 		saver.setInstances(newData);
 		try {
 			saver.setFile(new File("./data/test.arff"));
@@ -903,7 +1229,7 @@ public class DataMiner {
 			saver.writeBatch();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		
 		return newData;

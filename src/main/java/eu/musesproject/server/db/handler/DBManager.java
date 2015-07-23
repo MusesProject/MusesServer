@@ -816,6 +816,29 @@ public class DBManager {
 	}
 	
 	/**
+     * Get Decision list by Access Request id
+     * @param id
+     * @return List<Decision>
+     */
+	public List<Decision> findDecisionByAccessRequestId(String accessRequestId) {
+		Session session = null;
+		Query query = null;
+		List<Decision> decisions = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("Decision.findDecisionByAccessRequestId").setString("access_request_id", accessRequestId);
+			if (query!=null) {
+				decisions = query.list();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		return decisions;		
+	}
+	
+	/**
      * Save Threat list in the DB 
      * @param Threat
      */
@@ -2324,7 +2347,12 @@ public class DBManager {
 			session = getSessionFactory().openSession();
 			query = session.getNamedQuery("PatternsKrs.findDistinctEventTypes");
 			if (query!=null) {
+				Integer nullIndex = null;
 				allDifferentValues = query.list();
+				nullIndex = allDifferentValues.indexOf(null);
+				if (nullIndex != null) {
+					allDifferentValues.remove(nullIndex);
+				}				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2348,6 +2376,7 @@ public class DBManager {
 			query = session.getNamedQuery("PatternsKrs.findDistinctEventLevel");
 			if (query!=null) {
 				allDifferentValues = query.list();
+				allDifferentValues.remove(allDifferentValues.indexOf(null));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2440,6 +2469,7 @@ public class DBManager {
 			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceOS");
 			if (query!=null) {
 				allDifferentValues = query.list();
+				allDifferentValues.remove(allDifferentValues.indexOf(null));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2463,6 +2493,7 @@ public class DBManager {
 			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceOwnedBy");
 			if (query!=null) {
 				allDifferentValues = query.list();
+				allDifferentValues.remove(allDifferentValues.indexOf(null));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

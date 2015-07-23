@@ -566,6 +566,16 @@ public class DBManagerTest {
 	}
 	
 	@Test
+	public void testFindDecisionByAccessRequestId() {
+		String accessRequestID = "80";
+		List<Decision> trustValues = dbmanager.findDecisionByAccessRequestId(accessRequestID);
+		if(trustValues.size()>0)
+			assertTrue(true);
+		else
+			fail("There is not any Decision corresponding to that access_request_id.");
+	}
+	
+	@Test
 	public void testGetRoleById() {
 		int roleID = 145;
 		Roles role = dbmanager.getRoleById(roleID);
