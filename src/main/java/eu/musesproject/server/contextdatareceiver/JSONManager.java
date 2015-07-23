@@ -139,6 +139,31 @@ public class JSONManager {
 				e.printStackTrace();
 			}
 			
+		}else if (requestType.equals(RequestType.OPPORTUNITY)) {
+			
+			// Process the root JSON object
+						JSONObject root;
+						try {
+							root = new JSONObject(message);
+							contextEvent = new ContextEvent();
+							contextEvent.setType(EventTypes.OPPORTUNITY);
+							properties = new HashMap<String,String>();
+							for (Iterator iterator = root.keys(); iterator.hasNext();) {
+								String key = (String) iterator.next();
+								if ((!key.equals(ContextEvent.KEY_TYPE))&&(!key.equals(ContextEvent.KEY_TIMESTAMP))){
+									String value = root.getString(key);
+									properties.put(key, value);
+								}
+							}
+							contextEvent.setProperties(properties);
+							Logger.getLogger(JSONManager.class.getName()).log(
+									Level.INFO, "A new event has been received.");
+							printContextEventInfo(contextEvent);
+							resultList.add(contextEvent);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 		}
 		return resultList;
 
@@ -392,7 +417,7 @@ public class JSONManager {
 		return root;
 	}
 	
-	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig, ConnectionConfig connConfig, List<Zone> zoneConfig) {
+	public static JSONObject createConfigUpdateJSON(String requestType, MusesConfig config, List<SensorConfiguration> sensorConfig, ConnectionConfig connConfig, List<Zone> zoneConfig, String defaultPoliciesXML) {
 		JSONObject root = new JSONObject();
 		try {
 
@@ -447,6 +472,10 @@ public class JSONManager {
             
             root.put(JSONIdentifiers.CONNECTION_CONFIG,XML.toJSONObject(connConfigXML));
             
+            if (defaultPoliciesXML != null){
+            	root.put("default-policies", XML.toJSONObject(defaultPoliciesXML));
+            }
+            
             
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -476,13 +505,13 @@ public class JSONManager {
 		return "<"+tag+">"+value+"</"+tag+">";
 	}
 
-	public static JSONObject createDefaultPoliciesJSON(
+	public static String createDefaultPoliciesJSON(
 			List<DefaultPolicies> defaultPolicies) {
 		
-		JSONObject root = new JSONObject();
-		try {
+		//JSONObject root = new JSONObject();
+		//try {
 
-            root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, "default-policies");
+            //root.put(JSONIdentifiers.REQUEST_TYPE_IDENTIFIER, "default-policies");
             
           //Default Policies
             String defaultPoliciesXML = "";
@@ -495,12 +524,13 @@ public class JSONManager {
 				defaultPoliciesXML += "</"+JSONIdentifiers.DEVICE_POLICY+">";
 			}
 
-            root.put("policy", XML.toJSONObject(defaultPoliciesXML));
+            //root.put("default-policies", XML.toJSONObject(defaultPoliciesXML));
 
-		} catch (JSONException e) {
+		/*} catch (JSONException e) {
 			e.printStackTrace();
-		}
-		return root;
+		}*/
+		//return root;
+           return defaultPoliciesXML; 
 	}
 
 }

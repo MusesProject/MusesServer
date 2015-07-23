@@ -40,5 +40,6 @@ public class Constants {
 	public final static String INTERNAL = "INTERNAL";
 	public final static String VALIDATED = "VALIDATED";
 	public final static String DRAFT = "DRAFT";
+	public final static String WORKING_HOURS_OPP = "working hours opportunity";
 	
 }

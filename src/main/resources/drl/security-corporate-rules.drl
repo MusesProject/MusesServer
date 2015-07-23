@@ -23,6 +23,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SecurityIncidentEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Opportunity
 import eu.musesproject.server.eventprocessor.util.Constants
 import java.util.ArrayList
 import java.util.Date
@@ -144,6 +145,12 @@ declare AddNoteEvent
 	@expires (1m)
 end
 
+declare Opportunity
+	@role( event )
+	@timestamp ( event_date )
+	@expires (1m)
+end
+
 
 
 function boolean requiredApp(String name){
@@ -244,10 +251,10 @@ rule "AccessRequest Detection open asset type confidential unsecure wifi"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="CONFIDENTIAL")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="AccessRequest Detection open asset type confidential unsecure wifi") 
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
@@ -271,10 +278,10 @@ rule "AccessRequest Detection open asset type internal unsecure wifi"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="INTERNAL")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="AccessRequest Detection open asset type internal unsecure wifi") 
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
@@ -299,10 +306,10 @@ rule "AccessRequest Detection open asset type strictly confidential unsecure wif
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="STRICTLY_CONFIDENTIAL")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="AccessRequest Detection open asset type strictly confidential unsecure wifi") 
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open-unsecure wifi********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
@@ -327,11 +334,11 @@ rule "AccessRequest Detection open asset type confidential secure wifi"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="CONFIDENTIAL")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="AccessRequest Detection open asset type confidential secure wifi") 
 
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type confidential secure wifi");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type confidential secure wifi********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 
 		StatusGlobal.log("****Event conn****:"+conn);
@@ -359,11 +366,11 @@ rule "AccessRequest Detection open asset type internal secure wifi"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="INTERNAL")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="AccessRequest Detection open asset type internal secure wifi") 
 
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type internal secure wifi");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type internal secure wifi********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 
 		StatusGlobal.log("****Event conn****:"+conn);
@@ -390,11 +397,11 @@ rule "AccessRequest Detection open asset type internal secure wifi"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="STRICTLY_CONFIDENTIAL")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="AccessRequest Detection open asset type strictly confidential secure wifi") 
 
 	then
-		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type strictly confidential secure wifi");
+		StatusGlobal.log("1.1.A new AccessRequest has been detected: FileObserverEvent. Type open asset type strictly confidential secure wifi********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 
 		StatusGlobal.log("****Event conn****:"+conn);
@@ -421,11 +428,11 @@ rule "AccessRequest Detection open asset type internal secure wifi"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", resourceType=="PUBLIC")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true) //demo
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, sessionId==e.sessionId) //demo
 		not AccessRequest(event=="AccessRequest Detection open asset type PUBLIC")
 		//not AccessRequest(event==e.path)
 	then
-		StatusGlobal.log("1.2.A new AccessRequest has been detected: FileObserverEvent. Type open asset type PUBLIC");
+		StatusGlobal.log("1.2.A new AccessRequest has been detected: FileObserverEvent. Type open asset type PUBLIC********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event****:"+e);
 		if(e!=null){
@@ -586,10 +593,10 @@ rule "Blacklist app 00001"
 	dialect "mvel"
 	when
 		v: VirusFoundEvent()
-		e:EmailEvent(numberAttachments>0)
+		e:EmailEvent(numberAttachments>0, sessionId==v.sessionId)
 		not AccessRequest(event=="AccessRequest Email with Attachments")
 	then
-		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject());
+		StatusGlobal.log("EMAIL DETECTED:"+e.getSubject()+"**********SESSION-ID-e:"+e.getSessionId()+" v:"+v.getSessionId());
 		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Email with Attachments","DENY", "<noAttachments>1</noAttachments>");
 		
 		AccessRequest request = new AccessRequest();
@@ -639,10 +646,10 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: ChangeSecurityPropertyEvent()
-		d: DeviceProtectionEvent(screenTimeoutInSeconds>30)
+		d: DeviceProtectionEvent(screenTimeoutInSeconds>30, sessionId==e.sessionId)
 		not AccessRequest(event=="AccessRequest Change Security Property-screen-timeout")
 	then
-		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.");
+		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.**********SESSION-ID-e:"+e.getSessionId()+" d:"+d.getSessionId());
 		StatusGlobal.log("****Event change device protection****:"+d);
 		if((d!=null)&&(e!=null)){
 		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Change Security Property-screen-timeout","DENY", "<screenTimeoutInSeconds>"+d.getScreenTimeoutInSeconds()+"</screenTimeoutInSeconds>");
@@ -727,7 +734,7 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Required application list","DENY","<packagename>"+e.getAppPackage()+"</packagename>");
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Required application list","DENY","<packagestatus>REMOVED</packagestatus>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Required application list");
 		StatusGlobal.log("**********"+id);
@@ -918,9 +925,9 @@ rule "Blacklist app 00001"
 	dialect "mvel"
 	when
 		e: LocationEvent(isWithinZone matches ".*1.*")
-		e1: AppObserverEvent(appPackage matches ".*GoogleCamera.*",event=="open_application")
+		e1: AppObserverEvent(appPackage matches ".*GoogleCamera.*",event=="open_application", sessionId==e.sessionId)
 	then
-		StatusGlobal.log("Zone 1 application restriction");
+		StatusGlobal.log("Zone 1 application restriction.**********SESSION-ID-e:"+e.getSessionId()+" e1:"+e1.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e1);
 		int id = Rt2aeGlobal.composeAccessRequestI18n(e1,"Zone 1 application restriction","DENY","<packagename>"+e1.getAppPackage()+"</packagename>");
@@ -939,10 +946,10 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*", username=="muses")
-		e1: LocationEvent(isWithinZone matches ".*1.*")
+		e1: LocationEvent(isWithinZone matches ".*1.*", sessionId==e.sessionId)
 		not AccessRequest(event=="Open asset in restricted area")
 	then
-		StatusGlobal.log("Open asset in restricted area");
+		StatusGlobal.log("Open asset in restricted area**********SESSION-ID-e:"+e.getSessionId()+" e1:"+e1.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		if(e!=null){
 		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Open asset in restricted zone 1","DENY","<path>"+e.getPath()+"</path>");		
@@ -964,10 +971,10 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: SecurityIncidentEvent()
-		e1: ChangeSecurityPropertyEvent(deviceId==e.deviceId)
+		e1: ChangeSecurityPropertyEvent(deviceId==e.deviceId, sessionId==e.sessionId)
 
 	then
-		StatusGlobal.log("SECURITY INCIDENT******************************");
+		StatusGlobal.log("SECURITY INCIDENT**********************SESSION-ID-e:"+e.getSessionId()+" e1:"+e1.getSessionId());
 		StatusGlobal.log("WIPE DEVICE: "+e.getDeviceId());
 		StatusGlobal.log("SESSION ID: "+e1.getSessionId()+" TYPE:"+e1.getType());
 		Rt2aeGlobal.wipeDevice(e,e1.getSessionId());
@@ -1030,10 +1037,11 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*")
-		conn: ConnectivityEvent(bluetoothConnected=="TRUE")
+		conn: ConnectivityEvent(bluetoothConnected=="TRUE", sessionId==e.sessionId)
 		not AccessRequest(event=="Access file in monitored folder while bluetooth enabled")
 	then
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("Access file in monitored folder while bluetooth enabled**********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		if((conn!=null)&&(e!=null)){
 		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document with bluetooth enabled\nYou have bluetooth enabled and try to open a confidential document.\nInformation sent through bluetooh is not encrypted and might be visible to other people.Go to Settings > Bluetooh and disable it","DENY","<bluetoothconnected>"+conn.getBluetoothConnected()+"</bluetoothconnected>");
 		AccessRequest request = new AccessRequest();
@@ -1051,13 +1059,14 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "java"
 	when
-		e: FileObserverEvent(event=="open_asset", path matches ".*Swe.*")
-		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*")
+		e: FileObserverEvent(event=="open_asset", path matches ".*confidential.*")
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="Access file in monitored folder unsecure wifi")
 	then
 		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("Access file in monitored folder unsecure wifi**********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Access file in monitored folder unsecure wifi");
 		request.setId(id);
@@ -1066,4 +1075,20 @@ rule "Blacklist app 00001"
 		}else{
 		StatusGlobal.log("*****Null object*****");
 		}
+	end	
+
+
+	rule "Opportunity"
+	no-loop true
+	dialect "java"
+	when
+		o: Opportunity()
+		e: FileObserverEvent(event=="open_asset", path matches ".*confidential.*", sessionId==o.sessionId)
+		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==o.sessionId)
+		ar: AccessRequest(id==o.decisionId)
+	then
+		StatusGlobal.log("OPPORTUNITY RECEIVED******************************");
+		StatusGlobal.log("Opportunity**********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId()+" o:"+o.getSessionId());
+		int id = Rt2aeGlobal.composeAccessRequestOpportunity(o,e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		
 	end	

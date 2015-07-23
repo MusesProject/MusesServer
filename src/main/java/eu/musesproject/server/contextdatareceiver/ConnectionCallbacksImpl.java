@@ -208,20 +208,9 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 						logger.log(Level.INFO, MUSES_TAG
 								+ " Zones information for " + zoneConfig.size()
 								+ " zones.");
-
-						JSONObject response = JSONManager
-								.createConfigUpdateJSON(
-										RequestType.CONFIG_UPDATE, config,
-										sensorConfig, connectionConfig,
-										zoneConfig);
-						logger.log(Level.INFO, response.toString());
-						logger.log(Level.INFO, MUSES_TAG + " Response to send:"
-								+ response.toString());
-						logger.log(Level.INFO, MUSES_TAG + " sessionID: "
-								+ sessionId);
-						connManager.sendData(sessionId, response.toString());
-						//Send default policies
 						
+						//Retrieve default policies
+						String defaultPoliciesXML = null;
 						username = root
 								.getString(JSONIdentifiers.AUTH_USERNAME);
 						Users user = dbManager.getUserByUsername(username);
@@ -233,14 +222,29 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 
 							if ((defaultPolicies != null)
 									&& (defaultPolicies.size() > 0)) {
-								JSONObject defaultPoliciesJSON = JSONManager
+								
+								defaultPoliciesXML = JSONManager
 										.createDefaultPoliciesJSON(defaultPolicies);
 								logger.log(Level.INFO,
-										defaultPoliciesJSON.toString());
-								connManager.sendData(sessionId,
-										defaultPoliciesJSON.toString());
+										defaultPoliciesXML.toString());
+								//connManager.sendData(sessionId, defaultPoliciesJSON.toString());
 							}
 						}
+						
+						
+
+						JSONObject response = JSONManager
+								.createConfigUpdateJSON(
+										RequestType.CONFIG_UPDATE, config,
+										sensorConfig, connectionConfig,
+										zoneConfig, defaultPoliciesXML);
+						logger.log(Level.INFO, response.toString());
+						logger.log(Level.INFO, MUSES_TAG + " Response to send:"
+								+ response.toString());
+						logger.log(Level.INFO, MUSES_TAG + " sessionID: "
+								+ sessionId);
+						connManager.sendData(sessionId, response.toString());
+						
 						
 					} else {// Current sessionId has not been authenticated
 						JSONObject response = JSONManager

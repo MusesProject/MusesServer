@@ -21,7 +21,9 @@ package eu.musesproject.server.eventprocessor.composers;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -37,6 +39,8 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Opportunity;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.USBDeviceConnectedEvent;
 import eu.musesproject.server.eventprocessor.util.Constants;
@@ -45,6 +49,8 @@ import eu.musesproject.server.risktrust.AccessRequest;
 import eu.musesproject.server.risktrust.Asset;
 import eu.musesproject.server.risktrust.Device;
 import eu.musesproject.server.risktrust.DeviceTrustValue;
+import eu.musesproject.server.risktrust.OpportunityDescriptor;
+import eu.musesproject.server.risktrust.Outcome;
 import eu.musesproject.server.risktrust.User;
 import eu.musesproject.server.risktrust.UserTrustValue;
 import eu.musesproject.server.scheduler.ModuleType;
@@ -76,9 +82,14 @@ public class AccessRequestComposer {
 					if (fileEvent.getResourceType()!=null){
 						requestedCorporateAsset.setConfidential_level(fileEvent.getResourceType());
 					}else{
-						requestedCorporateAsset.setConfidential_level(Constants.PUBLIC);
+						if((fileEvent.getPath()!=null)&&(fileEvent.getPath().toUpperCase().contains(Constants.CONFIDENTIAL))){
+							requestedCorporateAsset.setConfidential_level(Constants.CONFIDENTIAL);
+						}else{
+							requestedCorporateAsset.setConfidential_level(Constants.PUBLIC);
+						}	
 					}
-					composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
 					
 					//Store asset
@@ -91,7 +102,8 @@ public class AccessRequestComposer {
 					AppObserverEvent appEvent = (AppObserverEvent) event;
 					requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
 					requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
-					composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+					//composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(appEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(appEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.APPOBSERVER);
 					
@@ -122,7 +134,8 @@ public class AccessRequestComposer {
 					FileObserverEvent fileEvent = (FileObserverEvent) event;
 					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
 					requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
-					composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.SAVE_ASSET);
 				}
@@ -153,6 +166,16 @@ public class AccessRequestComposer {
 					composedRequest.setAction(addNoteEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(addNoteEvent.getTimestamp());
 					requestedCorporateAsset.setDescription(EventTypes.ADD_NOTE);
+				}
+
+			}else if (event.getType().equals(EventTypes.PACKAGE)){
+				if (event instanceof PackageObserverEvent) {
+					PackageObserverEvent packageEvent = (PackageObserverEvent) event;
+					requestedCorporateAsset.setId(packageEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(packageEvent.getDescription());//Get the asset identifier
+					composedRequest.setAction(packageEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(packageEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.PACKAGE);
 				}
 
 			}else {
@@ -229,6 +252,213 @@ public class AccessRequestComposer {
 		composedRequest.setRequestedCorporateAsset(requestedCorporateAsset);
 		
 		logger.log(Level.INFO, "AccessRequest event id:"+composedRequest.getEventId());
+		
+		return composedRequest;
+	}
+	
+	
+	public static AccessRequest composeAccessRequestOpportunity(Event event, Opportunity opportunity){
+		
+		AccessRequest composedRequest = new AccessRequest();
+		Asset requestedCorporateAsset = new Asset();
+		Assets entityAsset = null;
+		
+		if (event.getType()!=null){
+			if (event.getType().equals(EventTypes.FILEOBSERVER)){
+				if (event instanceof FileObserverEvent) {
+					FileObserverEvent fileEvent = (FileObserverEvent) event;
+					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
+				
+//					if ((fileEvent.getResourceType()!=null)&&(fileEvent.getResourceType().equals("sensitive"))){
+//						requestedCorporateAsset.setConfidential_level("CONFIDENTIAL");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+//					}else{
+//						requestedCorporateAsset.setConfidential_level("PUBLIC");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
+//					}
+					if (fileEvent.getResourceType()!=null){
+						requestedCorporateAsset.setConfidential_level(fileEvent.getResourceType());
+					}else{
+						if((fileEvent.getPath()!=null)&&(fileEvent.getPath().toUpperCase().contains(Constants.CONFIDENTIAL))){
+							requestedCorporateAsset.setConfidential_level(Constants.CONFIDENTIAL);
+						}else{
+							requestedCorporateAsset.setConfidential_level(Constants.PUBLIC);
+						}	
+					}
+					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(fileEvent.getTimestamp());
+					
+					//Store asset
+					requestedCorporateAsset.setDescription(EventTypes.FILEOBSERVER);
+					entityAsset = convertAsset(requestedCorporateAsset);
+					dbManager.setAsset(entityAsset);
+				}
+			}else if (event.getType().equals(EventTypes.APPOBSERVER)){
+				if (event instanceof AppObserverEvent){
+					AppObserverEvent appEvent = (AppObserverEvent) event;
+					requestedCorporateAsset.setId(appEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(appEvent.getName());//Get the asset identifier
+					//composedRequest.setAction(appEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(appEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(appEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.APPOBSERVER);
+					
+				}
+			}else if (event.getType().equals(EventTypes.SEND_MAIL)){
+				if (event instanceof EmailEvent) {
+					EmailEvent emailEvent = (EmailEvent) event;
+					requestedCorporateAsset = testGetRequestedAsset(emailEvent
+							.getAttachmentName());
+					composedRequest.setAction(emailEvent.getType());// Get the action over the asset
+					composedRequest.setEventId(emailEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.SEND_MAIL);
+				}
+			}else if (event.getType().equals(EventTypes.CHANGE_SECURITY_PROPERTY)){
+				if (event instanceof ChangeSecurityPropertyEvent) {
+					ChangeSecurityPropertyEvent changeSecurityPropertyEvent = (ChangeSecurityPropertyEvent) event;
+					requestedCorporateAsset = new Asset();//TODO It is not clear what is the asset when a device setting is changed
+					requestedCorporateAsset.setId(0);
+					requestedCorporateAsset.setLocation("device");
+					//requestedCorporateAsset.setValue(400);
+					logger.log(Level.INFO, "ACTION TYPE:"+changeSecurityPropertyEvent.getType());
+					composedRequest.setAction(changeSecurityPropertyEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(changeSecurityPropertyEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.CHANGE_SECURITY_PROPERTY);
+				}
+			}else if (event.getType().equals(EventTypes.SAVE_ASSET)){
+				if (event instanceof FileObserverEvent) {
+					FileObserverEvent fileEvent = (FileObserverEvent) event;
+					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
+					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(fileEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.SAVE_ASSET);
+				}
+			}else if (event.getType().equals(EventTypes.USER_ENTERED_PASSWORD_FIELD)){
+				if (event instanceof PasswordEvent) {
+					PasswordEvent pwdEvent = (PasswordEvent) event;
+					requestedCorporateAsset.setId(pwdEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(pwdEvent.getPackageName());//Get the asset identifier
+					composedRequest.setAction(pwdEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(pwdEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.USER_ENTERED_PASSWORD_FIELD);
+				}
+			}else if (event.getType().equals(EventTypes.USB_DEVICE_CONNECTED)){
+				if (event instanceof USBDeviceConnectedEvent) {
+					USBDeviceConnectedEvent usbEvent = (USBDeviceConnectedEvent) event;
+					requestedCorporateAsset.setId(usbEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(usbEvent.getDescription());//Get the asset identifier
+					composedRequest.setAction(usbEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(usbEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.USB_DEVICE_CONNECTED);
+				}
+
+			}else if (event.getType().equals(EventTypes.ADD_NOTE)){
+				if (event instanceof AddNoteEvent) {
+					AddNoteEvent addNoteEvent = (AddNoteEvent) event;
+					requestedCorporateAsset.setId(addNoteEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(addNoteEvent.getDescription());//Get the asset identifier
+					composedRequest.setAction(addNoteEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(addNoteEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.ADD_NOTE);
+				}
+
+			}else if (event.getType().equals(EventTypes.PACKAGE)){
+				if (event instanceof PackageObserverEvent) {
+					PackageObserverEvent packageEvent = (PackageObserverEvent) event;
+					requestedCorporateAsset.setId(packageEvent.getId());//Get the asset identifier		
+					requestedCorporateAsset.setLocation(packageEvent.getDescription());//Get the asset identifier
+					composedRequest.setAction(packageEvent.getType());//Get the action over the asset
+					composedRequest.setEventId(packageEvent.getTimestamp());
+					requestedCorporateAsset.setDescription(EventTypes.PACKAGE);
+				}
+
+			}else {
+				logger.log(Level.INFO, "Unsupported Event type:"+event.getType());
+				requestedCorporateAsset.setDescription(event.getType());
+			}
+		}else{
+			logger.log(Level.INFO, "Null type for event instantiated as:" + event.getClass().getName());
+		}
+		
+		//Set value according to sensitivity level
+		if (requestedCorporateAsset.getConfidential_level()!=null){
+			if (requestedCorporateAsset.getConfidential_level().equals(Constants.PUBLIC)){
+				requestedCorporateAsset.setValue(0);
+			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.INTERNAL)){
+				requestedCorporateAsset.setValue(100);
+			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.CONFIDENTIAL)){
+				requestedCorporateAsset.setValue(10000);
+			}else if (requestedCorporateAsset.getConfidential_level().equals(Constants.STRICTLY_CONFIDENTIAL)){
+				requestedCorporateAsset.setValue(1000000);
+			}
+		}else{
+			requestedCorporateAsset.setValue(0);
+		}
+		
+		if (event instanceof OpenFileEvent){
+			OpenFileEvent fileEvent = (OpenFileEvent)event;
+			requestedCorporateAsset.setTitle(fileEvent.getAssetTypeId());//TODO Asset information should be completed
+		}
+		
+		//Store asset
+		entityAsset = convertAsset(requestedCorporateAsset);
+		//Associate event_id in the asset table
+		//EventType type = dbManager.getEventTypeByKey(event.getType());
+		//SimpleEvents simpleEvent = dbManager.findLastEventByEventType(type.getEventTypeId());
+		//entityAsset.setEvent(simpleEvent);
+		entityAsset.setAvailable(new Date());
+		String assetId = dbManager.setAsset(entityAsset);
+		
+		//Assign correct asset to simple event
+		
+		SimpleEvents associatedEvent = dbManager.updateSimpleEvent(event.getType(), assetId );
+		
+		if (associatedEvent!=null){
+			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
+		}else{
+			if (isInteger(event.getType(),10)){
+				associatedEvent = dbManager.findLastEventByEventType(Integer.valueOf(event.getType()));
+			}else{
+				EventType eventType = dbManager.getEventTypeByKey(event.getType());
+				int eventTypeIndex = eventType.getEventTypeId();
+				associatedEvent = dbManager.findLastEventByEventType(eventTypeIndex);
+			}
+			composedRequest.setEventId(Long.valueOf(associatedEvent.getEventId()));
+		}
+		
+		
+		eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(event.getUsername());
+		
+		eu.musesproject.server.entity.Devices musesDevice = dbManager.getDeviceByIMEI(event.getDeviceId());
+
+
+		User user = new User();
+		Device device = new Device();
+		dbManager.convertUsertoCommonUser(user, musesUser);
+				
+		dbManager.convertDevicetoCommonDevice(device, musesDevice);
+		//testGetUserFromDatabase(event.getUsername());//TODO User information should be retrieved from the database
+
+		//Device device = testGetDeviceFromDatabase(event.getDeviceId());//TODO Device information should be retrieved
+
+		composedRequest.setUser(user);
+		composedRequest.setDevice(device);
+		composedRequest.setRequestedCorporateAsset(requestedCorporateAsset);
+		
+		logger.log(Level.INFO, "AccessRequest event id:"+composedRequest.getEventId());
+		
+		//Compose opportunity part
+		OpportunityDescriptor opDescriptor = new OpportunityDescriptor();
+		List<Outcome> outcomes = new ArrayList<Outcome>();
+		double costBenefit = Integer.valueOf(opportunity.getTime())*200;
+		Outcome outcome1 = new Outcome(Constants.WORKING_HOURS_OPP, costBenefit);
+		outcomes.add(outcome1);
+		Outcome outcome2 = new Outcome(opportunity.getLossDescription(), Double.valueOf(opportunity.getLossCost()));
+		opDescriptor.setOutcomes(outcomes);
+		outcomes.add(outcome2);
+		composedRequest.setOpportunityDescriptor(opDescriptor);
 		
 		return composedRequest;
 	}

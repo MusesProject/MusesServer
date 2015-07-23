@@ -49,6 +49,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEve
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Opportunity;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent;
 import eu.musesproject.server.policyrulesselector.PolicySelector;
 import eu.musesproject.server.policyrulestransmitter.PolicyTransmitter;
@@ -196,7 +197,7 @@ public class Rt2aeGlobal {
 		
 		for (Iterator<AccessRequest> iterator = requests.iterator(); iterator.hasNext();) {
 			AccessRequest accessRequest = (AccessRequest) iterator.next();
-			Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:accessRequest.getId()"+accessRequest.getId());
+			//Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:accessRequest.getId()"+accessRequest.getId());
 			if (accessRequest.getId()==requestId){
 				eventId = accessRequest.getEventId();
 			}
@@ -204,7 +205,7 @@ public class Rt2aeGlobal {
 		
 		for (Iterator<Clue> iterator = clues.iterator(); iterator.hasNext();) {
 			Clue clue = (Clue) iterator.next();
-			Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:clue.getId-"+clue.getId()+" eventId:"+(int)eventId);
+			//Logger.getLogger(Rt2aeGlobal.class).info("[getCluesByRequestId]:clue.getId-"+clue.getId()+" eventId:"+(int)eventId);
 			if (clue.getId()==(int)eventId){
 				clue.setRequestId(requestId);
 				aux = convertClue(clue);
@@ -451,6 +452,67 @@ public class Rt2aeGlobal {
 
 		logger.info("		" + policyDT.getRawPolicy());
 		logger.info("		" + decision.toString());
+		logger.info("		DECISION ID:" + decision.getId());
+		//requests.add(composedRequest);
+		
+		//Send policy
+		
+		Device device = new Device();
+		PolicyTransmitter transmitter = new PolicyTransmitter();
+		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		logger.log(Level.INFO, MUSES_TAG + " Now sending policy:"+policyDT.getRawPolicy());
+		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
+
+		return Integer.valueOf(decision.getId());
+	}
+
+	public int composeAccessRequestOpportunity(Opportunity opportunity, Event event, String message, String mode, String condition){//Simulate response from RT2AE, for demo purposes
+		logger.info("[composedAccessRequest]");
+		Decision[] decisions = new Decision[1];
+		
+		AccessRequest composedRequest = AccessRequestComposer.composeAccessRequestOpportunity(event,opportunity);
+		composedRequest.setId(requests.size()+1);
+		requests.add(composedRequest);
+		//Rt2aeServerImpl rt2aeServer = new Rt2aeServerImpl();
+		Decision decision = null;
+		Context context = new Context();
+		
+		//Store security violation in db
+		
+		storeComplexEvent(event, message, mode, condition, composedRequest.getEventId());
+		
+		PolicyCompliance policyCompliance = policyCompliance(composedRequest, message, event, mode, condition);
+		try{
+			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
+		}catch(javax.persistence.EntityExistsException e){
+			logger.error("Please, check database persistence:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+		}catch(Exception e){
+			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+		}		
+		//Control based on policy compliance
+		
+		if (decision == null){
+			if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
+				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+			}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
+				decision = Decision.STRONG_DENY_ACCESS;
+			}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
+				decision = Decision.GRANTED_ACCESS;
+			}
+		}
+		decision.setCondition(condition);
+		decisions[0] = decision;
+		
+		//Select the most appropriate policy according to the decision and the action of the request		
+		logger.info("		Session id:"+event.getSessionId());
+		PolicySelector policySelector = new PolicySelector();
+		logger.info("		Rt2aeGlobal request action:"+composedRequest.getAction());
+		logger.log(Level.INFO, MUSES_TAG + " Request action: "+composedRequest.getAction());
+		PolicyDT policyDT = policySelector.computePolicyBasedOnDecisions(event.getHashId(),decisions, composedRequest.getAction(), composedRequest.getRequestedCorporateAsset());
+		logger.log(Level.INFO, MUSES_TAG + " Selecting policy action: "+composedRequest.getAction());
+
+		logger.info("		" + policyDT.getRawPolicy());
+		logger.info("		" + decision.toString());
 		//requests.add(composedRequest);
 		
 		//Send policy
@@ -463,7 +525,7 @@ public class Rt2aeGlobal {
 
 		return composedRequest.getId();
 	}
-	
+
 	
 	public int allow(AppObserverEvent event){//Simulate response from RT2AE, for demo purposes
 		logger.info("[allow]");

@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import com.ibm.icu.util.StringTokenizer;
 
+import eu.musesproject.client.model.JSONIdentifiers;
 import eu.musesproject.contextmodel.ContextEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AddNoteEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent;
@@ -41,6 +42,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.Opportunity;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PackageObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.PasswordEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.SensorAppEvent;
@@ -92,6 +94,9 @@ public class EventFormatter {
 					cepFileEvent = convertToUSBDeviceConnectedEvent(contextEvent);
 				}else if (contextEvent.getType().equals(EventTypes.ADD_NOTE)){
 					cepFileEvent = convertToAddNoteEvent(contextEvent);
+
+				}else if (contextEvent.getType().equals(EventTypes.OPPORTUNITY)){
+					cepFileEvent = convertToOpportunityEvent(contextEvent);
 
 				}else {
 					cepFileEvent = new Event();// Any other unsupported sensor
@@ -146,6 +151,18 @@ public class EventFormatter {
 		cepFileEvent.setId_user(properties.get("id_user"));
 		cepFileEvent.setDescription(properties.get("description"));
 		cepFileEvent.setTitle(properties.get("title"));
+		return cepFileEvent;
+	}
+	
+	private static Event convertToOpportunityEvent(ContextEvent contextEvent) {
+		Opportunity cepFileEvent = new Opportunity();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		cepFileEvent.setDeviceId(properties.get(JSONIdentifiers.AUTH_DEVICE_ID));
+		cepFileEvent.setLossDescription(properties.get(JSONIdentifiers.OPPORTUNITY_LOSS_DESCRIPTION));
+		cepFileEvent.setLossCost(properties.get(JSONIdentifiers.OPPORTUNITY_LOSS_EUROS));
+		cepFileEvent.setTime(properties.get(JSONIdentifiers.OPPORTUNITY_TIME));
+		cepFileEvent.setDecisionId(Integer.valueOf(properties.get(JSONIdentifiers.DECISION_IDENTIFIER)));
 		return cepFileEvent;
 	}
 
