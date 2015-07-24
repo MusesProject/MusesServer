@@ -5084,7 +5084,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 	@Override
 	public void warnDeviceSecurityStateChange(DeviceSecurityState deviceSecurityState) {
 
-		//if(dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).size()!=0){
+		/*if(dbManager.findDeviceById(Integer.toString(deviceSecurityState.getDevice_id())).size()!=0){
 		
 		logger.info("RT2AE.......: "+deviceSecurityState.getDevice_id());
 
@@ -5116,7 +5116,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 		}else{
 			logger.info("The device is not stored in the database, make sure that your device is registred,please contact the CSO");
 			
-		}
+		}*/
 		
 	}
 
