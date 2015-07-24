@@ -1622,28 +1622,28 @@ public class DBManager {
 	 * 
 	 */
 	
-	public void setDevice(Device device){
+	public void updateorSaveDevice(Devices device){
 		
 		Session session = null;
 		Transaction trans = null;
 				
 
 		try {
-			session = getSessionFactory().openSession();
-			trans = session.beginTransaction();
-			if (this.getDeviceByIMEI(device.getDeviceId()) == null){
-				
-			    session.save(device);
-				session.flush();
-
-			    trans.commit();
+		
+			if (this.getDeviceByIMEI(device.getImei()) == null){
+				session=getSessionFactory().openSession();
+				trans=session.beginTransaction();
+				session.save(device);
+				trans.commit();
 			}else{
-				 session.merge(device);
-				 session.flush();
+				Devices device1 = this.getDeviceByIMEI(device.getImei());
 
-				 trans.commit();
-			    
+				session=getSessionFactory().openSession();
+				trans=session.beginTransaction();
+				session.merge(device);
+				trans.commit();
 			}
+			  
 		} catch (Exception e) {
 			if (trans!=null) trans.rollback();
 			logger.log(Level.ERROR, e.getMessage());

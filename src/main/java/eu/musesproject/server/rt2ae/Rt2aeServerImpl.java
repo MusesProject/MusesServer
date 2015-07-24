@@ -311,7 +311,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				accessrequest1.setModification(new Date());
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 				accessrequest1.setAction(accessRequest.getAction());
-				accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+				accessrequest1.setThreatId(Integer.valueOf(threatId));
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 				
 				
@@ -498,7 +498,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
-					accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 					accessRequests.add(accessrequest1);
@@ -580,6 +580,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		Decision decision = Decision.STRONG_DENY_ACCESS;
 		
 		String decisionId="";
+		
+		String threatId="";
+
 
 
 		riskPolicy = rPolicy;
@@ -658,7 +661,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			currentThreats.add(threat);
 			
 			try {
-				dbManager.setThreat(threat);
+				threatId = dbManager.setThreat(threat);
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
@@ -687,7 +690,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 					+ " - Bad Count: " + existingThreat.getBadOutcomeCount());
 
 			try {
-				dbManager.setThreat(existingThreat);
+				 dbManager.setThreat(existingThreat);
+				 threatId = existingThreat.getThreatId();
 
 			} catch (Exception e) {
 				logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
@@ -846,6 +850,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setThreatId(Integer.valueOf(threatId));
 				accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setModification(new Date());
 
@@ -959,6 +964,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setThreatId(Integer.valueOf(threatId));
 				accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setModification(new Date());
 
@@ -1076,6 +1082,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setThreatId(Integer.valueOf(threatId));
 				accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setModification(new Date());
 
@@ -1190,6 +1197,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setThreatId(Integer.valueOf(threatId));
 				accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setModification(new Date());
 
@@ -1307,6 +1315,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+				accessrequest1.setThreatId(Integer.valueOf(threatId));
 				accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setModification(new Date());
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
@@ -1396,11 +1405,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decision = Decision.GRANTED_ACCESS;
-					accessrequest1.setAssetId(BigInteger.valueOf(1));
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
-					accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 					accessRequests.add(accessrequest1);
@@ -1467,11 +1476,11 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 				try {
 				
-					accessrequest1.setAssetId(BigInteger.valueOf(1));//TO DO Adding assetId from EP
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setModification(new Date());
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 					accessrequest1.setAction(accessRequest.getAction());
-					accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 					
 					
@@ -1582,6 +1591,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
 
@@ -1697,6 +1707,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
 
@@ -1809,6 +1820,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
 
@@ -1922,6 +1934,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
 
@@ -2043,6 +2056,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
 					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
@@ -2136,7 +2150,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 						accessrequest1.setAction(accessRequest.getAction());
 						accessrequest1.setModification(new Date());
-						accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+						accessrequest1.setThreatId(Integer.valueOf(threatId));
 						accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 						ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 						accessRequests.add(accessrequest1);
@@ -2207,7 +2221,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						accessrequest1.setModification(new Date());
 						accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 						accessrequest1.setAction(accessRequest.getAction());
-						accessrequest1.setThreatId(Integer.valueOf(existingThreat.getThreatId()));
+						accessrequest1.setThreatId(Integer.valueOf(threatId));
 						accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
 						
 						
@@ -2292,6 +2306,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 			accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 			accessrequest1.setAction(accessRequest.getAction());
+			accessrequest1.setThreatId(Integer.valueOf(threatId));
 			accessrequest1.setModification(new Date());
 
 			accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
@@ -5118,24 +5133,28 @@ public class Rt2aeServerImpl implements Rt2ae {
 			eu.musesproject.server.entity.Decision decision = dbManager.findDecisionById(String.valueOf(securityIncident.getDecisionid())).get(0);
 			
 			eu.musesproject.server.entity.Threat threat =  dbManager.findThreatById(String.valueOf(decision.getAccessRequest().getThreatId())).get(0);
-			
+			System.out.println("bad 11  "+threat.getBadOutcomeCount());
+
 			threat.setBadOutcomeCount(threat.getBadOutcomeCount()+1);
-			
-			
-			threat.setProbability(threat.getBadOutcomeCount()/threat.getOccurences());
+			System.out.println("bad  "+threat.getBadOutcomeCount());
+			System.out.println("occ  "+threat.getOccurences());
+			System.out.println("prob  "+(double)threat.getBadOutcomeCount()/(double)threat.getOccurences());
+
+			threat.setProbability(((double)threat.getBadOutcomeCount()/(double)threat.getOccurences()));
 			dbManager.setThreat(threat);
 			
-			eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(securityIncident.getUser().getSurname());
+			eu.musesproject.server.entity.Users musesUser = dbManager.getUserByUsername(securityIncident.getUser().getUsername());
 			
 			eu.musesproject.server.entity.Devices musesDevice = dbManager.findDeviceById(String.valueOf(securityIncident.getDeviceid())).get(0);
 
 			List<eu.musesproject.server.entity.Devices> musesDevices = new ArrayList<eu.musesproject.server.entity.Devices>();
 			
 			List<eu.musesproject.server.entity.Users> users = new ArrayList<eu.musesproject.server.entity.Users>();
+			System.out.println("opp  "+threat.getProbability());
 
 			musesDevice.setTrustValue(1-threat.getProbability());
 			musesDevices.add(musesDevice);	
-			dbManager.setDevice(musesDevice);
+			dbManager.updateorSaveDevice(musesDevice);
 
 			musesUser.setTrustValue(1-threat.getProbability());
 			users.add(musesUser);
