@@ -463,7 +463,7 @@ public class DataMiner {
 				pattern.setEventTime(eventDetection);
 				
 				/* Was MUSES in silent or verbose mode? */		
-				if (eventDetection.getDay() >= 25 && eventDetection.getMonth() <= 7) {
+				if (eventDetection.getDay() <= 2 && eventDetection.getMonth() <= 7) {
 					pattern.setSilentMode(1);
 				} else {
 					pattern.setSilentMode(0);
@@ -781,7 +781,7 @@ public class DataMiner {
 			pattern.setEventTime(eventDetection);
 			
 			/* Was MUSES in silent or verbose mode? */		
-			if (eventDetection.getDay() >= 25 && eventDetection.getMonth() <= 7) {
+			if (eventDetection.getDay() <= 2 && eventDetection.getMonth() <= 7) {
 				pattern.setSilentMode(1);
 			} else {
 				pattern.setSilentMode(0);
