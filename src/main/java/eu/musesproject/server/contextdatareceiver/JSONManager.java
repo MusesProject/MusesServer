@@ -71,7 +71,8 @@ public class JSONManager {
 			Logger.getLogger(JSONManager.class)
 					.log(Level.INFO,
 							"Update context events JSONMessage received: Processing message...");
-		} else if ((requestType.equals(RequestType.ONLINE_DECISION)||(requestType.equals(RequestType.LOCAL_DECISION)))) {// TODO Remove LOCAL_DECISION when sensors are updated conveniently
+		//} else if ((requestType.equals(RequestType.ONLINE_DECISION)||(requestType.equals(RequestType.LOCAL_DECISION)))) {// TODO Remove LOCAL_DECISION when sensors are updated conveniently
+		} else if ((requestType.equals(RequestType.ONLINE_DECISION))) {// TODO Remove LOCAL_DECISION when sensors are updated conveniently
 			Logger.getLogger(JSONManager.class)
 					.log(Level.INFO,
 							"Online decision JSONMessage received: Processing message...");
