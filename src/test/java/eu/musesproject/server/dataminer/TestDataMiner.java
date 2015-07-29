@@ -49,7 +49,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testRetrievePendingEvents() {
 		
 		List<SimpleEvents> eventList = dbManager.getEvent();
@@ -59,7 +59,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}
+	}*/
 
 	/**
 	  * testDataMining - JUnit test case whose aim is to test execution of current data mining algorithms over retrieved data
@@ -129,8 +129,8 @@ public class TestDataMiner {
 				for (int i = 0; i < data.numAttributes(); i++) {
 					indexes[i] = i;
 				}
-				//System.out.println("=== Results before feature selection ===");
-				//dm.dataClassification(data, indexes);
+				System.out.println("=== Results before feature selection ===");
+				dm.dataClassification(data, indexes);
 				if (indexes.length > 0) {
 					System.out.println("=== Results after feature selection ===");
 					dm.dataClassification(data, redIndexes);

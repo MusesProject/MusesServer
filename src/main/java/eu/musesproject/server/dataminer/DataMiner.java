@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Random;
 import java.sql.*;
 import java.util.Iterator;
@@ -609,23 +610,40 @@ public class DataMiner {
 				
 				
 				if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
-					String mailJSON =  	"\\\"to\\\"\\:\\\"(.*)\\\",\\\"noAttachments\\\"\\:\\\"(.*)\\\",\\\"subject\\\"\\:\\\"(.*)\\\",\\\"bcc\\\"\\:\\\"(.*)\\\",\\\"attachmentInfo\\\"\\:\\\"(.*)\\\",\\\"from\\\"\\:\\\"(.*)\\\",\\\"cc\\\"\\:\\\"(.*)\\\"";
+					String mailJSON = "\\\"(\\w+)\\\"\\:\\\"(.*)\\\"[\\,\\}]";
+					String mailFormat = "[\\w\\.\\_]+\\@([\\w\\.\\_]+)";
 					Pattern mailPattern = Pattern.compile(mailJSON);
+					Pattern mailFormatPattern = Pattern.compile(mailFormat);
 					Matcher matcherMail = mailPattern.matcher(event.getData());
 					if (matcherMail.find()) {
-						if (matcherMail.group(4).equals("none")) {
-							pattern.setMailContainsBCC(0);
-						} else {
-							pattern.setMailContainsBCC(1);
+						Matcher matcherMailFormat = mailFormatPattern.matcher(matcherMail.group(2));
+						if (matcherMail.group(1).equalsIgnoreCase("bcc")) {
+							while (matcherMailFormat.find()) {
+								if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+									pattern.setMailContainsBCC(1);
+								} else {
+									pattern.setMailContainsBCC(0);
+								}
+							}
+						} else if (matcherMail.group(1).equalsIgnoreCase("cc")) {
+							while (matcherMailFormat.find()) {
+								if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+									pattern.setMailContainsCC(1);
+								} else {
+									pattern.setMailContainsCC(0);
+								}
+							}
+						} else if (matcherMail.group(1).equalsIgnoreCase("to")) {
+							while (matcherMailFormat.find()) {
+								if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+									pattern.setMailRecipientAllowed(1);
+								} else {
+									pattern.setMailRecipientAllowed(0);
+								}
+							}
+						} else if (matcherMail.group(1).equalsIgnoreCase("noAttachments")) {
+							pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
 						}
-
-						if (matcherMail.group(7).equals("none")) {
-							pattern.setMailContainsCC(0);
-						} else {
-							pattern.setMailContainsCC(1);
-						}				
-						pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
-						pattern.setMailRecipientAllowed(1);
 					}
 					
 				}
@@ -636,25 +654,30 @@ public class DataMiner {
 				 * networkid=1, wificonnected=true, airplanemode=false}
 				 */
 				if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 8)) {
-					String wifiJSON = "\\{\\w+\\=\\d+,\\swifiencryption\\=([\\[\\w\\-\\+\\]]*),\\s\\w+=[\\w\\:]+,\\sbluetoothconnected\\=(\\w+),\\swifienabled\\=(\\w+),\\swifineighbors\\=(\\d+),\\shiddenssid\\=(\\w+),\\s\\w+\\=\\w+,\\swificonnected\\=(\\w+)";
+					String wifiJSON = "(\\w+)\\=([\\w\\[\\]\\-\\+\\:\\d]+)";
 					Pattern wifiPattern = Pattern.compile(wifiJSON);
 					Matcher matcherWifi = wifiPattern.matcher(event.getData());
 					if (matcherWifi.find()) {
-						pattern.setWifiEncryption(matcherWifi.group(1));
-						if(matcherWifi.group(2).equalsIgnoreCase("true")) {
-							pattern.setBluetoothConnected(1);
-						} else {
-							pattern.setBluetoothConnected(0);
-						}
-						if(matcherWifi.group(3).contentEquals("true")) {
-							pattern.setWifiEnabled(1);
-						} else {
-							pattern.setWifiEnabled(0);
-						}
-						if(matcherWifi.group(6).contentEquals("true")) {
-							pattern.setWifiConnected(1);
-						} else {
-							pattern.setWifiConnected(0);
+						if(matcherWifi.group(1).equalsIgnoreCase("wifiencryption")) {
+							pattern.setWifiEncryption(matcherWifi.group(2));
+						} else if (matcherWifi.group(1).equalsIgnoreCase("bluetoothconnected")) {
+							if(matcherWifi.group(2).equalsIgnoreCase("true")) {
+								pattern.setBluetoothConnected(1);
+							} else {
+								pattern.setBluetoothConnected(0);
+							}
+						} else if (matcherWifi.group(1).equalsIgnoreCase("wifienabled")) {
+							if(matcherWifi.group(3).contentEquals("true")) {
+								pattern.setWifiEnabled(1);
+							} else {
+								pattern.setWifiEnabled(0);
+							}
+						} else if (matcherWifi.group(1).equalsIgnoreCase("wificonnected")) {
+							if(matcherWifi.group(6).contentEquals("true")) {
+								pattern.setWifiConnected(1);
+							} else {
+								pattern.setWifiConnected(0);
+							}
 						}
 					}
 					
@@ -927,23 +950,40 @@ public class DataMiner {
 			
 			
 			if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
-				String mailJSON =  	"\\\"to\\\"\\:\\\"(.*)\\\",\\\"noAttachments\\\"\\:\\\"(.*)\\\",\\\"subject\\\"\\:\\\"(.*)\\\",\\\"bcc\\\"\\:\\\"(.*)\\\",\\\"attachmentInfo\\\"\\:\\\"(.*)\\\",\\\"from\\\"\\:\\\"(.*)\\\",\\\"cc\\\"\\:\\\"(.*)\\\"";
+				String mailJSON = "\\\"(\\w+)\\\"\\:\\\"(.*)\\\"[\\,\\}]";
+				String mailFormat = "[\\w\\.\\_]+\\@([\\w\\.\\_]+)";
 				Pattern mailPattern = Pattern.compile(mailJSON);
+				Pattern mailFormatPattern = Pattern.compile(mailFormat);
 				Matcher matcherMail = mailPattern.matcher(event.getData());
 				if (matcherMail.find()) {
-					if (matcherMail.group(4).equals("none")) {
-						pattern.setMailContainsBCC(0);
-					} else {
-						pattern.setMailContainsBCC(1);
+					Matcher matcherMailFormat = mailFormatPattern.matcher(matcherMail.group(2));
+					if (matcherMail.group(1).equalsIgnoreCase("bcc")) {
+						while (matcherMailFormat.find()) {
+							if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+								pattern.setMailContainsBCC(1);
+							} else {
+								pattern.setMailContainsBCC(0);
+							}
+						}
+					} else if (matcherMail.group(1).equalsIgnoreCase("cc")) {
+						while (matcherMailFormat.find()) {
+							if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+								pattern.setMailContainsCC(1);
+							} else {
+								pattern.setMailContainsCC(0);
+							}
+						}
+					} else if (matcherMail.group(1).equalsIgnoreCase("to")) {
+						while (matcherMailFormat.find()) {
+							if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+								pattern.setMailRecipientAllowed(1);
+							} else {
+								pattern.setMailRecipientAllowed(0);
+							}
+						}
+					} else if (matcherMail.group(1).equalsIgnoreCase("noAttachments")) {
+						pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
 					}
-
-					if (matcherMail.group(7).equals("none")) {
-						pattern.setMailContainsCC(0);
-					} else {
-						pattern.setMailContainsCC(1);
-					}				
-					pattern.setMailHasAttachment(Integer.parseInt(matcherMail.group(2)));
-					pattern.setMailRecipientAllowed(1);
 				}
 				
 			}
@@ -954,25 +994,30 @@ public class DataMiner {
 			 * networkid=1, wificonnected=true, airplanemode=false}
 			 */
 			if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 8)) {
-				String wifiJSON = "\\{\\w+\\=\\d+,\\swifiencryption\\=([\\[\\w\\-\\+\\]]*),\\s\\w+=[\\w\\:]+,\\sbluetoothconnected\\=(\\w+),\\swifienabled\\=(\\w+),\\swifineighbors\\=(\\d+),\\shiddenssid\\=(\\w+),\\s\\w+\\=\\w+,\\swificonnected\\=(\\w+)";
+				String wifiJSON = "(\\w+)\\=([\\w\\[\\]\\-\\+\\:\\d]+)";
 				Pattern wifiPattern = Pattern.compile(wifiJSON);
 				Matcher matcherWifi = wifiPattern.matcher(event.getData());
 				if (matcherWifi.find()) {
-					pattern.setWifiEncryption(matcherWifi.group(1));
-					if(matcherWifi.group(2).equalsIgnoreCase("true")) {
-						pattern.setBluetoothConnected(1);
-					} else {
-						pattern.setBluetoothConnected(0);
-					}
-					if(matcherWifi.group(3).contentEquals("true")) {
-						pattern.setWifiEnabled(1);
-					} else {
-						pattern.setWifiEnabled(0);
-					}
-					if(matcherWifi.group(6).contentEquals("true")) {
-						pattern.setWifiConnected(1);
-					} else {
-						pattern.setWifiConnected(0);
+					if(matcherWifi.group(1).equalsIgnoreCase("wifiencryption")) {
+						pattern.setWifiEncryption(matcherWifi.group(2));
+					} else if (matcherWifi.group(1).equalsIgnoreCase("bluetoothconnected")) {
+						if(matcherWifi.group(2).equalsIgnoreCase("true")) {
+							pattern.setBluetoothConnected(1);
+						} else {
+							pattern.setBluetoothConnected(0);
+						}
+					} else if (matcherWifi.group(1).equalsIgnoreCase("wifienabled")) {
+						if(matcherWifi.group(3).contentEquals("true")) {
+							pattern.setWifiEnabled(1);
+						} else {
+							pattern.setWifiEnabled(0);
+						}
+					} else if (matcherWifi.group(1).equalsIgnoreCase("wificonnected")) {
+						if(matcherWifi.group(6).contentEquals("true")) {
+							pattern.setWifiConnected(1);
+						} else {
+							pattern.setWifiConnected(0);
+						}
 					}
 				}
 				
@@ -982,6 +1027,24 @@ public class DataMiner {
 		
 		return pattern;
 		
+	}
+	
+	/**
+	 * Method isRecipientAllowed, which checks if the mail address server is allowed by the company.
+	 *
+	 * @param server Server of the mail address like in name@server.com.
+	 * 
+	 * 
+	 * @return boolean True if it is allowed, false if not.
+	 * 
+	 */
+	public boolean isRecipientAllowed(String server) {
+		
+		if (server.equalsIgnoreCase("generic.com")) {
+			return true;
+		} else {		
+			return false;
+		}
 	}
 	
 	/**
@@ -1287,10 +1350,18 @@ public class DataMiner {
 			e.printStackTrace();
 		}
 		
+		Enumeration<Attribute> atts = newData.enumerateAttributes();
+		
+		while (atts.hasMoreElements()) {
+			logger.info(atts.nextElement().toString());
+		}
+		
+		
+		
 		double percentageCorrect = 0;
 		
 		/* (1) J48 */
-		/*String[] optionsJ48 = new String[1];
+		String[] optionsJ48 = new String[1];
 		optionsJ48[0] = "-U";            // unpruned tree
 		J48 treeJ48 = new J48();         // new instance of tree
 		try {
@@ -1304,7 +1375,7 @@ public class DataMiner {
 			classifierRules = treeJ48.toSummaryString();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		/* (2) JRip */
 		String[] optionsJRip = new String[1];
@@ -1347,7 +1418,7 @@ public class DataMiner {
 		}
 		
 		/* (4) REPTree */
-		/*String[] optionsREPTree = new String[1];
+		String[] optionsREPTree = new String[1];
 		optionsREPTree[0] = "-P";            // unpruned tree
 		REPTree treeREPTree = new REPTree();         // new instance of tree
 		try {
@@ -1365,7 +1436,7 @@ public class DataMiner {
 			//System.out.println(treeREPTree.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		return classifierRules;
 		
