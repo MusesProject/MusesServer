@@ -223,17 +223,21 @@ public class DataMiner {
 				}	
 				logEntry.setCurrentEventId(eventID);
 				
-				//logger.info(eventID);
-				
 				/* Previous event is the last event the user made */				 
-				Date day = event.getDate();
-				String time = event.getTime().toString();
-				SimpleEvents userLastEvent = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.TRUE);
-				if (userLastEvent != null) {
-					BigInteger lastEvent = new BigInteger(userLastEvent.getEventId());
-					logEntry.setPreviousEventId(lastEvent);
+				Date day = null;
+				String time = null;
+				if ((event != null) && (event.getDate() != null)) {
+					day = event.getDate();
+					time = event.getTime().toString();
+					SimpleEvents userLastEvent = dbManager.findEventsByUserId(user, day.toString(), time, Boolean.TRUE);
+					if (userLastEvent != null) {
+						BigInteger lastEvent = new BigInteger(userLastEvent.getEventId());
+						logEntry.setPreviousEventId(lastEvent);
+					} else {
+						//logger.warn("No previous events by this user, assigning 0...");
+						logEntry.setPreviousEventId(BigInteger.ZERO);
+					}
 				} else {
-					//logger.warn("No previous events by this user, assigning 0...");
 					logEntry.setPreviousEventId(BigInteger.ZERO);
 				}
 				
@@ -317,7 +321,7 @@ public class DataMiner {
 	public PatternsKrs minePatterns(SimpleEvents event){
 		
 		PatternsKrs pattern = new PatternsKrs();
-		logger.info(event.getEventId());
+		//logger.info(event.getEventId());
 		
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
@@ -448,8 +452,8 @@ public class DataMiner {
 				
 				/* Obtaining the role of the user inside the company */
 				int userRoleId = user.getRoleId();
-				//Roles userRole = dbManager.getRoleById(userRoleId);
-				Roles userRole = dbManager.getRoleById(145);
+				Roles userRole = dbManager.getRoleById(userRoleId);
+				//Roles userRole = dbManager.getRoleById(145);
 				String userRoleName = userRole.getName();
 				if (userRoleName != null) {
 					pattern.setUserRole(userRoleName);
@@ -659,6 +663,7 @@ public class DataMiner {
 					Matcher matcherWifi = wifiPattern.matcher(event.getData());
 					if (matcherWifi.find()) {
 						if(matcherWifi.group(1).equalsIgnoreCase("wifiencryption")) {
+							logger.info(matcherWifi.group(2));
 							pattern.setWifiEncryption(matcherWifi.group(2));
 						} else if (matcherWifi.group(1).equalsIgnoreCase("bluetoothconnected")) {
 							if(matcherWifi.group(2).equalsIgnoreCase("true")) {
@@ -999,6 +1004,7 @@ public class DataMiner {
 				Matcher matcherWifi = wifiPattern.matcher(event.getData());
 				if (matcherWifi.find()) {
 					if(matcherWifi.group(1).equalsIgnoreCase("wifiencryption")) {
+						logger.info(matcherWifi.group(2));
 						pattern.setWifiEncryption(matcherWifi.group(2));
 					} else if (matcherWifi.group(1).equalsIgnoreCase("bluetoothconnected")) {
 						if(matcherWifi.group(2).equalsIgnoreCase("true")) {
@@ -1350,13 +1356,11 @@ public class DataMiner {
 			e.printStackTrace();
 		}
 		
-		Enumeration<Attribute> atts = newData.enumerateAttributes();
+		/*Enumeration<Attribute> atts = newData.enumerateAttributes();
 		
 		while (atts.hasMoreElements()) {
 			logger.info(atts.nextElement().toString());
-		}
-		
-		
+		}*/		
 		
 		double percentageCorrect = 0;
 		
