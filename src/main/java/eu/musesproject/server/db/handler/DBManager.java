@@ -2159,7 +2159,7 @@ public class DBManager {
 		} finally {
 			if (session!=null) session.close();
 		} 
-		if (list.size()>0){
+		if (list != null && list.size()>0){
 			event = list.get(list.size() - 1);
 		}else{
 			logger.info("Error: Query returned empty list");
@@ -2234,7 +2234,7 @@ public class DBManager {
 		} finally {
 			if (session!=null) session.close();
 		}
-		if (assets.size()!=0){
+		if (assets != null && assets.size()!=0){
 			return assets.get(assets.size() - 1);
 		}else{
 			return getNoAsset();
