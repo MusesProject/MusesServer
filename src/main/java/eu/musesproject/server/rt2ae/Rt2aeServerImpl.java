@@ -494,7 +494,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				try {
 					decision = Decision.GRANTED_ACCESS;
-					accessrequest1.setAssetId(BigInteger.valueOf(1));
+					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 					accessrequest1.setAction(accessRequest.getAction());
 					accessrequest1.setModification(new Date());
@@ -829,16 +829,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					riskTreatments[0] = riskTreatment;	
 
 				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getGerman());
-					riskTreatments[0] = riskTreatment;	
-
-				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getFrench());
-					riskTreatments[0] = riskTreatment;	
-
-				}
+				
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
@@ -869,7 +860,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setValue("MAYBE");
 				decision1.setTime(new java.util.Date());
 				RiskCommunication riskcommunication1 = new RiskCommunication();
-				riskcommunication1.setDescription("Opportunity");
+				riskcommunication1.setDescription("Opportunity with no clues");
 				
 				try {
 					dbManager.setRiskCommunications(riskcommunication1);
@@ -881,8 +872,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
- 
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
+				} 
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
@@ -943,16 +938,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					riskTreatments[0] = riskTreatment;	
 
 				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getGerman());
-					riskTreatments[0] = riskTreatment;	
-
-				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getFrench());
-					riskTreatments[0] = riskTreatment;	
-
-				}
+				
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
@@ -995,8 +981,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
- 
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getSpanish());
+				} 
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
@@ -1059,16 +1049,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					riskTreatments[0] = riskTreatment;	
 
 				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getGerman());
-					riskTreatments[0] = riskTreatment;	
-
-				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getFrench());
-					riskTreatments[0] = riskTreatment;	
-
-				}
+				
 				
 				
 				riskCommunication.setRiskTreatment(riskTreatments);
@@ -1113,8 +1094,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription()); 
-				risktreatment1.setRiskCommunication(riskcommunication1);
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription());
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getSpanish());
+				} 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
 				try {
@@ -1160,38 +1145,29 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 			
-			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && accessRequest.getOpportunityDescriptor() == null){
 				
 				
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
 				
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription());
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
 					riskTreatments[0] = riskTreatment;	
 
 				}
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getSpanish());
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
 					riskTreatments[0] = riskTreatment;	
 
 				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getGerman());
-					riskTreatments[0] = riskTreatment;	
-
-				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getFrench());
-					riskTreatments[0] = riskTreatment;	
-
-				}
+				
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 				decision.setSolving_risktreatment(2);
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 				logger.info("Decision: MAYBE_ACCESS");
-				logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
+				logger.info("RISKTREATMENTS:You may use an Opportunity in your situation. If oyur Oppportunity is higher that the risk of lossing the value of the asset, you will have access to the asset. Please your Opportunity");
 				
 				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
@@ -1228,7 +1204,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription()); 
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
+				}
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
@@ -1275,7 +1256,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 			
-			if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder")) {
+			if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder") ) {
 				
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
@@ -1290,16 +1271,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					riskTreatments[0] = riskTreatment;	
 
 				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getGerman());
-					riskTreatments[0] = riskTreatment;	
-
-				}
-				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getFrench());
-					riskTreatments[0] = riskTreatment;	
-
-				}
+				
 				
 				decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 				logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
@@ -1345,8 +1317,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-				risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription()); 
-				risktreatment1.setRiskCommunication(riskcommunication1);
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription());
+				}
+				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getSpanish());
+				} 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
 				
 				try {
@@ -1570,16 +1546,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						riskTreatments[0] = riskTreatment;	
 
 					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getGerman());
-						riskTreatments[0] = riskTreatment;	
-
-					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getFrench());
-						riskTreatments[0] = riskTreatment;	
-
-					}
+					
 					riskCommunication.setRiskTreatment(riskTreatments);
 					decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
 					decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
@@ -1622,8 +1589,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
-	 
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
+					}
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
+					} 	 
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
@@ -1686,16 +1657,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						riskTreatments[0] = riskTreatment;	
 
 					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getGerman());
-						riskTreatments[0] = riskTreatment;	
-
-					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getFrench());
-						riskTreatments[0] = riskTreatment;	
-
-					}
+					
 					
 					riskCommunication.setRiskTreatment(riskTreatments);
 					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
@@ -1738,7 +1700,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription()); 
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getDescription());
+					}
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.VIRUS_FOUND).getSpanish());
+					} 					
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
@@ -1800,16 +1767,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						riskTreatments[0] = riskTreatment;	
 
 					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getGerman());
-						riskTreatments[0] = riskTreatment;	
-
-					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getFrench());
-						riskTreatments[0] = riskTreatment;	
-
-					}	
+						
 					riskCommunication.setRiskTreatment(riskTreatments);
 					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 					decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication);
@@ -1851,7 +1809,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription()); 
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getDescription());
+					}
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.ANTIVIRUS_IS_NOT_RUNNING).getSpanish());
+					} 					
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
@@ -1898,37 +1861,28 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 				}
 				
-				if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure")){
+				if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && accessRequest.getOpportunityDescriptor() == null){
 					
 					
 					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 					RiskTreatment [] riskTreatments = new RiskTreatment[1];
 					
 					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription());
+						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
 						riskTreatments[0] = riskTreatment;	
 
 					}
 					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getSpanish());
+						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
 						riskTreatments[0] = riskTreatment;	
 
 					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getGerman());
-						riskTreatments[0] = riskTreatment;	
-
-					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getFrench());
-						riskTreatments[0] = riskTreatment;	
-
-					}	
+						
 					riskCommunication.setRiskTreatment(riskTreatments);
 					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 					decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication);
 					logger.info("Decision: UPTOYOU");
-					logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
+					logger.info("RISKTREATMENTS:You may use an Opportunity in your situation. If oyur Oppportunity is higher that the risk of lossing the value of the asset, you will have access to the asset. Please your Opportunity");
 					
 					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
@@ -1965,7 +1919,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 					eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
-					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription()); 
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
+					}
+					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+						risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
+					} 					
 					risktreatment1.setRiskCommunication(riskcommunication1);
 					risktreatments1.add(risktreatment1);
 					
@@ -2026,16 +1985,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						riskTreatments[0] = riskTreatment;	
 
 					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("de")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getGerman());
-						riskTreatments[0] = riskTreatment;	
-
-					}
-					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("fr")){
-						RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getFrench());
-						riskTreatments[0] = riskTreatment;	
-
-					}
+					
 					
 					decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 					logger.info("Decision: UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION");
