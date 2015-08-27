@@ -258,7 +258,7 @@ rule "AccessRequest Detection open asset type confidential unsecure wifi"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type confidential unsecure wifi","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type confidential unsecure wifi","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type confidential unsecure wifi");
@@ -1130,7 +1130,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "java"
 	when
-		e: FileObserverEvent(event=="open_asset", path matches ".*confidential.*")
+		e: FileObserverEvent(event=="open_asset", path matches ".*onfidential.*")
 		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="Access file in monitored folder unsecure wifi", sessionId==e.sessionId)
 	then
