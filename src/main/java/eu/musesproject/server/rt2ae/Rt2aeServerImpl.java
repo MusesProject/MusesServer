@@ -637,6 +637,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 		System.out.println("value of asset "+o.getCostbenefit());
 		threat.setOutcomes(new ArrayList<eu.musesproject.server.entity.Outcome>(
 				Arrays.asList(o)));
+		
+		logger.info("Asset value: "+requestedAssets.iterator().next().getValue());
+
 
 		// check if the threat already exists in the database
 		boolean exists = false;
@@ -715,8 +718,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			for (Iterator<Outcome> iterator = opportunityDescriptor.getOutcomes().iterator(); iterator.hasNext();) {
 				Outcome outcome =  iterator.next();
 				costOpportunity = costOpportunity + outcome.getCostBenefit();
-				System.out.println("Cost: "+outcome.getCostBenefit());
-				System.out.println("Total: "+costOpportunity);
+				logger.info("Cost: "+outcome.getCostBenefit());
+				logger.info("Total: "+costOpportunity);
 
 				
 			}
@@ -807,7 +810,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 		System.out.println("trust value: "+trustvalue);
 		System.out.println("value: "+(combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2);
 
-		
+		System.out.println("Asset value : "+accessRequest.getRequestedCorporateAsset().getValue());
+ 
 		if(((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 >= riskPolicy
 				.getRiskvalue()) && ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 < 0.6) ){
 
@@ -1152,12 +1156,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
 				
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription());
 					riskTreatments[0] = riskTreatment;	
 
 				}
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
-					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
+					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getSpanish());
 					riskTreatments[0] = riskTreatment;	
 
 				}
@@ -1167,7 +1171,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision.setSolving_risktreatment(2);
 				decision.MAYBE_ACCESS_WITH_RISKTREATMENTS.setRiskCommunication(riskCommunication);
 				logger.info("Decision: MAYBE_ACCESS");
-				logger.info("RISKTREATMENTS:You may use an Opportunity in your situation. If oyur Oppportunity is higher that the risk of lossing the value of the asset, you will have access to the asset. Please your Opportunity");
+				logger.info("RISKTREATMENTS: You are connected to an unsecure network, please connect to a secure network");
 				
 				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
@@ -1205,10 +1209,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 				List<eu.musesproject.server.entity.RiskTreatment> risktreatments1 = new ArrayList<eu.musesproject.server.entity.RiskTreatment>();
 				eu.musesproject.server.entity.RiskTreatment risktreatment1 = new eu.musesproject.server.entity.RiskTreatment();
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
-					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getDescription());
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getDescription());
 				}
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
-					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.OPPORTUNITY).getSpanish());
+					risktreatment1.setDescription(dbManager.getRisktreatments(SolvingRiskTreatment.UNSECURE_WIFI_ENCRYPTION_WITHOUT_WPA2).getSpanish());
 				}
 				risktreatment1.setRiskCommunication(riskcommunication1);
 				risktreatments1.add(risktreatment1);
@@ -1443,7 +1447,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}else {
 				
-				logger.info("Decision: DENY");
+				logger.info("The Opportunity was not higher that the risk to lose the asset Decision: DENY");
 
 
 				ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
