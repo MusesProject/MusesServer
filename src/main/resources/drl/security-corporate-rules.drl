@@ -258,7 +258,7 @@ rule "AccessRequest Detection open asset type confidential unsecure wifi"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type confidential unsecure wifi","DENY","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type confidential unsecure wifi","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type confidential unsecure wifi");
@@ -679,7 +679,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "java"
 	when
-		e: ChangeSecurityPropertyEvent(screenTimeoutInSeconds>30)
+		e: ChangeSecurityPropertyEvent(screenTimeoutInSeconds>60)
 		not AccessRequest(event=="AccessRequest Change Security Property-screen-timeout", sessionId==e.sessionId)
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.**********SESSION-ID-e:"+e.getSessionId());
@@ -703,7 +703,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "java"
 	when
-		e: DeviceProtectionEvent(screenTimeoutInSeconds>30)
+		e: DeviceProtectionEvent(screenTimeoutInSeconds>60)
 		not AccessRequest(event=="AccessRequest Change Security Property-screen-timeout", sessionId==e.sessionId)
 	then
 		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent.**********SESSION-ID-e:"+e.getSessionId());
@@ -992,7 +992,7 @@ rule "Blacklist app 00001"
 	dialect "mvel"
 	when
 		e: LocationEvent(isWithinZone matches ".*1.*")
-		e1: AppObserverEvent(appPackage matches ".*GoogleCamera.*",event=="open_application", sessionId==e.sessionId)
+		e1: AppObserverEvent(appPackage matches ".*amera.*",event=="open_application", sessionId==e.sessionId)
 	then
 		StatusGlobal.log("Zone 1 application restriction.**********SESSION-ID-e:"+e.getSessionId()+" e1:"+e1.getSessionId());
 		Rt2aeGlobal.setStatus(Constants.STARTED);
@@ -1130,7 +1130,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "java"
 	when
-		e: FileObserverEvent(event=="open_asset", path matches ".*confidential.*")
+		e: FileObserverEvent(event=="open_asset", path matches ".*onfidential.*")
 		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="Access file in monitored folder unsecure wifi", sessionId==e.sessionId)
 	then

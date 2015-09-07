@@ -502,10 +502,12 @@ public class AccessRequestComposer {
 	
 	private static Assets convertAsset(Asset asset){
 		Assets assets = new Assets();
+		assets.setValue(asset.getValue());
 		if (asset.getConfidential_level()==null){
 			assets.setConfidentialLevel(Constants.PUBLIC);
 		}else{
 			assets.setConfidentialLevel(asset.getConfidential_level());
+			assets.setValue(1000);
 		}	
 		if (asset.getLocation()==null){
 			assets.setLocation("");
@@ -522,7 +524,7 @@ public class AccessRequestComposer {
 		}else{
 			assets.setDescription(asset.getDescription());
 		}
-		assets.setValue(asset.getValue());
+		
 		return assets;
 	}
 	
