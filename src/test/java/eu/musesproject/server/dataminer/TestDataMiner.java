@@ -38,10 +38,10 @@ public class TestDataMiner {
 	/**
 	 * testDataMiner - JUnit test which tests the complete functionality of the Data Miner, obtaining the final output
 	 */
-	@Test
+	/*@Test
 	public final void testDataMiner() {
 		dm.ruleComparison();
-	}
+	}*/
 	
 	/**
 	  * testRetrieveUnprocessed - JUnit test case whose aim is to test unprocessed data retrieval from the database
@@ -76,10 +76,11 @@ public class TestDataMiner {
 			while(i.hasNext()){
 				SimpleEvents event = i.next();
 				PatternsKrs pattern = dm.minePatterns(event);
+				dbManager.setPatternsKRS(pattern);
 				patternList.add(pattern);
 				assertNotNull(pattern);			
 			}
-			dbManager.setPatternsKRS(patternList);
+			//dbManager.setPatternsKRS(patternList);
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}

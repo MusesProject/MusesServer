@@ -42,6 +42,8 @@ public class DataMiningUtils {
 	private static DBManager dbManager = new DBManager(ModuleType.KRS);
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private Logger logger = Logger.getLogger(DataMiner.class);
+	
+	
 
 
 }

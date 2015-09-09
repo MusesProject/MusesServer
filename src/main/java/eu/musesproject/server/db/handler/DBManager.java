@@ -2272,8 +2272,8 @@ public class DBManager {
 	}
     
     /**
-     * Fills system_log_krs table in database
-     * @param logs
+     * Fills patterns_krs table in database
+     * @param pattenrs
      * @return void
      */
 	public void setPatternsKRS(List<PatternsKrs> patterns) {
