@@ -230,9 +230,9 @@ public class EventFormatter {
 		cepFileEvent.setType(contextEvent.getType());
 		
 		cepFileEvent.setPath(getElement(properties.get("properties"), "path"));
-		cepFileEvent.setId(Integer.valueOf(getElement(properties.get("properties"), "id")));
+		//cepFileEvent.setId(Integer.valueOf(getElement(properties.get("properties"), "id")));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
-		cepFileEvent.setUid(getElement(properties.get("properties"), "id"));
+		//cepFileEvent.setUid(getElement(properties.get("properties"), "id"));
 		return cepFileEvent;
 	}
 

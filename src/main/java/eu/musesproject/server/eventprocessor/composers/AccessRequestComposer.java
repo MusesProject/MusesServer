@@ -198,7 +198,12 @@ public class AccessRequestComposer {
 				requestedCorporateAsset.setValue(1000000);
 			}
 		}else{
-			requestedCorporateAsset.setValue(0);
+			if (requestedCorporateAsset.getLocation().contains("onfidential")){
+				requestedCorporateAsset.setConfidential_level(Constants.CONFIDENTIAL);
+				requestedCorporateAsset.setValue(1000);
+			}else{
+				requestedCorporateAsset.setValue(0);
+			}	
 		}
 		
 		if (event instanceof OpenFileEvent){
