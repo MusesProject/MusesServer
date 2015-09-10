@@ -1289,7 +1289,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
 				
 				try {	
-				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+				accessrequest1.setAssetId(BigInteger.valueOf(1));
 				logger.info("Asset Id:"+accessRequest.getRequestedCorporateAsset().getId());
 				logger.info("Event Id:"+accessRequest.getEventId());
 
@@ -1676,7 +1676,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+					accessrequest1.setAssetId(BigInteger.valueOf(1));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setAction(accessRequest.getAction());
@@ -1785,7 +1785,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+					accessrequest1.setAssetId(BigInteger.valueOf(1));
 					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 					accessrequest1.setThreatId(Integer.valueOf(threatId));
 					accessrequest1.setAction(accessRequest.getAction());
