@@ -1266,11 +1266,15 @@ public class Rt2aeServerImpl implements Rt2ae {
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
 				
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
+					logger.info("RISKTREATMENTS:"+dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription());
+
 					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription());
 					riskTreatments[0] = riskTreatment;	
 
 				}
 				if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
+					logger.info("RISKTREATMENTS:"+dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getDescription());
+
 					RiskTreatment riskTreatment = new RiskTreatment(dbManager.getRisktreatments(SolvingRiskTreatment.ATTEMPT_TO_SAVE_A_FILE_IN_A_MONITORED_FOLDER).getSpanish());
 					riskTreatments[0] = riskTreatment;	
 
