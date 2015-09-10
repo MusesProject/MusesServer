@@ -67,7 +67,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dbManager.getEvent();
 		List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
@@ -84,7 +84,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}
+	}*/
 	
 	/**
 	  * testBuildInstancesFromPatterns - JUnit test case whose aim is to test if instances are being properly built from DB data
