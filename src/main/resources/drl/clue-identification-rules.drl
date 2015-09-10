@@ -191,7 +191,7 @@ rule "Clue-identification-00000"
 	salience 65000
 	dialect "mvel"
 	when
-		e: FileObserverEvent(event=="open_asset", resourceType=="sensitive")
+		e: FileObserverEvent(event=="open_asset", path matches ".*onfidential.*")
 		conn: ConnectivityEvent(wifiEncryption not matches ".*WPA2.*",deviceId==e.deviceId)
 		//conn: ConnectivityEvent(wifiEncryption!="WPA2",deviceId==e.deviceId)
 		not Clue(name=="UnsecureWifi:Encryption without WPA2 protocol might be unsecure",timestamp==e.timestamp)
