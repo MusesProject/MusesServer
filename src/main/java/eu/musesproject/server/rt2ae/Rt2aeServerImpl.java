@@ -1285,10 +1285,10 @@ public class Rt2aeServerImpl implements Rt2ae {
 				riskCommunication.setRiskTreatment(riskTreatments);
 				decision = Decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION;
 				decision.UPTOYOU_ACCESS_WITH_RISKCOMMUNICATION.setRiskCommunication(riskCommunication);
-
-				
 				eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 				eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
+				
+				try {	
 				accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 				accessrequest1.setThreatId(Integer.valueOf(threatId));
@@ -1298,7 +1298,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
 				accessRequests.add(accessrequest1);
 				
-				try {
+				
 					dbManager.setAccessRequests(accessRequests);
 
 				} catch (Exception e) {
