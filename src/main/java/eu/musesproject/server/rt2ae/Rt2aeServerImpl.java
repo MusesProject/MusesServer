@@ -1292,6 +1292,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 				accessrequest1.setAssetId(BigInteger.valueOf(1));
 				logger.info("Asset Id:"+accessRequest.getRequestedCorporateAsset().getId());
 				logger.info("Event Id:"+accessRequest.getEventId());
+				logger.info("ThreatId:"+threatId);
+				logger.info("UserId:"+accessRequest.getUser().getUserId());
+
 
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 				accessrequest1.setThreatId(Integer.valueOf(threatId));
