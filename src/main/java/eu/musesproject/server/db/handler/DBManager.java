@@ -943,17 +943,19 @@ public class DBManager {
 					threatId = threat.getThreatId();
 					
 					Iterator<Outcome> o = threat.getOutcomes().iterator();
-					session = getSessionFactory().openSession();
-					trans = session.beginTransaction();
+					Session session1 = null;
+					Transaction trans1 = null;
+					session1 = getSessionFactory().openSession();
+					trans1 = session1.beginTransaction();
 					Outcome outcome = o.next();
 					try {
 						
 							outcome.setThreat(threat);
 						
-					    session.save(outcome);
-						session.flush();
+					    session1.save(outcome);
+						session1.flush();
 
-					    trans.commit();
+					    trans1.commit();
 					    
 					} catch (Exception e) {
 						if (trans!=null) trans.rollback();
