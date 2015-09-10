@@ -1149,7 +1149,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 			
-			/*if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && accessRequest.getOpportunityDescriptor() == null){
+			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()>5000){
 				
 				
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
@@ -1258,9 +1258,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 				return decision;
 				
-			}*/
+			}
 			
-			if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder") ) {
+			if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder") && accessRequest.getRequestedCorporateAsset().getValue()<5000 ) {
 				
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
