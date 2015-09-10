@@ -2013,7 +2013,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					try {
 						
-						//accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+						accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
 						accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 						accessrequest1.setThreatId(Integer.valueOf(threatId));
 						accessrequest1.setAction(accessRequest.getAction());
