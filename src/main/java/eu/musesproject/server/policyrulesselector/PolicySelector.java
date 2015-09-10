@@ -399,6 +399,15 @@ public class PolicySelector {
 				}
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
+				}else if (decision.getRiskCommunication()!=null){					
+					RiskTreatment[] rt = decision.getRiskCommunication().getRiskTreatment();
+					if (rt!=null){
+						if (rt.length>0){
+							if (rt[0].getTextualDescription()!=null){
+								result += "<riskTreatment>"+rt[0].getTextualDescription()+"</riskTreatment>";
+							}
+						}
+					}
 				}
 				result += "<solving_risktreatment>"+decision.getSolving_risktreatment()+"</solving_risktreatment>";
 			}	
