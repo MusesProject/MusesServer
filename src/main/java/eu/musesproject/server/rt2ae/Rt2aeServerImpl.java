@@ -2008,16 +2008,19 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 					eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
 					eu.musesproject.server.entity.AccessRequest accessrequest1 = new eu.musesproject.server.entity.AccessRequest();
-					accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
-					accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
-					accessrequest1.setThreatId(Integer.valueOf(threatId));
-					accessrequest1.setAction(accessRequest.getAction());
-					accessrequest1.setModification(new Date());
-					accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
-					ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
-					accessRequests.add(accessrequest1);
+					
+					
 					
 					try {
+						
+						//accessrequest1.setAssetId(BigInteger.valueOf(accessRequest.getRequestedCorporateAsset().getId()));
+						accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
+						accessrequest1.setThreatId(Integer.valueOf(threatId));
+						accessrequest1.setAction(accessRequest.getAction());
+						accessrequest1.setModification(new Date());
+						accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+						ArrayList<eu.musesproject.server.entity.AccessRequest> accessRequests = new ArrayList<eu.musesproject.server.entity.AccessRequest>() ;
+						accessRequests.add(accessrequest1);
 						dbManager.setAccessRequests(accessRequests);
 
 					} catch (Exception e) {
