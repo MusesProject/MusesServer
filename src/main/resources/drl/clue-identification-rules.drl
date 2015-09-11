@@ -280,7 +280,7 @@ rule "Clue-identification-00000"
 	salience 65000
 	dialect "mvel"
 	when
-		d: DeviceProtectionEvent(screenTimeoutInSeconds<60)
+		d: DeviceProtectionEvent(screenTimeoutInSeconds>60)
 	then
 		
 		StatusGlobal.log("5.A new device security state has been identified: SCREEN TIMEOUT IS NOT ACCEPTABLE, associated to event:"+d.getTimestamp());

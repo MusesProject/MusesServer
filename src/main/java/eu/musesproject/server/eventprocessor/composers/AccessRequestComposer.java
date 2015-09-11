@@ -92,6 +92,8 @@ public class AccessRequestComposer {
 					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
 					
+					requestedCorporateAsset.setTitle(fileEvent.getResourceName());
+					
 					//Store asset
 					requestedCorporateAsset.setDescription(EventTypes.FILEOBSERVER);
 					entityAsset = convertAsset(requestedCorporateAsset);
@@ -198,12 +200,23 @@ public class AccessRequestComposer {
 				requestedCorporateAsset.setValue(1000000);
 			}
 		}else{
-			if (requestedCorporateAsset.getLocation().contains("onfidential")){
+			if ((requestedCorporateAsset.getLocation()!=null)&&(requestedCorporateAsset.getLocation().contains("onfidential"))){
 				requestedCorporateAsset.setConfidential_level(Constants.CONFIDENTIAL);
-				requestedCorporateAsset.setValue(1000);
+				requestedCorporateAsset.setValue(12000);
+				logger.info("confidential asset: value 12000");
 			}else{
 				requestedCorporateAsset.setValue(0);
+				logger.info("normal asset: value 0");
 			}	
+		}
+		
+		logger.info("title:"+requestedCorporateAsset.getTitle());
+		if ((requestedCorporateAsset.getTitle()!=null)&&(requestedCorporateAsset.getTitle().contains("maybe"))){
+			logger.info("set value to 16000:"+ requestedCorporateAsset.getTitle());
+			requestedCorporateAsset.setValue(16000);
+		}else if ((requestedCorporateAsset.getTitle()!=null)&&(requestedCorporateAsset.getTitle().contains("opportunity"))){
+			logger.info("set value to 32000:"+ requestedCorporateAsset.getTitle());
+			requestedCorporateAsset.setValue(32000);
 		}
 		
 		if (event instanceof OpenFileEvent){

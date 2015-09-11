@@ -29,6 +29,7 @@ public class FileObserverEvent extends Event {
 	private String event;
 	private String path;
 	private String resourceType;
+	private String resourceName;
 	
 	public int getId() {
 		return id;
@@ -65,6 +66,12 @@ public class FileObserverEvent extends Event {
 	}
 	public void setResourceType(String resourceType) {
 		this.resourceType = resourceType;
+	}
+	public String getResourceName() {
+		return resourceName;
+	}
+	public void setResourceName(String resourceName) {
+		this.resourceName = resourceName;
 	}
 	
 

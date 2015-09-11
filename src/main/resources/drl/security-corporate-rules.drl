@@ -246,7 +246,7 @@ rule "ResourceType set"
 
 	end	
 
-rule "AccessRequest Detection open asset type confidential unsecure wifi"
+rule "AccessRequest Detection open asset type confidential unsecure wifi "
 	no-loop true
 	dialect "java"
 	when
@@ -258,7 +258,8 @@ rule "AccessRequest Detection open asset type confidential unsecure wifi"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event conn****:"+conn);
 		if((conn!=null)&&(e!=null)){
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type confidential unsecure wifi","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		//int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type confidential unsecure wifi","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection open asset type confidential unsecure wifi","DECIDE","<resourceName>"+e.getResourceName()+"</resourceName>");
 		AccessRequest request = new AccessRequest();
 		//request.setEvent(e.getPath());
 		request.setEvent("AccessRequest Detection open asset type confidential unsecure wifi");
@@ -273,6 +274,7 @@ rule "AccessRequest Detection open asset type confidential unsecure wifi"
 		StatusGlobal.log("*****Null object*****");
 		}
 	end
+
 
 rule "AccessRequest Detection open asset type internal unsecure wifi"
 	no-loop true
@@ -817,7 +819,8 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event fileobserver****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection Save File in a monitored folder","ALLOW","<path>"+e.getPath()+"</path>");		
+		//int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection Save File in a monitored folder","ALLOW","<path>"+e.getPath()+"</path>");		
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Detection Save File in a monitored folder","ALLOW","<resourceName>"+e.getResourceName()+"</resourceName>");		
 		AccessRequest request = new AccessRequest();
 		request.setEvent("AccessRequest Detection Save File in a monitored folder");
 		request.setSessionId(e.getSessionId());
@@ -1130,7 +1133,7 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "java"
 	when
-		e: FileObserverEvent(event=="open_asset", path matches ".*onfidential.*")
+		e: FileObserverEvent(event=="open_asset", path matches ".*onfidential.*", resourceName matches ".*aybe.*")
 		conn: ConnectivityEvent(wifiConnected==true,wifiEnabled==true, wifiEncryption not matches ".*WPA2.*", sessionId==e.sessionId)
 		not AccessRequest(event=="Access file in monitored folder unsecure wifi", sessionId==e.sessionId)
 	then

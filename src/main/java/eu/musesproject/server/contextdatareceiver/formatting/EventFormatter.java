@@ -229,6 +229,16 @@ public class EventFormatter {
 	
 		cepFileEvent.setType(contextEvent.getType());
 		
+		if (getElement(properties.get("properties"),"resourceName")!=null){
+			cepFileEvent.setResourceName(getElement(properties.get("properties"),
+					"resourceName"));
+		}
+		
+		if (getElement(properties.get("properties"),"resourceType")!=null){
+			cepFileEvent.setResourceType(getElement(properties.get("properties"),
+					"resourceType"));
+		}
+		
 		cepFileEvent.setPath(getElement(properties.get("properties"), "path"));
 		//cepFileEvent.setId(Integer.valueOf(getElement(properties.get("properties"), "id")));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
@@ -405,7 +415,10 @@ public class EventFormatter {
 		PackageObserverEvent cepFileEvent = new PackageObserverEvent();
 		Map<String,String> properties = contextEvent.getProperties();
 		cepFileEvent.setType(contextEvent.getType());
-		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		if (properties.get("id")!=null){
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		}
+		
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setInstalledApps(properties.get("installedapps"));
 		
@@ -466,6 +479,13 @@ public class EventFormatter {
 		
 		cepFileEvent.setPath(getElement(properties.get("properties"),
 					"path"));
+		if (getElement(properties.get("properties"),"resourceName")!=null){
+			cepFileEvent.setResourceName(getElement(properties.get("properties"),
+					"resourceName"));
+		}
+		
+		
+	
 		
 		if (cepFileEvent.getPath()==null){
 			resourcePath = getElement(properties.get("properties"), "resourcePath");
@@ -504,7 +524,15 @@ public class EventFormatter {
 		cepFileEvent.setEvent(action.toString());
 		if (properties.get("id")!=null){//TODO Changes for System test
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
-		}		
+		}
+		if (getElement(properties.get("properties"),"resourceName")!=null){
+			cepFileEvent.setResourceName(getElement(properties.get("properties"),
+					"resourceName"));
+		}
+		if (getElement(properties.get("properties"),"resourceType")!=null){
+			cepFileEvent.setResourceType(getElement(properties.get("properties"),
+					"resourceType"));
+		}
 		cepFileEvent.setType(EventTypes.FILEOBSERVER);
 		cepFileEvent.setPath(properties.get("path"));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
