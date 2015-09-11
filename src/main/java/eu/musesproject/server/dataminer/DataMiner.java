@@ -91,6 +91,7 @@ public class DataMiner {
 	private static DBManager dbManager = new DBManager(ModuleType.KRS);
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private static ParsingUtils parser = new ParsingUtils();
+	private static DataMiningUtils dmu = new DataMiningUtils();
 	private Logger logger = Logger.getLogger(DataMiner.class);
 	
 	/**
@@ -329,7 +330,13 @@ public class DataMiner {
 		/* 1 event -> * decisions/access requests */
 		/* Then, for each event, the data mining process must be launched once per access request */
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
-		
+		/*int i = 0;
+		do {
+			String accessRequestId = accessRequests.get(i).getAccessRequestId();			
+			pattern.setLabel(dmu.obtainLabel(accessRequestId));
+			
+			i++;
+		} while (i < accessRequests.size());*/
 		
 		
 		String label;
