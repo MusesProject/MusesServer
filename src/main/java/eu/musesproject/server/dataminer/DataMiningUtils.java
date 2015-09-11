@@ -26,7 +26,12 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
+import java.util.List;
+
 import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.Decision;
+import eu.musesproject.server.entity.PatternsKrs;
+import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.scheduler.ModuleType;
 
 import org.apache.log4j.Logger;
@@ -43,7 +48,24 @@ public class DataMiningUtils {
 	private static final String MUSES_TAG = "MUSES_TAG";
 	private Logger logger = Logger.getLogger(DataMiner.class);
 	
-	
+	/**
+	  * obtainLabel - 
+	  *
+	  * @param accessRequestId
+	  * 
+	  * @return label
+	  * 
+	  */
+	public String obtainLabel(String accessRequestId){
+		
+		List<Decision> decisions = dbManager.findDecisionByAccessRequestId(accessRequestId);
+		if (decisions.size() > 0) {
+			return decisions.get(0).getValue();
+		} else {
+			return "ALLOW";
+		}
+		
+	}
 
 
 }
