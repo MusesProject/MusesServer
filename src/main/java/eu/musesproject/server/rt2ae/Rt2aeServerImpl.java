@@ -824,7 +824,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				.getRiskvalue()) && ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 < 0.6) ){
 
 			
-			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()>15000){
+			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()>30000){
 				
 				logger.info("Without OPPORTUNITY DESCRIPTOR");
 
@@ -1157,7 +1157,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 			
-			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()>5000 && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()<15000){
+			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()>15000 && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()<30000){
 				
 				
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
@@ -1268,7 +1268,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 			
-			if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder") && accessRequest.getRequestedCorporateAsset().getValue()<5000 ) {
+			if (clues.get(0).getName().equalsIgnoreCase("Attempt to save a file in a monitored folder") && accessRequest.getRequestedCorporateAsset().getValue()<15000 ) {
 				
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
