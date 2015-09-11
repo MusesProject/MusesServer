@@ -747,18 +747,26 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 		for (eu.musesproject.server.entity.Threat t : currentThreats) {
 			
-			costOpportunity = costOpportunity + t.getOutcomes().iterator().next()
-					.getCostbenefit();
-			
-			if (t.getOutcomes().iterator().next().getCostbenefit() < 0) {
-
+			if(t.getOutcomes().size()!=0){
+				costOpportunity = costOpportunity + t.getOutcomes().iterator().next()
+						.getCostbenefit();
+				
+				if (t.getOutcomes().iterator().next().getCostbenefit() < 0) {
+	
+					combinedProbabilityThreats = combinedProbabilityThreats
+							* t.getProbability();
+					singleThreatProbabibility = singleThreatProbabibility
+							+ t.getProbability();
+					threatcount++;
+	
+				} 
+			}else{
 				combinedProbabilityThreats = combinedProbabilityThreats
 						* t.getProbability();
 				singleThreatProbabibility = singleThreatProbabibility
 						+ t.getProbability();
 				threatcount++;
-
-			} 
+			}
 		}
 		
 
