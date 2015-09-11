@@ -955,12 +955,12 @@ public class DBManager {
 					    trans.commit();
 					    
 					} catch (Exception e) {
-						if (trans!=null) //trans.rollback();
+						if (trans!=null) trans.rollback();
 						logger.log(Level.ERROR, e.getMessage());
 					} finally {
 						//if (session!=null) session.close();
 					} 
-				    //trans.commit();
+				    trans.commit();
 				    
 				}
 			} catch (Exception e) {
