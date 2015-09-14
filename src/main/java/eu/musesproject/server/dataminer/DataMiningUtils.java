@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Decision;
+import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.PatternsKrs;
 import eu.musesproject.server.entity.SecurityViolation;
@@ -243,6 +244,50 @@ public class DataMiningUtils {
 			capLettersCount++;
 		}
 		return capLettersCount;
+	}
+	
+	/**
+	  * obtainingUserTrust - This method gathers the user trust value associated to the user, at the time of the decision.
+	  *
+	  * @param accessRequestId Is the access request number associated to an event.
+	  * 
+	  * @return trustValue
+	  * 
+	  */
+	public double obtainingUserTrust(String accessRequestId){
+		
+		double trustValue = Double.NaN;
+		List<Decision> decisions = dbManager.findDecisionByAccessRequestId(accessRequestId);
+		if (decisions.size() > 0) {
+			String decisionId = decisions.get(0).getValue();
+			List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionId);
+			if (trustValues.size() > 0) {
+				trustValue = trustValues.get(0).getUsertrustvalue();			
+			}
+		}
+		return trustValue;
+	}
+	
+	/**
+	  * obtainingDeviceTrust - This method gathers the user trust value associated to the device, at the time of the decision.
+	  *
+	  * @param accessRequestId Is the access request number associated to an event.
+	  * 
+	  * @return trustValue
+	  * 
+	  */
+	public double obtainingDeviceTrust(String accessRequestId){
+		
+		double trustValue = Double.NaN;
+		List<Decision> decisions = dbManager.findDecisionByAccessRequestId(accessRequestId);
+		if (decisions.size() > 0) {
+			String decisionId = decisions.get(0).getValue();
+			List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionId);
+			if (trustValues.size() > 0) {
+				trustValue = trustValues.get(0).getDevicetrustvalue();			
+			}
+		}
+		return trustValue;
 	}
 
 
