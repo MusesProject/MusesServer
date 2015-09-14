@@ -26,7 +26,9 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
+import java.math.BigInteger;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +36,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import eu.musesproject.server.db.handler.DBManager;
+import eu.musesproject.server.entity.Applications;
+import eu.musesproject.server.entity.Assets;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.DecisionTrustvalues;
 import eu.musesproject.server.entity.Devices;
@@ -428,8 +432,8 @@ public class DataMiningUtils {
 	}	
 	
 	/**
-	  * obtainDeviceOwner - This method for the certificate of the device. It returns 1 if it finds a certificate in the DB, and 0 if
-	  * 						  it does not.
+	  * obtainDeviceOwner - This method looks for the certificate of the device. It returns 1 if it finds a certificate in the DB, and 0 if
+	  * 					it does not.
 	  *
 	  * @param event The event as a Simple Events object.
 	  * 
@@ -444,11 +448,321 @@ public class DataMiningUtils {
 			deviceOwner = userDeviceId.getOwnerType();
 		}
 		return deviceOwner;
+	}	
+	
+	/**
+	  * obtainAppName - This method gathers characteristics of the application which the user was using at the time of the event.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return appName
+	  * 
+	  */
+	public String obtainAppName(SimpleEvents event){
+		
+		Applications eventApp = event.getApplication();
+		String appName = null;
+		if (eventApp.getName() != null && eventApp.getVersion() != null) {
+			appName = eventApp.getName().concat(eventApp.getVersion());
+		}
+		return appName;
+	}	
+	
+	/**
+	  * obtainAppVendor - This method gathers characteristics of the application which the user was using at the time of the event.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return appVendor
+	  * 
+	  */
+	public String obtainAppVendor(SimpleEvents event){
+		
+		Applications eventApp = event.getApplication();
+		String appVendor = null;
+		appVendor = eventApp.getVendor();
+		return appVendor;
+	}	
+	
+	/**
+	  * obtainMusesAwareness - This method checks if the application is MUSES aware or not.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return appMusesAware
+	  * 
+	  */
+	public int obtainMusesAwareness(SimpleEvents event){
+		
+		Applications eventApp = event.getApplication();
+		int appMusesAware = 0;
+		if (eventApp != null) {
+			appMusesAware = eventApp.getIs_MUSES_aware();
+		}
+		return appMusesAware;
+	}	
+	
+	/**
+	  * obtainAssetName - This method gathers characteristics of the asset that the event is trying to access to.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return assetName
+	  * 
+	  */
+	public String obtainAssetName(SimpleEvents event){
+		
+		Assets eventAsset = event.getAsset();
+		String assetName = null;
+		if (eventAsset != null) {
+			assetName = eventAsset.getTitle();
+		}
+		return assetName;
+	}	
+	
+	/**
+	  * obtainAssetValue - This method gathers characteristics of the asset that the event is trying to access to.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return assetValue
+	  * 
+	  */
+	public double obtainAssetValue(SimpleEvents event){
+		
+		Assets eventAsset = event.getAsset();
+		double assetValue = Double.NaN;
+		if (eventAsset != null) {
+			assetValue = eventAsset.getValue();
+		}
+		return assetValue;
+	}	
+	
+	/**
+	  * obtainAssetConfidentiality - This method gathers characteristics of the asset that the event is trying to access to.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return assetConf
+	  * 
+	  */
+	public String obtainAssetConfidentiality(SimpleEvents event){
+		
+		Assets eventAsset = event.getAsset();
+		String assetConf = null;
+		if (eventAsset != null) {
+			assetConf = eventAsset.getConfidentialLevel();
+		}
+		return assetConf;
+	}	
+	
+	/**
+	  * obtainAssetLocation - This method gathers characteristics of the asset that the event is trying to access to.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return assetLocation
+	  * 
+	  */
+	public String obtainAssetLocation(SimpleEvents event){
+		
+		Assets eventAsset = event.getAsset();
+		String assetLocation = null;
+		if (eventAsset != null) {
+			assetLocation = eventAsset.getLocation();
+		}
+		return assetLocation;
+	}	
+	
+	/**
+	  * readConfigurationJSON - This method extracts information about the last known configuration of the device.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return List<Integer> configValues
+	  * 
+	  */
+	public List<Integer> readConfigurationJSON(SimpleEvents event){
+		
+		List<Integer> configValues = new ArrayList<Integer>();
+		Devices userDeviceId = event.getDevice();
+		Date eventDate = event.getDate();
+		SimpleEvents configEvent = dbManager.findDeviceConfigurationBySimpleEvent(Integer.parseInt(userDeviceId.getDeviceId()), eventDate.toString());
+		String configData = configEvent.getData();
+		// configData format is like:
+		// {event=security_property_changed, properties={"id":"1",
+		// "ispasswordprotected":"true","isrootpermissiongiven":"false",
+		// "screentimeoutinseconds":"300","musesdatabaseexists":"true",
+		// "isrooted":"false","accessibilityenabled":"false",
+		// "istrustedantivirusinstalled":"false","ipaddress":"172.17.1.52"}}
+		String configFormat = "\\\"?(\\w+)\\\"?[\\:\\=]\\\"?(\\w+)\\\"?";
+		Pattern configPattern = Pattern.compile(configFormat);
+		Matcher configMatcher = configPattern.matcher(configData);
+		while (configMatcher.find()) {
+			if (configMatcher.group(1).equalsIgnoreCase("ispasswordprotected")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					configValues.add(1);
+				} else {
+					configValues.add(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("screentimeoutinseconds")) {
+				BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
+				configValues.add(Integer.parseInt(configMatcher.group(2)));
+			} else if (configMatcher.group(1).equalsIgnoreCase("isscreanlocked")) {
+				configValues.set(configValues.size()-1, 0);
+			} else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					configValues.add(1);;
+				} else {
+					configValues.add(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("accessibilityenabled")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					configValues.add(1);
+				} else {
+					configValues.add(0);
+				}
+			} else if (configMatcher.group(1).equalsIgnoreCase("istrustedantivirusinstalled")) {
+				if (configMatcher.group(2).equalsIgnoreCase("true")) {
+					configValues.add(1);
+				} else {
+					configValues.add(0);
+				}
+			} 			
+			
+		}		
+		
+		return configValues;
+	}	
+	
+	/**
+	  * readMailJSON - This method extracts information about the characteristics of a mail being sent.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return List<Integer> mailValues
+	  * 
+	  */
+	public List<Integer> readMailJSON(SimpleEvents event){
+		
+		List<Integer> mailValues = new ArrayList<Integer>();
+		EventType eventTypeId = event.getEventType();
+		/* Data in event_type_if = 11
+		 * {event=ACTION_SEND_MAIL, properties={"to":"the.reiceiver@generic.com,
+		 * another.direct.receiver@generic.com","noAttachments":"1",
+		 * "subject":"MUSES sensor status subject","bcc":"hidden.reiceiver@generic.com",
+		 * "from":"max.mustermann@generic.com","attachmentInfo":"pdf",
+		 * "cc":"other.listener@generic.com, 2other.listener@generic.com"}}
+		*/		
+		if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
+			String mailJSON = "\\\"(\\w+)\\\"\\:\\\"(.*)\\\"[\\,\\}]";
+			String mailFormat = "[\\w\\.\\_]+\\@([\\w\\.\\_]+)";
+			Pattern mailPattern = Pattern.compile(mailJSON);
+			Pattern mailFormatPattern = Pattern.compile(mailFormat);
+			Matcher matcherMail = mailPattern.matcher(event.getData());
+			if (matcherMail.find()) {
+				Matcher matcherMailFormat = mailFormatPattern.matcher(matcherMail.group(2));
+				if (matcherMail.group(1).equalsIgnoreCase("bcc")) {
+					while (matcherMailFormat.find()) {
+						if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+							mailValues.add(1);
+						} else {
+							mailValues.add(0);
+						}
+					}
+				} else if (matcherMail.group(1).equalsIgnoreCase("cc")) {
+					while (matcherMailFormat.find()) {
+						if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+							mailValues.add(1);
+						} else {
+							mailValues.add(0);
+						}
+					}
+				} else if (matcherMail.group(1).equalsIgnoreCase("to")) {
+					while (matcherMailFormat.find()) {
+						if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+							mailValues.add(1);
+						} else {
+							mailValues.add(0);
+						}
+					}
+				} else if (matcherMail.group(1).equalsIgnoreCase("noAttachments")) {
+					mailValues.add(Integer.parseInt(matcherMail.group(2)));
+				}
+			}
+			
+		}		
+		
+		return mailValues;
 	}
 	
+	/**
+	 * Method isRecipientAllowed, which checks if the mail address server is allowed by the company.
+	 *
+	 * @param server Server of the mail address like in name@server.com.
+	 * 
+	 * 
+	 * @return boolean True if it is allowed, false if not.
+	 * 
+	 */
+	public boolean isRecipientAllowed(String server) {
+		
+		if (server.equalsIgnoreCase("generic.com")) {
+			return true;
+		} else {		
+			return false;
+		}
+	}	
 	
-	
-	
+	/**
+	  * readAssetJSON - This method extracts information about the characteristics of a mail being sent.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return List<String> wifiValues
+	  * 
+	  */
+	public List<String> readAssetJSON(SimpleEvents event){
+		
+		List<String> wifiValues = new ArrayList<String>();
+		EventType eventTypeId = event.getEventType();
+		/* {id=3, wifiencryption=[WPA2-PSK-TKIP+CCMP][ESS], bssid=24:a4:3c:04:ae:09, 
+		 * bluetoothconnected=FALSE, wifienabled=true, wifineighbors=6, hiddenssid=false, 
+		 * networkid=1, wificonnected=true, airplanemode=false}
+		 */
+		if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 8)) {
+			String wifiJSON = "(\\w+)\\=([\\w\\[\\]\\-\\+\\:\\d]+)";
+			Pattern wifiPattern = Pattern.compile(wifiJSON);
+			Matcher matcherWifi = wifiPattern.matcher(event.getData());
+			if (matcherWifi.find()) {
+				if(matcherWifi.group(1).equalsIgnoreCase("wifiencryption")) {
+					logger.info(matcherWifi.group(2));
+					wifiValues.add(matcherWifi.group(2));
+				} else if (matcherWifi.group(1).equalsIgnoreCase("bluetoothconnected")) {
+					if(matcherWifi.group(2).equalsIgnoreCase("true")) {
+						wifiValues.add("1");
+					} else {
+						wifiValues.add("0");
+					}
+				} else if (matcherWifi.group(1).equalsIgnoreCase("wifienabled")) {
+					if(matcherWifi.group(3).contentEquals("true")) {
+						wifiValues.add("1");
+					} else {
+						wifiValues.add("0");
+					}
+				} else if (matcherWifi.group(1).equalsIgnoreCase("wificonnected")) {
+					if(matcherWifi.group(6).contentEquals("true")) {
+						wifiValues.add("1");
+					} else {
+						wifiValues.add("0");
+					}
+				}
+			}
+			
+		}		
+		
+		return wifiValues;
+	}
 
 
 }
