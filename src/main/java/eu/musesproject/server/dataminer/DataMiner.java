@@ -327,7 +327,7 @@ public class DataMiner {
 		/* Obtaining decision (label of the pattern) by obtaining first the AccessRequest related to that event, and then the decision related to it */
 		String eventID = event.getEventId();
 		
-		/* 1 event -> * decisions/access requests */
+		/* 1 event -> * decisions/access requests */	
 		/* Then, for each event, the data mining process must be launched once per access request */
 		List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
 		/*int i = 0;

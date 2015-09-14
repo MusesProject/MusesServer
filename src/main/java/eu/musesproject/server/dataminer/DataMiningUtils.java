@@ -26,11 +26,15 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.PatternsKrs;
+import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.scheduler.ModuleType;
 
@@ -49,9 +53,10 @@ public class DataMiningUtils {
 	private Logger logger = Logger.getLogger(DataMiner.class);
 	
 	/**
-	  * obtainLabel - 
+	  * obtainLabel - For every event, an access request is built by the Event Processor, so the RT2AE can make a final decision about it.
+	  * 			  This method obtains the associated label to an event.
 	  *
-	  * @param accessRequestId
+	  * @param accessRequestId Is the access request number associated to an event.
 	  * 
 	  * @return label
 	  * 
@@ -66,6 +71,41 @@ public class DataMiningUtils {
 		}
 		
 	}
+	
+	/**
+	  * obtainDecisionCause - For every event, it may be several security violations, and each one contains the cause of the violation.
+	  * 					  This method returns the decision cause for an event, either if the security violation is linked to a decision id
+	  * 					  or not.
+	  *
+	  * @param decisionId	Is the decision number associated to an access request, associated itself to an event.
+	  * @param eventId		The event Id
+	  * 
+	  * @return decisionCause
+	  * 
+	  */
+	public String obtainDecisionCause(String decisionId, String eventId){
+		
+		SecurityViolation securityViolation = dbManager.findSecurityViolationByDecisionId(decisionId);
+		Pattern p = Pattern.compile("<(.+?)>(.+?)</(.+?)>");
+		if (securityViolation != null) {
+			Matcher matcher = p.matcher(securityViolation.getConditionText());
+			if (matcher.find()) {
+				return matcher.group(1);
+			} else {
+				return "";
+			}
+		} else {
+			List<SecurityViolation> secViolations = dbManager.findSecurityViolationByEventId(eventId);
+			if (secViolations.size() > 0) {
+				return "";
+			} else {
+				return "ALLOW";
+			}			
+		}
+		
+	}
+	
+	
 
 
 }
