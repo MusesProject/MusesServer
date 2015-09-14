@@ -26,6 +26,8 @@ package eu.musesproject.server.dataminer;
  * #L%
  */
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,8 +36,10 @@ import java.util.regex.Pattern;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.Decision;
 import eu.musesproject.server.entity.DecisionTrustvalues;
+import eu.musesproject.server.entity.Devices;
 import eu.musesproject.server.entity.EventType;
 import eu.musesproject.server.entity.PatternsKrs;
+import eu.musesproject.server.entity.Roles;
 import eu.musesproject.server.entity.SecurityViolation;
 import eu.musesproject.server.entity.SimpleEvents;
 import eu.musesproject.server.entity.Users;
@@ -288,7 +292,163 @@ public class DataMiningUtils {
 			}
 		}
 		return trustValue;
+	}	
+	
+	/**
+	  * obtainUserRole - This method obtains the role of the user who made the event.
+	  *
+	  * @param user The user as a User object.
+	  * 
+	  * @return role
+	  * 
+	  */
+	public String obtainUserRole(Users user){
+		
+		int userRoleId = user.getRoleId();
+		Roles userRole = dbManager.getRoleById(userRoleId);
+		String userRoleName = null;
+		if (userRole != null) {
+			userRoleName = userRole.getName();
+		}
+		return userRoleName;
+	}	
+	
+	/**
+	  * obtainTimestamp - This method obtains the detection time of the event.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return eventDetection
+	  * 
+	  */
+	public Date obtainTimestamp(SimpleEvents event){
+		
+		Date eventDate = event.getDate();
+		Time eventTime = event.getTime();
+		Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
+		return eventDetection;
+	}	
+	
+	/**
+	  * silentModeTrials1 - This method checks if the device was in silent mode or verbose mode during first trials. It returns 1 if it was
+	  * 					in silent mode, and 0 if it was in verbose mode.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return silentMode
+	  * 
+	  */
+	public int silentModeTrials1(SimpleEvents event){
+		
+		Date eventDate = event.getDate();
+		Time eventTime = event.getTime();
+		Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
+		if (eventDetection.getDay() <= 2 && eventDetection.getMonth() <= 7) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}	
+	
+	/**
+	  * silentModeTrials2 - This method checks if the device was in silent mode or verbose mode during second trials. It returns 1 if it was
+	  * 					in silent mode, and 0 if it was in verbose mode.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return silentMode
+	  * 
+	  */
+	public int silentModeTrials2(SimpleEvents event){
+		
+		Date eventDate = event.getDate();
+		Time eventTime = event.getTime();
+		Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
+		if (eventDetection.getDay() <= 2 && eventDetection.getMonth() <= 7) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}	
+	
+	/**
+	  * obtainDeviceModel - This method obtains the device model.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return deviceModel
+	  * 
+	  */
+	public String obtainDeviceModel(SimpleEvents event){
+		
+		Devices userDeviceId = event.getDevice();
+		String deviceModel = null;
+		if (userDeviceId != null) {
+			deviceModel = userDeviceId.getDeviceModel();
+		}
+		return deviceModel;
+	}	
+	
+	/**
+	  * obtainDeviceOS - This method obtains the OS of the device. It returns a string made from the name of the OS and the version.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return deviceOS
+	  * 
+	  */
+	public String obtainDeviceOS(SimpleEvents event){
+		
+		Devices userDeviceId = event.getDevice();
+		String deviceOS = null;
+		if (userDeviceId.getOS_name()!=null && userDeviceId.getOS_version() != null){
+			deviceOS = userDeviceId.getOS_name().concat(userDeviceId.getOS_version());
+		}
+		return deviceOS;
+	}	
+	
+	/**
+	  * obtainDeviceCertificate - This method for the certificate of the device. It returns 1 if it finds a certificate in the DB, and 0 if
+	  * 						  it does not.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return validCertificate
+	  * 
+	  */
+	public int obtainDeviceCertificate(SimpleEvents event){
+		
+		Devices userDeviceId = event.getDevice();
+		byte[] deviceCertificate = userDeviceId.getCertificate();
+		if ((deviceCertificate != null) && (deviceCertificate.length > 0)) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}	
+	
+	/**
+	  * obtainDeviceOwner - This method for the certificate of the device. It returns 1 if it finds a certificate in the DB, and 0 if
+	  * 						  it does not.
+	  *
+	  * @param event The event as a Simple Events object.
+	  * 
+	  * @return deviceOwner
+	  * 
+	  */
+	public String obtainDeviceOwner(SimpleEvents event){
+		
+		Devices userDeviceId = event.getDevice();
+		String deviceOwner = null;
+		if (userDeviceId != null) {
+			deviceOwner = userDeviceId.getOwnerType();
+		}
+		return deviceOwner;
 	}
+	
+	
+	
+	
 
 
 }
