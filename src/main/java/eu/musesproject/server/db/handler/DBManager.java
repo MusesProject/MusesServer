@@ -2111,6 +2111,34 @@ public class DBManager {
 		} 
 		return securityViolations;		
 	}
+	
+	/**
+     * Get SecurityViolation by decision_id
+     * @param decisionId
+     * @return SecurityViolation
+     */
+	public SecurityViolation findSecurityViolationByDecisionId(String decisionId) {
+		Session session = null;
+		Query query = null;
+		List<SecurityViolation> securityViolations = null;
+		SecurityViolation securityViolation = null;
+		try {
+			session = getSessionFactory().openSession();
+			query = session.getNamedQuery("SecurityViolation.findByDecisionId").setString("decision_id", decisionId);
+			if (query!=null) {
+				securityViolations = query.list();
+				if (securityViolations.size() > 0) {
+					securityViolation = securityViolations.get(0);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (session!=null) session.close();
+		}
+		
+		return securityViolation;		
+	}
 
 	public SimpleEvents updateSimpleEvent(String eventType, String assetId) {
 		Session session = null;

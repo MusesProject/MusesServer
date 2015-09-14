@@ -40,7 +40,9 @@ import java.util.List;
 	@NamedQuery(name="SecurityViolation.findAll", 
 				query="SELECT s FROM SecurityViolation s"),
 	@NamedQuery(name="SecurityViolation.findByEventId", 
-    			query="SELECT s FROM SecurityViolation s where s.eventId = :event_id")
+    			query="SELECT s FROM SecurityViolation s where s.eventId = :event_id"),
+	@NamedQuery(name="SecurityViolation.findByDecisionId", 
+    			query="SELECT s FROM SecurityViolation s where s.decisionId = :decision_id")
 
 })
 public class SecurityViolation implements Serializable {

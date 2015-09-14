@@ -477,6 +477,16 @@ public class DBManagerTest {
 	}
 	
 	@Test
+	public void testFindSecurityViolationByDecisionId() {
+		String decisionID = "628";
+		SecurityViolation secViolation = dbmanager.findSecurityViolationByDecisionId(decisionID);
+		if(secViolation != null)
+			assertTrue(true);
+		else
+			fail("There is not any Security Violation corresponding to that decision_id.");
+	}
+	
+	@Test
 	public void testFindEventsByUserId() {
 		String userID = "1";
 		String day = "2015-01-09";
