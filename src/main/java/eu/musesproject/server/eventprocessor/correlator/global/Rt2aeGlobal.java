@@ -21,6 +21,8 @@ package eu.musesproject.server.eventprocessor.correlator.global;
  * #L%
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -425,8 +427,14 @@ public class Rt2aeGlobal {
 			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		}catch(javax.persistence.EntityExistsException e){
 			logger.error("Please, check database persistence:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			logger.error("RT2AE entity exception stack trace: " + errors.toString());
 		}catch(Exception e){
 			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			logger.error("RT2AE exception stack trace: " + errors.toString());
 		}		
 		//Control based on policy compliance
 		
