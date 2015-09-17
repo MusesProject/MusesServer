@@ -609,7 +609,7 @@ public class DataMiningUtils {
 				BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
 				configValues.add(Integer.parseInt(configMatcher.group(2)));
 			} else if (configMatcher.group(1).equalsIgnoreCase("isscreanlocked")) {
-				configValues.set(configValues.size()-1, 0);
+				configValues.add(0);
 			} else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
 				if (configMatcher.group(2).equalsIgnoreCase("true")) {
 					configValues.add(1);;
@@ -655,7 +655,7 @@ public class DataMiningUtils {
 		 * "cc":"other.listener@generic.com, 2other.listener@generic.com"}}
 		*/		
 		if ((eventTypeId!=null)&&(eventTypeId.getEventTypeId() == 11)) {
-			String mailJSON = "\\\"(\\w+)\\\"\\:\\\"(.*)\\\"[\\,\\}]";
+			String mailJSON = "\\\"(\\w+)\\\"\\:\\\"?([\\w\\@\\.\\_\\-\\,\\s]+)";
 			String mailFormat = "[\\w\\.\\_]+\\@([\\w\\.\\_]+)";
 			Pattern mailPattern = Pattern.compile(mailJSON);
 			Pattern mailFormatPattern = Pattern.compile(mailFormat);
@@ -664,7 +664,7 @@ public class DataMiningUtils {
 				Matcher matcherMailFormat = mailFormatPattern.matcher(matcherMail.group(2));
 				if (matcherMail.group(1).equalsIgnoreCase("bcc")) {
 					while (matcherMailFormat.find()) {
-						if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+						if (this.isRecipientAllowed(matcherMailFormat.group(1))) {
 							mailValues.add(1);
 						} else {
 							mailValues.add(0);
@@ -672,7 +672,7 @@ public class DataMiningUtils {
 					}
 				} else if (matcherMail.group(1).equalsIgnoreCase("cc")) {
 					while (matcherMailFormat.find()) {
-						if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+						if (this.isRecipientAllowed(matcherMailFormat.group(1))) {
 							mailValues.add(1);
 						} else {
 							mailValues.add(0);
@@ -680,14 +680,18 @@ public class DataMiningUtils {
 					}
 				} else if (matcherMail.group(1).equalsIgnoreCase("to")) {
 					while (matcherMailFormat.find()) {
-						if (this.isRecipientAllowed(matcherMailFormat.group(2))) {
+						if (this.isRecipientAllowed(matcherMailFormat.group(1))) {
 							mailValues.add(1);
 						} else {
 							mailValues.add(0);
 						}
 					}
 				} else if (matcherMail.group(1).equalsIgnoreCase("noAttachments")) {
-					mailValues.add(Integer.parseInt(matcherMail.group(2)));
+					Pattern attachmentP = Pattern.compile("(\\d+)\\,");
+					Matcher matcherAttachment = attachmentP.matcher(matcherMail.group(2));
+					if (matcherAttachment.find()) {
+						mailValues.add(Integer.parseInt(matcherAttachment.group(1)));
+					}
 				}
 			}
 			
@@ -736,7 +740,6 @@ public class DataMiningUtils {
 			Matcher matcherWifi = wifiPattern.matcher(event.getData());
 			if (matcherWifi.find()) {
 				if(matcherWifi.group(1).equalsIgnoreCase("wifiencryption")) {
-					logger.info(matcherWifi.group(2));
 					wifiValues.add(matcherWifi.group(2));
 				} else if (matcherWifi.group(1).equalsIgnoreCase("bluetoothconnected")) {
 					if(matcherWifi.group(2).equalsIgnoreCase("true")) {
