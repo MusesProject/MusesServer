@@ -490,23 +490,38 @@ public class Rt2aeGlobal {
 		storeComplexEvent(event, message, mode, condition, composedRequest.getEventId());
 		
 		PolicyCompliance policyCompliance = policyCompliance(composedRequest, message, event, mode, condition);
+		
+		logger.info("policyCompliance.getInformation():"+policyCompliance.getInformation());
 		try{
 			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		}catch(javax.persistence.EntityExistsException e){
 			logger.error("Please, check database persistence:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			logger.error("RT2AE exception entity opport stack trace: " + errors.toString());
 		}catch(Exception e){
 			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			logger.error("RT2AE exception opport stack trace: " + errors.toString());
 		}		
 		//Control based on policy compliance
 		
+			
 		if (decision == null){
+			logger.info("decision sent from RT2AE is null");
 			if (policyCompliance.getResult().equals(PolicyCompliance.MAYBE)){
 				decision = Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS;
+				logger.info("setting Decision.MAYBE_ACCESS_WITH_RISKTREATMENTS");
 			}else if (policyCompliance.getResult().equals(PolicyCompliance.DENY)){
 				decision = Decision.STRONG_DENY_ACCESS;
+				logger.info("setting Decision.STRONG_DENY_ACCESS");
 			}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
 				decision = Decision.GRANTED_ACCESS;
+				logger.info("setting Decision.GRANTED_ACCESS");
 			}
+		}else{
+			logger.info("Information attribute after RT2AE:" + decision.getInformation());
 		}
 		decision.setCondition(condition);
 		decisions[0] = decision;
@@ -882,12 +897,19 @@ public class Rt2aeGlobal {
 		storeComplexEvent(event, message, mode, condition, composedRequest.getEventId());
 		
 		PolicyCompliance policyCompliance = policyCompliance(composedRequest, key, message, event, mode, condition);
+		logger.info("policyCompliance.getInformation():"+policyCompliance.getInformation());
 		try{
 			decision = rt2aeServer.decideBasedOnRiskPolicy(composedRequest, policyCompliance, context);
 		}catch(javax.persistence.EntityExistsException e){
 			logger.error("Please, check database persistence:An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			logger.error("RT2AE entity exception stack trace: " + errors.toString());
 		}catch(Exception e){
 			logger.error("An error has produced while calling RT2AE server: decideBasedOnRiskPolicy:"+e.getLocalizedMessage());
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			logger.error("RT2AE exception stack trace: " + errors.toString());
 		}		
 		//Control based on policy compliance
 		
@@ -899,6 +921,8 @@ public class Rt2aeGlobal {
 			}else if (policyCompliance.getResult().equals(PolicyCompliance.ALLOW)){
 				decision = Decision.GRANTED_ACCESS;
 			}
+		}else{
+			logger.info("Information attribute after RT2AE:" + decision.getInformation());
 		}
 		decision.setCondition(condition);
 		decisions[0] = decision;

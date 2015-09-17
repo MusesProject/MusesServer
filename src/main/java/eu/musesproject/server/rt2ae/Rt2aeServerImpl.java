@@ -233,6 +233,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			}
 
 			decision.setInformation(policyCompliance.getInformation());
+			logger.info("Main decision setInformation:"+ decision.getInformation());
 			if (policyCompliance.getReason().equalsIgnoreCase("AccessRequest Disable Accessibility")){
 				decision.setSolving_risktreatment(SolvingRiskTreatment.ACCESSIBILITY);	
 			} 
@@ -329,6 +330,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 			try {
 				decision1.setAccessRequest(accessrequest1);
 				decision1.setInformation(decision.getInformation());
+				logger.info("decision1 setInformation:"+ decision1.getInformation());
 				decision1.setValue("STRONGDENY");
 				decision1.setTime(new java.util.Date());
 				decisionId = dbManager.setDecision(decision1);
@@ -1499,16 +1501,17 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
 						decision.setInformation(dbManager.getRisktreatments(6).getDescription());
-
+						logger.info("RT2AE decision setInformation:"+ decision.getInformation());
 
 					}
 					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
 						decision.setInformation(dbManager.getRisktreatments(6).getSpanish());
-
+						logger.info("RT2AE decision setInformation:"+ decision.getInformation());
 
 					}
 					
 					decision1.setInformation(decision.getInformation());
+					logger.info("RT2AE decision1 setInformation:"+ decision1.getInformation());
 					decision1.setValue("STRONGDENY");
 					decision1.setTime(new java.util.Date());
 					decisionId = dbManager.setDecision(decision1);
@@ -2217,16 +2220,17 @@ public class Rt2aeServerImpl implements Rt2ae {
 						
 						if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
 							decision.setInformation(dbManager.getRisktreatments(6).getDescription());
-
+							logger.info("decision setInformation:"+ decision.getInformation());
 
 						}
 						if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
 							decision.setInformation(dbManager.getRisktreatments(6).getSpanish());
-
+							logger.info("decision setInformation:"+ decision.getInformation());
 
 						}
 						
 						decision1.setInformation(decision.getInformation());
+						logger.info("decision setInformation:"+ decision1.getInformation());
 						decision1.setValue("STRONGDENY");
 						decision1.setTime(new java.util.Date());
 						decisionId = dbManager.setDecision(decision1);
@@ -3620,7 +3624,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision1.setAccessRequest(accessrequest1);
 				decision = Decision.STRONG_DENY_ACCESS;
 				decision.setInformation(strongdenythreat);
+				logger.info("decision setInformation strong deny:"+ decision.getInformation());
 				decision1.setInformation(decision.getInformation());
+				logger.info("decision1 setInformation strong deny:"+ decision1.getInformation());
 				decision1.setValue("STRONGDENY");
 				decision1.setTime(new java.util.Date());
 				decisionId = dbManager.setDecision(decision1);
