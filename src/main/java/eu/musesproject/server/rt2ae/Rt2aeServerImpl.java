@@ -214,7 +214,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 						+ " - Bad Count: " + existingThreat.getBadOutcomeCount());
 
 				try {
-					threatId = dbManager.setThreat(existingThreat);
+					dbManager.setThreat(existingThreat);
+					threatId = existingThreat.getThreatId();
 
 				} catch (Exception e) {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
@@ -309,12 +310,19 @@ public class Rt2aeServerImpl implements Rt2ae {
 
 			try {
 			
+				logger.info("decision1 setInformation:"+ accessRequest.getEventId());
+				logger.info("decision1 setInformation:"+ accessRequest.getAction());
+				logger.info("decision1 setInformation:"+ accessRequest.getUser().getUserId());
+				logger.info("decision1 setInformation:"+ threatId);
+
+
 				accessrequest1.setAssetId(BigInteger.valueOf(1));//TO DO Adding assetId from EP
 				accessrequest1.setModification(new Date());
 				accessrequest1.setEventId(BigInteger.valueOf(accessRequest.getEventId()));
 				accessrequest1.setAction(accessRequest.getAction());
 				accessrequest1.setThreatId(Integer.valueOf(threatId));
 				accessrequest1.setUserId(new BigInteger(accessRequest.getUser().getUserId()));
+				
 				
 				
 				
