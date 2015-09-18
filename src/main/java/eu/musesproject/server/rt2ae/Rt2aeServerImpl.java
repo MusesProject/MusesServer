@@ -1501,12 +1501,12 @@ public class Rt2aeServerImpl implements Rt2ae {
 					decision = Decision.STRONG_DENY_ACCESS;
 					
 					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("en")){
-						decision.setInformation(dbManager.getRisktreatments(6).getDescription());
+						decision.setInformation("The Opportunity was not higher that the risk to lose the asset Decision: DENY");
 						logger.info("RT2AE decision setInformation:"+ decision.getInformation());
 
 					}
 					if(dbManager.getUserByUsername(accessRequest.getUser().getUsername()).getLanguage().equalsIgnoreCase("es")){
-						decision.setInformation(dbManager.getRisktreatments(6).getSpanish());
+						decision.setInformation("La oportunidad no fue mayor que el riesgo de perder la Decisión del activo: DENY");
 						logger.info("RT2AE decision setInformation:"+ decision.getInformation());
 
 					}

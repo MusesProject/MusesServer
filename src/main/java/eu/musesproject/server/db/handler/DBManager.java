@@ -938,7 +938,7 @@ public class DBManager {
 					threat1.setOccurences(threat.getOccurences());*/
 				    session.save(threat);
 					session.flush();
-				    trans.commit();
+				    //trans.commit();
 
 					threatId = threat.getThreatId();
 					
@@ -947,12 +947,12 @@ public class DBManager {
 					Outcome outcome = o.next();
 					try {
 						
-							outcome.setThreat(threat);
+						outcome.setThreat(threat);
 						
 					    session.save(outcome);
 						session.flush();
 
-					    trans.commit();
+					    //trans.commit();
 					    
 					} catch (Exception e) {
 						if (trans!=null) trans.rollback();
