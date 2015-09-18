@@ -105,7 +105,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 		Decision decision = Decision.STRONG_DENY_ACCESS;
 		if(policyCompliance.getResult().equals(policyCompliance.DENY)){ 
 			
-			
+			logger.info("RT2AE: receives DENY policyCompliance from EP");
+
 			EventProcessorImpl eventProcessorImpl = new EventProcessorImpl();
 
 			List<Asset> requestedAssets = new ArrayList<Asset>();
@@ -191,14 +192,14 @@ public class Rt2aeServerImpl implements Rt2ae {
 					logger.error("Please, check database persistence:An error has produced while calling dbManager.setThreat:"+e.getLocalizedMessage());
 				}
 
-				logger.info("The newly created Threat from the Clues is: "
+				/*logger.info("The newly created Threat from the Clues is: "
 						+ threat.getDescription() + " with probability "
 						+ threat.getProbability()
 						+ " for the following outcome: \""
 						+ threat.getOutcomes().iterator().next().getDescription()
 						+ "\" with the following potential cost (in kEUR): "
 						+ threat.getOutcomes().iterator().next().getCostbenefit()
-						+ "\n");
+						+ "\n");*/
 
 				// if already exists, update occurrences and update it in the
 				// database
@@ -220,7 +221,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 				}
 
 
-				logger.info("The inferred Threat from the Clues is: "
+				/*logger.info("The inferred Threat from the Clues is: "
 						+ existingThreat.getDescription()
 						+ " with probability "
 						+ existingThreat.getProbability()
@@ -228,7 +229,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 						+ existingThreat.getOutcomes().iterator().next().getDescription()
 						+ "\" with the following potential cost (in kEUR): "
 						+ existingThreat.getOutcomes().iterator().next().getCostbenefit()
-						+ "\n");
+						+ "\n");*/
 
 			}
 
