@@ -719,6 +719,7 @@ rule "Blacklist app 00001"
 	rule "Required application list"
 	no-loop true
 	dialect "mvel"
+	enabled false
 	when
 		//e: AppObserverEvent(eval(requiredApp(this.name)),event=="uninstall")
 		e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="uninstall")
