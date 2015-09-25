@@ -320,9 +320,9 @@ public class DataMiner {
       *
       */
     @SuppressWarnings("null")
-    public PatternsKrs minePatterns(SimpleEvents event){
+    public List<PatternsKrs> minePatterns(SimpleEvents event){
        
-        PatternsKrs pattern = new PatternsKrs();
+    	List<PatternsKrs> patternList = new ArrayList<PatternsKrs>();
         logger.info(event.getEventId());
        
         /* Important variables and objects for the DM process, and common to several methods */
@@ -334,6 +334,7 @@ public class DataMiner {
         List<AccessRequest> accessRequests = dbManager.findAccessRequestByEventId(eventID);
         int i = 0;
         do {
+        	PatternsKrs pattern = new PatternsKrs();
             if (accessRequests.size() > 0) {
                 String accessRequestId = accessRequests.get(i).getAccessRequestId();           
                 pattern.setLabel(dmUtils.obtainLabel(accessRequestId));
@@ -407,9 +408,10 @@ public class DataMiner {
             }
            
             i++;
-        } while (i < accessRequests.size());       
-               
-        return pattern;
+            patternList.add(pattern);
+        } while (i < accessRequests.size());
+        
+        return patternList;
        
     }
    

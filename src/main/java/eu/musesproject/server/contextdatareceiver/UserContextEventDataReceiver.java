@@ -208,8 +208,7 @@ public class UserContextEventDataReceiver {
 		list.add(event);
 		dbManager.setSimpleEvents(list);
 		dm.retrievePendingEvents(list);
-		PatternsKrs pattern = dm.minePatterns(event);
-		pList.add(pattern);
+		pList = dm.minePatterns(event);
 		dbManager.setPatternsKRS(pList);
 
 	}
