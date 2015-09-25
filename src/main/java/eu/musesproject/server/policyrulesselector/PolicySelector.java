@@ -298,9 +298,8 @@ public class PolicySelector {
 		result += "<action>";
 		result += decisionIdIni + decision.getId() + decisionIdEnd;
 		result += "<type>"+action+"</type>";
-		if (requestId != null){
-			result = "<request_id>"+requestId+"</request_id>";
-		}
+		result += "<request_id>"+requestId+"</request_id>";
+		
 		if (decision.equals(Decision.GRANTED_ACCESS)){
 			result += allowIni;
 			result += id; //TODO Add resource identification
@@ -339,9 +338,8 @@ public class PolicySelector {
 		result += "<action>";
 		result += decisionIdIni + decision.getId() + decisionIdEnd;
 		result += "<type>"+action+"</type>";
-		if (requestId != 0){
-			result +="<request_id>"+requestId+"</request_id>";
-		}
+		result +="<request_id>"+requestId+"</request_id>";
+		
 		if (decision.equals(Decision.GRANTED_ACCESS)){
 			result += allowIni;
 			if ((asset != null)){
