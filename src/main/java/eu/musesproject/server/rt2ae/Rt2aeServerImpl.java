@@ -303,6 +303,9 @@ public class Rt2aeServerImpl implements Rt2ae {
 				decision.setSolving_risktreatment(SolvingRiskTreatment.EMAS_ADD_NOTE);
 			}
 			
+			if (policyCompliance.getReason().contains("bluetooth enabled")){
+				decision.setSolving_risktreatment(SolvingRiskTreatment.BLUETOOTH_ENABLED_MIGHT_TURN_INTO_LEAKAGE_PROBLEMS);
+			}
 			
 			ArrayList<eu.musesproject.server.entity.Decision> listDecisions = new ArrayList<eu.musesproject.server.entity.Decision>();
 			eu.musesproject.server.entity.Decision decision1 = new eu.musesproject.server.entity.Decision();
