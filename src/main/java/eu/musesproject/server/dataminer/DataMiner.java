@@ -373,6 +373,7 @@ public class DataMiner {
             pattern.setSilentMode(dmUtils.silentModeTrials2(event));
             pattern.setDeviceType(dmUtils.obtainDeviceModel(event));
             pattern.setDeviceOS(dmUtils.obtainDeviceOS(event));
+            pattern.setDeviceOwnedBy(dmUtils.obtainDeviceOwner(event));
             pattern.setDeviceHasCertificate(dmUtils.obtainDeviceCertificate(event));
             pattern.setAppName(dmUtils.obtainAppName(event));
             pattern.setAppVendor(dmUtils.obtainAppVendor(event));

@@ -604,7 +604,7 @@ public class DataMiningUtils {
                 BigInteger time = BigInteger.valueOf(Integer.parseInt(configMatcher.group(2)));
                 configValues.add(Integer.parseInt(configMatcher.group(2)));
             } else if (configMatcher.group(1).equalsIgnoreCase("isscreanlocked")) {
-                configValues.add(null);
+                configValues.add(0);
 
             } else if (configMatcher.group(1).equalsIgnoreCase("isrooted")) {
                 if (configMatcher.group(2).equalsIgnoreCase("true")) {
