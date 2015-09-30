@@ -734,7 +734,7 @@ public class DataMiningUtils {
             String wifiJSON = "(\\w+)\\=([\\w\\[\\]\\-\\+\\:\\d]+)";
             Pattern wifiPattern = Pattern.compile(wifiJSON);
             Matcher matcherWifi = wifiPattern.matcher(event.getData());
-            if (matcherWifi.find()) {
+            while (matcherWifi.find()) {
                 if(matcherWifi.group(1).equalsIgnoreCase("wifiencryption")) {
                     wifiValues.add(matcherWifi.group(2));
                 } else if (matcherWifi.group(1).equalsIgnoreCase("bluetoothconnected")) {
@@ -744,13 +744,13 @@ public class DataMiningUtils {
                         wifiValues.add("0");
                     }
                 } else if (matcherWifi.group(1).equalsIgnoreCase("wifienabled")) {
-                    if(matcherWifi.group(3).contentEquals("true")) {
+                    if(matcherWifi.group(2).contentEquals("true")) {
                         wifiValues.add("1");
                     } else {
                         wifiValues.add("0");
                     }
                 } else if (matcherWifi.group(1).equalsIgnoreCase("wificonnected")) {
-                    if(matcherWifi.group(6).contentEquals("true")) {
+                    if(matcherWifi.group(2).contentEquals("true")) {
                         wifiValues.add("1");
                     } else {
                         wifiValues.add("0");

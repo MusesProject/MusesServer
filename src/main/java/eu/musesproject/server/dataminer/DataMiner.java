@@ -578,7 +578,12 @@ public class DataMiner {
                         vals[18] = deviceOwners.indexOf(deviceOwner);
                     }
                     vals[19] = pattern.getDeviceHasPassword();
-                    vals[20] = pattern.getDeviceScreenTimeout().doubleValue();
+                    BigInteger time = pattern.getDeviceScreenTimeout();
+                    if (time == null) {
+                    	vals[20] = Utils.missingValue();
+                    } else {
+                    	vals[20] = pattern.getDeviceScreenTimeout().doubleValue();
+                    }
                     vals[21] = pattern.getDeviceHasAccessibility();
                     vals[22] = pattern.getDeviceIsRooted();
                     String appName = pattern.getAppName();
