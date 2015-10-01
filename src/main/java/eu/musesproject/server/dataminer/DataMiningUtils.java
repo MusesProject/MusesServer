@@ -187,7 +187,7 @@ public class DataMiningUtils {
         String userPassword = user.getPassword();
         // Characters (numbers, letters, and symbols) in the password
         if (userPassword != null) {
-            passwordLength = 0;userPassword.length();
+            passwordLength = userPassword.length();
         }
         return passwordLength;
     }
@@ -349,7 +349,7 @@ public class DataMiningUtils {
        Date eventDate = event.getDate();
        Time eventTime = event.getTime();
        Date eventDetection = new Date(eventDate.getYear(), eventDate.getMonth(), eventDate.getDate(), eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
-       if (eventDetection.getDay() <= 2 && eventDetection.getMonth() <= 7) {
+       if (eventDetection.getDay() <= 16 && eventDetection.getMonth() <= 3) {
            return 1;
        } else {
            return 0;

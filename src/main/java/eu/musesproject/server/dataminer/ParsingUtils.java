@@ -235,6 +235,7 @@ public class ParsingUtils {
 			Pattern label = Pattern.compile("^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e1?,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\:\\-\\']*,\\s?\\\"\\w+\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);");
 			while (it.hasNext()) {
 				SecurityRules dbRule = it.next();
+				logger.info(dbRule.getDescription());
 				String[] lines = dbRule.getDescription().split("\\n");
 				List<String> ruleContent = new ArrayList<String>();
 				int ruleStarts = 0;
@@ -264,6 +265,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.SecurityPropertyRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -271,6 +273,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.AppObserverRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}					
 					
@@ -278,6 +281,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.FileObserverRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -287,6 +291,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.EmailRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -311,8 +316,8 @@ public class ParsingUtils {
 	public String SecurityPropertyRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = "";
-		String secPropertyEvent = "e\\:\\s?ChangeSecurityPropertyEvent\\(([a-zA-Z]+)([\\=\\w]+)\\)";
-		String devProtectionEvent = "d\\:\\s?DeviceProtectionEvent\\(([a-zA-Z]+)([\\=<>]+)(\\w+)\\)";
+		String secPropertyEvent = "^e\\:\\s?ChangeSecurityPropertyEvent\\(([a-zA-Z]+)([\\=\\w]+)\\)";
+		String devProtectionEvent = "^d\\:\\s?DeviceProtectionEvent\\(([a-zA-Z]+)([\\=<>]+)(\\w+)\\)";
 		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
 		Pattern conditionPattern = Pattern.compile(secPropertyEvent);
 		Pattern anotherConditionPattern = Pattern.compile(devProtectionEvent);
@@ -357,7 +362,7 @@ public class ParsingUtils {
 	public String AppObserverRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = "";
-		String appEvent = "e1?\\:\\s?AppObserverEvent\\((.*),\\s?(event)\\=\\=\\\"(\\w+)\\\"\\)";
+		String appEvent = "^e1?\\:\\s?AppObserverEvent\\((.*),\\s?(event)\\=\\=\\\"(\\w+)\\\"\\)";
 		String conditionType1 = "eval\\(blacklistedApp\\(name\\)\\)";
 		String conditionType2 = "(name)\\=\\=\\\"([\\w\\s]*)\\\"";
 		String conditionType3 = "(appPackage)\\smatches\\s\\\"\\.\\*(\\w+)\\.\\*\\\"";
@@ -378,7 +383,7 @@ public class ParsingUtils {
 				Matcher conditionType2Matcher = conditionType2Pattern.matcher(conditionMatcher.group(1));
 				Matcher conditionType3Matcher = conditionType3Pattern.matcher(conditionMatcher.group(1));
 				if (conditionType1Matcher.find()) {
-					parsedRule += "app_name=>orrentANDapp_name=>vuzeAND";
+					parsedRule += "app_name=>orrent AND app_name=>vuze AND ";
 				} else if (conditionType2Matcher.find()) {
 					parsedRule += this.droolsToKRSDictionary(conditionType2Matcher.group(1))+"=>"+
 							conditionType2Matcher.group(2)+
@@ -416,11 +421,11 @@ public class ParsingUtils {
 	public String FileObserverRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = "";
-		String fileEvent = "e\\:\\s?FileObserverEvent\\((.*)\\)";
+		String fileEvent = "^e\\:\\s?FileObserverEvent\\(([\\w\\=\\\"\\_\\s\\,\\/]+)\\)";
 		String conditionType1 = "(\\w+)\\=\\=\\\"(\\w+)\\\""; // Like event=="open_asset", resourceType=="CONFIDENTIAL", username=="muses"
 		String conditionType2 = "(\\w+)\\=\\=\\\"([\\w\\/\\.]+)\\\""; // Like path=="/sdcard/Swe/door_1"
 		String conditionType3 = "(\\w+)\\s(n?o?t?)\\s?matches\\s\\\"\\.\\*(\\w+)\\.\\*\\\""; // Like path matches ".*Swe.*", wifiEncryption matches ".*WPA2.*", wifiEncryption not matches ".*WPA2.*"
-		String connectionEvent = "conn\\:\\s?ConnectivityEvent\\((.*)\\)";
+		String connectionEvent = "^conn\\:\\s?ConnectivityEvent\\(([\\w\\=\\\"\\_\\s\\,\\/\\.\\*]+)\\)";
 		String conditionType4 = "(\\w+)([\\=\\w]+)"; // Like wifiConnected==true, wifiEnabled==true, bluetoothConnected==true
 		String locationEvent = ""; // TODO: fill in when I read Zones
 		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
@@ -449,20 +454,24 @@ public class ParsingUtils {
 								"=>"+
 								this.droolsToKRSDictionary(conditionType1Matcher.group(2))+
 								" AND ";
+						continue;
 					}
 					if (conditionType2Matcher.find()) {
 						parsedRule += this.droolsToKRSDictionary(conditionType2Matcher.group(1))+"=>"+
 								conditionType2Matcher.group(2)+
 								" AND ";
+						continue;
 					}
 					if (conditionType3Matcher.find() && conditionType3Matcher.group(2).contentEquals("not")) {
 						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"!=>"+
 								conditionType3Matcher.group(3)+
 								" AND ";
+						continue;
 					} else if (conditionType3Matcher.find()) {
 						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"=>"+
 								conditionType3Matcher.group(3)+
 								" AND ";
+						continue;
 					}
 				}
 			}
@@ -471,24 +480,30 @@ public class ParsingUtils {
 				for (int i = 0; i < conditions.length; i++) {
 					Matcher conditionType3Matcher = conditionType3Pattern.matcher(conditions[i]);
 					Matcher conditionType4Matcher = conditionType4Pattern.matcher(conditions[i]);
-					if (conditionType3Matcher.find() && conditionType3Matcher.group(2).contentEquals("not")) {
-						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"!=>"+
+					Boolean matches3 = conditionType3Matcher.find();
+					if (matches3) {
+						if (conditionType3Matcher.group(2).contentEquals("not")) {
+							parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"!=>"+
+									conditionType3Matcher.group(3)+
+									" AND ";
+							continue;
+						} else {
+							parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"=>"+
 								conditionType3Matcher.group(3)+
 								" AND ";
-					} else if (conditionType3Matcher.find()) {
-						parsedRule += this.droolsToKRSDictionary(conditionType3Matcher.group(1))+"=>"+
-								conditionType3Matcher.group(3)+
-								" AND ";
+							continue;
+						}
 					}
 					if (conditionType4Matcher.find()) {
 						parsedRule += this.droolsToKRSDictionary(conditionType4Matcher.group(1))+
 								this.droolsToKRSDictionary(conditionType4Matcher.group(2))+
 								" AND ";
+						continue;
 					}
 				}
 			}
 			if (labelMatcher.find() && parsedRule != null) {
-				parsedRule += "THEN ";
+				parsedRule += " THEN ";
 				parsedRule += this.droolsToKRSDictionary(labelMatcher.group(1));
 			}
 		}
@@ -510,8 +525,8 @@ public class ParsingUtils {
 	public String EmailRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = "";
-		String mailEvent = "e\\:\\s?EmailEvent\\(([a-zA-Z]+)([\\=<>\\w]+)\\)";
-		String virusEvent = "v\\:\\s?(VirusFoundEvent)\\(\\)";
+		String mailEvent = "^e\\:\\s?EmailEvent\\(([a-zA-Z]+)([\\=<>\\w]+)\\)";
+		String virusEvent = "^v\\:\\s?(VirusFoundEvent)\\(\\)";
 		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
 		Pattern mailPattern = Pattern.compile(mailEvent);
 		Pattern virusPattern = Pattern.compile(virusEvent);
