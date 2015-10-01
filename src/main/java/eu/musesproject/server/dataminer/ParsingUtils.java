@@ -235,7 +235,6 @@ public class ParsingUtils {
 			Pattern label = Pattern.compile("^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e1?,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\:\\-\\']*,\\s?\\\"\\w+\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);");
 			while (it.hasNext()) {
 				SecurityRules dbRule = it.next();
-				logger.info(dbRule.getDescription());
 				String[] lines = dbRule.getDescription().split("\\n");
 				List<String> ruleContent = new ArrayList<String>();
 				int ruleStarts = 0;
@@ -265,7 +264,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.SecurityPropertyRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -273,7 +271,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.AppObserverRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}					
 					
@@ -281,7 +278,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.FileObserverRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -291,7 +287,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.EmailRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info("DB Rule: "+resultRule);
 						ruleList.add(resultRule);
 					}
 					

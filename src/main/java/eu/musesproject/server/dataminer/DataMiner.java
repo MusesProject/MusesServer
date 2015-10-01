@@ -137,11 +137,12 @@ public class DataMiner {
                 if (classifierRules != null && droolsRules != null) {
                     Iterator<String> i1 = droolsRules.iterator();
                     Iterator<String> i2 = classifierRules.iterator();
+                    boolean same = false;
                     while (i1.hasNext()) {
                         String dbRule = i1.next();
                         while (i2.hasNext()) {
                             String proposedRule = i2.next();
-                            boolean same = parser.isAlike(dbRule, proposedRule);
+                            same = parser.isAlike(dbRule, proposedRule);
                             if (!same) {
                                 if (alreadyDraftRules.size() > 0) {
                                     Iterator<SecurityRules> i3 = alreadyDraftRules.iterator();
@@ -502,6 +503,11 @@ public class DataMiner {
                         eventType.contentEquals("SAVE_ASSET") ||
                         eventType.contentEquals("VIRUS_FOUND") ||
                         eventType.contentEquals("CONTEXT_SENSOR_PACKAGE") ||
+                        eventType.contentEquals("CONTEXT_SENSOR_CONNECTIVITY") ||
+                        eventType.contentEquals("CONTEXT_SENSOR_PERIPHERAL") ||
+                        eventType.contentEquals("CONTEXT_SENSOR_DEVICE_PROTECTION") ||
+                        eventType.contentEquals("CONFIGURATION_CHANGE") ||
+                        eventType.contentEquals("SECURITY_INCIDENT") ||
                         eventType.contentEquals("user_entered_password_field") ||
                         eventType.contentEquals("CONTEXT_SENSOR_PERIPHERAL") ||
                         eventType.contentEquals("USER_BEHAVIOR") ||
