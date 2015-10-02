@@ -1086,11 +1086,22 @@ rule "Blacklist app 00001"
 	dialect "java"
 	when
 		e: USBDeviceConnectedEvent()
-
+		not AccessRequest(event=="USB device connected", sessionId==e.sessionId)
 
 	then
 		StatusGlobal.log("USB DEVICE CONNECTED EVENT******************************");
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"USB device connected","DENY","");
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"USB device connected","DENY","<connected_via_usb>true</connected_via_usb>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("USB device connected");
+		request.setSessionId(e.getSessionId());
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
 
 	end
 	
