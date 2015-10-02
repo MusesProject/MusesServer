@@ -61,7 +61,7 @@ public class EventFormatter {
 		Event cepFileEvent = null;
 		if (contextEvent != null){
 			if (contextEvent.getType() != null) {
-				if (contextEvent.getType().equals(EventTypes.FILEOBSERVER)) {
+				if ((contextEvent.getType().equals(EventTypes.FILEOBSERVER))||(contextEvent.getType().equals(EventTypes.FILEOBSERVER_SENSOR))) {
 					cepFileEvent = convertToFileObserverEvent(contextEvent);
 				} else if (contextEvent.getType().equals(EventTypes.CONNECTIVITY)) {
 					cepFileEvent = convertToConnectivityEvent(contextEvent);
@@ -476,13 +476,21 @@ public class EventFormatter {
 		}
 		cepFileEvent.setType(contextEvent.getType());
 
-		
-		cepFileEvent.setPath(getElement(properties.get("properties"),
+		if (properties.get("properties")!=null){
+			cepFileEvent.setPath(getElement(properties.get("properties"),
 					"path"));
-		if (getElement(properties.get("properties"),"resourceName")!=null){
-			cepFileEvent.setResourceName(getElement(properties.get("properties"),
-					"resourceName"));
+		}else{
+			cepFileEvent.setPath(properties.get("path"));
 		}
+		if (properties.get("properties")!=null){
+			if (getElement(properties.get("properties"),"resourceName")!=null){
+				cepFileEvent.setResourceName(getElement(properties.get("properties"),
+						"resourceName"));
+			}
+		}else{
+			cepFileEvent.setResourceName(properties.get("resourceName"));
+		}
+		
 		
 		
 	
@@ -494,10 +502,13 @@ public class EventFormatter {
 			}
 		}
 			
-
-		resourceType = getElement(properties.get("properties"), "resourceType");
-		if (resourceType != null) {
-			cepFileEvent.setResourceType(resourceType);
+		if (properties.get("properties")!=null){
+			resourceType = getElement(properties.get("properties"), "resourceType");
+			if (resourceType != null) {
+				cepFileEvent.setResourceType(resourceType);
+			}
+		}else{
+			cepFileEvent.setResourceType(properties.get("resourceType"));
 		}
 
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());

@@ -68,7 +68,7 @@ public class AccessRequestComposer {
 		Assets entityAsset = null;
 		
 		if (event.getType()!=null){
-			if (event.getType().equals(EventTypes.FILEOBSERVER)){
+			if ((event.getType().equals(EventTypes.FILEOBSERVER))||(event.getType().equals(EventTypes.FILEOBSERVER_SENSOR))){
 				if (event instanceof FileObserverEvent) {
 					FileObserverEvent fileEvent = (FileObserverEvent) event;
 					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
@@ -139,6 +139,7 @@ public class AccessRequestComposer {
 					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
 					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
+					requestedCorporateAsset.setTitle(fileEvent.getResourceName());
 					requestedCorporateAsset.setDescription(EventTypes.SAVE_ASSET);
 				}
 			}else if (event.getType().equals(EventTypes.USER_ENTERED_PASSWORD_FIELD)){

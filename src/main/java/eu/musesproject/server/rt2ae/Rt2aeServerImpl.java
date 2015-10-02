@@ -1571,7 +1571,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					.getRiskvalue()) {
 				
 				
-				if (clues.get(0).getName().contains("NOT-AVAILABLE-CLUES") && accessRequest.getOpportunityDescriptor() == null ){
+				/*TESTif (clues.get(0).getName().contains("NOT-AVAILABLE-CLUES") && accessRequest.getOpportunityDescriptor() == null ){
 					eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 					RiskTreatment [] riskTreatments = new RiskTreatment[1];
 					
@@ -1678,7 +1678,7 @@ public class Rt2aeServerImpl implements Rt2ae {
 					
 					return decision;
 					
-				}
+				}TEST*/
 				
 				
 				if (clues.get(0).getName().contains("Virus")){
