@@ -207,9 +207,9 @@ public class UserContextEventDataReceiver {
 		event.setRT2AE_can_access(1);
 		list.add(event);
 		dbManager.setSimpleEvents(list);
-		dm.retrievePendingEvents(list);
-		pList = dm.minePatterns(event);
-		dbManager.setPatternsKRS(pList);
+		//DEACTIVATE DATAMINER IN THIS BRANCH dm.retrievePendingEvents(list);
+		//DEACTIVATE DATAMINER IN THIS BRANCH pList = dm.minePatterns(event);
+		//DEACTIVATE DATAMINER IN THIS BRANCH dbManager.setPatternsKRS(pList);
 
 	}
 
