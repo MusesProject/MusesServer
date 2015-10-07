@@ -208,7 +208,9 @@ public class EventFormatter {
 		SensorAppEvent cepFileEvent = new SensorAppEvent();
 		Map<String,String> properties = contextEvent.getProperties();
 		cepFileEvent.setType(contextEvent.getType());
-		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		if (properties.get("id")!=null){
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		}
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setBackgroundProcess(properties.get("backgroundprocess"));
 		cepFileEvent.setAppVersion(properties.get("appversion"));
@@ -437,8 +439,9 @@ public class EventFormatter {
 		cepFileEvent.setIsRooted(Boolean.valueOf(properties.get("isrooted")));
 		cepFileEvent.setRootPermissionGiven(Boolean.valueOf("isrootpermissiongiven"));
 		cepFileEvent.setIpaddress(properties.get("ipaddress"));
-		cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties.get("screentimeoutinseconds")));
-		
+		if (properties.get("screentimeoutinseconds")!=null){
+			cepFileEvent.setScreenTimeoutInSeconds(Integer.valueOf(properties.get("screentimeoutinseconds")));
+		}
 		return cepFileEvent;
 	}
 	public static ConnectivityEvent convertToConnectivityEvent(ContextEvent contextEvent){			
@@ -454,7 +457,9 @@ public class EventFormatter {
 			cepFileEvent.setWifiConnected(Boolean.valueOf(properties.get("wificonnected")));
 			cepFileEvent.setWifiEnabled(Boolean.valueOf(properties.get("wifienabled")));
 			cepFileEvent.setNetworkId(String.valueOf(properties.get("networkid")));
-			cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifineighbors")));
+			if (properties.get("wifineighbors")!=null){
+				cepFileEvent.setWifiNeighbors(Integer.valueOf(properties.get("wifineighbors")));
+			}	
 			cepFileEvent.setWifiEncryption(properties.get("wifiencryption"));
 			cepFileEvent.setTimestamp(contextEvent.getTimestamp());		
 			//cepFileEvent.setUid(properties.get("id"));

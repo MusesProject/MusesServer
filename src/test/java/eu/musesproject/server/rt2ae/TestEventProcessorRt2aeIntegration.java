@@ -2386,6 +2386,157 @@ public final void testPolicyOpenConfAssetInSecure(){
 			des.insertFact(formattedEvent);
 		}
 	}
+	
+	public final void testWindowsUnsafeStorage(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		
+		final String testConfigSyncWindows = "{\"requesttype\":\"config_sync\",\"device_id\":\"C0-18-85-C5-35-8B\",\"operating-system-version\":\"Windows 7\",\"operating-system\":\"Windows\",\"username\":\"muses\"}";
+		String testWindows = "{\"requesttype\":\"online_decision\",\"device_id\":\"C0-18-85-C5-35-8B\",\"action\":{\"type\":\"open_application\",\"properties\":{\"appname\":\"Idle\",\"packagename\":\"Idle\",\"version\":\"null\"},\"timestamp\":1444223246808},\"sensor\":{\"CONTEXT_SENSOR_EMAIL\":{\"cc\":\"cc_1@a.com; cc_2@b.com\",\"bcc\":\"bcc_1@a.com; bcc_2@b.com\",\"attachments\":\"c:\\tmp\\test.txt; d:\\t.pdf\",\"receivers\":\"r_1@a.com; r_2@b.com\",\"subject\":\"test\",\"type\":\"CONTEXT_SENSOR_EMAIL\",\"timestamp\":1444223246765},\"CONTEXT_SENSOR_FILE_ACCESS\":{\"cancreate\":\"true\",\"canread\":\"false\",\"candelete\":\"false\",\"canexecute\":\"false\",\"canmodify\":\"false\",\"type\":\"CONTEXT_SENSOR_FILE_ACCESS\",\"timestamp\":1444223246765},\"CONTEXT_SENSOR_APP\":{\"backgroundprocess\":\"[]\",\"appname\":\"Idle\",\"packagename\":\"Idle\",\"appversion\":\"null\",\"type\":\"CONTEXT_SENSOR_APP\",\"timestamp\":1444223246765},\"CONTEXT_SENSOR_DEVICE_PROTECTION\":{\"istrustedantivirusinstalled\":\"false\",\"type\":\"CONTEXT_SENSOR_DEVICE_PROTECTION\",\"ispasswordprotected\":\"true\",\"timestamp\":1444223246765,\"isscreanlocked\":\"false\"},\"CONTEXT_SENSOR_PACKAGE\":{\"installedapps\":\"Adobe Flash Player 19 NPAPI,19.0.0.185;Git version 1.8.4-preview20130916,1.8.4-preview20130916;Google Chrome,45.0.2454.101;KeyStore Explorer 5.1.1,5.1.1;Microsoft Help Viewer 2.0,2.0.50727;Mozilla Firefox 41.0.1 (x86 en-US),41.0.1;Mozilla Thunderbird 38.2.0 (x86 en-US),38.2.0;Mozilla Maintenance Service,41.0.1.5750; for Microsoft .NET Framework 4.5 (KB2840642),1;Security Update for Microsoft .NET Framework 4.5 (KB2840642v2),2;Security Update for Microsoft .NET Framework 4.5 (KB2861208),1;Security Update for Microsoft .NET Framework 4.5 (KB2894854v2),2;Security Update for Microsoft .NET Framework 4.5 (KB2898864),1;Security Update for Microsoft .NET Framework 4.5 (KB2901118),1;Security Update for Microsoft .NET Framework 4.5 (KB2931368),1;Security Update for Microsoft .NET Framework 4.5 (KB2972107),1;Security Update for Microsoft .NET Framework 4.5 (KB2972216),1;Security Update for Microsoft .NET Framework 4.5 (KB2978128),1;Security Update for Microsoft .NET Framework 4.5 (KB2979578v2),2;Security Update for Microsoft .NET Framework 4.5 (KB3023224),1;Security Update for Microsoft .NET Framework 4.5 (KB3035490),1;Security Update for Microsoft .NET Framework 4.5 (KB3037581),1;Security Update for Microsoft .NET Framework 4.5 (KB3074230),1;Security Update for Microsoft .NET Framework 4.5 (KB3074550),1;Microsoft Office Outlook Connector,14.0.5118.5000;MySQL Examples and Samples 5.6,5.6.21;Realtek USB 2.0 Card Reader,6.1.7601.39019;MySQL Connector J,5.1.33;MySQL Connector/C 6.1,6.1.5;Visual Studio 2012 x86 Redistributables,14.0.0.1;CCC Help Finnish,2012.0305.0347.6610;MySQL Documents 5.6,5.6.21;Windows Live Writer,16.4.3528.0331;CCC Help Japanese,2012.0305.0347.6610;Microsoft Visual C++ 2005 Redistributable,8.0.50727.42;Google Update Helper,1.3.25.11;CCC Help Korean,2012.0305.0347.6610;Adobe Refresh Manager,1.8.0;Adobe Reader XI (11.0.12),11.0.12;Microsoft Visual C++ 2012 x86 Additional Runtime - 11.0.61030,11.0.61030;Windows Live PIMT Platform,16.4.3528.0331;Windows Live Mail,16.4.3528.0331;CCC Help Chinese Standard,2012.0305.0347.6610;CCC Help French,2012.0305.0347.6610;Windows Live Mail,16.4.3528.0331;Windows Live Messenger,16.4.3528.0331;Catalyst Control Center Profiles Mobile,2012.0305.348.6610;Microsoft Visual C++ 2012 x86 Minimum Runtime - 11.0.61030,11.0.61030;CCC Help German,2012.0305.0347.6610;CCC Help Danish,2012.0305.0347.6610;CCC Help Italian,2012.0305.0347.6610;ComProbe Protocol Analysis System,1.00.0000;Muses.WindowsClient.Service.Installer,1.0.0;Photo Gallery,16.4.3528.0331;Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.61030,11.0.61030.0;Photo Common,16.4.3528.0331;MySQL Notifier 1.1.6,1.1.6;Windows Live SOXE,16.4.3528.0331;Catalyst Control Center - Branding,1.00.0000;Microsoft .NET Framework 4 Multi-Targeting Pack,4.0.30319;Update for  (KB2504637),1;MSVCRT_amd64,15.4.2862.0708;Windows Live SOXE Definitions,16.4.3528.0331;Catalyst Control Center Localization All,2012.0305.348.6610;CCC Help Portuguese,2012.0305.0347.6610;Microsoft SQL Server 2012 Management Objects ,11.0.2100.60;CCC Help Spanish,2012.0305.0347.6610;Movie Maker,16.4.3528.0331;MySQL Connector C++ 1.1.4,1.1.4;D3DX10,15.4.2368.0902;CCC Help Chinese Traditional,2012.0305.0347.6610;Microsoft System CLR Types for SQL Server 2012,11.0.2100.60;Windows Live Messenger,16.4.3528.0331;Cisco PEAP Module,1.1.6;Microsoft SQL Server 2005 Compact Edition [ENU],3.1.0000;Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219,10.0.40219;Intel(R) Display Audio Driver,6.14.00.3090;MSXML 4.0 SP2 (KB973688),4.20.9876.0;Microsoft SQL Server Data Tools Build Utilities - enu (11.1.20828.01),11.1.20828.01;Microsoft SQL Server 2012 1;MySQL Connector Net 6.9.4,6.9.4;Apple Application Support (32-bit),3.2;CCC Help Russian,2012.0305.0347.6610;Google Earth,7.1.5.1557;Microsoft Visual C++ 2005 Redistributable,8.0.59193;MSXML 4.0 SP2 (KB954430),4.20.9870.0;Realtek Ethernet Controller Driver,7.54.309.2012;MySQL Installer - Community,1.4.2.0;MSVCRT,15.4.2862.0708;MSVCRT110,16.4.1108.0727;Microsoft Office Excel MUI (English) 2007,12.0.6612.1000;Microsoft Office PowerPoint MUI (English) 2007,12.0.6612.1000;Microsoft Office Outlook MUI (English) 2007,12.0.6612.1000;Microsoft Office Word MUI (English) 2007,12.0.6612.1000;Microsoft Office Proof (English) 2007,12.0.6612.1000;Microsoft Office Proof (French) 2007,12.0.6612.1000;Microsoft Office Proof (Spanish) 2007,12.0.6612.1000;Microsoft Office Proofing (English) 2007,12.0.4518.1014;Microsoft Office Shared MUI (English) 2007,12.0.6612.1000;Microsoft Office Shared Setup Metadata MUI (English) 2007,12.0.6612.1000;Microsoft Office File Validation Add-In,14.0.5130.5003;Microsoft Office Standard 2007,12.0.6612.1000;Prerequisites for SSDT ,11.0.2100.60;Security Update for Microsoft .NET Framework 4.5 (KB2737083),1;Security Update for Microsoft .NET Framework 4.5 (KB2742613),1;Security Update for Microsoft .NET Framework 4.5 (KB2789648),1;Security Update for Microsoft .NET Framework 4.5 (KB2804582),1;Security Update for Microsoft .NET Framework 4.5 (KB2833957),1;Security UpdateWriter,16.4.3528.0331;SmartSVN 7.5,7.1.10;Photo Gallery,16.4.3528.0331;MySQL Utilities,1.4.4;Junk Mail filter update,16.4.3528.0331;Catalyst Control Center,2012.0305.348.6610;Windows Live Writer Resources,16.4.3528.0331;PX Profile Update,1.00.1.;Microsoft .NET Framework 4.5 SDK,4.5.50709;Windows Live Photo Common,16.4.3528.0331;Intel(R) USB 3.0 eXtensible Host Controller Driver,1.0.3.214;Catalyst Control Center InstallProxy,2012.0305.348.6610;CCC Help English,2012.0305.0347.6610;Entity Framework Designer for Visual Studio 2012 - enu,11.1.20810.00;Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.61030,11.0.61030.0;Movie Maker,16.4.3528.0331;Intel(R) Rapid Storage Technology,11.1.0.1006;CCC Help Norwegian,2012.0305.0347.6610;Windows Live Communications Platform,16.4.3528.0331;Java Auto Updater,2.8.60.27;MySQL Connector/ODBC 5.3,5.3.4;HTC Driver Installer,4.10.0.001;CCC Help Swedish,2012.0305.0347.6610;Microsoft SQL Server Data Tools - enu (11.1.20828.01),11.1.20828.01;Cisco LEAP Module,1.0.19;PowerXpressHybrid,1.00.0000;CCC Help Dutch,2012.0305.0347.6610;Microsoft .NET Framework 4.5 Multi-Targeting Pack,4.5.50709;Google Update Helper,1.3.28.15;Windows Live Family Safety,16.4.3528.0331;Cisco EAP-FAST Module,2.2.14;Intel(R) Management Engine Components,8.0.1.1399;Windows Live UX Platform Language Pack,16.4.3528.0331;Windows Live Installer,16.4.3528.0331;Windows Live Essentials,16.4.3528.0331;Skypeâ\u0084¢ 7.8,7.8.102;Skype Click to Call,7.4.0.9058;Microsoft SQL Server 2012 T-SQL Language Service ,11.0.2100.60;Microsoft Visual C++ 2005 Redistributable,8.0.61001;Windows Live Writer,16.4.3528.0331;Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.21005,12.0.21005.Data-Tier App Framework ,11.0.2316.0;Microsoft Help Viewer 2.0,2.0.50727\",\"appname\":\"init\",\"packagestatus\":\"unknown\",\"appversion\":\"init\",\"id\":\"1\",\"type\":\"CONTEXT_SENSOR_PACKAGE\",\"timestamp\":1444223246765}},\"id\":-1048923444,\"username\":\"muses\"}";
+		
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
+		callback.receiveCb(defaultSessionId, testConfigSyncWindows);
+		
+		List<ContextEvent> list = JSONManager.processJSONMessage(testWindows, "online_decision");
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			JSONObject root;
+			try {
+			
+				root = new JSONObject(testWindows);
+				formattedEvent.setSessionId(defaultSessionId);
+				formattedEvent.setUsername(root
+						.getString(JSONIdentifiers.AUTH_USERNAME));
+				formattedEvent.setDeviceId(root
+						.getString(JSONIdentifiers.AUTH_DEVICE_ID));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+	}
+	
+	public final void testConfigSyncWithWindowsOS(){
+		final String testConfigSyncWindows = "{\"requesttype\":\"config_sync\",\"device_id\":\"C0-18-85-C5-35-8B\",\"operating-system-version\":\"Windows 7\",\"operating-system\":\"Windows\",\"username\":\"muses\"}";
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		//ConnectionCallbacksImpl cb = new ConnectionCallbacksImpl();
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
+		callback.receiveCb(defaultSessionId, testLogin);
+		callback.receiveCb(defaultSessionId, testConfigSyncWindows);
+
+
+	}
+	
+	public final void testWindowsBlacklist(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		
+		final String testConfigSyncWindows = "{\"requesttype\":\"config_sync\",\"device_id\":\"C0-18-85-C5-35-8B\",\"operating-system-version\":\"Windows 7\",\"operating-system\":\"Windows\",\"username\":\"muses\"}";
+		String testWindows = " {\"requesttype\":\"online_decision\",\"device_id\":\"D4-BE-D9-46-CF-FA\",\"action\":{\"type\":\"open_application\",\"properties\":{\"appname\":\"Dropbox Setup\",\"packagename\":\"Dropbox Setup\",\"version\":\"0.0\"},\"timestamp\":1444230989465},\"sensor\":{\"CONTEXT_SENSOR_EMAIL\":{\"cc\":\"cc_1@a.com; cc_2@b.com\",\"bcc\":\"bcc_1@a.com; bcc_2@b.com\",\"attachments\":\"c:\\tmp\\test.txt; d:\\t.pdf\",\"receivers\":\"r_1@a.com; r_2@b.com\",\"subject\":\"test\",\"type\":\"CONTEXT_SENSOR_EMAIL\",\"timestamp\":1444230594161},\"CONTEXT_SENSOR_FILE_ACCESS\":{\"cancreate\":\"true\",\"canread\":\"false\",\"candelete\":\"false\",\"canexecute\":\"false\",\"canmodify\":\"false\",\"type\":\"CONTEXT_SENSOR_FILE_ACCESS\",\"timestamp\":1444230594154},\"CONTEXT_SENSOR_APP\":{\"backgroundprocess\":\"[]\",\"appname\":\"Dropbox Setup\",\"packagename\":\"Dropbox Setup\",\"appversion\":\"0.0\",\"type\":\"CONTEXT_SENSOR_APP\",\"timestamp\":1444230989465},\"CONTEXT_SENSOR_CONNECTIVITY\":{\"ipaddress\":\"192.168.1.100\",\"bssid\":\"f81a67837158,54e6fcd170de,24a43c17e640,f029294d2590,e01c41d359d4,c0ffd480a1fd,0a18d69d230b,e01c41d359d5,b4b52f15e4af,54e6fcd170de\",\"connectedtotrustediprange\":\"false\",\"wificonnected\":\"true\",\"type\":\"CONTEXT_SENSOR_CONNECTIVITY\",\"deviceconnected\":\"true\",\"wifienabled\":\"true\",\"ethernetconnected\":\"true\",\"networkname\":\"MUSES_UNSEC\",\"wifiencryption\":\"none\",\"networkid\":\"{7CE1A057-5777-4FC9-95CE-089FCAE68D6D}\",\"id\":\"3\",\"timestamp\":1444230616147},\"CONTEXT_SENSOR_DEVICE_PROTECTION\":{\"isscreenlocked\":\"null\",\"istrustedantivirusinstalled\":\"false\",\"type\":\"CONTEXT_SENSOR_DEVICE_PROTECTION\",\"ispasswordprotected\":\"true\",\"timestamp\":1444230594154},\"CONTEXT_SENSOR_PACKAGE\":{\"installedapps\":\"Adobe Flash Player 19 NPAPI,19.0.0.185;Avast Premier,10.4.2233;Dropbox,3.10.7;Git version 1.8.4-preview20130916,1.8.4-preview20130916;Google Chrome,45.0.2454.101;KeyStore Explorer 5.1.1,5.1.1;Microsoft Help Viewer 2.0,2.0.50727;Mozilla Firefox 41.0.1 (x86 en-US),41.0.1;Mozilla Thunderbird 38.2.0 (x86 en-US),0305.0347.6610;CCC Help Italian,2012.0305.0347.6610;ComProbe Protocol Analysis System,1.00.0000;Muses.WindowsClient.Service.Installer,1.0.0;Photo Gallery,16.4.3528.0331;Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.61030,11.0.61030.0;Photo Common,16.4.3528.0331;MySQL Notifier 1.1.6,1.1.6;Windows Live SOXE,16.4.3528.0331;Catalyst Control Center - Branding,1.00.0000;Microsoft .NET Framework 4 Multi-Targeting Pack,4.0.30319;Update for  (KB2504637),1;MSVCRT_amd64,15.4.2862.0708;Windows Live SOXE Definitions,16.4.3528.0331;Catalyst Control Center Localization All,2012.0305.348.6610;CCC Help Portuguese,TrueCrypt,2012.0305.0347.6610;Microsoft SQL Server 2012 Management Objects ,11.0.2100.60;CCC Help Spanish,2012.0305.0347.6610;Movie Maker,16.4.3528.0331;MySQL Connector C++ 1.1.4,1.1.4;D3DX10,15.4.2368.0902;CCC Help Chinese Traditional,2012.0305.0347.6610;Microsoft System CLR Types for SQL Server 2012,11.0.2100.60;Windows Live Messenger,16.4.3528.0331;Cisco PEAP Module,1.1.6;Microsoft SQL Server 2005 Compact Edition [ENU],3.1.0000;Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219,10.0.40219;Intel(R) Display Audio Driver,6.14.00.3090;MSXML 4.0 SP2 (KB973688),4.20.9876.0;Microsoft SQL Server Data Tools Build Utilities - enu (11.1.20828.01),11.1.20828.01;Microsoft SQL Server 2012 Data-Tier App Framework ,11.0.2316.0;Microsoft Help Viewer 2.0,2.0.50727\",\"appname\":\"init\",\"packagestatus\":\"unknown\",\"appversion\":\"init\",\"id\":\"1\",\"type\":\"CONTEXT_SENSOR_PACKAGE\",\"timestamp\":1444230594154}},\"id\":2011783024,\"username\":\"muses\"}";
+		
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
+		callback.receiveCb(defaultSessionId, testConfigSyncWindows);
+		
+		List<ContextEvent> list = JSONManager.processJSONMessage(testWindows, "online_decision");
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			JSONObject root;
+			try {
+			
+				root = new JSONObject(testWindows);
+				formattedEvent.setSessionId(defaultSessionId);
+				formattedEvent.setUsername(root
+						.getString(JSONIdentifiers.AUTH_USERNAME));
+				formattedEvent.setDeviceId(root
+						.getString(JSONIdentifiers.AUTH_DEVICE_ID));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+	}
+	
+	public final void testWindowsUninstallRequiredApp(){
+		
+		EventProcessor processor = null;
+		MusesCorrelationEngineImpl engine = null;
+		
+		final String testConfigSyncWindows = "{\"requesttype\":\"config_sync\",\"device_id\":\"C0-18-85-C5-35-8B\",\"operating-system-version\":\"Windows 7\",\"operating-system\":\"Windows\",\"username\":\"muses\"}";
+		String testWindows = "{\"sensor\":{\"CONTEXT_SENSOR_APP\":{\"id\":\"3\",\"timestamp\":1402313215730,\"type\":\"CONTEXT_SENSOR_APP\",\"backgroundprocess\":\"[com.android.server.device.enterprise:remote, com.android.phone, com.google.process.gapps, com.google.android.gms.drive, com.android.smspush, com.samsung.music, system, com.sec.spp.push, com.google.android.talk, com.google.process.location, com.android.systemui, com.google.android.gms, com.google.android.apps.maps, com.android.phone, com.sec.android.app.controlpanel, com.tgrape.android.radar, com.android.phone, com.samsung.music, com.android.systemui, com.wssnps, com.google.android.googlequicksearchbox:search, com.android.settings, com.sec.android.app.twdvfs, com.android.bluetooth, com.google.process.location, com.sec.android.inputmethod, com.google.android.youtube, android.process.media, com.google.android.gms, com.sec.phone, com.sec.msc.learninghub, com.google.process.gapps, com.sec.factory, com.google.process.location, com.android.server.vpn.enterprise:remote, com.android.phone, com.sec.android.widgetapp.at.hero.accuweather.widget:remote, eu.musesproject.client, com.android.MtpApplication, com.vlingo.midas, com.google.process.gapps, com.google.android.gms, eu.musesproject.client, com.android.phone, net.openvpn.openvpn, com.android.phone, system, com.sec.android.app.sysscope, com.google.process.location, com.google.process.location, com.samsung.videohub, com.google.android.tts, com.google.android.gm, com.sec.android.app.videoplayer, com.google.android.gms, com.google.process.gapps]\",\"appname\":\"Gmail\"},\"CONTEXT_SENSOR_CONNECTIVITY\":{\"id\":\"3\",\"wifiencryption\":\"[WPA2-PSK-TKIP+CCMP][ESS]\",\"timestamp\":1402313210321,\"bssid\":\"24:a4:3c:03:ae:09\",\"bluetoothconnected\":\"FALSE\",\"wifienabled\":\"true\",\"wifineighbors\":\"8\",\"hiddenssid\":\"false\",\"networkid\":\"1\",\"type\":\"CONTEXT_SENSOR_CONNECTIVITY\",\"wificonnected\":\"true\",\"airplanemode\":\"false\"}},\"action\":{\"timestamp\":1402313215730,\"type\":\"uninstall\",\"properties\":{\"packagename\":\"com.avast.android.mobilesecurity\",\"appname\":\"Avast\",\"version\":\"\"}},\"requesttype\":\"online_decision\",\"device_id\":\"358648051980583\",\"username\":\"muses\"}";
+		
+		
+		
+		ConnectionCallbacksImpl callback = ConnectionCallbacksImpl.getInstance();
+		callback.receiveCb(defaultSessionId, testConfigSyncWindows);
+		
+		
+		List<ContextEvent> list = JSONManager.processJSONMessage(testUninstallRequiredApp, "online_decision");
+		DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+		if (des==null){
+			processor = new EventProcessorImpl();
+			engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+			assertNotNull(engine);
+			des = EventProcessorImpl.getMusesEngineService();
+		}
+		
+		for (Iterator<ContextEvent> iterator = list.iterator(); iterator.hasNext();) {
+			ContextEvent contextEvent = (ContextEvent) iterator.next();
+			assertNotNull(contextEvent);
+			Event formattedEvent = UserContextEventDataReceiver.getInstance().formatEvent(contextEvent);
+			JSONObject root;
+			try {
+			
+				root = new JSONObject(testWindows);
+				formattedEvent.setSessionId(defaultSessionId);
+				formattedEvent.setUsername(root
+						.getString(JSONIdentifiers.AUTH_USERNAME));
+				formattedEvent.setDeviceId(root
+						.getString(JSONIdentifiers.AUTH_DEVICE_ID));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			formattedEvent.setSessionId(defaultSessionId);
+			des.insertFact(formattedEvent);
+		}
+	}
 
 
 }

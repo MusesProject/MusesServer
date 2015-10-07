@@ -37,6 +37,7 @@ import eu.musesproject.server.authentication.AuthenticationManager;
 import eu.musesproject.server.connectionmanager.ConnectionManager;
 import eu.musesproject.server.connectionmanager.IConnectionCallbacks;
 import eu.musesproject.server.connectionmanager.Statuses;
+import eu.musesproject.server.continuousrealtimeeventprocessor.EventProcessor;
 import eu.musesproject.server.db.handler.DBManager;
 import eu.musesproject.server.entity.ConnectionConfig;
 import eu.musesproject.server.entity.DefaultPolicies;
@@ -44,6 +45,10 @@ import eu.musesproject.server.entity.MusesConfig;
 import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
+import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ConfigSyncEvent;
+import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
+import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
 import eu.musesproject.server.eventprocessor.util.EventTypes;
 import eu.musesproject.server.scheduler.ModuleType;
 
@@ -177,6 +182,10 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 				try{
 					os = root.getString(JSONIdentifiers.OPERATING_SYSTEM);
 					//osVersion = root.getString(JSONIdentifiers.OPERATING_SYSTEM_VERSION);
+					username = root
+							.getString(JSONIdentifiers.AUTH_USERNAME);
+					deviceId = root
+							.getString(JSONIdentifiers.AUTH_DEVICE_ID);
 				} catch (JSONException je) {
 					logger.log(Level.ERROR, MUSES_TAG+ je.getMessage() + je.getCause());					
 				}
@@ -256,7 +265,52 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					}
 				}else if ((os != null) && (os.contains(eu.musesproject.server.eventprocessor.util.Constants.OS_WINDOWS))) {
 					//TODO Windows config-sync to be done
-					logger.log(Level.INFO, "Windows config-sync to be done");
+					logger.log(Level.INFO, "Windows config-sync...");
+					
+					String response = "";
+					logger.log(Level.INFO, MUSES_TAG + " Response to send:"
+							+ response);
+					logger.log(Level.INFO, MUSES_TAG + " sessionID: "
+							+ sessionId);
+					connManager.sendData(sessionId, response);
+					
+					//Insert config sync
+					
+					eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = null;
+							
+					ConfigSyncEvent csEvent= new ConfigSyncEvent();
+					
+					csEvent.setOs(os);
+					csEvent.setSessionId(sessionId);
+					
+					formattedEvent = (eu.musesproject.server.eventprocessor.correlator.model.owl.Event)csEvent;
+					
+					EventProcessor processor = null;
+					MusesCorrelationEngineImpl engine = null;
+					DroolsEngineService des = EventProcessorImpl.getMusesEngineService();
+				
+					if (des==null){
+						processor = new EventProcessorImpl();
+						engine = (MusesCorrelationEngineImpl)processor.startTemporalCorrelation("drl");
+						des = EventProcessorImpl.getMusesEngineService();
+					}else{
+						logger.info("DroolsEngine Service already available");
+					}
+					if (formattedEvent != null){
+						formattedEvent.setSessionId(sessionId);
+						formattedEvent.setUsername(username);
+						formattedEvent.setDeviceId(deviceId);
+						//if (requestId != 0){
+							formattedEvent.setHashId(requestId);
+						//}
+						logger.info("Inserting event into the WM:"+formattedEvent);
+						try{
+							des.insertFact(formattedEvent);
+						}catch(NullPointerException e){
+							logger.info("formatter Event not inserted due to NullPointerException");
+						}
+					}
+					
 				}
 			}else {
 				//Data exchange: We should check if sessionId is correctly authenticated

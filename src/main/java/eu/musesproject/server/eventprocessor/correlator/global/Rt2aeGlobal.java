@@ -124,7 +124,11 @@ public class Rt2aeGlobal {
 		//FIXME no function right now change to current implementation
 		if (event.getDeviceId()!=null){
 			//deviceSecurityState.setDevice_id(Integer.valueOf(event.getDeviceId()));
-			deviceSecurityState.setDevice_id(new BigInteger(event.getDeviceId()));
+			try {
+				deviceSecurityState.setDevice_id(new BigInteger(event.getDeviceId()));
+			}catch(NumberFormatException nfe){
+				deviceSecurityState.setDevice_id(new BigInteger("99999999"));
+			}
 		}
 		deviceSecurityState.setClues(deviceSecurityClues);
 		try{

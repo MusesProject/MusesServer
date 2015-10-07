@@ -7,6 +7,7 @@ global eu.musesproject.server.eventprocessor.correlator.global.Rt2aeGlobal Rt2ae
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AccessRequest
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AddNoteEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.AppObserverEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.ConfigSyncEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
@@ -151,10 +152,17 @@ declare Opportunity
 	@expires (5s)
 end
 
+declare ConfigSyncEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (5s)
+end
+
 
 
 function boolean requiredApp(String name){
 	boolean result = false;
+	System.out.println("Required:"+name);
 	if (name.contains("com.avast.android.mobilesecurity")){
 		result = true;
 	}else if (name.contains("com.lotus.sync.traveler")){
@@ -162,7 +170,17 @@ function boolean requiredApp(String name){
 	}else if (name.contains("net.openvpn.openvpn")){
 		result = true;
 	}
+	System.out.println("Required result:"+result);
+	return result;
+}
 
+function boolean requiredAppWindows(String name){
+	boolean result = false;
+	System.out.println("Required win:"+name);
+	if (name.contains("vast")){
+		result = true;
+	}
+	System.out.println("Required result win:"+result);
 	return result;
 }
 
@@ -170,6 +188,17 @@ function boolean unsafeStorage(String name){
 	System.out.println("Safe storage input:"+name);
 	boolean result = true;
 	if (name.contains("cryptonite")){
+		result = false;
+	}
+	System.out.println("Unsafe storage result:"+result);
+
+	return result;
+}
+
+function boolean unsafeStorageWindows(String name){
+	System.out.println("Safe storage input:"+name);
+	boolean result = true;
+	if (name.contains("TrueCrypt")){
 		result = false;
 	}
 	System.out.println("Unsafe storage result:"+result);
@@ -216,6 +245,22 @@ rule "Rule firing"
 		//int id = Rt2aeGlobal.sendDefaultDevicePolicy(e);
 
 	end
+
+rule "Config sync"
+	no-loop true
+	dialect "mvel"
+	when
+		e: ConfigSyncEvent()
+	then
+		StatusGlobal.log("-------------------------------------------------------------------------");
+		StatusGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("Config sync received!");
+		StatusGlobal.log("User:"+e.getUsername()+" Device:"+e.getDeviceId());
+		StatusGlobal.log("SessionId:"+e.getSessionId());
+		StatusGlobal.log("Os:"+e.getOs());
+
+
+	end	
 	
 rule "Sensor app"
 	no-loop true
@@ -553,6 +598,7 @@ rule "Blacklist app 00001"
 	when
 		e: AppObserverEvent(name=="Wifi Analyzer",event=="open_application")
 		not AccessRequest(event=="Blacklist app 00002", sessionId==e.sessionId)
+		not ConfigSyncEvent(sessionId==e.sessionId, os=="Windows")
 	then
 		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
@@ -792,6 +838,7 @@ rule "Blacklist app 00001"
 		//e: AppObserverEvent(eval(requiredApp(this.name)),event=="uninstall")
 		e: AppObserverEvent(eval(requiredApp(this.appPackage)),event=="uninstall")
 		not AccessRequest(event=="Required application list", sessionId==e.sessionId)
+		not ConfigSyncEvent(sessionId==e.sessionId, os=="Windows")
 	then
 		StatusGlobal.log("A required application is trying to get uninstalled.");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
@@ -946,10 +993,9 @@ rule "Blacklist app 00001"
 	no-loop true
 	dialect "mvel"
 	when
-		//e: AppObserverEvent(eval(unsafeStorage(this.appPackage)))
 		e: PackageObserverEvent(eval(unsafeStorage(this.installedApps)))
-		//e: PackageObserverEvent(installedApps not matches ".*cryptonite.*")
 		not AccessRequest(event=="Unsafe Storage", sessionId==e.sessionId)
+		not ConfigSyncEvent(sessionId==e.sessionId, os=="Windows")
 	then
 		StatusGlobal.log("Safe storage is not enabled on device. Criptonite application is required");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
@@ -1168,3 +1214,82 @@ rule "Blacklist app 00001"
 		int id = Rt2aeGlobal.composeAccessRequestOpportunity(o,e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DECIDE","<wifiencryption>"+conn.getWifiEncryption()+"</wifiencryption>");
 		
 	end	
+
+
+	//Windows
+
+
+	rule "Unsafe Storage Windows"
+	no-loop true
+	dialect "mvel"
+	when
+		e: PackageObserverEvent(eval(unsafeStorageWindows(this.installedApps)))
+		not AccessRequest(event=="Unsafe Storage Windows", sessionId==e.sessionId)
+		ConfigSyncEvent(sessionId==e.sessionId, os=="Windows")
+	then
+		StatusGlobal.log("Safe storage is not enabled on device. TrueCrypt application is required");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device
+ You require to install a safe storage application to keep corporate data encrypted. Please, install TrueCrypt.Open Play Store, search for TrueCrypt application and install it","DENY","<installedApps>truecrypt</installedApps>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Unsafe Storage Windows");
+		request.setSessionId(e.getSessionId());
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+
+	end
+
+
+	
+	rule "Blacklist windows app"
+	no-loop true
+	dialect "java"
+	when
+		e: AppObserverEvent(name matches ".*Dropbox.*",event=="open_application")
+		not AccessRequest(event=="Blacklist windows app", sessionId==e.sessionId)
+		ConfigSyncEvent(sessionId==e.sessionId, os=="Windows")
+	then
+		StatusGlobal.log("A blacklisted app has been detected: AppObserverEvent.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event app****:"+e);
+		if(e!=null){
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful: Dropbox. Other people can gain control over your device.","DENY","<appname>"+e.getName()+"</appname>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Blacklist windows app");
+		request.setSessionId(e.getSessionId());
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+		////retract(e);
+		}else{
+		StatusGlobal.log("*****Null object*****");
+		}
+	end	
+
+
+	rule "Required application list windows"
+	no-loop true
+	dialect "mvel"
+	when
+		e: AppObserverEvent(eval(requiredAppWindows(this.appPackage)),event=="uninstall")
+		not AccessRequest(event=="Required application list windows", sessionId==e.sessionId)
+		ConfigSyncEvent(sessionId==e.sessionId, os=="Windows")
+	then
+		StatusGlobal.log("A required application is trying to get uninstalled.");
+		Rt2aeGlobal.setStatus(Constants.STARTED);
+		StatusGlobal.log("****Event appobserver****:"+e);
+		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Required application list","DENY","<packagestatus>REMOVED</packagestatus>");
+		AccessRequest request = new AccessRequest();
+		request.setEvent("Required application list windows");
+		request.setSessionId(e.getSessionId());
+		StatusGlobal.log("**********"+id);
+		request.setId(id);
+		request.setEvent_date(new Date(System.currentTimeMillis()));
+		insert(request);
+
+	end
