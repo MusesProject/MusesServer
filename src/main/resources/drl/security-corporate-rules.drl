@@ -155,7 +155,7 @@ end
 declare ConfigSyncEvent
 	@role( event )
 	@timestamp ( event_date )
-	@expires (5s)
+	@expires (1d)
 end
 
 
