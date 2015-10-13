@@ -50,6 +50,7 @@ public class EventTypes {
 	public final static String USB_DEVICE_CONNECTED = "CONTEXT_SENSOR_PERIPHERAL";
 	public final static String ADD_NOTE = "add_note";
 	public final static String OPPORTUNITY = "OPPORTUNITY";
+	public final static String FILE_ACCESS_PERMISSION = "CONTEXT_SENSOR_FILE_ACCESS";
 	
 	
 	

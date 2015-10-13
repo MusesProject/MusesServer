@@ -40,6 +40,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEv
 import eu.musesproject.server.eventprocessor.correlator.model.owl.DeviceProtectionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event;
+import eu.musesproject.server.eventprocessor.correlator.model.owl.FileAccessPermissionEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.LocationEvent;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Opportunity;
@@ -98,6 +99,8 @@ public class EventFormatter {
 				}else if (contextEvent.getType().equals(EventTypes.OPPORTUNITY)){
 					cepFileEvent = convertToOpportunityEvent(contextEvent);
 
+				}else if (contextEvent.getType().equals(EventTypes.FILE_ACCESS_PERMISSION)) {
+					cepFileEvent = convertToFileAccessPermissionEvent(contextEvent);
 				}else {
 					cepFileEvent = new Event();// Any other unsupported sensor
 					Logger.getLogger(EventFormatter.class).error("Unsupported sensor:"+contextEvent.getType());
@@ -140,6 +143,32 @@ public class EventFormatter {
 		
 	}
 	
+	private static Event convertToFileAccessPermissionEvent(
+			ContextEvent contextEvent) {
+		FileAccessPermissionEvent cepFileEvent = new FileAccessPermissionEvent();
+		Map<String,String> properties = contextEvent.getProperties();
+		cepFileEvent.setType(contextEvent.getType());
+		if (properties.get("id")!=null){
+			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
+		}
+		
+		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
+		
+		cepFileEvent.setCanRead((Boolean.valueOf(properties
+				.get("canRead"))));
+		cepFileEvent.setCanCreate((Boolean.valueOf(properties
+				.get("cancreate"))));
+		cepFileEvent.setCanDelete((Boolean.valueOf(properties
+				.get("candelete"))));
+		cepFileEvent.setCanModify((Boolean.valueOf(properties
+				.get("canmodify"))));
+		cepFileEvent.setCanExecute((Boolean.valueOf(properties
+				.get("canexecute"))));
+
+		
+		return cepFileEvent;
+	}
+
 	private static Event convertToAddNoteEvent(ContextEvent contextEvent) {
 		AddNoteEvent cepFileEvent = new AddNoteEvent();
 		Map<String,String> properties = contextEvent.getProperties();
