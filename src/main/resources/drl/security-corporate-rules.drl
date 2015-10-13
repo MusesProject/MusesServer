@@ -11,6 +11,7 @@ import eu.musesproject.server.eventprocessor.correlator.model.owl.ConfigSyncEven
 import eu.musesproject.server.eventprocessor.correlator.model.owl.EmailEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.Event
 import eu.musesproject.server.eventprocessor.correlator.model.owl.FileObserverEvent
+import eu.musesproject.server.eventprocessor.correlator.model.owl.FileAccessPermissionEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.OpenFileEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConnectivityEvent
 import eu.musesproject.server.eventprocessor.correlator.model.owl.UserBehaviorEvent
@@ -49,6 +50,13 @@ declare AccessRequest
 end
 
 declare FileObserverEvent
+	@role( event )
+	@timestamp ( event_date )
+	@expires (5s)
+end
+
+
+declare FileAccessPermissionEvent
 	@role( event )
 	@timestamp ( event_date )
 	@expires (5s)
