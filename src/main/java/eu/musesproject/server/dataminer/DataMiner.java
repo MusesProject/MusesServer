@@ -558,13 +558,13 @@ public class DataMiner {
                         e.printStackTrace();
                     }
                     String deviceModel = pattern.getDeviceType();
-                    if (deviceModel == null) {
+                    if (deviceModel == null || deviceModel.equalsIgnoreCase("domemodel") || deviceModel.equalsIgnoreCase("1222")) {
                         vals[13] = Utils.missingValue();
                     } else {
                         vals[13] = deviceTypes.indexOf(deviceModel);
                     }
                     String deviceOS = pattern.getDeviceOS();
-                    if (deviceOS == null) {
+                    if (deviceOS == null || deviceOS.equalsIgnoreCase("a0")) {
                         vals[14] = Utils.missingValue();
                     } else {
                         vals[14] = deviceOSs.indexOf(deviceOS);
