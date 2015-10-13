@@ -339,12 +339,17 @@ public class PolicySelector {
 		result += decisionIdIni + decision.getId() + decisionIdEnd;
 		result += "<type>"+action+"</type>";
 		result +="<request_id>"+requestId+"</request_id>";
+		String device = "device";
 		
 		if (decision.equals(Decision.GRANTED_ACCESS)){
 			result += allowIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
-				result += "<path>"+asset.getLocation()+"</path>";
+				if (asset.getLocation()==null){
+					result += "<path>"+device+"</path>";
+				}else{
+					result += "<path>"+asset.getLocation()+"</path>";
+				}
 				result += "<condition>"+decision.getCondition()+"</condition>";
 				result += "<riskTreatment>Allowed</riskTreatment>";
 	
@@ -356,7 +361,11 @@ public class PolicySelector {
 			result += denyIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
-				result += "<path>"+asset.getLocation()+"</path>";
+				if (asset.getLocation()==null){
+					result += "<path>"+device+"</path>";
+				}else{
+					result += "<path>"+asset.getLocation()+"</path>";
+				}
 				result += "<condition>"+decision.getCondition()+"</condition>";
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
@@ -368,7 +377,11 @@ public class PolicySelector {
 			result += maybeIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
-				result += "<path>"+asset.getLocation()+"</path>";
+				if (asset.getLocation()==null){
+					result += "<path>"+device+"</path>";
+				}else{
+					result += "<path>"+asset.getLocation()+"</path>";
+				}
 				if (decision.getCondition()!=null){
 					result += "<condition>"+decision.getCondition()+"</condition>";
 				}
@@ -391,7 +404,11 @@ public class PolicySelector {
 			result += upToYouIni;
 			if ((asset != null)){
 				result += "<id>"+asset.getId()+"</id>";
-				result += "<path>"+asset.getLocation()+"</path>";
+				if (asset.getLocation()==null){
+					result += "<path>"+device+"</path>";
+				}else{
+					result += "<path>"+asset.getLocation()+"</path>";
+				}
 				if (decision.getCondition()!=null){
 					result += "<condition>"+decision.getCondition()+"</condition>";
 				}
