@@ -204,12 +204,12 @@ function boolean unsafeStorage(String name){
 }
 
 function boolean unsafeStorageWindows(String name){
-	System.out.println("Safe storage input:"+name);
+	System.out.println("Safe storage input windows:"+name);
 	boolean result = true;
 	if (name.contains("TrueCrypt")){
 		result = false;
 	}
-	System.out.println("Unsafe storage result:"+result);
+	System.out.println("Unsafe storage result windows:"+result);
 
 	return result;
 }
@@ -250,6 +250,7 @@ rule "Rule firing"
 		StatusGlobal.log("Rule firing correctly working!");
 		StatusGlobal.log("User:"+e.getUsername()+" Device:"+e.getDeviceId());
 		StatusGlobal.log("SessionId:"+e.getSessionId());
+		StatusGlobal.log("Event type:"+e.getType());
 		//int id = Rt2aeGlobal.sendDefaultDevicePolicy(e);
 
 	end
@@ -269,6 +270,7 @@ rule "Config sync"
 
 
 	end	
+
 	
 rule "Sensor app"
 	no-loop true
