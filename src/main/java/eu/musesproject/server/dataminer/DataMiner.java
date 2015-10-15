@@ -750,7 +750,8 @@ public class DataMiner {
             eval.crossValidateModel(treeJ48, newData, 10, new Random(1));
             percentageCorrect = eval.pctCorrect();
             System.out.println("Percentage of correctly classified instances for J48 classifier: "+eval.pctCorrect());
-            classifierRules = treeJ48.toSummaryString();
+            classifierRules = treeJ48.toString();
+            //System.out.println(treeJ48.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
