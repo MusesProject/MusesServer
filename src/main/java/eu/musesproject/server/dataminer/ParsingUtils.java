@@ -151,24 +151,48 @@ public class ParsingUtils {
 	public List<String> J48Parser(String classifierRules){
 		
 		List<String> ruleList = new ArrayList<String>();
-		String ruleJ48 = "(\\|*\\s*)(\\w+)([\\s\\>\\=\\<]+)(\\w+)\\s?\\:?\\s?(\\w*)";
+		List<String> conditionList = new ArrayList<String>();
+		String ruleJ48 = "([\\|\\s]*)(\\w+)([\\s\\>\\=\\<]+)(\\w+)\\s?\\:?\\s?(\\w*)";
+		String branch = "\\|\\s*";
 		String lines[] = classifierRules.split("\\r?\\n");
 		int i = 0;
 		
 		Pattern J48Pattern = Pattern.compile(ruleJ48);
+		Pattern branchPattern = Pattern.compile(branch);
 		String rule = "";
+		String condition = "";
 		for (i = 1; i < lines.length; i++) {
 			Matcher J48Matcher = J48Pattern.matcher(lines[i]);
 			while (J48Matcher.find()) {
+				int count = 0;
+				Matcher branchMatcher = branchPattern.matcher(J48Matcher.group(1));
+				while (branchMatcher.find()) {
+					count++;
+				}
 				// Attribute name
-				J48Matcher.group(2);
+				condition+= J48Matcher.group(2);
 				/* Relationship, J48Matcher.group(2) can be =, <, <=, >, >= */
-				J48Matcher.group(3);
+				condition+= J48Matcher.group(3);
 				// Value
-				J48Matcher.group(4);
-				if (!J48Matcher.group(5).isEmpty()) {
+				condition+= J48Matcher.group(4);
+				if (J48Matcher.group(5).isEmpty()) {
+					 condition += " AND ";
+					 conditionList.add(count, condition);
+					 condition = "";
+				} else {
+					condition += " THEN ";
 					// Label
-					J48Matcher.group(5);
+					condition += J48Matcher.group(5);
+					conditionList.add(count, condition);
+					List<String> finalItems = conditionList.subList(0, count+1);
+					Iterator<String> it = finalItems.iterator();
+					while (it.hasNext()) {
+						String item = it.next();
+						rule += item;						
+					}
+					ruleList.add(rule);
+					rule = "";
+					condition = "";
 				}
 			}
 		}
