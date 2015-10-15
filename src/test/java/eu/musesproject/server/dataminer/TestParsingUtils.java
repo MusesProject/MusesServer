@@ -44,7 +44,7 @@ public class TestParsingUtils {
 		String rulePART = "PART decision list\n------------------\n\ndevice_screen_timeout <= 30 AND\ndevice_is_rooted <= 0 AND\nsilent_mode > 0: STRONGDENY (13985.0/4947.0)\n"+
 				"letters_in_password > 3 AND\npasswd_has_capital_letters > 1 AND\ndevice_is_rooted <= 0 AND\ndevice_screen_timeout > 60 AND\nletters_in_password > 6: STRONGDENY (2723.0/773.0)";
 		String ruleJ48 = "J48 pruned tree\n------------------\n\nevent_type = SECURITY_PROPERTY_CHANGED\n|   device_is_rooted <= 0\n|   |   silent_mode > 0\n"+
-		"|   |   |   device_screen_timeout > 30\n   |   |   |   passwd_has_capital_letters <= 3\n|   |   |   |   |   device_has_password <= 0: STRONGDENY (2001.0/774.0)\n"+
+		"|   |   |   device_screen_timeout > 30\n|   |   |   |   passwd_has_capital_letters <= 3\n|   |   |   |   |   device_has_password <= 0: STRONGDENY (2001.0/774.0)\n"+
 				"|   |   |   |   |   device_has_password > 0\n|   |   |   |   |   |   password_length <= 6: GRANTED (67.0)\n"+
 		"|   |   |   |   |   |   password_length > 6\n|   |   |   |   |   |   |   device_screen_timeout <= 300: GRANTED (7462.0/3292.0)\n"+
 				"|   |   |   |   |   |   |   device_screen_timeout > 300: STRONGDENY (194.0/89.0)";
@@ -107,6 +107,7 @@ public class TestParsingUtils {
 			Iterator<String> i = DBRules.iterator();
 			while (i.hasNext()) {
 				String rule = i.next();
+				logger.info("DB rule: "+rule);
 				assertNotNull(rule);
 			}
 		} else {
