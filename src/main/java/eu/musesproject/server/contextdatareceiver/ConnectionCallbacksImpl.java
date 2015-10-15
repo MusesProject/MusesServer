@@ -46,6 +46,7 @@ import eu.musesproject.server.entity.SensorConfiguration;
 import eu.musesproject.server.entity.Users;
 import eu.musesproject.server.entity.Zone;
 import eu.musesproject.server.eventprocessor.correlator.engine.DroolsEngineService;
+import eu.musesproject.server.eventprocessor.correlator.model.CepFact;
 import eu.musesproject.server.eventprocessor.correlator.model.owl.ConfigSyncEvent;
 import eu.musesproject.server.eventprocessor.impl.EventProcessorImpl;
 import eu.musesproject.server.eventprocessor.impl.MusesCorrelationEngineImpl;
@@ -276,14 +277,16 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					
 					//Insert config sync
 					
-					eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = null;
+					//eu.musesproject.server.eventprocessor.correlator.model.owl.Event formattedEvent = null;
+					//CepFact formattedEvent = null;
 							
 					ConfigSyncEvent csEvent= new ConfigSyncEvent();
 					
 					csEvent.setOs(os);
 					csEvent.setSessionId(sessionId);
 					
-					formattedEvent = (eu.musesproject.server.eventprocessor.correlator.model.owl.Event)csEvent;
+					//formattedEvent = (eu.musesproject.server.eventprocessor.correlator.model.owl.Event)csEvent;
+					//formattedEvent = csEvent;
 					
 					EventProcessor processor = null;
 					MusesCorrelationEngineImpl engine = null;
@@ -296,16 +299,16 @@ public class ConnectionCallbacksImpl implements IConnectionCallbacks {
 					}else{
 						logger.info("DroolsEngine Service already available");
 					}
-					if (formattedEvent != null){
-						formattedEvent.setSessionId(sessionId);
-						formattedEvent.setUsername(username);
-						formattedEvent.setDeviceId(deviceId);
+					if (csEvent != null){
+						csEvent.setSessionId(sessionId);
+						csEvent.setUsername(username);
+						csEvent.setDeviceId(deviceId);
 						//if (requestId != 0){
-							formattedEvent.setHashId(requestId);
+						csEvent.setHashId(requestId);
 						//}
-						logger.info("Inserting event into the WM:"+formattedEvent);
+						logger.info("Inserting event into the WM:"+csEvent);
 						try{
-							des.insertFact(formattedEvent);
+							des.insertFact(csEvent);
 						}catch(NullPointerException e){
 							logger.info("formatter Event not inserted due to NullPointerException");
 						}

@@ -1,5 +1,7 @@
 package eu.musesproject.server.eventprocessor.correlator.model.owl;
 
+import eu.musesproject.server.eventprocessor.correlator.model.CepFact;
+
 /*
  * #%L
  * MUSES Server
@@ -21,12 +23,18 @@ package eu.musesproject.server.eventprocessor.correlator.model.owl;
  * #L%
  */
 
-public class ConfigSyncEvent extends Event {
+public class ConfigSyncEvent extends CepFact {
 	
 	private int id;
 	private String os;
 	private long timestamp;
 	private String sessionId;
+	
+	String type;
+	String uid;
+	String username;
+	String deviceId;
+	int hashId;
 	
 	public int getId() {
 		return id;
@@ -51,6 +59,36 @@ public class ConfigSyncEvent extends Event {
 	}
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getUid() {
+		return uid;
+	}
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getDeviceId() {
+		return deviceId;
+	}
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+	public int getHashId() {
+		return hashId;
+	}
+	public void setHashId(int hashId) {
+		this.hashId = hashId;
 	}
 
 
