@@ -277,6 +277,7 @@ public class ParsingUtils {
 				}
 				if (ruleStarts > 0 && ruleEnds > 0) {
 					for (i = ruleStarts; i <= ruleEnds; i++) {
+						logger.info(lines[i]);
 						ruleContent.add(lines[i]);
 					}
 				} else {
@@ -288,6 +289,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.SecurityPropertyRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -295,6 +297,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.AppObserverRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}					
 					
@@ -302,6 +305,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.FileObserverRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -311,6 +315,7 @@ public class ParsingUtils {
 					
 					String resultRule = this.EmailRuleParser(ruleContent);
 					if (resultRule != null) {
+						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -385,7 +390,7 @@ public class ParsingUtils {
 		String conditionType1 = "eval\\(blacklistedApp\\(name\\)\\)";
 		String conditionType2 = "(name)\\=\\=\\\"([\\w\\s]*)\\\"";
 		String conditionType3 = "(appPackage)\\smatches\\s\\\"\\.\\*(\\w+)\\.\\*\\\"";
-		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
+		String label = "^int\\sid\\s\\=\\s\\w+\\.\\w+\\(e1?,\\s?[\\\"\\w\\(\\)\\s\\\\\\,\\.\\+\\\"\\:\\-\\']*,\\s?\\\"(\\w+)\\\",\\s?\\\"[\\w\\(\\)\\s\\\\\\,\\.\\+\\/<>\\\"\\:\\-\\']*\\\"\\);";
 		Pattern conditionPattern = Pattern.compile(appEvent);
 		Pattern conditionType1Pattern = Pattern.compile(conditionType1);
 		Pattern conditionType2Pattern = Pattern.compile(conditionType2);
@@ -440,7 +445,7 @@ public class ParsingUtils {
 	public String FileObserverRuleParser(List<String> droolsRule) {
 		
 		String parsedRule = "";
-		String fileEvent = "^e\\:\\s?FileObserverEvent\\(([\\w\\=\\\"\\_\\s\\,\\/]+)\\)";
+		String fileEvent = "^e\\:\\s?FileObserverEvent\\(([\\w\\=\\\"\\_\\s\\,\\/\\*\\.]+)\\)";
 		String conditionType1 = "(\\w+)\\=\\=\\\"(\\w+)\\\""; // Like event=="open_asset", resourceType=="CONFIDENTIAL", username=="muses"
 		String conditionType2 = "(\\w+)\\=\\=\\\"([\\w\\/\\.]+)\\\""; // Like path=="/sdcard/Swe/door_1"
 		String conditionType3 = "(\\w+)\\s(n?o?t?)\\s?matches\\s\\\"\\.\\*(\\w+)\\.\\*\\\""; // Like path matches ".*Swe.*", wifiEncryption matches ".*WPA2.*", wifiEncryption not matches ".*WPA2.*"
