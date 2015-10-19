@@ -277,7 +277,6 @@ public class ParsingUtils {
 				}
 				if (ruleStarts > 0 && ruleEnds > 0) {
 					for (i = ruleStarts; i <= ruleEnds; i++) {
-						logger.info(lines[i]);
 						ruleContent.add(lines[i]);
 					}
 				} else {
@@ -673,8 +672,8 @@ public class ParsingUtils {
 		
 		boolean same = false;
 		
-		String[] sidesRule1 = rule1.split("\\sTHEN\\s");
-		String[] sidesRule2 = rule2.split("\\sTHEN\\s");
+		String[] sidesRule1 = rule1.split("\\s?A?N?D?\\s*THEN\\s");
+		String[] sidesRule2 = rule2.split("\\s?A?N?D?\\s*THEN\\s");
 		
 		if (sidesRule1.length == 2 && sidesRule2.length == 2) {
 			String[] conditionsRule1 = sidesRule1[0].split("\\sAND\\s?");
