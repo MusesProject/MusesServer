@@ -38,10 +38,10 @@ public class TestDataMiner {
 	/**
 	 * testDataMiner - JUnit test which tests the complete functionality of the Data Miner, obtaining the final output
 	 */
-	/*@Test
+	@Test
 	public final void testDataMiner() {
 		dm.ruleComparison();
-	}*/
+	}
 	
 	/**
 	  * testRetrieveUnprocessed - JUnit test case whose aim is to test unprocessed data retrieval from the database
@@ -67,7 +67,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	@Test
+	/*@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dbManager.getEvent();
 		List<PatternsKrs> outPatternList = new ArrayList<PatternsKrs>();
@@ -87,7 +87,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}
+	}*/
 	
 	/**
 	  * testBuildInstancesFromPatterns - JUnit test case whose aim is to test if instances are being properly built from DB data

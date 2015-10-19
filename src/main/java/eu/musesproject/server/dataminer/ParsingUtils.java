@@ -6,6 +6,7 @@
 package eu.musesproject.server.dataminer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -152,7 +153,7 @@ public class ParsingUtils {
 		
 		List<String> ruleList = new ArrayList<String>();
 		List<String> conditionList = new ArrayList<String>();
-		String ruleJ48 = "([\\|\\s]*)(\\w+)([\\s\\>\\=\\<]+)(\\w+)\\s?\\:?\\s?(\\w*)";
+		String ruleJ48 = "([\\|\\s]*)([\\w\\_]+)([\\s\\>\\=\\<]+)([\\w\\d\\.\\_\\/]+)\\s?\\:?\\s?(\\w*)";
 		String branch = "\\|\\s*";
 		String lines[] = classifierRules.split("\\r?\\n");
 		int i = 0;
@@ -288,7 +289,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.SecurityPropertyRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -296,7 +296,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.AppObserverRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}					
 					
@@ -304,7 +303,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.FileObserverRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -314,7 +312,6 @@ public class ParsingUtils {
 					
 					String resultRule = this.EmailRuleParser(ruleContent);
 					if (resultRule != null) {
-						logger.info(resultRule);
 						ruleList.add(resultRule);
 					}
 					
@@ -668,67 +665,93 @@ public class ParsingUtils {
 		
 	}
 	
+	/**
+	 * Method isAlike which compares two different rules to see if there is a new one
+	 * to include in the database.
+	 * 
+	 * @param rule1 The first of the two rules to compare
+	 * @param rule2 The second of the two rules to compare
+	 * 
+	 * @return boolean True is the rules are the same, False if they are different.
+	 */
 	public boolean isAlike (String rule1, String rule2) {
 		
 		boolean same = false;
 		
-		String[] sidesRule1 = rule1.split("\\s?A?N?D?\\s*THEN\\s");
-		String[] sidesRule2 = rule2.split("\\s?A?N?D?\\s*THEN\\s");
+		String[] arraySides1 = rule1.split("\\s?A?N?D?\\s*THEN\\s");
+		List<String> sidesRule1 = new ArrayList<String>(Arrays.asList(arraySides1));
+		String[] arraySides2 = rule2.split("\\s?A?N?D?\\s*THEN\\s");
+		List<String> sidesRule2 = new ArrayList<String>(Arrays.asList(arraySides2));
 		
-		if (sidesRule1.length == 2 && sidesRule2.length == 2) {
-			String[] conditionsRule1 = sidesRule1[0].split("\\sAND\\s?");
-			String labelRule1 = sidesRule1[1];
-			String[] conditionsRule2 = sidesRule2[0].split("\\sAND\\s?");
-			String labelRule2 = sidesRule2[1];
+		if (sidesRule1.size() == 2 && sidesRule2.size() == 2) {
+			String[] arrayConditions1 = sidesRule1.get(0).split("\\sAND\\s?");
+			List<String> conditionsRule1  = new ArrayList<String>(Arrays.asList(arrayConditions1));
+			String labelRule1 = sidesRule1.get(1);
+			String[] arrayConditions2 = sidesRule1.get(0).split("\\sAND\\s?");
+			List<String> conditionsRule2  = new ArrayList<String>(Arrays.asList(arrayConditions2));
+			String labelRule2 = sidesRule2.get(1);
 			
-			if (conditionsRule1.length == conditionsRule2.length) { // Not the same number of conditions = not the same
-				String conditionFormat = "(\\w+)([\\=<>\\!\\s]+)(\\w+)";
-				Pattern conditionPattern = Pattern.compile(conditionFormat);
-				Matcher conditionMatcher1 = conditionPattern.matcher(sidesRule1[0]);
-				Matcher conditionMatcher2 = conditionPattern.matcher(sidesRule1[0]);
-				while (conditionMatcher1.find()) {
-					while (conditionMatcher2.find()) {
-						if (conditionMatcher1.group(1).contentEquals(conditionMatcher2.group(1))) {
-							if (!conditionMatcher1.group(3).matches("\\d+") && 
-									conditionMatcher2.group(3).contains(conditionMatcher1.group(3))) {
-								logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
-								same = true;
-							} else if (conditionMatcher1.group(3).matches("\\d+")) {
-								// As there is no "eval()" function in Java...
-								if (conditionMatcher1.group(2).contentEquals("=") && 
-										Integer.parseInt(conditionMatcher1.group(3)) == Integer.parseInt(conditionMatcher2.group(3))) {
-									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
+			if (conditionsRule1.indexOf("") != -1) {
+				conditionsRule1.remove(conditionsRule1.indexOf(""));
+			}
+			if (conditionsRule2.indexOf("") != -1) {
+				conditionsRule2.remove(conditionsRule2.indexOf(""));
+			}
+			
+			if (conditionsRule1.size() == 0 || conditionsRule2.size() == 0) {
+				same = false;
+			} else {
+				if (conditionsRule1.size() == conditionsRule2.size()) { // Not the same number of conditions = not the same
+					String conditionFormat = "(\\w+)([\\=<>\\!\\s]+)(\\w+)";
+					Pattern conditionPattern = Pattern.compile(conditionFormat);
+					Matcher conditionMatcher1 = conditionPattern.matcher(sidesRule1.get(0));
+					Matcher conditionMatcher2 = conditionPattern.matcher(sidesRule2.get(0));
+					while (conditionMatcher1.find()) {
+						while (conditionMatcher2.find()) {
+							if (conditionMatcher1.group(1).contentEquals(conditionMatcher2.group(1))) {
+								if (!conditionMatcher1.group(3).matches("\\d+") && 
+										conditionMatcher2.group(3).contains(conditionMatcher1.group(3))) {
+									//logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
 									same = true;
-								} else if (conditionMatcher1.group(2).contentEquals("<") && 
-										Integer.parseInt(conditionMatcher1.group(3)) < Integer.parseInt(conditionMatcher2.group(3))) {
-									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
-									same = true;
-								} else if (conditionMatcher1.group(2).contentEquals(">") && 
-										Integer.parseInt(conditionMatcher1.group(3)) > Integer.parseInt(conditionMatcher2.group(3))) {
-									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
-									same = true;
-								} else if (conditionMatcher1.group(2).contentEquals("<=") && 
-										Integer.parseInt(conditionMatcher1.group(3)) <= Integer.parseInt(conditionMatcher2.group(3))) {
-									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
-									same = true;
-								} else if (conditionMatcher1.group(2).contentEquals(">=") && 
-										Integer.parseInt(conditionMatcher1.group(3)) >= Integer.parseInt(conditionMatcher2.group(3))) {
-									logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
-									same = true;
+								} else if (conditionMatcher1.group(3).matches("\\d+")) {
+									// As there is no "eval()" function in Java...
+									if (conditionMatcher1.group(2).contentEquals("=") && 
+											Integer.parseInt(conditionMatcher1.group(3)) == Integer.parseInt(conditionMatcher2.group(3))) {
+										//logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
+										same = true;
+									} else if (conditionMatcher1.group(2).contentEquals("<") && 
+											Integer.parseInt(conditionMatcher1.group(3)) < Integer.parseInt(conditionMatcher2.group(3))) {
+										//logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
+										same = true;
+									} else if (conditionMatcher1.group(2).contentEquals(">") && 
+											Integer.parseInt(conditionMatcher1.group(3)) > Integer.parseInt(conditionMatcher2.group(3))) {
+										//logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
+										same = true;
+									} else if (conditionMatcher1.group(2).contentEquals("<=") && 
+											Integer.parseInt(conditionMatcher1.group(3)) <= Integer.parseInt(conditionMatcher2.group(3))) {
+										//logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
+										same = true;
+									} else if (conditionMatcher1.group(2).contentEquals(">=") && 
+											Integer.parseInt(conditionMatcher1.group(3)) >= Integer.parseInt(conditionMatcher2.group(3))) {
+										//logger.info(conditionMatcher1.group(3)+","+conditionMatcher2.group(3));
+										same = true;
+									}
+								} else {
+									same = false;
+								}
+								if (same && !labelRule1.contentEquals(labelRule2)) {
+									same = false;
 								}
 							} else {
-								same = false;
+								continue;
 							}
-							if (same && !labelRule1.contentEquals(labelRule2)) {
-								same = false;
-							}
-						} else {
-							continue;
 						}
 					}
+					
+				} else {
+					same = false;
 				}
-				
-			}
+			}		
 			
 		} else {
 			logger.error("Rules do not have the proper format");

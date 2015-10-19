@@ -140,18 +140,21 @@ public class DataMiner {
                     boolean same = false;
                     while (i1.hasNext()) {
                         String dbRule = i1.next();
+                        logger.info("DB rule-----"+dbRule);
                         while (i2.hasNext()) {
                             String proposedRule = i2.next();
+                            logger.info(proposedRule);
                             same = parser.isAlike(dbRule, proposedRule);
-                            if (!same) {
-                                if (alreadyDraftRules.size() > 0) {
-                                    Iterator<SecurityRules> i3 = alreadyDraftRules.iterator();
-                                    while (i3.hasNext()) {
-                                        SecurityRules draftRule = i3.next();
-                                        String ruleString = draftRule.getDescription();
-                                        same = parser.isAlike(proposedRule, ruleString);
-                                    }
+                            if (!same && alreadyDraftRules.size() > 0) {
+                                Iterator<SecurityRules> i3 = alreadyDraftRules.iterator();
+                                while (i3.hasNext()) {
+                                    SecurityRules draftRule = i3.next();
+                                    String ruleString = draftRule.getDescription();
+                                    //logger.info(ruleString);
+                                    same = parser.isAlike(proposedRule, ruleString);
                                 }
+                            }
+                            if (!same) {                                
                                 SecurityRules finalRule = new SecurityRules();
                                 finalRule.setDescription(proposedRule);
                                 finalRule.setStatus(Constants.DRAFT);
@@ -162,7 +165,7 @@ public class DataMiner {
                                 finalRule.setRefined(refined);
                                 dbManager.setSecurityRule(finalRule);
                             }
-                            logger.info(dbRule+" VS. "+proposedRule+" ARE THE SAME? ->"+same);
+                            //logger.info(dbRule+" VS. "+proposedRule+" ARE THE SAME? ->"+same);
                         }
                     }
                 }
