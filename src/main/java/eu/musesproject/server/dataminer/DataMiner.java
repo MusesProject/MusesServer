@@ -140,10 +140,10 @@ public class DataMiner {
                     boolean same = false;
                     while (i1.hasNext()) {
                         String dbRule = i1.next();
-                        logger.info("DB rule-----"+dbRule);
+                        //logger.info("DB rule-----"+dbRule);
                         while (i2.hasNext()) {
                             String proposedRule = i2.next();
-                            logger.info(proposedRule);
+                            //logger.info(proposedRule);
                             same = parser.isAlike(dbRule, proposedRule);
                             if (!same && alreadyDraftRules.size() > 0) {
                                 Iterator<SecurityRules> i3 = alreadyDraftRules.iterator();
@@ -152,9 +152,13 @@ public class DataMiner {
                                     String ruleString = draftRule.getDescription();
                                     //logger.info(ruleString);
                                     same = parser.isAlike(proposedRule, ruleString);
+                                    if (same) {
+                                    	//logger.info(ruleString+" VS. "+proposedRule+" ARE THE SAME? ->"+same);
+                                    	break;
+                                    }
                                 }
                             }
-                            if (!same) {                                
+                            if (!same) {
                                 SecurityRules finalRule = new SecurityRules();
                                 finalRule.setDescription(proposedRule);
                                 finalRule.setStatus(Constants.DRAFT);
@@ -165,13 +169,12 @@ public class DataMiner {
                                 finalRule.setRefined(refined);
                                 dbManager.setSecurityRule(finalRule);
                             }
-                            //logger.info(dbRule+" VS. "+proposedRule+" ARE THE SAME? ->"+same);
                         }
                     }
                 }
                
                 if (indexes.length > 0) {
-                    //System.out.println("=== Results after feature selection ===");
+                	logger.info("=== Results after feature selection ===");
                     this.dataClassification(data, selectedIndexes);
                 } else {
                     logger.error("Feature selection not being properly performed");
@@ -622,7 +625,7 @@ public class DataMiner {
                         vals[28] = assetConfidentialLevels.indexOf(assetConfidentialLevel);
                     }
                     String assetLocation = pattern.getAssetLocation();
-                    if (assetLocation == null) {
+                    if (assetLocation == null || assetLocation.equalsIgnoreCase("")) {
                         vals[29] = Utils.missingValue();
                     } else {
                         vals[29] = assetLocations.indexOf(assetLocation);

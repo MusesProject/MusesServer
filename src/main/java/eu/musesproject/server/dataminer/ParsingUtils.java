@@ -153,7 +153,7 @@ public class ParsingUtils {
 		
 		List<String> ruleList = new ArrayList<String>();
 		List<String> conditionList = new ArrayList<String>();
-		String ruleJ48 = "([\\|\\s]*)([\\w\\_]+)([\\s\\>\\=\\<]+)([\\w\\d\\.\\_\\/]+)\\s?\\:?\\s?(\\w*)";
+		String ruleJ48 = "([\\|\\s]*)([\\w\\_]+)\\s?([\\>\\=\\<]+)\\s?([\\w\\d\\.\\_\\/]+)\\s?\\:?\\s?(\\w*)";
 		String branch = "\\|\\s*";
 		String lines[] = classifierRules.split("\\r?\\n");
 		int i = 0;
@@ -687,7 +687,7 @@ public class ParsingUtils {
 			String[] arrayConditions1 = sidesRule1.get(0).split("\\sAND\\s?");
 			List<String> conditionsRule1  = new ArrayList<String>(Arrays.asList(arrayConditions1));
 			String labelRule1 = sidesRule1.get(1);
-			String[] arrayConditions2 = sidesRule1.get(0).split("\\sAND\\s?");
+			String[] arrayConditions2 = sidesRule2.get(0).split("\\sAND\\s?");
 			List<String> conditionsRule2  = new ArrayList<String>(Arrays.asList(arrayConditions2));
 			String labelRule2 = sidesRule2.get(1);
 			

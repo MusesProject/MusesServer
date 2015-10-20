@@ -2724,10 +2724,15 @@ public class DBManager {
 			query = session.getNamedQuery("PatternsKrs.findDistinctAssetLocation");
 			if (query!=null) {
 				int nullIndex = -1;
+				int emptyIndex = -1;
 				allDifferentValues = query.list();
 				nullIndex = allDifferentValues.indexOf(null);
+				emptyIndex = allDifferentValues.indexOf("");
 				if (nullIndex > -1){
 					allDifferentValues.remove(nullIndex);
+				}
+				if (emptyIndex > -1){
+					allDifferentValues.remove(emptyIndex);
 				}
 			}
 		} catch (Exception e) {
@@ -2847,7 +2852,7 @@ public class DBManager {
 		Transaction trans = null;
 		SecurityRules existing = getSecurityRuleByName(rule.getName());
 
-		if (existing == null) {
+		if (existing == null || existing.getName().equalsIgnoreCase("Proposed Rule by Data Miner")) {
 			try {
 				session = getSessionFactory().openSession();
 				trans = session.beginTransaction();
