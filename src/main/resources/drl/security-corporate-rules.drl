@@ -1240,8 +1240,8 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("Safe storage is not enabled on device. TrueCrypt application is required");
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event appobserver****:"+e);
-		int id = Rt2aeGlobal.composeAccessRequest(e,"Unsafe storage on device
- You require to install a safe storage application to keep corporate data encrypted. Please, install TrueCrypt.Open Play Store, search for TrueCrypt application and install it","DENY","<installedApps>truecrypt</installedApps>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"Unsecure storage on device
+ You require to install a safe storage application to keep corporate data encrypted. Please, download TrueCrypt application from www.truecrypt.org and install it","DENY","<installedApps>truecrypt</installedApps>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Unsafe Storage Windows");
 		request.setSessionId(e.getSessionId());
