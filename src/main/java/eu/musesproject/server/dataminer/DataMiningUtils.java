@@ -268,7 +268,7 @@ public class DataMiningUtils {
         double trustValue = Double.NaN;
         List<Decision> decisions = dbManager.findDecisionByAccessRequestId(accessRequestId);
         if (decisions.size() > 0) {
-            String decisionId = decisions.get(0).getValue();
+            String decisionId = decisions.get(0).getDecisionId();
             List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionId);
             if (trustValues.size() > 0) {
                 trustValue = trustValues.get(0).getUsertrustvalue();           
@@ -291,7 +291,7 @@ public class DataMiningUtils {
 
        List<Decision> decisions = dbManager.findDecisionByAccessRequestId(accessRequestId);
        if (decisions.size() > 0) {
-           String decisionId = decisions.get(0).getValue();
+           String decisionId = decisions.get(0).getDecisionId();
            List<DecisionTrustvalues> trustValues = dbManager.findDecisionTrustValuesByDecisionId(decisionId);
            if (trustValues.size() > 0) {
                trustValue = trustValues.get(0).getDevicetrustvalue();           

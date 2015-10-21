@@ -612,7 +612,7 @@ public class DataMiner {
                     }
                     vals[25] = pattern.getAppMUSESAware();
                     String assetName = pattern.getAssetName();
-                    if (assetName == null) {
+                    if (assetName == null || assetName.equalsIgnoreCase("")) {
                         vals[26] = Utils.missingValue();
                     } else {
                         vals[26] = assetNames.indexOf(assetName);
