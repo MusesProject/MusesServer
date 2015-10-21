@@ -373,7 +373,8 @@ public class DataMiner {
             pattern.setNumbersInPassword(dmUtils.passwdDigits(user));
             pattern.setLettersInPassword(dmUtils.passwdLetters(user));
             pattern.setPasswdHasCapitalLetters(dmUtils.passwdCapLetters(user));
-            pattern.setActivatedAccount(user.getEnabled());
+            if (user!=null)
+            	pattern.setActivatedAccount(user.getEnabled());
             pattern.setUserRole(dmUtils.obtainUserRole(user));
             pattern.setEventTime(dmUtils.obtainTimestamp(event));
             pattern.setSilentMode(dmUtils.silentModeTrials1(event));
