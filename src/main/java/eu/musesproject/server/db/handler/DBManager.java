@@ -1601,17 +1601,18 @@ public class DBManager {
 	
 	public void convertDevicetoCommonDevice(Device device, eu.musesproject.server.entity.Devices musesDevice){
 		
-		device.setDeviceId(musesDevice.getDeviceId());
-		device.setCertificate(musesDevice.getCertificate());
-		DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
-		devicetrustvalue.setValue(musesDevice.getTrustValue());
-		device.setDevicetrustvalue(devicetrustvalue);
-		device.setName(musesDevice.getName());
-		device.setImei(musesDevice.getImei());
-		
-		device.setOS_name(musesDevice.getOS_name());
-		device.setOS_version(musesDevice.getOS_version());
-		
+		if (musesDevice != null) {
+			device.setDeviceId(musesDevice.getDeviceId());
+			device.setCertificate(musesDevice.getCertificate());
+			DeviceTrustValue devicetrustvalue = new DeviceTrustValue();
+			devicetrustvalue.setValue(musesDevice.getTrustValue());
+			device.setDevicetrustvalue(devicetrustvalue);
+			device.setName(musesDevice.getName());
+			device.setImei(musesDevice.getImei());
+
+			device.setOS_name(musesDevice.getOS_name());
+			device.setOS_version(musesDevice.getOS_version());
+		}
 		
 	}
 	

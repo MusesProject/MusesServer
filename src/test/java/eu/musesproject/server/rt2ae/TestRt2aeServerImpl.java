@@ -285,6 +285,7 @@ public class TestRt2aeServerImpl {
 		Asset requestedCorporateAsset = new Asset();  
 		requestedCorporateAsset.setValue(1000000);
 		requestedCorporateAsset.setConfidential_level("confidential");
+		requestedCorporateAsset.setTitle("");
 
 		accessRequest.setRequestedCorporateAsset(requestedCorporateAsset);
 		
