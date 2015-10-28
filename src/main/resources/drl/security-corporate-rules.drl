@@ -1240,7 +1240,7 @@ rule "Blacklist app 00001"
 		Rt2aeGlobal.setStatus(Constants.STARTED);
 		StatusGlobal.log("****Event app****:"+e);
 		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful: Dropbox. Other people can gain control over your device.","DENY","<appname>"+e.getName()+"</appname>");
+		int id = Rt2aeGlobal.composeAccessRequest(e,"You are trying to open an application which is considered harmful: Dropbox\nOther people can gain control over your device.","DENY","<appname>"+e.getName()+"</appname>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Blacklist windows app");
 		request.setSessionId(e.getSessionId());
