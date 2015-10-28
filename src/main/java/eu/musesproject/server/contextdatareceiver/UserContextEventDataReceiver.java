@@ -208,9 +208,9 @@ public class UserContextEventDataReceiver {
 		event.setRT2AE_can_access(1);
 		list.add(event);
 		dbManager.setSimpleEvents(list);
-		dm.retrievePendingEvents(list);
-		pList = dm.minePatterns(event);
-		dbManager.setPatternsKRS(pList);
+		//dm.retrievePendingEvents(list);
+		//pList = dm.minePatterns(event);
+		//dbManager.setPatternsKRS(pList);
 
 	}
 
