@@ -2529,10 +2529,15 @@ public class DBManager {
 			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceType");
 			if (query!=null) {
 				int nullIndex = -1;
+				int emptyIndex = -1;
 				allDifferentValues = query.list();
 				nullIndex = allDifferentValues.indexOf(null);
+				emptyIndex = allDifferentValues.indexOf("domemodel");
 				if (nullIndex > -1){
 					allDifferentValues.remove(nullIndex);
+				}
+				if (emptyIndex > -1){
+					allDifferentValues.remove(emptyIndex);
 				}
 			}
 		} catch (Exception e) {
@@ -2557,10 +2562,15 @@ public class DBManager {
 			query = session.getNamedQuery("PatternsKrs.findDistinctDeviceOS");
 			if (query!=null) {
 				int nullIndex = -1;
+				int emptyIndex = -1;
 				allDifferentValues = query.list();
 				nullIndex = allDifferentValues.indexOf(null);
+				emptyIndex = allDifferentValues.indexOf("a0");
 				if (nullIndex > -1){
 					allDifferentValues.remove(nullIndex);
+				}
+				if (emptyIndex > -1){
+					allDifferentValues.remove(emptyIndex);
 				}
 			}
 		} catch (Exception e) {

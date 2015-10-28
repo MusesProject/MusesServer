@@ -118,8 +118,14 @@ public class DataMiner {
                 for (int i = 0; i < data.numAttributes(); i++) {
                     indexes[i] = i;
                 }
+                int[] indexesReview = new int[data.numAttributes()];
+                indexesReview[0] = 11;
+                indexesReview[1] = 13;
+                indexesReview[2] = 14;
+                indexesReview[3] = 18;
+                indexesReview[4] = 38;
                 logger.info("Classifying...");
-                String notParsedClassifierRules = this.dataClassification(data, indexes);
+                String notParsedClassifierRules = this.dataClassification(data, indexesReview);
                 String[] ruleLines = notParsedClassifierRules.split("\\n+");
                 logger.info("Obtaining rules from best classifier...");
                 if (ruleLines[0].contains("JRIP")) {
@@ -373,8 +379,7 @@ public class DataMiner {
             pattern.setNumbersInPassword(dmUtils.passwdDigits(user));
             pattern.setLettersInPassword(dmUtils.passwdLetters(user));
             pattern.setPasswdHasCapitalLetters(dmUtils.passwdCapLetters(user));
-            if (user!=null)
-            	pattern.setActivatedAccount(user.getEnabled());
+            pattern.setActivatedAccount(user.getEnabled());
             pattern.setUserRole(dmUtils.obtainUserRole(user));
             pattern.setEventTime(dmUtils.obtainTimestamp(event));
             pattern.setSilentMode(dmUtils.silentModeTrials1(event));
@@ -667,7 +672,7 @@ public class DataMiner {
         }
        
         // OPTIONAL, only if we want the ARFF file
-        ArffSaver saver = new ArffSaver();
+        /*ArffSaver saver = new ArffSaver();
         saver.setInstances(newData);
         try {
             saver.setFile(new File("./data/test.arff"));
@@ -675,7 +680,7 @@ public class DataMiner {
             saver.writeBatch();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
        
        
         return newData;
@@ -737,11 +742,11 @@ public class DataMiner {
             e.printStackTrace();
         }
        
-        /*Enumeration<Attribute> atts = newData.enumerateAttributes();
+        Enumeration<Attribute> atts = newData.enumerateAttributes();
        
         while (atts.hasMoreElements()) {
             logger.info(atts.nextElement().toString());
-        }*/       
+        }       
        
         double percentageCorrect = 0;
        
