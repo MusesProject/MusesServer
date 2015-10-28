@@ -40,7 +40,7 @@ public class DailyJob implements Job{
 		Scheduler scheduler = new SchedulerImpl();
 		logger.log(Level.INFO, MUSES_TAG + "  Daily Job called..");
 		scheduler.erase();
-		dm.ruleComparison();
+		//dm.ruleComparison();
 	}
 
 }
