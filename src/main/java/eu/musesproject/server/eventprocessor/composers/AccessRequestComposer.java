@@ -68,7 +68,7 @@ public class AccessRequestComposer {
 		Assets entityAsset = null;
 		
 		if (event.getType()!=null){
-			if (event.getType().equals(EventTypes.FILEOBSERVER)){
+			if ((event.getType().equals(EventTypes.FILEOBSERVER))||(event.getType().equals(EventTypes.FILEOBSERVER_SENSOR))){
 				if (event instanceof FileObserverEvent) {
 					FileObserverEvent fileEvent = (FileObserverEvent) event;
 					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
