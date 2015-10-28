@@ -260,10 +260,17 @@ public class EventFormatter {
 	
 		cepFileEvent.setType(contextEvent.getType());
 		
-		if (getElement(properties.get("properties"),"resourceName")!=null){
-			cepFileEvent.setResourceName(getElement(properties.get("properties"),
-					"resourceName"));
+		
+		if (properties.get("properties")!=null){
+			if (getElement(properties.get("properties"),"resourceName")!=null){
+					cepFileEvent.setResourceName(getElement(properties.get("properties"),
+									"resourceName"));
+					
+			}
+		}else{
+			cepFileEvent.setResourceName(properties.get("resourceName"));
 		}
+
 		
 		if (getElement(properties.get("properties"),"resourceType")!=null){
 			cepFileEvent.setResourceType(getElement(properties.get("properties"),
@@ -521,6 +528,7 @@ public class EventFormatter {
 			if (getElement(properties.get("properties"),"resourceName")!=null){
 					cepFileEvent.setResourceName(getElement(properties.get("properties"),
 									"resourceName"));
+					
 			}
 		}else{
 			cepFileEvent.setResourceName(properties.get("resourceName"));

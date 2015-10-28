@@ -833,6 +833,15 @@ public class Rt2aeServerImpl implements Rt2ae {
 		System.out.println("value: "+(combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2);
 
 		System.out.println("Asset value : "+accessRequest.getRequestedCorporateAsset().getValue());
+		
+		logger.info("combinedProbabilityThreats "+combinedProbabilityThreats);
+		logger.info("trustvalue "+trustvalue);
+		logger.info("riskPolicy.getRiskvalue() "+riskPolicy
+				.getRiskvalue());
+		logger.info("1 "+(boolean)((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 >= riskPolicy.getRiskvalue()));
+		logger.info("2 "+(boolean)((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 < 0.6));
+		
+		
  
 		if(((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 >= riskPolicy
 				.getRiskvalue()) && ((combinedProbabilityThreats + ((Double) 1.0-trustvalue) )/2 < 0.6) ){
@@ -1171,9 +1180,13 @@ public class Rt2aeServerImpl implements Rt2ae {
 				
 			}
 			
+			logger.info("1"+clues.get(0).getName());
+			logger.info("2"+accessRequest.getOpportunityDescriptor());
+			logger.info("3"+accessRequest.getRequestedCorporateAsset().getValue());
+			
 			if (clues.get(0).getName().contains("UnsecureWifi:Encryption without WPA2 protocol might be unsecure") && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()>15000 && (accessRequest.getOpportunityDescriptor() == null) && accessRequest.getRequestedCorporateAsset().getValue()<30000){
 				
-				
+				logger.info("MAYBE scenario!");
 				eu.musesproject.server.risktrust.RiskCommunication riskCommunication = new eu.musesproject.server.risktrust.RiskCommunication();
 				RiskTreatment [] riskTreatments = new RiskTreatment[1];
 				

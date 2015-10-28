@@ -68,17 +68,12 @@ public class AccessRequestComposer {
 		Assets entityAsset = null;
 		
 		if (event.getType()!=null){
-			if ((event.getType().equals(EventTypes.FILEOBSERVER))||(event.getType().equals(EventTypes.FILEOBSERVER_SENSOR))){
+			if ((event.getType().equals(EventTypes.FILEOBSERVER))||(event.getType().equals(EventTypes.FILEOBSERVER_SENSOR))||(event.getType().equals(EventTypes.SAVE_ASSET))){
 				if (event instanceof FileObserverEvent) {
 					FileObserverEvent fileEvent = (FileObserverEvent) event;
 					requestedCorporateAsset.setId(fileEvent.getId());//Get the asset identifier		
 					requestedCorporateAsset.setLocation(fileEvent.getPath());//Get the asset identifier
 				
-//					if ((fileEvent.getResourceType()!=null)&&(fileEvent.getResourceType().equals("sensitive"))){
-//						requestedCorporateAsset.setConfidential_level("CONFIDENTIAL");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
-//					}else{
-//						requestedCorporateAsset.setConfidential_level("PUBLIC");//TODO This is temporary. Fix this with the use of the domain confidentiality selector
-//					}
 					if (fileEvent.getResourceType()!=null){
 						requestedCorporateAsset.setConfidential_level(fileEvent.getResourceType());
 					}else{
@@ -88,9 +83,10 @@ public class AccessRequestComposer {
 							requestedCorporateAsset.setConfidential_level(Constants.PUBLIC);
 						}	
 					}
-					//composedRequest.setAction(fileEvent.getEvent());//Get the action over the asset
+					
 					composedRequest.setAction(fileEvent.getType());//Get the action over the asset
 					composedRequest.setEventId(fileEvent.getTimestamp());
+					
 					
 					requestedCorporateAsset.setTitle(fileEvent.getResourceName());
 					
