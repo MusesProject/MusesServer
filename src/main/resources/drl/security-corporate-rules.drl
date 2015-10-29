@@ -1168,8 +1168,8 @@ rule "Blacklist app 00001"
 		not AccessRequest(event=="Access file in monitored folder unsecure wifi", sessionId==e.sessionId)
 	then
 		Rt2aeGlobal.setStatus(Constants.STARTED);
-		StatusGlobal.log("Access file in monitored folder unsecure wifi**********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		if((conn!=null)&&(e!=null)){
+		StatusGlobal.log("Access file in monitored folder unsecure wifi**********SESSION-ID-e:"+e.getSessionId()+" conn:"+conn.getSessionId());
 		int id = Rt2aeGlobal.composeAccessRequest(e,"Opening confidential document in unsecure network\nYou are connected to an unsecure network and try to open a confidential document.\nInformation sent over this network is not encrypted and might be visible to other people can observe. Switch to a secure network.Go to Settings > Select a WiFi and click on Advanced options. In section Security, a network is considered secure if it uses WPA2 encryption protocol.","DECIDE","<resourcename>"+e.getResourceName()+"</resourcename>");
 		AccessRequest request = new AccessRequest();
 		request.setEvent("Access file in monitored folder unsecure wifi");
