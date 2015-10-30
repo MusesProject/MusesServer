@@ -214,23 +214,48 @@ public class ParsingUtils {
 	public List<String> REPTreeParser(String classifierRules){
 		
 		List<String> ruleList = new ArrayList<String>();
-		String ruleREPTree = "(\\|*\\s*)(\\w+)([\\s\\>\\=\\<]+)(\\w+\\.?\\w*)\\s?\\:?\\s?(\\w*)";
+		List<String> conditionList = new ArrayList<String>();
+		String ruleREPTree = "([\\|\\s]*)([\\w\\_]+)\\s?([\\>\\=\\<]+)\\s?([\\w\\d\\.\\_\\/]+)\\s?\\:?\\s?(\\w*)";
+		String branch = "\\|\\s*";
 		String lines[] = classifierRules.split("\\r?\\n");
 		int i = 0;
 		
 		Pattern REPTreePattern = Pattern.compile(ruleREPTree);
+		Pattern branchPattern = Pattern.compile(branch);
+		String rule = "";
+		String condition = "";
 		for (i = 1; i < lines.length; i++) {
 			Matcher REPTreeMatcher = REPTreePattern.matcher(lines[i]);
 			while (REPTreeMatcher.find()) {
+				int count = 0;
+				Matcher branchMatcher = branchPattern.matcher(REPTreeMatcher.group(1));
+				while (branchMatcher.find()) {
+					count++;
+				}			
 				// Attribute name
-				REPTreeMatcher.group(2);
+				condition+= REPTreeMatcher.group(2);
 				/* Relationship, REPTreeMatcher.group(2) can be =, <, <=, >, >= */
-				REPTreeMatcher.group(3);
+				condition+= REPTreeMatcher.group(3);
 				// Value
-				REPTreeMatcher.group(4);
-				if (!REPTreeMatcher.group(5).isEmpty()) {
+				condition+= REPTreeMatcher.group(4);
+				if (REPTreeMatcher.group(5).isEmpty()) {
+					 condition += " AND ";
+					 conditionList.add(count, condition);
+					 condition = "";
+				} else {
+					condition += " THEN ";
 					// Label
-					REPTreeMatcher.group(5);
+					condition += REPTreeMatcher.group(5);
+					conditionList.add(count, condition);
+					List<String> finalItems = conditionList.subList(0, count+1);
+					Iterator<String> it = finalItems.iterator();
+					while (it.hasNext()) {
+						String item = it.next();
+						rule += item;						
+					}
+					ruleList.add(rule);
+					rule = "";
+					condition = "";
 				}
 			}
 		}
