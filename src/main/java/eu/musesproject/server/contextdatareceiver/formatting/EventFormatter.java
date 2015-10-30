@@ -226,7 +226,6 @@ public class EventFormatter {
 		LocationEvent cepFileEvent = new LocationEvent();
 		Map<String,String> properties = contextEvent.getProperties();
 		cepFileEvent.setType(contextEvent.getType());
-		cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
 		cepFileEvent.setIsWithinZone(properties.get("isWithinZone"));
 		
