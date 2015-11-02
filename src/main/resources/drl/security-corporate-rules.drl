@@ -1042,30 +1042,30 @@ rule "Blacklist app 00001"
 	end
 
 
-	rule "Open asset in restricted zone 1"
-	no-loop true
-	dialect "java"
-	when
-		e: FileObserverEvent(event=="open_asset", path matches ".*SWE.*", username=="muses")
-		e1: LocationEvent(isWithinZone matches ".*1.*", sessionId==e.sessionId)
-		not AccessRequest(event=="Open asset in restricted area", sessionId==e.sessionId)
-	then
-		StatusGlobal.log("Open asset in restricted area**********");
-		Rt2aeGlobal.setStatus(Constants.STARTED);
-		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Open asset in restricted zone 1","DENY","<path>"+e.getPath()+"</path>");		
-		AccessRequest request = new AccessRequest();
-		request.setEvent("Open asset in restricted area");
-		request.setSessionId(e.getSessionId());
-		StatusGlobal.log("**********"+id);
-		StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
-		request.setId(id);
-		request.setEvent_date(new Date(System.currentTimeMillis()));
-		insert(request);
-		}else{
-		StatusGlobal.log("*****Null object*****");
-		}
-	end
+	//rule "Open asset in restricted zone 1"
+	//no-loop true
+	//dialect "java"
+	//when
+	//	e: FileObserverEvent(event=="open_asset", path matches ".*SWE.*", username=="muses")
+	//	e1: LocationEvent(isWithinZone matches ".*1.*", sessionId==e.sessionId)
+	//	not AccessRequest(event=="Open asset in restricted area", sessionId==e.sessionId)
+	//then
+	//	StatusGlobal.log("Open asset in restricted area**********");
+	//	Rt2aeGlobal.setStatus(Constants.STARTED);
+	//	if(e!=null){
+	//	int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Open asset in restricted zone 1","DENY","<path>"+e.getPath()+"</path>");		
+	//	AccessRequest request = new AccessRequest();
+	//	request.setEvent("Open asset in restricted area");
+	//	request.setSessionId(e.getSessionId());
+	//	StatusGlobal.log("**********"+id);
+	//	StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
+	//	request.setId(id);
+	//	request.setEvent_date(new Date(System.currentTimeMillis()));
+	//	insert(request);
+	//	}else{
+	//	StatusGlobal.log("*****Null object*****");
+	//	}
+	//end
 
 
 	rule "Security Incident"
