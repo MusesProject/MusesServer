@@ -945,9 +945,13 @@ public class Rt2aeGlobal {
 		
 		//Send policy
 		
+
+		
 		Device device = new Device();
 		PolicyTransmitter transmitter = new PolicyTransmitter();
-		transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		if (!policyDT.getRawPolicy().contains("Opportunity was not higher")){
+			transmitter.sendPolicyDT(policyDT, device, event.getSessionId());
+		}
 		logger.log(Level.INFO, MUSES_TAG + " Now sending policy:"+policyDT.getRawPolicy());
 		logger.info("		Device Policy is now sent:"+policyDT.getRawPolicy());
 

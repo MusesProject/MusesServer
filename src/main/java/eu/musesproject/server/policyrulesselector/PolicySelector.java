@@ -410,7 +410,15 @@ public class PolicySelector {
 					result += "<path>"+asset.getLocation()+"</path>";
 				}
 				if (decision.getCondition()!=null){
-					result += "<condition>"+decision.getCondition()+"</condition>";
+					if (decision.getCondition().contains(".tmp")){
+						logger.info("Contains .tmp! "+decision.getCondition());
+						String aux = decision.getCondition().substring(0, decision.getCondition().indexOf(".tmp"));
+						logger.info("Aux:"+aux);
+						//decision.setCondition(aux+"\"");
+						result +="<condition>"+aux+"\""+"</condition>";
+					}else{
+						result += "<condition>"+decision.getCondition()+"</condition>";
+					}	
 				}
 				if (decision.getInformation()!=null){
 					result += "<riskTreatment>"+decision.getInformation()+"</riskTreatment>";
