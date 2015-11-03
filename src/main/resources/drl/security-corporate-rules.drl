@@ -1038,6 +1038,10 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
+		if (e1!=null){
+			StatusGlobal.log("Removing AppObserverEvent.**********");
+			retract(e1);		
+		}
 
 	end
 
