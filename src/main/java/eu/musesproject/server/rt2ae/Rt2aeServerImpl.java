@@ -290,7 +290,8 @@ public class Rt2aeServerImpl implements Rt2ae {
 			}
 			
 			if (policyCompliance.getReason().equalsIgnoreCase("Zone 1 application restriction")){
-				decision.setSolving_risktreatment(SolvingRiskTreatment.ZONE_1_APPLICATION_RESTRICTION);	
+				//decision.setSolving_risktreatment(SolvingRiskTreatment.ZONE_1_APPLICATION_RESTRICTION);
+				decision.setSolving_risktreatment(SolvingRiskTreatment.BLACKLIST_GENERIC_OPEN);
 			} 
 			if (policyCompliance.getReason().equalsIgnoreCase("Open asset in restricted zone 1")){
 				decision.setSolving_risktreatment(SolvingRiskTreatment.OPEN_ASSET_IN_RESTRICTED_ZONE_1);
