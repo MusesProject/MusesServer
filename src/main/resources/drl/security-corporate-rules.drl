@@ -754,25 +754,25 @@ rule "Blacklist app 00001"
 		}
 	end
 	
-	rule "AccessRequest Disable Accessibility"
-	no-loop true
-	dialect "mvel"
-	when
-		e: ChangeSecurityPropertyEvent(accessibilityEnabled==false)
-		not AccessRequest(event=="AccessRequest Disable Accessibility", sessionId==e.sessionId)
-	then
-		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent. ACCESIBILITY DISABLED");
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Disable Accessibility","DENY", "<accessibilityEnabled>false</accessibilityEnabled>");
+	//rule "AccessRequest Disable Accessibility"
+	//no-loop true
+	//dialect "mvel"
+	//when
+	//	e: ChangeSecurityPropertyEvent(accessibilityEnabled==false)
+	//	not AccessRequest(event=="AccessRequest Disable Accessibility", sessionId==e.sessionId)
+	//then
+	//	StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent. ACCESIBILITY DISABLED");
+	//	int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Disable Accessibility","DENY", "<accessibilityEnabled>false</accessibilityEnabled>");
 		
-		AccessRequest request = new AccessRequest();
-		request.setEvent("AccessRequest Disable Accessibility");
-		request.setSessionId(e.getSessionId());
-		StatusGlobal.log("**********"+id);
-		request.setId(id);
-		request.setEvent_date(new Date(System.currentTimeMillis()));
-		insert(request);
+	//	AccessRequest request = new AccessRequest();
+	//	request.setEvent("AccessRequest Disable Accessibility");
+	//	request.setSessionId(e.getSessionId());
+	//	StatusGlobal.log("**********"+id);
+	//	request.setId(id);
+	//	request.setEvent_date(new Date(System.currentTimeMillis()));
+	//	insert(request);
 
-	end
+	//end
 	
 	rule "ACL6 door_1"
 	no-loop true
