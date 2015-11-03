@@ -67,7 +67,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testDataMining() {		
 		List<SimpleEvents> list = dbManager.getEvent();
 		List<PatternsKrs> outPatternList = new ArrayList<PatternsKrs>();
@@ -87,7 +87,7 @@ public class TestDataMiner {
 		}else{
 			fail("There are not simple events in the database, please create some events first.");
 		}
-	}*/
+	}
 	
 	/**
 	  * testBuildInstancesFromPatterns - JUnit test case whose aim is to test if instances are being properly built from DB data
@@ -95,7 +95,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testBuildInstancesFromPatterns() {		
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		if (patternList.size()>0){
@@ -114,7 +114,7 @@ public class TestDataMiner {
 		} else {
 			fail("There are no patterns in the table.");
 		}
-	}*/
+	}
 		
 	/**
 	  * testDataClassification - JUnit test case whose aim is to test execution of current classification algorithms over the built dataset
@@ -122,7 +122,7 @@ public class TestDataMiner {
 	  * @param none 
 	  * 
 	  */
-	/*@Test
+	@Test
 	public final void testDataClassification() {
 		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
 		if (patternList.size()>0){
@@ -148,8 +148,39 @@ public class TestDataMiner {
 		} else {
 			fail("There are no patterns in the table.");
 		}
-	}*/
-	
+	}
+		
+	/**
+	  * testApriori - JUnit test case whose aim is to test execution of A Priori association algorithms over the built dataset
+	  *
+	  * @param none 
+	  * 
+	  */
+	@Test
+	public final void testApriori() {
+		List<PatternsKrs> patternList = dbManager.getPatternsKRS();
+		String associationRules = null;
+		if (patternList.size()>0){
+			Instances data = dm.buildInstancesFromPatterns(patternList);
+			if (data != null) {
+				int[] indexesReview = new int[data.numAttributes()];
+                indexesReview[0] = 11; // User role
+                indexesReview[1] = 13; // Device Type
+                indexesReview[2] = 14; // Device OS
+                indexesReview[3] = 18; // Device Owner
+                indexesReview[4] = 38; // Label
+                associationRules = dm.associationRules(data, indexesReview);
+                if (associationRules != null) {
+                	System.out.println("A priori rules:\n"+associationRules);
+                }
+			} else {
+				fail("Instances not being properly built.");
+			}
+						
+		} else {
+			fail("There are no patterns in the table.");
+		}
+	}	
 	
 
 }

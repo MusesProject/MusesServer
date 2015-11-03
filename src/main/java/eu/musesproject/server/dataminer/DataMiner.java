@@ -47,6 +47,7 @@ import eu.musesproject.server.scheduler.ModuleType;
 
 import org.apache.log4j.Logger;
 
+import weka.associations.Apriori;
 import weka.attributeSelection.AttributeSelection;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -54,6 +55,7 @@ import weka.core.Instances;
 import weka.core.Utils;
 import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.NumericToNominal;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.attributeSelection.CfsSubsetEval;
@@ -127,6 +129,8 @@ public class DataMiner {
                 logger.info("Classifying...");
                 String notParsedClassifierRules = this.dataClassification(data, indexesReview);
                 String[] ruleLines = notParsedClassifierRules.split("\\n+");
+                logger.info("Obtaining rules from association algorithm...");
+                String associationRules = this.associationRules(data, indexesReview);
                 logger.info("Obtaining rules from best classifier...");
                 if (ruleLines[0].contains("JRIP")) {
                     classifierRules = parser.JRipParser(notParsedClassifierRules);
@@ -732,21 +736,25 @@ public class DataMiner {
        
         String classifierRules = null;
         Instances newData = data;
+        String[] options = new String[2];
+        options[0] = "-R";
+        options[1] = "1";
         Remove remove = new Remove();
         remove.setAttributeIndicesArray(indexes);
         remove.setInvertSelection(true);
         try {
+        	remove.setOptions(options);
             remove.setInputFormat(data);
             newData = Filter.useFilter(data, remove);
         } catch (Exception e) {
             e.printStackTrace();
         }
        
-        Enumeration<Attribute> atts = newData.enumerateAttributes();
+        /*Enumeration<Attribute> atts = newData.enumerateAttributes();
        
         while (atts.hasMoreElements()) {
             logger.info(atts.nextElement().toString());
-        }       
+        } */      
        
         double percentageCorrect = 0;
        
@@ -830,6 +838,58 @@ public class DataMiner {
         }
        
         return classifierRules;
+       
+    }
+   
+    /**
+     * Method associationRules in which first we erase the attributes that were not selected by
+     * featureSelection method and then obtains the set of rules through association algorithms.
+     *
+     * @param data The original set of instances
+     * @param indexes The selected indexes by the feature selection algorithm
+     *
+     * @return associationRules Output of the algorithm, consisting of rules
+     */
+   
+    public String associationRules(Instances data, int[] indexes){
+       
+    	String associationRules = null;
+        Instances newData = data;
+        String[] options = new String[2];
+        options[0] = "-R";
+        options[1] = "1";
+        Remove remove = new Remove();
+        remove.setAttributeIndicesArray(indexes);
+        remove.setInvertSelection(true);
+        try {
+        	remove.setOptions(options);
+            remove.setInputFormat(data);
+            newData = Filter.useFilter(data, remove);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Instances filteredData = newData;
+    	NumericToNominal filter = new NumericToNominal();
+    	try {
+    		filter.setOptions(options);
+			filter.setInputFormat(filteredData);
+			filteredData = Filter.useFilter(newData, filter);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+    	
+    	Apriori aprioriObj = new Apriori();
+    	aprioriObj.setNumRules(500);
+    	try {
+			aprioriObj.buildAssociations(filteredData);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	associationRules = aprioriObj.toString();
+    	//System.out.println("A Priori Rules: "+associationRules);
+       
+        return associationRules;
        
     }
    
