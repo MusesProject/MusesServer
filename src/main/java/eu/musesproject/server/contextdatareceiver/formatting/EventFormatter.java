@@ -216,7 +216,17 @@ public class EventFormatter {
 		if (properties.get("id")!=null)
 			cepFileEvent.setId(Integer.valueOf(properties.get("id")));
 		cepFileEvent.setTimestamp(contextEvent.getTimestamp());
-		cepFileEvent.setPackageName(properties.get("packagename"));
+				
+		if (properties.get("properties")!=null){
+			if (getElement(properties.get("properties"),"packagename")!=null){
+				cepFileEvent.setPackageName(getElement(properties.get("properties"),
+									"packagename"));
+					
+			}
+		}else{
+			cepFileEvent.setPackageName(properties.get("packagename"));
+		}
+
 		
 		return cepFileEvent;
 	}
