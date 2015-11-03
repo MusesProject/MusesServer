@@ -415,7 +415,7 @@ public class PolicySelector {
 						String aux = decision.getCondition().substring(0, decision.getCondition().indexOf(".tmp"));
 						logger.info("Aux:"+aux);
 						//decision.setCondition(aux+"\"");
-						result +="<condition>"+aux+"\""+"</condition>";
+						result +="<condition>"+aux+"\"</resourceName>"+"</condition>";
 					}else{
 						result += "<condition>"+decision.getCondition()+"</condition>";
 					}	
