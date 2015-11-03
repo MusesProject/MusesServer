@@ -349,7 +349,7 @@ public class JSONManager {
 					}
 				}
 				contextEvent.setProperties(properties);
-				if (contextEventType.equals(ActionType.OPEN_ASSET)||contextEventType.equals(ActionType.ACCESS)||contextEventType.equals(ActionType.OPEN)){
+				if (contextEventType.equals(ActionType.OPEN_ASSET)||contextEventType.equals(ActionType.CREATE_ASSET)||contextEventType.equals(ActionType.MODIFY_ASSET)||contextEventType.equals(ActionType.DELETE_ASSET)||contextEventType.equals(ActionType.ACCESS)||contextEventType.equals(ActionType.OPEN)){
 					contextEvent.setType(EventTypes.FILEOBSERVER);
 					properties.put("event", contextEventType);
 				}else if (contextEventType.equals(ActionType.OPEN_APPLICATION)){

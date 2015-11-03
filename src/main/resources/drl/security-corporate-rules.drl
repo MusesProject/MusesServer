@@ -754,25 +754,25 @@ rule "Blacklist app 00001"
 		}
 	end
 	
-	rule "AccessRequest Disable Accessibility"
-	no-loop true
-	dialect "mvel"
-	when
-		e: ChangeSecurityPropertyEvent(accessibilityEnabled==false)
-		not AccessRequest(event=="AccessRequest Disable Accessibility", sessionId==e.sessionId)
-	then
-		StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent. ACCESIBILITY DISABLED");
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Disable Accessibility","DENY", "<accessibilityEnabled>false</accessibilityEnabled>");
+	//rule "AccessRequest Disable Accessibility"
+	//no-loop true
+	//dialect "mvel"
+	//when
+	//	e: ChangeSecurityPropertyEvent(accessibilityEnabled==false)
+	//	not AccessRequest(event=="AccessRequest Disable Accessibility", sessionId==e.sessionId)
+	//then
+	//	StatusGlobal.log("CHANGE SECURITY PROPERTY 1.4.A new AccessRequest has been detected: ChangeSecurityPropertyEvent. ACCESIBILITY DISABLED");
+	//	int id = Rt2aeGlobal.composeAccessRequestI18n(e,"AccessRequest Disable Accessibility","DENY", "<accessibilityEnabled>false</accessibilityEnabled>");
 		
-		AccessRequest request = new AccessRequest();
-		request.setEvent("AccessRequest Disable Accessibility");
-		request.setSessionId(e.getSessionId());
-		StatusGlobal.log("**********"+id);
-		request.setId(id);
-		request.setEvent_date(new Date(System.currentTimeMillis()));
-		insert(request);
+	//	AccessRequest request = new AccessRequest();
+	//	request.setEvent("AccessRequest Disable Accessibility");
+	//	request.setSessionId(e.getSessionId());
+	//	StatusGlobal.log("**********"+id);
+	//	request.setId(id);
+	//	request.setEvent_date(new Date(System.currentTimeMillis()));
+	//	insert(request);
 
-	end
+	//end
 	
 	rule "ACL6 door_1"
 	no-loop true
@@ -1038,34 +1038,36 @@ rule "Blacklist app 00001"
 		request.setId(id);
 		request.setEvent_date(new Date(System.currentTimeMillis()));
 		insert(request);
+		StatusGlobal.log("Removing AppObserverEvent.**********");
+		retract(e1);		
 
 	end
 
 
-	rule "Open asset in restricted zone 1"
-	no-loop true
-	dialect "java"
-	when
-		e: FileObserverEvent(event=="open_asset", path matches ".*SWE.*", username=="muses")
-		e1: LocationEvent(isWithinZone matches ".*1.*", sessionId==e.sessionId)
-		not AccessRequest(event=="Open asset in restricted area", sessionId==e.sessionId)
-	then
-		StatusGlobal.log("Open asset in restricted area**********");
-		Rt2aeGlobal.setStatus(Constants.STARTED);
-		if(e!=null){
-		int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Open asset in restricted zone 1","DENY","<path>"+e.getPath()+"</path>");		
-		AccessRequest request = new AccessRequest();
-		request.setEvent("Open asset in restricted area");
-		request.setSessionId(e.getSessionId());
-		StatusGlobal.log("**********"+id);
-		StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
-		request.setId(id);
-		request.setEvent_date(new Date(System.currentTimeMillis()));
-		insert(request);
-		}else{
-		StatusGlobal.log("*****Null object*****");
-		}
-	end
+	//rule "Open asset in restricted zone 1"
+	//no-loop true
+	//dialect "java"
+	//when
+	//	e: FileObserverEvent(event=="open_asset", path matches ".*SWE.*", username=="muses")
+	//	e1: LocationEvent(isWithinZone matches ".*1.*", sessionId==e.sessionId)
+	//	not AccessRequest(event=="Open asset in restricted area", sessionId==e.sessionId)
+	//then
+	//	StatusGlobal.log("Open asset in restricted area**********");
+	//	Rt2aeGlobal.setStatus(Constants.STARTED);
+	//	if(e!=null){
+	//	int id = Rt2aeGlobal.composeAccessRequestI18n(e,"Open asset in restricted zone 1","DENY","<path>"+e.getPath()+"</path>");		
+	//	AccessRequest request = new AccessRequest();
+	//	request.setEvent("Open asset in restricted area");
+	//	request.setSessionId(e.getSessionId());
+	//	StatusGlobal.log("**********"+id);
+	//	StatusGlobal.log("AccessRequest Detection open file type:"+e.getEvent() + " " + e.getTimestamp());
+	//	request.setId(id);
+	//	request.setEvent_date(new Date(System.currentTimeMillis()));
+	//	insert(request);
+	//	}else{
+	//	StatusGlobal.log("*****Null object*****");
+	//	}
+	//end
 
 
 	rule "Security Incident"
@@ -1181,6 +1183,8 @@ rule "Blacklist app 00001"
 		StatusGlobal.log("*****Null object*****");
 		}
 	end	
+
+
 
 
 	rule "Opportunity"
