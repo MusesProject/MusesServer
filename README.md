@@ -1,7 +1,7 @@
 MusesServer
 ===========
 
-Sources for the server part of the [Muses project](http://musesproject.eu). This is the server part of the MUSES suite in charge of detection of security violations, configuration of corporate security policies, database management, authentication, risk & trust calculation, and transmission of device policies to the MUSES Client.
+Sources for the server part of the [Muses project](http://musesproject.eu). This is the server part of the MUSES suite in charge of detection of security violations, configuration of corporate security policies, database management, authentication, risk & trust calculation, and transmission of device policies to the MUSES Client. 
 
 ##License
 
