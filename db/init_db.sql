@@ -120,7 +120,7 @@ INSERT INTO `security_incident` VALUES (1,'Test Security Incident',NULL,NULL,203
 
 --
 
-INSERT INTO `zone` VALUES (1,'Brussels',0,50.814497,4.412498,50000),(2,'Office Madrid',0,40.443132,-3.682402,500);
+INSERT INTO `zone` VALUES (1,'Brussels',0,4.412498,50.814497,50000),(2,'Office Madrid',0,40.443132,-3.682402,500);
 
 INSERT INTO `list_ofpossible_risktreatments` (`listofpossiblerisktreatment_id`, `description`, `Spanish`, `German`, `French`) VALUES
 (1, 'Sending e-mail with virus.\nYour system is infected with a virus and you want to send an attachment via e-mail. This may cause critical system failure and puts the receiver at risk.\n Open antivirus application, locate and clean the virus.', 'Enviando email con virus.\n nSu sistema está infectado con un virus y usted intenta enviar un email con un archivo adjunto. Esto puede ocasionar errores críticos de sistema y poner en riesgo al receptor de su mensaje. \n Ejecute su antivirus, localice y elimine el virus antes de continuar.', 'Senden von E-Mail mit einem Virus \n Ihre System ist mit einem Virus infiziert ist und Sie\n Nachricht einen Anhang per E-Mail wünschen.\n Das kann kritische Systemfehler verursachen und stellt das \n Empfänger gefährdet. Entfernen Sie zuerst das Virus', 'Envoi d''e-mail avec un virus \n Votre système est infecté par un virus et que vous voulez \\ n envoyer une pièce jointe dans votre e-mail. \\ N Cela peut provoquer une défaillance du système et mettre celui qui reçoit le mail \n en danger. Eliminez en premi'),
